@@ -49,27 +49,32 @@ Set `draft: true` to keep it hidden.
 - Set your real **LinkedIn URL** in `src/consts.ts` (`SOCIALS.linkedin` — currently a guess).
 - Optionally add a **GitHub URL** (`SOCIALS.github`).
 
-## Deploy to moonbatant.com
+## Deploy — GitHub Pages (live)
 
-The site builds to a static `dist/` folder — host it anywhere. Recommended free options:
+This repo auto-deploys to **GitHub Pages** via `.github/workflows/deploy.yml` on every
+push to `main`. No server, no database — it's a fully static site (the résumé is just
+`public/resume.pdf`). Repo: https://github.com/atmamoon/moonbatant
 
-### Option A — Cloudflare Pages (recommended)
-1. Push this repo to GitHub.
-2. Cloudflare Dashboard → **Workers & Pages** → **Create** → **Pages** → connect the repo.
-3. Build command: `npm run build` · Output directory: `dist`.
-4. **Custom domains** → add `moonbatant.com`. If your DNS is on Cloudflare, it wires up automatically; otherwise point a `CNAME` to the `*.pages.dev` target.
+- Pages source: **GitHub Actions** (set under Settings → Pages).
+- Custom domain: `moonbatant.com` (also stored in `public/CNAME`).
 
-### Option B — Netlify
-1. Push to GitHub → Netlify → **Add new site** → import repo.
-2. Build: `npm run build` · Publish dir: `dist`.
-3. **Domain settings** → add `moonbatant.com` and follow the DNS instructions.
+### Point Namecheap DNS at GitHub Pages
 
-### Option C — Vercel
-1. Import the repo at vercel.com. Astro is auto-detected.
-2. **Settings → Domains** → add `moonbatant.com`.
+In Namecheap → **Domain List → Manage → Advanced DNS → Host Records**, first
+**delete** the default `CNAME www → parkingpage.namecheap.com` and the `URL Redirect`
+records, then add:
 
-> `public/CNAME` (`moonbatant.com`) is included for **GitHub Pages**. If you deploy with
-> Pages instead, set the custom domain in the repo's Pages settings — the CNAME file is read automatically.
+| Type  | Host | Value                | TTL       |
+|-------|------|----------------------|-----------|
+| A     | @    | 185.199.108.153      | Automatic |
+| A     | @    | 185.199.109.153      | Automatic |
+| A     | @    | 185.199.110.153      | Automatic |
+| A     | @    | 185.199.111.153      | Automatic |
+| CNAME | www  | atmamoon.github.io.  | Automatic |
 
-DNS, in short: add an `A`/`ALIAS`/`CNAME` record at your registrar pointing the apex
-`moonbatant.com` (and optionally `www`) at your host, then verify in the host's dashboard.
+(Optional IPv6 — add four AAAA `@` records: `2606:50c0:8000::153`, `…8001::153`,
+`…8002::153`, `…8003::153`.)
+
+Propagation takes minutes to a couple of hours. Then in **Settings → Pages**, once the
+domain shows verified, tick **Enforce HTTPS** (GitHub provisions the SSL cert
+automatically). Done — `https://moonbatant.com` is live.
