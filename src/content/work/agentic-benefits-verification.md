@@ -9,7 +9,7 @@ metrics:
   - { value: "0 → 1", label: "Launched the product line" }
   - { value: "Eval-gated", label: "Regressions caught pre-production" }
 tags: ["Agent design", "Orchestration", "Evals", "Enterprise B2B", "Reliability"]
-order: 3
+order: 4
 featured: true
 draft: false
 ---

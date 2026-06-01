@@ -9,7 +9,7 @@ metrics:
   - { value: "5 in 7", label: "Activation metric (notes / days)" }
   - { value: "3.5% → <1%", label: "Incident rate, cut in parallel" }
 tags: ["PLG", "Funnel & activation", "PostHog", "Experimentation", "Growth"]
-order: 4
+order: 3
 featured: true
 draft: false
 ---
