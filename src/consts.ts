@@ -20,7 +20,7 @@ export const SITE = {
 // Host: US cloud = https://us.i.posthog.com · EU cloud = https://eu.i.posthog.com
 // Leave posthogKey empty to disable tracking entirely (no script loads).
 export const ANALYTICS = {
-  posthogKey: '', // e.g. 'phc_AbC123...'
+  posthogKey: 'phc_AGCpstJm3x2tY5LhLagAwzKSEHaZYyTr7utRdTUwWpFr',
   posthogHost: 'https://us.i.posthog.com',
 };
 
