@@ -6,9 +6,9 @@
 export const SITE = {
   name: 'Mamoon Mondal',
   domain: 'moonbatant.com',
-  title: 'Mamoon Mondal — Founding PM, AI-native products',
+  title: 'Mamoon Mondal — AI Product Manager',
   description:
-    'Founding Product Manager with 4+ years building AI-native products — agentic systems, eval-driven reliability, and PLG growth. Writing about building AI agents with Claude.',
+    'AI Product Manager with 4+ years building AI-native products — agentic systems, eval-driven reliability, and PLG growth. Writing about building AI agents with Claude.',
   // Used for absolute URLs (Open Graph). Keep in sync with astro.config.mjs.
   url: 'https://moonbatant.com',
 };
@@ -26,14 +26,14 @@ export const SOCIALS = {
 
 export const HERO = {
   name: 'Mamoon Mondal',
-  role: 'Founding Product Manager · AI-native products',
+  role: 'AI Product Manager',
   tagline:
     'I build AI-native products end to end — running a PLG self-serve product and an enterprise B2B agentic product in parallel, owning 0-to-1 discovery, agent design, and eval-driven reliability.',
-  // Short punchy line under the name
-  kicker: 'Founding PM with 4+ years building AI-native products',
+  // Short punchy line above the name
+  kicker: '4+ years building AI-native products',
 };
 
-export const ABOUT = `I'm a founding Product Manager who builds AI-native products from zero to one. At Supanote.ai I run a PLG self-serve clinical-scribe product and an enterprise B2B benefits-verification agent in parallel — owning discovery, agent design, and the eval harnesses that keep them reliable in production.
+export const ABOUT = `I'm an AI product manager who builds AI-native products from zero to one. As founding PM at Supanote.ai, I run a PLG self-serve clinical-scribe product and an enterprise B2B benefits-verification agent in parallel — owning discovery, agent design, and the eval harnesses that keep them reliable in production.
 
 Before that, at Innovaccer, I shipped AI agents that automated healthcare operations at scale, lifting per-user efficiency 4x and unifying post-acquisition product integrations.
 
