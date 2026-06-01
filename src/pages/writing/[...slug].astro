@@ -1,0 +1,69 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog')).filter((p) => !p.data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const fmt = post.data.date.toLocaleDateString('en-US', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<Base title={post.data.title} description={post.data.description}>
+  <article style="padding-top: 56px;">
+    <div class="container">
+      <a href="/writing" class="back">← All writing</a>
+      <header class="post-head">
+        <h1>{post.data.title}</h1>
+        <p class="muted post-sub">{post.data.description}</p>
+        <div class="post-meta">
+          <span class="faint">{fmt}</span>
+          <div class="chips">
+            {post.data.tags.map((t) => <span class="chip">{t}</span>)}
+          </div>
+        </div>
+      </header>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .back {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    display: inline-block;
+    margin-bottom: 28px;
+  }
+  .post-head {
+    max-width: 720px;
+    margin: 0 auto 44px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+  }
+  .post-head h1 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); }
+  .post-sub { font-size: 1.1rem; margin-top: 14px; }
+  .post-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+  }
+</style>

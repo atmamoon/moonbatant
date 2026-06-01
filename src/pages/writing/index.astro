@@ -1,0 +1,103 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { EXTERNAL_WRITING } from '../../data/external-writing';
+
+const localPosts = (await getCollection('blog'))
+  .filter((p) => !p.data.draft)
+  .map((p) => ({
+    title: p.data.title,
+    description: p.data.description,
+    date: p.data.date,
+    tags: p.data.tags,
+    url: `/writing/${p.slug}`,
+    source: 'moonbatant',
+    external: false,
+  }));
+
+const external = EXTERNAL_WRITING.map((p) => ({
+  title: p.title,
+  description: p.description,
+  date: new Date(p.date),
+  tags: p.tags,
+  url: p.url,
+  source: p.source,
+  external: true,
+}));
+
+const posts = [...localPosts, ...external].sort(
+  (a, b) => b.date.valueOf() - a.date.valueOf()
+);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+---
+
+<Base title="Writing" description="Notes on building AI agents with Claude, product, and the occasional engineering rabbit hole.">
+  <section style="padding-top: 64px;">
+    <div class="container">
+      <p class="section-label">Writing & updates</p>
+      <h1 class="section-title" style="font-size: clamp(2rem,5vw,3rem);">Notes from the lab</h1>
+      <p class="muted" style="max-width: 620px; margin-bottom: 40px;">
+        Building AI agents with Claude, product thinking, and the occasional
+        engineering rabbit hole. Some posts live here; longer pieces are on Medium.
+      </p>
+
+      <div class="writing-list">
+        {posts.map((post) => (
+          <a
+            class="writing-row"
+            href={post.url}
+            target={post.external ? '_blank' : undefined}
+            rel={post.external ? 'noopener' : undefined}
+          >
+            <div>
+              <h3 class="writing-title">
+                {post.title}
+                {post.external && <span class="ext">↗</span>}
+              </h3>
+              <p class="muted writing-desc">{post.description}</p>
+              <div class="chips" style="margin-top:10px;">
+                {post.tags.map((t) => <span class="chip">{t}</span>)}
+              </div>
+            </div>
+            <div class="writing-meta">
+              <span class="chip">{post.source}</span>
+              <span class="faint">{fmt(post.date)}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .writing-list { display: flex; flex-direction: column; }
+  .writing-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    color: var(--text);
+  }
+  .writing-row:last-child { border-bottom: 1px solid var(--border); }
+  .writing-row:hover .writing-title { color: var(--accent); }
+  .writing-title { font-size: 1.18rem; transition: color 0.15s ease; }
+  .ext { font-size: 0.85rem; color: var(--text-faint); margin-left: 4px; }
+  .writing-desc { font-size: 0.96rem; margin-top: 6px; max-width: 640px; }
+  .writing-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 0.85rem;
+  }
+  @media (max-width: 760px) {
+    .writing-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .writing-meta { flex-direction: row; align-items: center; }
+  }
+</style>

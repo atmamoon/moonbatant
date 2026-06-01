@@ -1,0 +1,137 @@
+// ─────────────────────────────────────────────────────────────────────────
+// Site-wide config. Edit this file to update your contact links, headline,
+// experience, and project cards — everything below flows into the pages.
+// ─────────────────────────────────────────────────────────────────────────
+
+export const SITE = {
+  name: 'Mamoon Mondal',
+  domain: 'moonbatant.com',
+  title: 'Mamoon Mondal — Founding PM, AI-native products',
+  description:
+    'Founding Product Manager with 4+ years building AI-native products — agentic systems, eval-driven reliability, and PLG growth. Writing about building AI agents with Claude.',
+  // Used for absolute URLs (Open Graph). Keep in sync with astro.config.mjs.
+  url: 'https://moonbatant.com',
+};
+
+export const SOCIALS = {
+  email: 'sheikh.mamoon.mondal@gmail.com',
+  // TODO: drop in your full LinkedIn URL (e.g. https://www.linkedin.com/in/your-handle)
+  linkedin: 'https://www.linkedin.com/in/mamoon-mondal',
+  medium: 'https://medium.com/@sheikh.mamoon.mondal',
+  // TODO: add if you want a GitHub link in the header/footer
+  github: '',
+  location: 'Bengaluru, India',
+  phone: '+91 7022382627',
+};
+
+export const HERO = {
+  name: 'Mamoon Mondal',
+  role: 'Founding Product Manager · AI-native products',
+  tagline:
+    'I build AI-native products end to end — running a PLG self-serve product and an enterprise B2B agentic product in parallel, owning 0-to-1 discovery, agent design, and eval-driven reliability.',
+  // Short punchy line under the name
+  kicker: 'Founding PM with 4+ years building AI-native products',
+};
+
+export const ABOUT = `I'm a founding Product Manager who builds AI-native products from zero to one. At Supanote.ai I run a PLG self-serve clinical-scribe product and an enterprise B2B benefits-verification agent in parallel — owning discovery, agent design, and the eval harnesses that keep them reliable in production.
+
+Before that, at Innovaccer, I shipped AI agents that automated healthcare operations at scale, lifting per-user efficiency 4x and unifying post-acquisition product integrations.
+
+I use AI heavily inside my own workflow too — building internal agents on Claude Code + MCP that automate program and design ops and multiply my throughput as a PM. I write about those experiments below.`;
+
+// ── Experience ──────────────────────────────────────────────────────────
+export type Job = {
+  company: string;
+  role: string;
+  period: string;
+  location: string;
+  highlights: string[];
+};
+
+export const EXPERIENCE: Job[] = [
+  {
+    company: 'Supanote.ai',
+    role: 'Founding Product Manager',
+    period: 'Jan 2026 — Present',
+    location: 'Bengaluru, India',
+    highlights: [
+      'Lifted PLG paid conversion 5% in 2 months on the AI clinical scribe through funnel analysis, onboarding iteration, and reliability improvements — running PLG and enterprise B2B in parallel.',
+      'Scaled the B2B benefits-verification agent to 2.2x ARR in 3 months post 0-to-1 launch by re-architecting rule-based workflows into an agentic, harness-based orchestration with parallel agents, skill hierarchies, tool calling, and context/memory loops.',
+      'Drove production incident rate from 3.5% to <1% in 2 weeks via architectural audits and a custom eval harness.',
+      'Built the founding product operating layer — analytics, agile cadence, and internal AI agents automating program and design ops — driving a 5x lift in product velocity.',
+    ],
+  },
+  {
+    company: 'Innovaccer',
+    role: 'Product Manager',
+    period: 'Jul 2022 — Dec 2025',
+    location: 'Noida, India',
+    highlights: [
+      'Automated fax-based referral intake for specialty clinics with an AI agent, improving per-user operational efficiency 4x (40% faster TAT).',
+      'Scaled adoption of an automation platform 75% in 3 quarters by segmenting users, uncovering key pain points, and shipping bi-weekly experiments guided by KPIs.',
+      'Improved complex UI flows via user-journey analytics and A/B testing, lifting active engagement 35%.',
+      'Scaled automation execution capacity 2x through demand forecasting and rapid cross-functional delivery, maintaining <1% error rate under higher load.',
+      'Unified post-acquisition product integrations into a single UX, achieving 100% SLA adherence and <2% incident rate post-launch.',
+      'Built a contract-driven integration layer replacing one-off API/Kafka hooks, cutting rollout time by 67%.',
+    ],
+  },
+];
+
+export const EDUCATION = {
+  school: 'Indian Institute of Technology (IIT) Dhanbad',
+  degree: 'B.Tech, Mechanical Engineering · CGPA 8.28',
+  period: '2018 — 2022',
+};
+
+export const SKILLS: { group: string; items: string[] }[] = [
+  {
+    group: 'Product',
+    items: ['Discovery', 'Strategy', 'Roadmapping', 'Prioritization', 'GTM', 'Eval frameworks', 'A/B testing', 'KPI trees', 'Telemetry'],
+  },
+  {
+    group: 'AI & Agents',
+    items: ['LLMs (Claude, OpenAI, Gemini)', 'Agent design', 'Harnesses', 'Tool calling', 'Skill hierarchies', 'Context/memory', 'HITL & guardrails', 'RAG', 'Evals', 'MCP'],
+  },
+  {
+    group: 'AI Foundations',
+    items: ['Post-training (SFT, RLHF, DPO)', 'Reasoning models', 'Transformer internals'],
+  },
+  {
+    group: 'Data & Tools',
+    items: ['Claude Code', 'Codex', 'SQL', 'Python', 'Mixpanel', 'PostHog', 'Linear', 'Figma', 'n8n', 'Cursor', 'Braintrust', 'Langfuse'],
+  },
+];
+
+// ── Projects / "Building with Claude" ───────────────────────────────────
+export type Project = {
+  title: string;
+  blurb: string;
+  tags: string[];
+  link?: string;
+  linkLabel?: string;
+};
+
+export const PROJECTS: Project[] = [
+  {
+    title: 'The 5x PM Agent',
+    blurb:
+      'An autonomous PM agent on Claude Code + MCP. One Slack message in — a PRD, a mockup, and a Linear ticket out. The architecture behind a 5x lift in my own product velocity.',
+    tags: ['Claude Code', 'MCP', 'Agent design', 'Linear'],
+    link: 'https://medium.com/@sheikh.mamoon.mondal/building-a-5x-pm-agent-b9af78e16628',
+    linkLabel: 'Read the build',
+  },
+  {
+    title: 'One WhatsApp Chat Runs My Digital Life',
+    blurb:
+      'An always-on AI agent running on my old PC that monitors email, Slack, analytics, and news — replacing five apps with a single WhatsApp conversation.',
+    tags: ['Always-on agent', 'WhatsApp', 'Self-hosted', 'Automation'],
+    link: 'https://medium.com/@sheikh.mamoon.mondal/i-replaced-5-apps-with-one-whatsapp-chat-using-an-ai-agent-running-on-my-old-pc-f48eedfe2229',
+    linkLabel: 'Read the build',
+  },
+  {
+    title: 'Agentic Benefits-Verification Harness',
+    blurb:
+      'Re-architected rule-based enterprise workflows into a harness-based orchestration with parallel agents, skill hierarchies, tool calling, and context/memory loops — scaling to 2.2x ARR in 3 months.',
+    tags: ['Agentic orchestration', 'Evals', 'Enterprise B2B', 'Reliability'],
+  },
+];
