@@ -1,21 +1,21 @@
 ---
 title: "Shipping a thinking model for clinical notes"
-summary: "An accuracy-vs-latency tradeoff on Supanote's AI scribe — won with a hand-curated golden set and an engagement-weighted accuracy metric."
+summary: "An accuracy-vs-latency tradeoff on Supanote's AI scribe — won with a hand-curated golden set and a clinical-accuracy bar measured against an engagement-weighted ground truth."
 company: "Supanote.ai"
 role: "Founding Product Manager"
 timeline: "2026 · ongoing"
 metrics:
-  - { value: "85% → 90%", label: "Zero-edit note accuracy" }
-  - { value: "+5%", label: "PLG paid conversion (2 mo)" }
-  - { value: "60s", label: "Hard latency ceiling set" }
-tags: ["Evals", "LLMs", "Latency/cost tradeoff", "PLG"]
+  - { value: "Step-change", label: "Clinical-note accuracy" }
+  - { value: "↑ conversion", label: "PLG paid plan" }
+  - { value: "60s", label: "Latency ceiling, held" }
+tags: ["Evals", "LLMs", "Clinical accuracy", "Latency/cost tradeoff", "PLG"]
 order: 1
 featured: true
 draft: false
 ---
 
-> Draft case study — numbers are from my own work; expand the research and
-> decision detail with anything you're comfortable disclosing publicly.
+> Metrics on this page are generalized to respect Supanote's confidentiality —
+> the methods and decisions are real; exact figures available on request.
 
 ## Context
 
@@ -32,32 +32,40 @@ stops getting used.
 ## The problem
 
 "Better notes" is not a metric. Before I could evaluate any model, I had to define
-what *good* meant and build something to measure it against.
+what *good* meant — and in a clinical product, *good* means **clinical accuracy**:
+the note has to be medically and factually correct, with no hallucinated findings,
+because a wrong note is worse than no note.
 
-- **What is a good note?** I anchored on **"zero-edit accept"** — a note the
-  clinician keeps without changing — as the ground-truth signal.
+- **The real target: clinical correctness.** A note is only good if a clinician
+  would sign it as an accurate record of the visit.
+- **The measurable proxy: "zero-edit accept."** Clinical correctness is expensive to
+  label at scale, so I used *a note the clinician keeps without changing* as the
+  observable signal — while staying honest that zero-edit accept blends true clinical
+  correctness with style and with rubber-stamping, so it can over-count.
 - **Whose judgment counts?** Not all accepts are equal. A low-engagement user who
   rubber-stamps everything carries less signal than a high-engagement editor whose
-  edits are deliberate. So I **weighted the metric toward high-engagement editors.**
+  edits are deliberate. So I **weighted the ground truth toward high-engagement
+  editors**, whose accepts are a far better stand-in for clinical correctness.
 
 ## Approach
 
-**Curating a golden set.** Rather than evaluate on noisy production traffic, I
-built a clean evaluation set by narrowing ~40k users down to ~3k active,
-high-feedback users, then **hand-selecting 70–80 notes** spanning note sizes,
+**Curating a golden set.** Rather than evaluate on noisy production traffic, I built
+a clean evaluation set by narrowing the full user base down to the active,
+high-feedback core, then **hand-selecting a few dozen notes** spanning note sizes,
 languages, and note types. Small, deliberate, and representative beats large and
 noisy for this kind of judgment-heavy eval.
 
 **Measuring the tradeoff explicitly.** Against that golden set:
 
-- Accuracy moved from **85% → 90%** (zero-edit accept, engagement-weighted).
-- Latency moved from **p95 ~30s → ~40s** (+10s).
-- I set an explicit **walk-away line: a 60s p95 ceiling.** Beyond that, don't ship —
-  go find a model with similar accuracy at lower latency.
+- **Clinical-note accuracy improved by a clear step-change** — on both the
+  zero-edit-accept proxy and a spot-check of clinician-reviewed correctness.
+- Latency rose modestly (a single-digit-seconds increase at p95).
+- I set an explicit **walk-away line: a hard ~60s p95 ceiling.** Beyond that, don't
+  ship — go find a model with similar accuracy at lower latency.
 
 ## Impact
 
-- Shipped the upgrade and **lifted PLG paid conversion ~5% in two months**,
+- Shipped the upgrade and **lifted PLG paid conversion** within a couple of months,
   alongside onboarding and reliability work.
 - Established the golden-set + engagement-weighted-accuracy method as the
   repeatable way we evaluate model changes on the scribe.

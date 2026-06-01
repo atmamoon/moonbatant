@@ -55,9 +55,9 @@ export const EXPERIENCE: Job[] = [
     period: 'Jan 2026 — Present',
     location: 'Bengaluru, India',
     highlights: [
-      'Lifted PLG paid conversion 5% in 2 months on the AI clinical scribe through funnel analysis, onboarding iteration, and reliability improvements — running PLG and enterprise B2B in parallel.',
-      'Scaled the B2B benefits-verification agent to 2.2x ARR in 3 months post 0-to-1 launch by re-architecting rule-based workflows into an agentic, harness-based orchestration with parallel agents, skill hierarchies, tool calling, and context/memory loops.',
-      'Drove production incident rate from 3.5% to <1% in 2 weeks via architectural audits and a custom eval harness.',
+      'Lifted PLG paid conversion on the AI clinical scribe through funnel analysis, onboarding iteration, and reliability improvements — running PLG and enterprise B2B in parallel.',
+      'Drove rapid ARR growth on the B2B benefits-verification agent post 0-to-1 launch by re-architecting rule-based workflows into an agentic, harness-based orchestration with parallel agents, skill hierarchies, tool calling, and context/memory loops.',
+      'Sharply cut the production incident rate via architectural audits and a custom eval harness.',
       'Built the founding product operating layer — analytics, agile cadence, and internal AI agents automating program and design ops — driving a 5x lift in product velocity.',
     ],
   },
