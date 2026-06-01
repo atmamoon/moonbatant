@@ -13,6 +13,17 @@ export const SITE = {
   url: 'https://moonbatant.com',
 };
 
+// ── Analytics ───────────────────────────────────────────────────────────
+// Paste your PostHog *Project API Key* below to turn on site-wide tracking.
+// It's a public client key (starts with `phc_`) — safe to commit.
+// Get it: posthog.com → sign up (free) → Settings → Project → "Project API Key".
+// Host: US cloud = https://us.i.posthog.com · EU cloud = https://eu.i.posthog.com
+// Leave posthogKey empty to disable tracking entirely (no script loads).
+export const ANALYTICS = {
+  posthogKey: '', // e.g. 'phc_AbC123...'
+  posthogHost: 'https://us.i.posthog.com',
+};
+
 export const SOCIALS = {
   email: 'sheikh.mamoon.mondal@gmail.com',
   // TODO: drop in your full LinkedIn URL (e.g. https://www.linkedin.com/in/your-handle)
