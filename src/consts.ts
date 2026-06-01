@@ -113,14 +113,6 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
-    title: 'The 5x PM Agent',
-    blurb:
-      'An autonomous PM agent on Claude Code + MCP. One Slack message in — a PRD, a mockup, and a Linear ticket out. The architecture behind a 5x lift in my own product velocity.',
-    tags: ['Claude Code', 'MCP', 'Agent design', 'Linear'],
-    link: 'https://medium.com/@sheikh.mamoon.mondal/building-a-5x-pm-agent-b9af78e16628',
-    linkLabel: 'Read the build',
-  },
-  {
     title: 'One WhatsApp Chat Runs My Digital Life',
     blurb:
       'An always-on AI agent running on my old PC that monitors email, Slack, analytics, and news — replacing five apps with a single WhatsApp conversation.',

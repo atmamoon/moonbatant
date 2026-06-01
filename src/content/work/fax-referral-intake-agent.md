@@ -8,7 +8,7 @@ metrics:
   - { value: "4x", label: "Per-user operational efficiency" }
   - { value: "40%", label: "Faster turnaround time" }
 tags: ["AI agent", "Healthcare ops", "Automation", "Workflow"]
-order: 3
+order: 4
 featured: false
 draft: false
 ---
