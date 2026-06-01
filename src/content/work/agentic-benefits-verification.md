@@ -1,15 +1,15 @@
 ---
 title: "Re-architecting benefits verification into an agentic system"
-summary: "Took a brittle rule-based enterprise workflow to a harness-based agent orchestration — 2.2x ARR in 3 months, incidents from 3.5% to under 1%."
+summary: "Took a brittle rule-based enterprise workflow to a harness-based agent orchestration — 2.2x ARR in 3 months, with eval-gated reliability for an enterprise bar."
 company: "Supanote.ai"
 role: "Founding Product Manager"
 timeline: "2026 · 3 months post-launch"
 metrics:
   - { value: "2.2x", label: "ARR in 3 months" }
-  - { value: "3.5% → <1%", label: "Production incident rate (2 wks)" }
   - { value: "0 → 1", label: "Launched the product line" }
+  - { value: "Eval-gated", label: "Regressions caught pre-production" }
 tags: ["Agent design", "Orchestration", "Evals", "Enterprise B2B", "Reliability"]
-order: 2
+order: 3
 featured: true
 draft: false
 ---
@@ -25,8 +25,8 @@ wrong, and enterprise customers who feel every incident.
 
 The initial implementation was **rule-based**. Rules are predictable but brittle:
 every new payer quirk or edge case meant another branch, and the system couldn't
-generalize. Reliability suffered as coverage grew, and the incident rate sat around
-**3.5%** — unacceptable for an enterprise product.
+generalize. Reliability suffered as coverage grew — too brittle to hold the bar an
+enterprise product demands.
 
 ## Approach
 
@@ -45,8 +45,8 @@ discovering them as incidents.
 ## Impact
 
 - **2.2x ARR within 3 months** of the 0-to-1 launch.
-- Drove the **production incident rate from 3.5% to under 1% in two weeks** via the
-  audits and eval harness.
+- **Hardened reliability to an enterprise bar** — a custom eval harness plus
+  architectural audits caught regressions before they reached production.
 
 ## Reflection & tradeoffs
 

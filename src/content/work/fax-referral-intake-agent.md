@@ -8,13 +8,13 @@ metrics:
   - { value: "4x", label: "Per-user operational efficiency" }
   - { value: "40%", label: "Faster turnaround time" }
 tags: ["AI agent", "Healthcare ops", "Automation", "Workflow"]
-order: 4
-featured: false
+order: 2
+featured: true
 draft: false
 ---
 
-> Draft case study — metrics are from my own work. Expand the discovery, the
-> before/after workflow, and the rollout detail with what you can share.
+> 📰 Featured in **Fierce Healthcare** —
+> [Olympia Orthopaedic Associates rolls out Innovaccer's AI agents for referrals](https://www.fiercehealthcare.com/ai-and-machine-learning/olympia-orthopaedic-associates-rolls-out-innovaccers-ai-agents-referrals).
 
 ## Context
 
@@ -33,9 +33,10 @@ depended on whoever was reading the page that day.
 
 I shipped an **AI intake agent** that reads inbound faxes, extracts the structured
 referral data, and routes it into the workflow — turning a manual transcription
-step into a reviewed, automated one.
-*(Expand: extraction approach, the human review/confirmation step, and how you
-measured extraction quality before trusting it.)*
+step into a reviewed, automated one, with a human confirmation step kept in place
+where a mis-read would be costly. The referral agents were rolled out with real
+specialty-clinic customers, including **Olympia Orthopaedic Associates**, and the
+launch was [covered by Fierce Healthcare](https://www.fiercehealthcare.com/ai-and-machine-learning/olympia-orthopaedic-associates-rolls-out-innovaccers-ai-agents-referrals).
 
 ## Impact
 
