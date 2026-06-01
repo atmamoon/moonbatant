@@ -12,6 +12,11 @@ import {
 } from '../consts';
 import { EXTERNAL_WRITING } from '../data/external-writing';
 
+// Featured case studies for the homepage
+const caseStudies = (await getCollection('work'))
+  .filter((s) => !s.data.draft && s.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+
 // Latest writing (local + external) for the homepage teaser
 const localPosts = (await getCollection('blog'))
   .filter((p) => !p.data.draft)
@@ -116,11 +121,45 @@ const fmt = (d: Date) =>
     </div>
   </section>
 
-  <!-- ── Projects ───────────────────────────────────────────── -->
+  <!-- ── Case studies ───────────────────────────────────────── -->
+  <section id="work">
+    <div class="container">
+      <p class="section-label">Selected work</p>
+      <div class="writing-head">
+        <h2 class="section-title" style="margin-bottom:0;">Case studies</h2>
+        <a href="/work" class="btn">All case studies →</a>
+      </div>
+      <div class="cs-grid">
+        {caseStudies.map((s) => (
+          <a class="card cs-card" href={`/work/${s.slug}`}>
+            <div class="cs-card-top">
+              <span class="chip">{s.data.company}</span>
+              <span class="faint" style="font-size:0.82rem;">{s.data.timeline}</span>
+            </div>
+            <h3>{s.data.title}</h3>
+            <p class="muted cs-card-summary">{s.data.summary}</p>
+            {s.data.metrics.length > 0 && (
+              <div class="cs-card-metrics">
+                {s.data.metrics.slice(0, 3).map((m) => (
+                  <div>
+                    <div class="cs-card-metric-val">{m.value}</div>
+                    <div class="faint cs-card-metric-label">{m.label}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <span class="cs-read">Read case study →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Side builds ────────────────────────────────────────── -->
   <section id="projects">
     <div class="container">
       <p class="section-label">Building with Claude</p>
-      <h2 class="section-title">AI agents I've designed & shipped</h2>
+      <h2 class="section-title">Side builds &amp; experiments</h2>
       <div class="project-grid">
         {PROJECTS.map((p) => (
           <article class="card project">
@@ -286,6 +325,24 @@ const fmt = (d: Date) =>
     border-radius: 50%;
     background: var(--accent);
   }
+
+  /* Case studies */
+  .cs-grid { display: flex; flex-direction: column; gap: 20px; }
+  .cs-card { display: flex; flex-direction: column; gap: 12px; }
+  .cs-card-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .cs-card h3 { font-size: 1.3rem; }
+  .cs-card-summary { font-size: 1rem; }
+  .cs-card-metrics {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    margin: 6px 0;
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+  }
+  .cs-card-metric-val { font-size: 1.25rem; font-weight: 800; color: var(--accent-2); }
+  .cs-card-metric-label { font-size: 0.78rem; }
+  .cs-read { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; color: var(--accent); }
 
   /* Projects */
   .project-grid {

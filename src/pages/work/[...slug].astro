@@ -1,0 +1,110 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const studies = (await getCollection('work')).filter((s) => !s.data.draft);
+  return studies.map((study) => ({
+    params: { slug: study.slug },
+    props: { study },
+  }));
+}
+
+const { study } = Astro.props;
+const { Content } = await study.render();
+const d = study.data;
+---
+
+<Base title={d.title} description={d.summary}>
+  <article style="padding-top: 56px;">
+    <div class="container">
+      <a href="/work" class="back">← All case studies</a>
+
+      <header class="cs-head">
+        <div class="cs-meta-top">
+          <span class="chip">{d.company}</span>
+          <span class="faint">{d.role}</span>
+          <span class="faint">· {d.timeline}</span>
+        </div>
+        <h1>{d.title}</h1>
+        <p class="cs-summary muted">{d.summary}</p>
+        <div class="chips">{d.tags.map((t) => <span class="chip">{t}</span>)}</div>
+      </header>
+
+      {d.metrics.length > 0 && (
+        <div class="cs-metrics">
+          {d.metrics.map((m) => (
+            <div class="cs-metric">
+              <div class="cs-metric-val">{m.value}</div>
+              <div class="cs-metric-label faint">{m.label}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <div class="cs-foot">
+        <a href="/work" class="btn">← All case studies</a>
+        <a href="/#contact" class="btn btn-primary">Let's talk →</a>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .back {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    display: inline-block;
+    margin-bottom: 28px;
+  }
+  .cs-head { max-width: 760px; margin: 0 auto 8px; }
+  .cs-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    font-size: 0.9rem;
+  }
+  .cs-head h1 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); }
+  .cs-summary { font-size: 1.2rem; margin: 16px 0 20px; }
+  .cs-metrics {
+    max-width: 760px;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+  }
+  .cs-metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    text-align: center;
+  }
+  .cs-metric-val {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(120deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .cs-metric-label { font-size: 0.85rem; margin-top: 6px; }
+  .cs-foot {
+    max-width: 760px;
+    margin: 56px auto 0;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+</style>

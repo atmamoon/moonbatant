@@ -128,10 +128,4 @@ export const PROJECTS: Project[] = [
     link: 'https://medium.com/@sheikh.mamoon.mondal/i-replaced-5-apps-with-one-whatsapp-chat-using-an-ai-agent-running-on-my-old-pc-f48eedfe2229',
     linkLabel: 'Read the build',
   },
-  {
-    title: 'Agentic Benefits-Verification Harness',
-    blurb:
-      'Re-architected rule-based enterprise workflows into a harness-based orchestration with parallel agents, skill hierarchies, tool calling, and context/memory loops — scaling to 2.2x ARR in 3 months.',
-    tags: ['Agentic orchestration', 'Evals', 'Enterprise B2B', 'Reliability'],
-  },
 ];
