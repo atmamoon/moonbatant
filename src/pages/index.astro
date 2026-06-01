@@ -10,40 +10,11 @@ import {
   PROJECTS,
   SOCIALS,
 } from '../consts';
-import { EXTERNAL_WRITING } from '../data/external-writing';
 
 // Featured case studies for the homepage
 const caseStudies = (await getCollection('work'))
   .filter((s) => !s.data.draft && s.data.featured)
   .sort((a, b) => a.data.order - b.data.order);
-
-// Latest writing (local + external) for the homepage teaser
-const localPosts = (await getCollection('blog'))
-  .filter((p) => !p.data.draft)
-  .map((p) => ({
-    title: p.data.title,
-    description: p.data.description,
-    date: p.data.date,
-    url: `/writing/${p.slug}`,
-    source: 'moonbatant',
-    external: false,
-  }));
-
-const external = EXTERNAL_WRITING.map((p) => ({
-  title: p.title,
-  description: p.description,
-  date: new Date(p.date),
-  url: p.url,
-  source: p.source,
-  external: true,
-}));
-
-const latest = [...localPosts, ...external]
-  .sort((a, b) => b.date.valueOf() - a.date.valueOf())
-  .slice(0, 3);
-
-const fmt = (d: Date) =>
-  d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 ---
 
 <Base>
@@ -172,36 +143,6 @@ const fmt = (d: Date) =>
               </a>
             )}
           </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Latest writing ─────────────────────────────────────── -->
-  <section id="latest-writing">
-    <div class="container">
-      <p class="section-label">Writing & updates</p>
-      <div class="writing-head">
-        <h2 class="section-title" style="margin-bottom:0;">Latest from the lab</h2>
-        <a href="/writing" class="btn">All writing →</a>
-      </div>
-      <div class="writing-list">
-        {latest.map((post) => (
-          <a
-            class="writing-row"
-            href={post.url}
-            target={post.external ? '_blank' : undefined}
-            rel={post.external ? 'noopener' : undefined}
-          >
-            <div>
-              <h3 class="writing-title">{post.title}</h3>
-              <p class="muted writing-desc">{post.description}</p>
-            </div>
-            <div class="writing-meta">
-              <span class="chip">{post.source}</span>
-              <span class="faint">{fmt(post.date)}</span>
-            </div>
-          </a>
         ))}
       </div>
     </div>
@@ -355,7 +296,7 @@ const fmt = (d: Date) =>
   .project-blurb { font-size: 0.96rem; flex-grow: 1; }
   .project-link { font-weight: 600; font-family: var(--font-mono); font-size: 0.88rem; }
 
-  /* Writing */
+  /* Section header row (case studies) */
   .writing-head {
     display: flex;
     justify-content: space-between;
@@ -363,35 +304,11 @@ const fmt = (d: Date) =>
     margin-bottom: 28px;
     gap: 16px;
   }
-  .writing-list { display: flex; flex-direction: column; }
-  .writing-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 24px;
-    padding: 22px 0;
-    border-top: 1px solid var(--border);
-    color: var(--text);
-  }
-  .writing-row:last-child { border-bottom: 1px solid var(--border); }
-  .writing-row:hover .writing-title { color: var(--accent); }
-  .writing-title { font-size: 1.12rem; transition: color 0.15s ease; }
-  .writing-desc { font-size: 0.95rem; margin-top: 6px; max-width: 620px; }
-  .writing-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-    white-space: nowrap;
-    font-size: 0.85rem;
-  }
 
   /* Contact */
   .contact { text-align: center; }
 
   @media (max-width: 760px) {
     .about-grid { grid-template-columns: 1fr; gap: 30px; }
-    .writing-row { flex-direction: column; align-items: flex-start; gap: 12px; }
-    .writing-meta { flex-direction: row; align-items: center; }
   }
 </style>
