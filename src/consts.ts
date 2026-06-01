@@ -26,10 +26,9 @@ export const ANALYTICS = {
 
 export const SOCIALS = {
   email: 'sheikh.mamoon.mondal@gmail.com',
-  // TODO: drop in your full LinkedIn URL (e.g. https://www.linkedin.com/in/your-handle)
   linkedin: 'https://www.linkedin.com/in/mamoon-mondal',
   medium: 'https://medium.com/@sheikh.mamoon.mondal',
-  // TODO: add if you want a GitHub link in the header/footer
+  // Optional: add a GitHub URL to show it in the header/footer
   github: '',
   location: 'Bengaluru, India',
   phone: '+91 7022382627',
