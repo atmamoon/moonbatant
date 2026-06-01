@@ -9,7 +9,7 @@ metrics:
   - { value: "1 Slack msg", label: "→ PRD, mockup & Linear ticket" }
   - { value: "Minutes", label: "Insight → reviewable artifact (was hours)" }
 tags: ["Claude Code", "MCP", "Agent design", "Orchestration", "Observability"]
-order: 3
+order: 1
 featured: true
 draft: false
 ---

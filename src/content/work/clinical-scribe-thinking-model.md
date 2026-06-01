@@ -1,21 +1,18 @@
 ---
 title: "Shipping a thinking model for clinical notes"
-summary: "An accuracy-vs-latency tradeoff on Supanote's AI scribe — won with a hand-curated golden set and a clinical-accuracy bar measured against an engagement-weighted ground truth."
+summary: "An accuracy-vs-latency tradeoff on Supanote's AI scribe — clinical-note accuracy from 85% to 90% via a hand-curated golden set and an engagement-weighted ground truth."
 company: "Supanote.ai"
 role: "Founding Product Manager"
 timeline: "2026 · ongoing"
 metrics:
-  - { value: "Step-change", label: "Clinical-note accuracy" }
-  - { value: "↑ conversion", label: "PLG paid plan" }
-  - { value: "60s", label: "Latency ceiling, held" }
+  - { value: "85% → 90%", label: "Clinical-note accuracy" }
+  - { value: "+5%", label: "PLG paid conversion (2 mo)" }
+  - { value: "60s", label: "Hard latency ceiling set" }
 tags: ["Evals", "LLMs", "Clinical accuracy", "Latency/cost tradeoff", "PLG"]
-order: 1
+order: 3
 featured: true
 draft: false
 ---
-
-> Metrics on this page are generalized to respect Supanote's confidentiality —
-> the methods and decisions are real; exact figures available on request.
 
 ## Context
 
@@ -50,22 +47,22 @@ because a wrong note is worse than no note.
 ## Approach
 
 **Curating a golden set.** Rather than evaluate on noisy production traffic, I built
-a clean evaluation set by narrowing the full user base down to the active,
-high-feedback core, then **hand-selecting a few dozen notes** spanning note sizes,
-languages, and note types. Small, deliberate, and representative beats large and
-noisy for this kind of judgment-heavy eval.
+a clean evaluation set by narrowing ~40k users down to ~3k active, high-feedback
+users, then **hand-selecting 70–80 notes** spanning note sizes, languages, and note
+types. Small, deliberate, and representative beats large and noisy for this kind of
+judgment-heavy eval.
 
 **Measuring the tradeoff explicitly.** Against that golden set:
 
-- **Clinical-note accuracy improved by a clear step-change** — on both the
-  zero-edit-accept proxy and a spot-check of clinician-reviewed correctness.
-- Latency rose modestly (a single-digit-seconds increase at p95).
-- I set an explicit **walk-away line: a hard ~60s p95 ceiling.** Beyond that, don't
-  ship — go find a model with similar accuracy at lower latency.
+- **Clinical-note accuracy moved from 85% → 90%** — measured via engagement-weighted
+  zero-edit accept and spot-checked against clinician-reviewed correctness.
+- Latency moved from **p95 ~30s → ~40s** (+10s).
+- I set an explicit **walk-away line: a 60s p95 ceiling.** Beyond that, don't ship —
+  go find a model with similar accuracy at lower latency.
 
 ## Impact
 
-- Shipped the upgrade and **lifted PLG paid conversion** within a couple of months,
+- Shipped the upgrade and **lifted PLG paid conversion ~5% in two months**,
   alongside onboarding and reliability work.
 - Established the golden-set + engagement-weighted-accuracy method as the
   repeatable way we evaluate model changes on the scribe.
