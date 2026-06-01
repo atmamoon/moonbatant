@@ -7,7 +7,6 @@ import {
   EXPERIENCE,
   EDUCATION,
   SKILLS,
-  PROJECTS,
   SOCIALS,
 } from '../consts';
 
@@ -26,7 +25,7 @@ const caseStudies = (await getCollection('work'))
       <p class="hero-role">{HERO.role}</p>
       <p class="hero-tagline">{HERO.tagline}</p>
       <div class="hero-cta">
-        <a href="#projects" class="btn btn-primary">View projects</a>
+        <a href="#work" class="btn btn-primary">View case studies</a>
         <a href="/resume.pdf" target="_blank" rel="noopener" class="btn">Download résumé</a>
         <a href={`mailto:${SOCIALS.email}`} class="btn">Get in touch</a>
       </div>
@@ -121,28 +120,6 @@ const caseStudies = (await getCollection('work'))
             )}
             <span class="cs-read">Read case study →</span>
           </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Side builds ────────────────────────────────────────── -->
-  <section id="projects">
-    <div class="container">
-      <p class="section-label">Building with Claude</p>
-      <h2 class="section-title">Side builds &amp; experiments</h2>
-      <div class="project-grid">
-        {PROJECTS.map((p) => (
-          <article class="card project">
-            <h3>{p.title}</h3>
-            <p class="muted project-blurb">{p.blurb}</p>
-            <div class="chips">{p.tags.map((t) => <span class="chip">{t}</span>)}</div>
-            {p.link && (
-              <a class="project-link" href={p.link} target="_blank" rel="noopener">
-                {p.linkLabel ?? 'Read more'} →
-              </a>
-            )}
-          </article>
         ))}
       </div>
     </div>
@@ -284,17 +261,6 @@ const caseStudies = (await getCollection('work'))
   .cs-card-metric-val { font-size: 1.25rem; font-weight: 800; color: var(--accent-2); }
   .cs-card-metric-label { font-size: 0.78rem; }
   .cs-read { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; color: var(--accent); }
-
-  /* Projects */
-  .project-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-  }
-  .project { display: flex; flex-direction: column; gap: 14px; }
-  .project h3 { font-size: 1.18rem; }
-  .project-blurb { font-size: 0.96rem; flex-grow: 1; }
-  .project-link { font-weight: 600; font-family: var(--font-mono); font-size: 0.88rem; }
 
   /* Section header row (case studies) */
   .writing-head {

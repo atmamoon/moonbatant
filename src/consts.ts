@@ -101,23 +101,3 @@ export const SKILLS: { group: string; items: string[] }[] = [
     items: ['Claude Code', 'Codex', 'SQL', 'Python', 'Mixpanel', 'PostHog', 'Linear', 'Figma', 'n8n', 'Cursor', 'Braintrust', 'Langfuse'],
   },
 ];
-
-// ── Projects / "Building with Claude" ───────────────────────────────────
-export type Project = {
-  title: string;
-  blurb: string;
-  tags: string[];
-  link?: string;
-  linkLabel?: string;
-};
-
-export const PROJECTS: Project[] = [
-  {
-    title: 'One WhatsApp Chat Runs My Digital Life',
-    blurb:
-      'An always-on AI agent running on my old PC that monitors email, Slack, analytics, and news — replacing five apps with a single WhatsApp conversation.',
-    tags: ['Always-on agent', 'WhatsApp', 'Self-hosted', 'Automation'],
-    link: 'https://medium.com/@sheikh.mamoon.mondal/i-replaced-5-apps-with-one-whatsapp-chat-using-an-ai-agent-running-on-my-old-pc-f48eedfe2229',
-    linkLabel: 'Read the build',
-  },
-];
