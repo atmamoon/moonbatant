@@ -1,0 +1,32 @@
+---
+// Mono uppercase badge. tone: accent | info | neutral. Optional leading dot.
+interface Props { tone?: 'accent' | 'info' | 'neutral'; dot?: boolean; }
+const { tone = 'neutral', dot = false } = Astro.props;
+---
+<span class:list={['mb-badge', `mb-badge--${tone}`]}>
+  {dot && <span class="mb-badge__dot" aria-hidden="true"></span>}
+  <slot />
+</span>
+<style>
+  .mb-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .mb-badge__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .mb-badge--accent { background: rgba(255, 138, 107, 0.16); color: var(--accent); }
+  .mb-badge--info   { background: rgba(127, 176, 217, 0.18); color: var(--glacier); }
+  .mb-badge--neutral{ background: rgba(255, 255, 255, 0.08); color: var(--text-soft); }
+</style>

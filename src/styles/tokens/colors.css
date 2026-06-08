@@ -1,0 +1,61 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Moonbatant — Color tokens (dark only)
+   Alpine neutrals (cool slate/stone) + alpenglow accents (coral → gold).
+   Variable NAMES are preserved from the original moonbatant theme so existing
+   markup that references --bg / --surface / --text / --accent stays a drop-in.
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Base ramp · alpine ink → snow (cool slate, slightly warm at the top) ── */
+  --ink-900: #080c18;   /* deepest night sky */
+  --ink-800: #0b1020;   /* base background (dark) */
+  --ink-700: #111830;   /* soft background */
+  --ink-600: #161e38;   /* raised surface */
+  --ink-500: #1c2746;   /* surface-2 */
+  --ink-400: #2a3658;   /* hairline border */
+  --ink-300: #3a486e;   /* strong border / divider */
+  --slate-400: #727c9b; /* faint text */
+  --slate-300: #aab3cd; /* soft text */
+  --snow-200: #d7dcea;  /* dim snow */
+  --snow-100: #eef1f8;  /* primary text on dark, lit snow */
+  --snow-000: #ffffff;
+
+  /* ── Alpenglow accent ramp (the signature warm light on the peaks) ── */
+  --glow-coral: #ff8a6b;   /* primary accent — alpenglow coral */
+  --glow-gold:  #f5b971;   /* secondary accent — last gold light */
+  --glow-rose:  #ff7d9c;   /* dusk magenta highlight */
+  --glow-ember: #c4502a;   /* deep burnt-sienna */
+  --glacier:    #7fb0d9;   /* glacier blue — cool informational accent */
+  --glacier-deep: #2f6f9e;
+
+  /* ── Semantic status ── */
+  --ok:    #6bbf8a;   /* summit green */
+  --warn:  #f5b971;   /* gold */
+  --danger:#ef6f6f;   /* warning red */
+  --info:  #7fb0d9;   /* glacier */
+
+  /* ─────────────────────────────────────────────────────────────────────
+     SEMANTIC ALIASES — the names the rest of the system & components use.
+     (Original moonbatant names kept: --bg, --surface, --text, --accent…)
+     ───────────────────────────────────────────────────────────────────── */
+  --bg: var(--ink-800);
+  --bg-soft: var(--ink-700);
+  --surface: var(--ink-600);
+  --surface-2: var(--ink-500);
+  --border: var(--ink-400);
+  --border-strong: var(--ink-300);
+
+  --text: var(--snow-100);
+  --text-soft: var(--slate-300);
+  --text-faint: var(--slate-400);
+  --moon: #f3ede6;
+
+  --accent: var(--glow-coral);
+  --accent-2: var(--glow-gold);
+  --accent-cool: var(--glacier);
+  --accent-glow: rgba(255, 138, 107, 0.34);
+  --accent-contrast: #2a160e; /* readable text ON an accent fill */
+
+  --link: var(--glow-gold);
+  --link-hover: var(--glow-coral);
+}

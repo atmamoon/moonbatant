@@ -1,68 +1,75 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import SectionLabel from '../../components/SectionLabel.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
 
 const studies = (await getCollection('work'))
   .filter((s) => !s.data.draft)
   .sort((a, b) => a.data.order - b.data.order);
+const lastIdx = studies.length - 1;
 ---
 
-<Base title="Case studies" description="Deep dives on the AI-native products I've built — problem, approach, evals, and impact.">
-  <section style="padding-top: 64px;">
-    <div class="container">
-      <p class="section-label">Selected work</p>
-      <h1 class="section-title" style="font-size: clamp(2rem,5vw,3rem);">Case studies</h1>
-      <p class="muted" style="max-width: 640px; margin-bottom: 44px;">
+<Base title="Work" description="Deep dives on the AI-native products I've built — problem, approach, evals, and impact.">
+  <div class="kit-case worklist">
+    <section class="worklist__inner">
+      <a href="/" class="worklist__back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Home
+      </a>
+      <SectionLabel>Selected work</SectionLabel>
+      <h1 class="worklist__title">Products &amp; agents I've shipped.</h1>
+      <p class="worklist__lead">
         How I think about building AI-native products — the problem, the agent and
         eval design, the tradeoffs I made, and what moved.
       </p>
 
-      <div class="cs-grid">
-        {studies.map((s) => (
-          <a class="card cs-card" href={`/work/${s.slug}`}>
-            <div class="cs-card-top">
-              <span class="chip">{s.data.company}</span>
-              <span class="faint" style="font-size:0.82rem;">{s.data.timeline}</span>
-            </div>
-            <h3>{s.data.title}</h3>
-            <p class="muted cs-card-summary">{s.data.summary}</p>
-            {s.data.metrics.length > 0 && (
-              <div class="cs-card-metrics">
-                {s.data.metrics.slice(0, 3).map((m) => (
-                  <div>
-                    <div class="cs-card-metric-val">{m.value}</div>
-                    <div class="faint cs-card-metric-label">{m.label}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-            <span class="cs-read">Read case study →</span>
-          </a>
+      <div class="worklist__grid">
+        {studies.map((s, i) => (
+          <ProjectCard
+            href={`/work/${s.slug}`}
+            company={s.data.company}
+            timeline={s.data.timeline}
+            title={s.data.title}
+            summary={s.data.summary}
+            metrics={s.data.metrics}
+            featured={s.data.featured}
+            large={i === 0 || i === lastIdx}
+          />
         ))}
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </Base>
 
 <style>
-  .cs-grid { display: flex; flex-direction: column; gap: 20px; }
-  .cs-card { display: flex; flex-direction: column; gap: 12px; }
-  .cs-card-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .cs-card h3 { font-size: 1.3rem; }
-  .cs-card-summary { font-size: 1rem; }
-  .cs-card-metrics {
-    display: flex;
-    gap: 28px;
-    flex-wrap: wrap;
-    margin: 6px 0;
-    padding: 14px 0;
-    border-top: 1px solid var(--border);
+  .worklist__inner {
+    max-width: var(--maxw-wide); margin: 0 auto;
+    padding: calc(var(--section-y) + 40px) var(--gutter) var(--section-y);
   }
-  .cs-card-metric-val {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--accent-2);
+  /* Translucent glass pill — matches the "All work" button inside case studies. */
+  .worklist__back {
+    display: flex; width: fit-content; align-items: center; gap: 8px;
+    padding: 8px 14px; margin-bottom: 22px;
+    border-radius: var(--radius-sm);
+    background: rgba(0,0,0,0.32); color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    font-family: var(--font-sans); font-weight: var(--w-semibold); font-size: 0.86rem;
   }
-  .cs-card-metric-label { font-size: 0.78rem; }
-  .cs-read { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; color: var(--accent); }
+  .worklist__back:hover { color: #fff; background: rgba(0,0,0,0.45); }
+  .worklist__inner > :global(.section-label) { margin-bottom: 14px; }
+  .worklist__title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--snow-100); margin: 0 0 16px;
+    text-shadow: 0 1px 16px rgba(0,0,0,0.5);
+  }
+  .worklist__lead {
+    color: var(--text-soft); max-width: 640px; margin: 0 0 44px;
+  }
+  .worklist__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  @media (max-width: 760px) {
+    .worklist__grid { grid-template-columns: 1fr; }
+  }
 </style>

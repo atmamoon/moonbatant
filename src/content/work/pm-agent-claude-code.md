@@ -12,6 +12,10 @@ tags: ["Claude Code", "MCP", "Agent design", "Orchestration", "Observability"]
 order: 1
 featured: true
 draft: false
+scene: alpenglow
+photo: "/photos/alpenglow-amadablam.webp"
+focal: center
+peak: "Ama Dablam"
 ---
 
 > Full write-up on Medium:

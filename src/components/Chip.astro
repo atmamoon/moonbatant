@@ -1,0 +1,19 @@
+---
+// Small pill for skills & tags.
+---
+<span class="mb-chip"><slot /></span>
+<style>
+  .mb-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-soft);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+</style>

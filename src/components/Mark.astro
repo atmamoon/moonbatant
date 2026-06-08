@@ -1,0 +1,14 @@
+---
+// Brand mark — moon over peak. Tinted via currentColor (gold by default).
+interface Props { size?: number; }
+const { size = 30 } = Astro.props;
+---
+<span class="mb-mark" style={`width:${size}px;height:${size}px;`} aria-hidden="true">
+  <svg viewBox="0 0 48 48" width={size} height={size}>
+    <circle cx="32" cy="15" r="8.5" fill="currentColor" opacity="0.5"></circle>
+    <path d="M3 41 L18.5 13 L27 28.5 L31.5 21 L45 41 Z" fill="currentColor"></path>
+  </svg>
+</span>
+<style>
+  .mb-mark { display: inline-flex; color: var(--accent-2); }
+</style>

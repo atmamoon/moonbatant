@@ -16,3 +16,6 @@ node_modules/
 .DS_Store
 *.log
 .vscode/
+
+# design handoff bundle (reference only — not site source)
+design_handoff_portfolio/

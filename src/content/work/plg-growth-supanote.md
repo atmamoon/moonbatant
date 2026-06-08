@@ -12,6 +12,10 @@ tags: ["PLG", "Funnel & activation", "PostHog", "Experimentation", "Growth"]
 order: 3
 featured: true
 draft: false
+scene: lake
+photo: "/photos/lake-gokyo.webp"
+focal: "50% 32%"
+peak: "Gokyo"
 ---
 
 ## Context

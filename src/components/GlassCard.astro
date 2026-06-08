@@ -1,0 +1,43 @@
+---
+// Frosted-glass surface floating over a scene. Renders <a> if href is set.
+interface Props {
+  hover?: boolean;
+  padding?: string;
+  href?: string;
+  class?: string;
+  style?: string;
+}
+const { hover = false, padding = '26px', href, class: cls, style = '' } = Astro.props;
+const Tag = href ? 'a' : 'div';
+const extra = href ? { href } : {};
+---
+<Tag
+  class:list={['mb-glass', hover && 'mb-glass--hover', cls]}
+  style={`padding:${padding};${style}`}
+  {...extra}
+>
+  <slot />
+</Tag>
+<style>
+  .mb-glass {
+    display: block;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    box-shadow: var(--shadow-lg), var(--rim);
+    border-radius: var(--radius-lg);
+    color: var(--text);
+  }
+  a.mb-glass { text-decoration: none; }
+  .mb-glass--hover {
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+  .mb-glass--hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg), var(--rim), var(--shadow-md);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .mb-glass { background: var(--glass-bg-strong); }
+  }
+</style>

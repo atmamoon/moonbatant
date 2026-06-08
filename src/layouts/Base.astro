@@ -1,7 +1,10 @@
 ---
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/newsreader/standard-italic.css';
+import '@fontsource-variable/hanken-grotesk';
+import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
 import Analytics from '../components/Analytics.astro';
 import { SITE } from '../consts';
 
@@ -17,7 +20,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -33,29 +36,12 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Set theme before paint to avoid flash -->
-    <script is:inline>
-      (function () {
-        const stored = localStorage.getItem('theme');
-        const theme = stored || 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
-      })();
-    </script>
-
     <Analytics />
   </head>
   <body>
     <Header />
-    <main>
+    <main id="top">
       <slot />
     </main>
-    <Footer />
   </body>
 </html>

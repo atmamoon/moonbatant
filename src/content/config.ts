@@ -21,6 +21,14 @@ const work = defineCollection({
     order: z.number().default(99),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),
+    // ── Himalayan scene attribution (drives the case-study backdrop) ──
+    // Each project is bound to one atmosphere + one ultra-HD peak photo.
+    scene: z
+      .enum(['alpenglow', 'winterline', 'storm', 'lake', 'night'])
+      .default('alpenglow'),
+    photo: z.string().optional(), // e.g. "/photos/alpenglow-amadablam.webp"
+    focal: z.string().default('center'), // background-position for the photo
+    peak: z.string().optional(), // ambient label only — never shown in UI
   }),
 });
 

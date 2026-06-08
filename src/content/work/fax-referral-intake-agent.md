@@ -11,6 +11,10 @@ tags: ["AI agent", "Healthcare ops", "Automation", "Workflow"]
 order: 2
 featured: true
 draft: false
+scene: winterline
+photo: "/photos/winterline-kangchenjunga.webp"
+focal: center
+peak: "Kanchenjunga"
 ---
 
 > 📰 Featured in **Fierce Healthcare** —

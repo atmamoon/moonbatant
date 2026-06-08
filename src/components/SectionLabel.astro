@@ -1,0 +1,7 @@
+---
+// Mono, uppercase, tracked label with a hairline lead. Style lives in base.css.
+interface Props { as?: 'p' | 'span'; class?: string; }
+const { as = 'p', class: cls } = Astro.props;
+const Tag = as;
+---
+<Tag class:list={['section-label', cls]}><slot /></Tag>

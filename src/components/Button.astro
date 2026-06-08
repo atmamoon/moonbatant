@@ -1,0 +1,61 @@
+---
+import Icon from './Icon.astro';
+// variant: primary | secondary | ghost. Renders <a> if href, else <button>.
+interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  href?: string;
+  iconLeft?: string;
+  iconRight?: string;
+  target?: string;
+  rel?: string;
+  download?: boolean;
+  class?: string;
+}
+const { variant = 'primary', href, iconLeft, iconRight, target, rel, download, class: cls } = Astro.props;
+const Tag = href ? 'a' : 'button';
+const extra = href ? { href, target, rel, ...(download ? { download: '' } : {}) } : { type: 'button' };
+---
+<Tag class:list={['mb-btn', `mb-btn--${variant}`, cls]} {...extra}>
+  {iconLeft && <Icon name={iconLeft} size={16} />}
+  <span><slot /></span>
+  {iconRight && <Icon name={iconRight} size={16} />}
+</Tag>
+<style>
+  .mb-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-weight: var(--w-semibold);
+    font-size: 0.92rem;
+    line-height: 1;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    transition: transform var(--dur) var(--ease), background var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .mb-btn:hover { transform: var(--lift); }
+  .mb-btn:active { transform: var(--press); }
+
+  .mb-btn--primary {
+    background: var(--accent);
+    color: var(--accent-contrast);
+    box-shadow: var(--shadow-glow);
+  }
+  .mb-btn--primary:hover { color: var(--accent-contrast); }
+
+  .mb-btn--secondary {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--glass-border);
+    color: var(--text);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  .mb-btn--secondary:hover { color: var(--text); background: rgba(255, 255, 255, 0.1); }
+
+  .mb-btn--ghost { background: transparent; color: var(--text-soft); padding-left: 0; }
+  .mb-btn--ghost:hover { color: var(--accent); }
+</style>

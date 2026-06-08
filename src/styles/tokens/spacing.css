@@ -1,0 +1,35 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Moonbatant — Spacing, radii & layout tokens
+   8px base rhythm. Generous, airy — content floats over the peaks.
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Spacing scale (8px base) */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* Section rhythm */
+  --section-y: clamp(64px, 9vw, 120px);
+
+  /* Radii — soft alpine, never pill-y on big surfaces */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius: 14px;        /* default card radius (preserved name) */
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* Layout */
+  --maxw: 1080px;        /* preserved name — primary content column */
+  --maxw-prose: 720px;   /* reading measure */
+  --maxw-wide: 1240px;
+  --gutter: clamp(20px, 5vw, 40px);
+}

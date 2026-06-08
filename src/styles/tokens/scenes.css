@@ -1,0 +1,204 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Moonbatant — SCENE CONTRACT
+   Each page / project is attributed to a Himalayan scene. A scene = ONE
+   background asset (an ultra-HD photo) PLUS a set of atmosphere tokens that
+   paint a self-contained, performant CSS sky as the live fallback. Switch
+   scenes with a single attribute on a wrapper:
+
+        <div class="scene" data-scene="alpenglow"> … </div>
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ── Continuous page atmosphere ──────────────────────────────────────────────
+   The whole page is ONE sky descending alpenglow/dusk (top) → night (bottom).
+   Adjacent sections share boundary colors (--atm-1, --atm-2) so there are NO
+   horizontal seams. (Ported from the prototype's index.html.)               */
+:root {
+  --atm-0: #241a44;  /* upper dusk      — hero top */
+  --atm-1: #3b2a4e;  /* warm plum dusk  — hero foot == mid top */
+  --atm-2: #161c34;  /* twilight blue   — mid foot  == footer top */
+  --atm-3: #05070f;  /* night           — footer foot */
+}
+
+/* Default = alpenglow (the signature scene) */
+:root {
+  --scene-zenith:    #16123a;
+  --scene-mid:       #6a3566;
+  --scene-horizon:   #d36a5a;
+  --scene-glow:      #ffb583;
+  --scene-snow:      #ffd5be;
+  --scene-shadow:    #6e6aa0;
+  --scene-ridge-far: #9c6f86;
+  --scene-ridge-near:#1a1430;
+  --scene-scrim:     16, 10, 26;   /* RGB triplet → used in rgba() scrims */
+  --scene-on:        #fbeee8;
+}
+
+[data-scene='alpenglow'] {
+  --scene-zenith:    #16123a;
+  --scene-mid:       #6a3566;
+  --scene-horizon:   #d36a5a;
+  --scene-glow:      #ffb583;
+  --scene-snow:      #ffd5be;
+  --scene-shadow:    #6e6aa0;
+  --scene-ridge-far: #9c6f86;
+  --scene-ridge-near:#1a1430;
+  --scene-scrim:     16, 10, 26;
+  --scene-on:        #fbeee8;
+}
+
+/* Winterline — post-sunset twilight band over the earth-shadow */
+[data-scene='winterline'] {
+  --scene-zenith:    #0b1430;
+  --scene-mid:       #2a3f6b;
+  --scene-horizon:   #f0a583;
+  --scene-glow:      #ffc6a0;
+  --scene-snow:      #d8def0;
+  --scene-shadow:    #3c4a72;
+  --scene-ridge-far: #5a6a92;
+  --scene-ridge-near:#0d1530;
+  --scene-scrim:     10, 16, 36;
+  --scene-on:        #eef2fb;
+}
+
+/* Storm — monsoon cloud, moody and desaturated */
+[data-scene='storm'] {
+  --scene-zenith:    #161d28;
+  --scene-mid:       #2f3b48;
+  --scene-horizon:   #515f6b;
+  --scene-glow:      #8b9aa6;
+  --scene-snow:      #b9c4cf;
+  --scene-shadow:    #3a4654;
+  --scene-ridge-far: #46545f;
+  --scene-ridge-near:#10161e;
+  --scene-scrim:     12, 16, 22;
+  --scene-on:        #eef2f6;
+}
+
+/* Lake — clear glacial day, bright cerulean over turquoise water */
+[data-scene='lake'] {
+  --scene-zenith:    #2a72b8;
+  --scene-mid:       #5fa8d6;
+  --scene-horizon:   #bfe2ec;
+  --scene-glow:      #f2faf7;
+  --scene-snow:      #ffffff;
+  --scene-shadow:    #9fc3d8;
+  --scene-ridge-far: #8fb6cf;
+  --scene-ridge-near:#345b74;
+  --scene-scrim:     14, 30, 44;
+  --scene-on:        #f4fbff;
+}
+
+/* Night — Milky Way over moonlit silver snow */
+[data-scene='night'] {
+  --scene-zenith:    #04060f;
+  --scene-mid:       #0a1228;
+  --scene-horizon:   #182a52;
+  --scene-glow:      #3a4f86;
+  --scene-snow:      #dfe6f5;
+  --scene-shadow:    #1b2645;
+  --scene-ridge-far: #1f2c50;
+  --scene-ridge-near:#04060e;
+  --scene-scrim:     4, 6, 16;
+  --scene-on:        #eef2fb;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   .scene — the composition. Layers are REAL child divs painted in DOM order
+   (no negative z-index), so the stack is predictable everywhere. Author them
+   back-to-front; .scene__content comes last and floats on top.
+   The sky (zenith → mid → horizon + glow bloom) is painted by .scene itself,
+   so even an empty .scene already renders a full atmosphere.
+   ───────────────────────────────────────────────────────────────────────── */
+.scene {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(135% 80% at 68% 92%, var(--scene-glow), transparent 56%),
+    linear-gradient(180deg,
+      var(--scene-zenith) 0%,
+      var(--scene-mid) 50%,
+      var(--scene-horizon) 100%);
+  color: var(--scene-on);
+}
+
+/* Every layer fills the scene and ignores pointer events… */
+.scene__photo,
+.scene__ridges,
+.scene__grain,
+.scene__scrim { position: absolute; inset: 0; pointer-events: none; }
+
+/* …except content, which flows normally on top of the stack. */
+.scene__content { position: relative; z-index: 1; }
+
+/* Photo layer — set background-image or drop an <img> inside. */
+.scene__photo {
+  background-size: cover;
+  background-position: center;
+}
+.scene__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Ridgelines — two scene-tinted silhouettes (CSS fallback when no photo). */
+.scene__ridge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  line-height: 0;
+}
+.scene__ridge svg { display: block; width: 100%; height: 100%; }
+.scene__ridge--far {
+  height: 46%;
+  color: var(--scene-ridge-far);
+  opacity: 0.92;
+}
+.scene__ridge--near {
+  height: 34%;
+  color: var(--scene-ridge-near);
+}
+
+/* When a real photo is present, its own skyline replaces the CSS ridgelines. */
+.scene:has(> .scene__photo) .scene__ridges { display: none; }
+
+/* Grain — a tiny fractal-noise texture keeps gradients from banding. */
+.scene__grain {
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Scrim — the text-protection layer. Three flavors via modifier. */
+.scene__scrim {
+  background:
+    linear-gradient(180deg,
+      rgba(var(--scene-scrim), 0.30) 0%,
+      rgba(var(--scene-scrim), 0.00) 28%,
+      rgba(var(--scene-scrim), 0.00) 55%,
+      rgba(var(--scene-scrim), 0.62) 100%);
+}
+.scene__scrim--full {
+  background: rgba(var(--scene-scrim), 0.46);
+}
+.scene__scrim--vignette {
+  background: radial-gradient(120% 100% at 50% 40%,
+    rgba(var(--scene-scrim), 0) 40%, rgba(var(--scene-scrim), 0.55) 100%);
+}
+
+/* Starfield — opt-in extra (auto-on for the night scene). */
+.scene--stars .scene__grain::after,
+[data-scene='night'] .scene__grain::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 40% 0;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, #fff, transparent),
+    radial-gradient(1px 1px at 28% 32%, #cdd6ee, transparent),
+    radial-gradient(1.4px 1.4px at 44% 12%, #fff, transparent),
+    radial-gradient(1px 1px at 62% 26%, #e7ecff, transparent),
+    radial-gradient(1px 1px at 78% 14%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 88% 30%, #cdd6ee, transparent),
+    radial-gradient(1px 1px at 36% 44%, #fff, transparent),
+    radial-gradient(1px 1px at 70% 40%, #fff, transparent);
+  opacity: 0.85;
+}

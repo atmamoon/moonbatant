@@ -1,212 +1,65 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOONBATANT DESIGN SYSTEM — global entry point
+   Personal portfolio of Mamoon Mondal · moonbatant.com
+   Theme: Himalayan scenes — floating content over live peaks, alpenglow-led.
+   Dark theme only.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/elevation.css';
+@import './tokens/scenes.css';
+@import './tokens/base.css';
+
 /* ─────────────────────────────────────────────────────────────────────────
-   Moonbatant — global styles. Lunar/indigo theme with dark + light modes.
+   CONTINUOUS ATMOSPHERE — section scaffolding
+   The page is one sky descending from alpenglow/dusk (top) → night (bottom).
+   Each section starts at the color the previous one ended on (the --atm ramp),
+   and any background photo feathers fully to that boundary tone BEFORE the seam.
+   NEVER use background-attachment: fixed (it desyncs the feather → hard seam).
    ───────────────────────────────────────────────────────────────────────── */
 
-:root {
-  --bg: #070d1c;
-  --bg-soft: #0c1426;
-  --surface: #111b33;
-  --surface-2: #16223f;
-  --border: #213050;
-  --text: #e7ebf5;
-  --text-soft: #9fa8c4;
-  --text-faint: #69728f;
-  --accent: #4f80f7;
-  --accent-2: #82a8ff;
-  --accent-glow: rgba(79, 128, 247, 0.38);
-  --moon: #eef3fb;
-  --radius: 14px;
-  --maxw: 1080px;
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code', Menlo, monospace;
+body { background: var(--atm-2); }
+
+/* Header: a soft top-scrim that protects the nav and fades to nothing — no bar,
+   no border — so it blends into the hero instead of reading as a separate block. */
+.kit-header-bar {
+  background: linear-gradient(180deg,
+    rgba(8, 9, 18, 0.62) 0%,
+    rgba(8, 9, 18, 0.26) 56%,
+    rgba(8, 9, 18, 0) 100%);
 }
 
-:root[data-theme='light'] {
-  --bg: #f7f7fb;
-  --bg-soft: #ffffff;
-  --surface: #ffffff;
-  --surface-2: #f0f0f7;
-  --border: #e3e3ee;
-  --text: #161728;
-  --text-soft: #4c5170;
-  --text-faint: #8b90b0;
-  --accent: #1e44b8;
-  --accent-2: #2c5ad6;
-  --accent-glow: rgba(30, 68, 184, 0.18);
-  --moon: #1b2a4a;
+/* Middle band (Selected Work + About): a shared night-peak backdrop behind the
+   glass cards. The gradient overlay blends its top into the hero (--atm-1) and
+   its bottom into the footer (--atm-2) so there are no seams; photo scrolls. */
+.kit-mid {
+  position: relative;
+  background-image:
+    /* TOP FEATHER — guarantees the seam is pure --atm-2 twilight blue (matching
+       the hero foot + night images) and eases the photo/overlay in. Topmost. */
+    linear-gradient(180deg, var(--atm-2) 0%, rgba(22,28,52,0) clamp(160px, 26vh, 320px)),
+    linear-gradient(95deg, rgba(13,17,34,0.72) 0%, rgba(13,17,34,0.28) 44%, rgba(13,17,34,0) 64%),
+    linear-gradient(180deg, var(--atm-2) 0%, rgba(18,21,42,0.92) 24%, rgba(18,21,42,0.34) 46%, rgba(15,19,38,0.44) 82%, var(--atm-2) 100%),
+    url('/photos/night-machapuchare.webp');
+  background-size: cover, cover, cover, cover;
+  background-position: center, center, center, center 32%;
+  background-attachment: scroll, scroll, scroll, scroll;   /* never fixed */
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* Legibility for text that floats directly over the backdrop photo. */
+.kit-on-photo { text-shadow: 0 1px 16px rgba(0, 0, 0, 0.62); }
 
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 90px;
-}
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-sans);
-  line-height: 1.65;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  min-height: 100vh;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-/* Subtle starfield / glow background */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(circle at 85% -5%, var(--accent-glow), transparent 45%),
-    radial-gradient(circle at 10% 100%, rgba(79, 128, 247, 0.12), transparent 40%);
-  pointer-events: none;
-}
-
-a {
-  color: var(--accent-2);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-a:hover { color: var(--accent); }
-
-h1, h2, h3, h4 {
-  line-height: 1.15;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--text);
-}
-
-.container {
-  width: 100%;
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-section {
-  padding: 80px 0;
-}
-
-.section-label {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.section-label::before {
-  content: '';
-  width: 22px;
-  height: 1px;
-  background: var(--accent);
-  display: inline-block;
-}
-
-.section-title {
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  margin-bottom: 36px;
-}
-
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 11px 20px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-}
-.btn:hover { transform: translateY(-2px); border-color: var(--accent); color: var(--text); }
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  border-color: transparent;
-  color: #fff;
-  box-shadow: 0 8px 24px -8px var(--accent-glow);
-}
-.btn-primary:hover { color: #fff; box-shadow: 0 12px 30px -8px var(--accent-glow); }
-
-/* Cards */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 26px;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.card:hover {
-  transform: translateY(-4px);
-  border-color: var(--accent);
-  box-shadow: 0 18px 40px -20px var(--accent-glow);
-}
-
-/* Tags / chips */
-.chip {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  color: var(--text-soft);
-}
-
-.muted { color: var(--text-soft); }
-.faint { color: var(--text-faint); }
-
-ul.clean { list-style: none; }
-
-/* Prose (blog post body) */
-.prose { max-width: 720px; margin: 0 auto; font-size: 1.05rem; color: var(--text-soft); }
-.prose h2 { font-size: 1.5rem; margin: 2em 0 0.6em; color: var(--text); }
-.prose h3 { font-size: 1.2rem; margin: 1.6em 0 0.5em; color: var(--text); }
-.prose p { margin: 1em 0; }
-.prose ul, .prose ol { margin: 1em 0 1em 1.3em; }
-.prose li { margin: 0.4em 0; }
-.prose code {
-  font-family: var(--font-mono);
-  font-size: 0.88em;
-  background: var(--surface-2);
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-.prose pre {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 18px;
-  border-radius: var(--radius);
-  overflow-x: auto;
-  margin: 1.5em 0;
-}
-.prose pre code { background: none; padding: 0; }
-.prose blockquote {
-  border-left: 3px solid var(--accent);
-  padding-left: 18px;
-  margin: 1.5em 0;
-  color: var(--text);
-  font-style: italic;
-}
-.prose a { text-decoration: underline; text-underline-offset: 3px; }
-
-@media (max-width: 640px) {
-  section { padding: 56px 0; }
+/* Case-study pages share the same continuous-backdrop treatment as the home
+   middle section, so they blend on scroll instead of image-on-flat-colour. */
+.kit-case {
+  position: relative;
+  background-image:
+    linear-gradient(180deg, var(--atm-0) 0%, rgba(20,23,46,0.34) 30%, rgba(15,19,38,0.5) 78%, var(--atm-2) 100%),
+    url('/photos/night-machapuchare.webp');
+  background-size: cover, cover;
+  background-position: center, center 38%;
+  background-attachment: scroll, scroll;
+  background-repeat: no-repeat, no-repeat;
 }

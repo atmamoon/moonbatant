@@ -43,6 +43,28 @@ export const HERO = {
   kicker: '4+ years building AI-native products',
 };
 
+// ── Hero rotation ───────────────────────────────────────────────────────
+// A dusk-into-night arc. The first entry shows upfront (best shot); the hero
+// cross-fades through the rest like changing mountain weather.
+export const HERO_SCENES = [
+  { scene: 'night',      photo: '/photos/night-zanskar.webp',            focal: 'center'  },
+  { scene: 'winterline', photo: '/photos/winterline-kangchenjunga.webp', focal: 'center'  },
+  { scene: 'alpenglow',  photo: '/photos/alpenglow-garhwal-ridge.webp',  focal: '50% 72%' },
+  { scene: 'alpenglow',  photo: '/photos/alpenglow-everest.webp',        focal: 'center'  },
+];
+
+// Night Milky-Way backdrop behind the Writing/Contact footer.
+export const FOOTER_PHOTO = '/photos/night-milkyway-pano.webp';
+
+// ── Writing ─────────────────────────────────────────────────────────────
+export const WRITING: { title: string; outlet: string; href: string }[] = [
+  {
+    title: 'Building a 5x PM Agent',
+    outlet: 'Medium',
+    href: 'https://medium.com/@sheikh.mamoon.mondal/building-a-5x-pm-agent-b9af78e16628',
+  },
+];
+
 export const ABOUT = `I'm an AI product manager who builds AI-native products from zero to one. As founding PM at Supanote.ai, I run a PLG self-serve clinical-scribe product and an enterprise B2B benefits-verification agent in parallel — owning discovery, agent design, and the eval harnesses that keep them reliable in production.
 
 Before that, at Innovaccer, I shipped AI agents that automated healthcare operations at scale, lifting per-user efficiency 4x and unifying post-acquisition product integrations.

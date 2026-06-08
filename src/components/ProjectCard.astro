@@ -1,0 +1,74 @@
+---
+import GlassCard from './GlassCard.astro';
+import Badge from './Badge.astro';
+import MetricStat from './MetricStat.astro';
+import Icon from './Icon.astro';
+
+interface Metric { value: string; label: string; }
+interface Props {
+  href: string;
+  company: string;
+  timeline: string;
+  title: string;
+  summary: string;
+  metrics?: Metric[];
+  featured?: boolean;
+  large?: boolean;
+}
+const { href, company, timeline, title, summary, metrics = [], featured = false, large = false } = Astro.props;
+const shown = metrics.slice(0, large ? 3 : 2);
+---
+<GlassCard href={href} hover padding={large ? '34px' : '26px'} class={large ? 'pc pc--lg' : 'pc'}>
+  <div class="pc__top">
+    <span class="pc__meta">{company} · {timeline}</span>
+    {featured && <span class="pc__badge"><Badge tone="accent" dot>Featured</Badge></span>}
+  </div>
+  <h3 class="pc__title">{title}</h3>
+  <p class="pc__summary">{summary}</p>
+  <div class="pc__foot">
+    {shown.map((m, i) => <MetricStat value={m.value} label={m.label} size="sm" accent={i === 0} />)}
+    <span class="pc__read">Read <Icon name="arrowUpRight" size={15} /></span>
+  </div>
+</GlassCard>
+<style>
+  .pc { grid-column: span 1; min-height: 230px; display: flex; flex-direction: column; }
+  .pc--lg { grid-column: span 2; min-height: 250px; }
+  .pc__top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .pc__meta {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--text-soft);
+  }
+  .pc__badge { margin-left: auto; }
+  .pc__title {
+    font-family: var(--font-serif);
+    font-size: 1.34rem;
+    line-height: 1.16;
+    color: var(--text);
+    margin: 0 0 10px;
+  }
+  .pc--lg .pc__title { font-size: 1.85rem; max-width: 620px; }
+  .pc__summary {
+    font-size: 0.94rem;
+    color: var(--text-soft);
+    line-height: 1.55;
+    margin: 0;
+    flex: 1;
+    max-width: 600px;
+  }
+  .pc__foot { display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-top: 22px; }
+  .pc--lg .pc__foot { gap: 34px; }
+  .pc__read {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.84rem;
+    font-weight: var(--w-semibold);
+    color: var(--accent);
+  }
+  @media (max-width: 760px) {
+    .pc, .pc--lg { grid-column: span 1 !important; }
+  }
+</style>

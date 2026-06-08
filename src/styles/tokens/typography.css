@@ -1,0 +1,40 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Moonbatant — Typography tokens
+   Serif display (Newsreader) for headlines & quotes; grotesk (Hanken) for
+   everything functional; mono (JetBrains) for labels, metrics, and code.
+   Font files are self-hosted via @fontsource-variable (imported in Base.astro).
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Families */
+  --font-serif: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --font-sans:  'Hanken Grotesk Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:  'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Fluid type scale */
+  --text-display: clamp(2.9rem, 6.2vw, 5.2rem);  /* hero name */
+  --text-h1:      clamp(2.1rem, 4.2vw, 3.4rem);
+  --text-h2:      clamp(1.6rem, 3vw, 2.2rem);
+  --text-h3:      clamp(1.25rem, 2vw, 1.5rem);
+  --text-lead:    clamp(1.12rem, 1.5vw, 1.35rem);  /* tagline / dek */
+  --text-body:    1.0625rem;   /* 17px */
+  --text-sm:      0.9rem;
+  --text-xs:      0.8rem;
+  --text-label:   0.74rem;     /* mono, uppercase, tracked */
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  /* Tracking */
+  --track-display: -0.025em;
+  --track-tight: -0.015em;
+  --track-normal: 0em;
+  --track-label: 0.16em;
+
+  /* Leading */
+  --leading-tight: 1.1;
+  --leading-snug: 1.28;
+  --leading-body: 1.65;
+}

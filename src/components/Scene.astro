@@ -1,0 +1,73 @@
+---
+// SceneFrame — a self-contained Himalayan atmosphere with an optional ultra-HD
+// peak photo, text scrim, and a feathered "bleed" edge that melts the scene
+// into the page atmosphere (--atm ramp) so there are no seams.
+interface Props {
+  scene?: 'alpenglow' | 'winterline' | 'storm' | 'lake' | 'night';
+  photo?: string;
+  focal?: string;
+  scrim?: 'gradient' | 'full' | 'vignette' | 'none';
+  stars?: boolean;
+  bleed?: 'top' | 'bottom';
+  bleedColor?: string;
+  bleedSize?: string;
+  minHeight?: string;
+  align?: 'start' | 'end';
+  id?: string;
+  class?: string;
+  style?: string;
+}
+const {
+  scene = 'alpenglow',
+  photo,
+  focal = 'center',
+  scrim = 'gradient',
+  stars = false,
+  bleed,
+  bleedColor = 'var(--atm-1)',
+  bleedSize = '40%',
+  minHeight,
+  align = 'end',
+  id,
+  class: cls,
+  style = '',
+} = Astro.props;
+
+const scrimClass = scrim !== 'none' ? `scene__scrim scene__scrim--${scrim}` : '';
+const frameStyle = [
+  minHeight ? `min-height:${minHeight}` : '',
+  `--mb-align:${align === 'end' ? 'flex-end' : 'flex-start'}`,
+  style,
+].filter(Boolean).join(';');
+const bleedGradient =
+  bleed === 'top'
+    ? `linear-gradient(180deg, ${bleedColor} 0%, transparent ${bleedSize})`
+    : `linear-gradient(0deg, ${bleedColor} 0%, transparent ${bleedSize})`;
+---
+<div
+  class:list={['scene', 'mb-scene', stars && 'scene--stars', cls]}
+  data-scene={scene}
+  id={id}
+  style={frameStyle}
+>
+  {photo && (
+    <div class="scene__photo" style={`background-image:url('${photo}');background-position:${focal};`}></div>
+  )}
+  {!photo && (
+    <div class="scene__ridges">
+      <div class="scene__ridge scene__ridge--far"><svg viewBox="0 0 1200 200" preserveAspectRatio="none" fill="currentColor"><path d="M0 200 L180 70 L360 140 L560 40 L760 130 L980 60 L1200 150 L1200 200 Z" /></svg></div>
+      <div class="scene__ridge scene__ridge--near"><svg viewBox="0 0 1200 200" preserveAspectRatio="none" fill="currentColor"><path d="M0 200 L240 110 L470 170 L700 90 L920 160 L1200 110 L1200 200 Z" /></svg></div>
+    </div>
+  )}
+  <div class="scene__grain"></div>
+  {scrim !== 'none' && <div class={scrimClass}></div>}
+  {bleed && <div class="scene__bleed" style={`background:${bleedGradient};`} data-edge={bleed}></div>}
+  <div class="scene__content mb-scene__content"><slot /></div>
+</div>
+<style>
+  .mb-scene { display: flex; align-items: var(--mb-align, flex-end); }
+  .mb-scene__content { width: 100%; }
+  .scene__bleed { position: absolute; left: 0; right: 0; height: 100%; pointer-events: none; }
+  .scene__bleed[data-edge='top'] { top: 0; }
+  .scene__bleed[data-edge='bottom'] { bottom: 0; }
+</style>

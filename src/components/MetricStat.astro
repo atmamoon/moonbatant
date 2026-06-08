@@ -1,0 +1,25 @@
+---
+// Serif value + caption. accent=true tints the value coral (else gold).
+interface Props { value: string; label: string; accent?: boolean; size?: 'sm' | 'lg'; }
+const { value, label, accent = false, size = 'lg' } = Astro.props;
+---
+<div class:list={['mb-metric', `mb-metric--${size}`, accent && 'mb-metric--accent']}>
+  <div class="mb-metric__val">{value}</div>
+  <div class="mb-metric__label">{label}</div>
+</div>
+<style>
+  .mb-metric__val {
+    font-family: var(--font-serif);
+    font-weight: var(--w-semibold);
+    line-height: 1;
+    color: var(--glow-gold);
+  }
+  .mb-metric--lg .mb-metric__val { font-size: clamp(1.5rem, 2.4vw, 1.7rem); }
+  .mb-metric--sm .mb-metric__val { font-size: 1.3rem; }
+  .mb-metric--accent .mb-metric__val { color: var(--accent); }
+  .mb-metric__label {
+    font-size: 0.74rem;
+    color: var(--text-faint);
+    margin-top: 6px;
+  }
+</style>

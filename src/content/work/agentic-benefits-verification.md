@@ -12,6 +12,10 @@ tags: ["Agent design", "Orchestration", "Evals", "Enterprise B2B", "Reliability"
 order: 4
 featured: true
 draft: false
+scene: storm
+photo: "/photos/storm-annapurna.webp"
+focal: center
+peak: "Annapurna"
 ---
 
 ## Context
