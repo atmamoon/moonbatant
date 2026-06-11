@@ -5,6 +5,7 @@ import '@fontsource-variable/hanken-grotesk';
 import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
+import LiquidCursor from '../components/LiquidCursor.astro';
 import Analytics from '../components/Analytics.astro';
 import { SITE } from '../consts';
 
@@ -43,5 +44,6 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <main id="top">
       <slot />
     </main>
+    <LiquidCursor />
   </body>
 </html>

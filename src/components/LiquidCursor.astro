@@ -1,0 +1,101 @@
+---
+// LiquidCursor — the liquid-glass refraction lens. An INVISIBLE circular lens
+// follows the mouse with a fluid lag and REFRACTS whatever is behind it (SVG
+// displacement map via backdrop-filter on Chromium; a whisper of blur
+// elsewhere). No outline, no highlight — pure distortion. It appears only while
+// the pointer is over a `.glass` surface. Mount ONCE per page (Base.astro).
+// Mouse-only: auto-disabled on touch devices and under prefers-reduced-motion.
+const SIZE = 9;
+---
+<div class="mb-lens-cursor" aria-hidden="true" style={`width:${SIZE}px;height:${SIZE}px`}></div>
+
+<script>
+  const SIZE = 9;
+
+  // Displacement map: R channel encodes X-offset, G encodes Y-offset (gray
+  // #7f7f7f = neutral). A radial overlay fades displacement to zero at the rim,
+  // producing a magnifying core with a refraction squeeze ring — no visible edge.
+  const LENS_MAP =
+    'data:image/svg+xml;utf8,' +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256">' +
+        '<defs>' +
+        '<linearGradient id="x" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#000000"/><stop offset="1" stop-color="#ff0000"/></linearGradient>' +
+        '<linearGradient id="y" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#000000"/><stop offset="1" stop-color="#00ff00"/></linearGradient>' +
+        '<radialGradient id="m" cx="0.5" cy="0.5" r="0.5"><stop offset="0.45" stop-color="#7f7f7f" stop-opacity="0"/><stop offset="0.94" stop-color="#7f7f7f" stop-opacity="1"/></radialGradient>' +
+        '</defs>' +
+        '<rect width="256" height="256" fill="url(#x)"/>' +
+        '<rect width="256" height="256" fill="url(#y)" style="mix-blend-mode:screen"/>' +
+        '<rect width="256" height="256" fill="url(#m)"/>' +
+        '</svg>'
+    );
+
+  function ensureLensFilters(size: number) {
+    if (document.getElementById('mb-lens-defs')) return;
+    const scale = Math.round(-64 * (size / 120));
+    const holder = document.createElement('div');
+    holder.innerHTML =
+      '<svg id="mb-lens-defs" width="0" height="0" style="position:absolute" aria-hidden="true">' +
+        '<filter id="mb-lens" x="0" y="0" width="' + size + '" height="' + size + '" color-interpolation-filters="sRGB">' +
+        '<feImage href="' + LENS_MAP + '" x="0" y="0" width="' + size + '" height="' + size + '" preserveAspectRatio="none" result="map"/>' +
+        '<feDisplacementMap in="SourceGraphic" in2="map" scale="' + scale + '" xChannelSelector="R" yChannelSelector="G"/>' +
+        '</filter>' +
+        '<filter id="mb-pane" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">' +
+        '<feTurbulence type="fractalNoise" baseFrequency="0.011 0.016" numOctaves="2" seed="7" result="n"/>' +
+        '<feGaussianBlur in="n" stdDeviation="1.4" result="soft"/>' +
+        '<feDisplacementMap in="SourceGraphic" in2="soft" scale="26" xChannelSelector="R" yChannelSelector="G"/>' +
+        '</filter>' +
+      '</svg>';
+    document.body.appendChild(holder.firstChild as Node);
+  }
+
+  function init() {
+    const el = document.querySelector<HTMLElement>('.mb-lens-cursor');
+    if (!el) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    ensureLensFilters(SIZE);
+    // Displacement-in-backdrop-filter is Chromium-only; gate so other browsers
+    // keep their valid fallback declaration (a whisper of blur).
+    if ((window as any).chrome) document.documentElement.classList.add('lens-on');
+
+    let tx = -2 * SIZE,
+      ty = -2 * SIZE,
+      x = tx,
+      y = ty,
+      visible = false;
+
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      const overGlass = e.target instanceof Element && e.target.closest('.glass');
+      tx = e.clientX;
+      ty = e.clientY;
+      if (overGlass && !visible) {
+        visible = true;
+        x = tx;
+        y = ty;
+        el.style.opacity = '1';
+      } else if (!overGlass && visible) {
+        visible = false;
+        el.style.opacity = '0';
+      }
+    };
+    const onLeave = () => {
+      visible = false;
+      el.style.opacity = '0';
+    };
+    const tick = () => {
+      x += (tx - x) * 0.18;
+      y += (ty - y) * 0.18;
+      el.style.transform = 'translate(' + (x - SIZE / 2) + 'px,' + (y - SIZE / 2) + 'px)';
+      requestAnimationFrame(tick);
+    };
+
+    window.addEventListener('pointermove', onMove);
+    document.documentElement.addEventListener('pointerleave', onLeave);
+    requestAnimationFrame(tick);
+  }
+
+  init();
+</script>

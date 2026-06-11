@@ -1,5 +1,8 @@
 ---
-// Frosted-glass surface floating over a scene. Renders <a> if href is set.
+// Liquid-glass surface floating over a scene. Renders <a> if href is set.
+// Emits the global `.glass` class (tokens/elevation.css owns the liquid recipe:
+// gradient fill, specular rim, top-sheen bloom, deep blur). The `.glass` class
+// is also what LiquidCursor keys off to show its refraction lens.
 interface Props {
   hover?: boolean;
   padding?: string;
@@ -12,7 +15,7 @@ const Tag = href ? 'a' : 'div';
 const extra = href ? { href } : {};
 ---
 <Tag
-  class:list={['mb-glass', hover && 'mb-glass--hover', cls]}
+  class:list={['glass', 'mb-glass', hover && 'mb-glass--hover', cls]}
   style={`padding:${padding};${style}`}
   {...extra}
 >
@@ -21,23 +24,24 @@ const extra = href ? { href } : {};
 <style>
   .mb-glass {
     display: block;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    box-shadow: var(--shadow-lg), var(--rim);
-    border-radius: var(--radius-lg);
     color: var(--text);
   }
   a.mb-glass { text-decoration: none; }
   .mb-glass--hover {
-    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
+      border-color var(--dur) var(--ease), background var(--dur) var(--ease);
   }
   .mb-glass--hover:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-lg), var(--rim), var(--shadow-md);
+    border-color: rgba(255, 255, 255, 0.30);
+    box-shadow:
+      var(--shadow-lg),
+      0 0 34px -10px var(--accent-glow),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.09);
   }
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .mb-glass { background: var(--glass-bg-strong); }
+  @media (prefers-reduced-motion: reduce) {
+    .mb-glass--hover { transition: none; }
+    .mb-glass--hover:hover { transform: none; }
   }
 </style>

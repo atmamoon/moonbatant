@@ -1,7 +1,7 @@
 /* ─────────────────────────────────────────────────────────────────────────
    Moonbatant — Elevation, glass & scrim tokens (dark only)
-   The system's defining surface treatment is FROSTED GLASS floating over a
-   photographic peak.
+   The system's defining surface treatment is LIQUID GLASS floating over a
+   photographic peak — a lensed, luminous pane rather than a flat frosted one.
    ───────────────────────────────────────────────────────────────────────── */
 :root {
   /* ── Shadows — cool alpine cast, never pure black ── */
@@ -13,12 +13,12 @@
   /* Inner highlight that gives glass its "rim-lit" top edge */
   --rim: inset 0 1px 0 rgba(255, 255, 255, 0.14);
 
-  /* ── Glass (frosted) ── */
-  --glass-bg: rgba(18, 24, 44, 0.46);
-  --glass-bg-strong: rgba(14, 19, 36, 0.66);
-  --glass-border: rgba(255, 255, 255, 0.14);
-  --glass-blur: 18px;
-  --glass-saturate: 130%;
+  /* ── Glass (liquid) ── */
+  --glass-bg: rgba(18, 24, 44, 0.34);
+  --glass-bg-strong: rgba(14, 19, 36, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-blur: 26px;
+  --glass-saturate: 180%;
 
   /* ── Scrim (text protection) — generic; scene scrims live in scenes.css ── */
   --scrim-soft: linear-gradient(180deg, rgba(8,10,20,0) 40%, rgba(8,10,20,0.6) 100%);
@@ -37,18 +37,80 @@
 }
 
 /* ── Utility classes the components & kits reuse ── */
+/* LIQUID GLASS — the system's floating-content surface. A lensed, luminous
+   pane: gradient fill (lit from the top-left), deep blur + saturation,
+   specular rim (inset highlights), and a soft sheen bloom along the top edge.
+   Pseudo-element sheen is pointer-transparent and very low alpha, so text
+   stays crisp. */
 .glass {
-  background: var(--glass-bg);
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(165deg,
+      rgba(255, 255, 255, 0.13) 0%,
+      rgba(255, 255, 255, 0.04) 32%,
+      rgba(16, 20, 40, 0.08) 68%,
+      rgba(255, 255, 255, 0.055) 100%),
+    var(--glass-bg);
   border: 1px solid var(--glass-border);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-          backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  box-shadow: var(--shadow-lg), var(--rim);
-  border-radius: var(--radius-lg);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(1.07);
+          backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(1.07);
+  box-shadow:
+    var(--shadow-lg),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.07),
+    inset 1px 0 0 rgba(255, 255, 255, 0.09),
+    inset -1px 0 0 rgba(255, 255, 255, 0.09);
+}
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(130% 56% at 50% -18%, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 62%),
+    radial-gradient(56% 30% at 12% 3%, rgba(255, 255, 255, 0.10), transparent 72%);
 }
 .glass-strong {
-  background: var(--glass-bg-strong);
+  background:
+    linear-gradient(165deg,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.03) 32%,
+      rgba(12, 16, 32, 0.10) 68%,
+      rgba(255, 255, 255, 0.045) 100%),
+    var(--glass-bg-strong);
 }
 /* Graceful fallback where backdrop-filter is unsupported */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass { background: var(--glass-bg-strong); }
+}
+
+/* ── Liquid refraction (cursor lens + pane waviness) ──
+   The lens is INVISIBLE in itself — no outline, no highlight, no tint. On
+   Chromium the .lens-on class (set by LiquidCursor) applies the #mb-lens SVG
+   displacement so the backdrop genuinely warps under the cursor; elsewhere a
+   whisper of blur stands in. The displacement map fades to zero at the rim,
+   so there is no visible circle — just the distortion. */
+.mb-lens-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transform: translate(-300px, -300px);
+  transition: opacity 0.3s var(--ease);
+  -webkit-backdrop-filter: blur(1.5px);
+          backdrop-filter: blur(1.5px);
+}
+.lens-on .mb-lens-cursor {
+  -webkit-backdrop-filter: url(#mb-lens);
+          backdrop-filter: url(#mb-lens);
+}
+.lens-on .glass {
+  -webkit-backdrop-filter: url(#mb-pane) blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(1.07);
+          backdrop-filter: url(#mb-pane) blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(1.07);
 }
