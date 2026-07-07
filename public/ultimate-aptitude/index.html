@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultimate Aptitude — free GMAT &amp; CAT-level practice tests</title>
+  <meta name="description" content="Free, open-source aptitude trainer: timed GMAT/CAT-level quant, verbal, data-insights and DILR mocks with per-question pacing analysis. No login, no ads — your results stay in your browser." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+</head>
+<body>
+
+  <!-- ===================== START ===================== -->
+  <section id="screen-start" class="screen">
+    <div class="card hero">
+      <h1>🧠 Ultimate Aptitude</h1>
+      <p class="sub">Free, timed <b>GMAT/CAT-level practice tests</b> — quant, verbal, data insights, logic &amp; DILR. 1,000+ hand-checked bank questions plus procedurally generated ones, so every session is fresh.</p>
+      <ul class="facts">
+        <li><b>13</b> session types — 8-min blitz to full 3-section GMAT mock</li>
+        <li><b>1,000+</b> bank questions — no repeats until exhausted</li>
+        <li><b>5 options</b> each, single answer</li>
+        <li><b>Forward-only</b> — no going back</li>
+        <li><b>No login</b> — progress lives in your browser</li>
+      </ul>
+      <div class="tips">
+        <b>How to win:</b> this is <b>forward-only</b> — once you move on, your answer locks and you can't return, just like the real exams. So decide in the moment: <i>attempt it, or guess-and-go.</i> A blank scores the same as a wrong answer (no penalty for guessing), so never move on leaving one truly empty.
+      </div>
+      <div class="keys">Keyboard: <kbd>1</kbd>–<kbd>5</kbd> select &middot; <kbd>→</kbd> or <kbd>Enter</kbd> to lock &amp; advance</div>
+
+      <div class="mode-label">Pick a session:</div>
+      <div id="mode-picker" class="mode-picker"></div>
+
+      <div class="keys">Open source (MIT) — <a href="https://github.com/atmamoon/ultimate-aptitude" target="_blank" rel="noopener">code &amp; question banks on GitHub</a> &middot; anonymous usage counts only, never anything about you</div>
+    </div>
+
+    <div id="history-wrap" class="card history-wrap hidden">
+      <div class="history-head">
+        <span class="side-title">📊 Your practice log</span>
+        <div class="history-actions">
+          <button id="export-log" class="btn ghost sm">⤓ Export .md</button>
+          <button id="clear-log" class="btn ghost sm">Clear</button>
+        </div>
+      </div>
+      <div id="history-table" class="history-table"></div>
+    </div>
+  </section>
+
+  <!-- ===================== TEST ===================== -->
+  <section id="screen-test" class="screen hidden">
+    <header class="topbar">
+      <div class="brand">🧠 Ultimate Aptitude</div>
+      <div id="timer" class="timer">20:00</div>
+      <button id="submit-btn" class="btn danger-outline">Submit Test</button>
+    </header>
+
+    <div class="test-layout">
+      <main class="qpanel card">
+        <div class="qhead">
+          <span id="q-counter" class="q-counter">Question 1 of 40</span>
+          <span id="q-category" class="q-cat">Numerical</span>
+        </div>
+        <div id="q-prompt" class="q-prompt"></div>
+        <div id="q-options" class="options"></div>
+        <div class="qnav one-way">
+          <span class="lock-hint">⚠️ Forward-only — moving on <b>locks</b> this answer. You can't return.</span>
+          <button id="advance-btn" class="btn primary">Skip (leave blank) &amp; Next →</button>
+        </div>
+      </main>
+
+      <aside class="sidebar card">
+        <div class="side-title">Question navigator</div>
+        <div id="answered-count" class="answered-count">0/40 answered</div>
+        <div id="palette" class="palette"></div>
+        <div class="legend">
+          <span><i class="dot answered"></i> answered</span>
+          <span><i class="dot skipped"></i> skipped (blank)</span>
+          <span><i class="dot current"></i> current</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== RESULTS ===================== -->
+  <section id="screen-results" class="screen hidden">
+    <div class="card results-head">
+      <h1>Test Results</h1>
+      <div class="score-row">
+        <div id="score-ring" class="score-ring"><div class="score-ring-inner"><span id="result-pct">0%</span></div></div>
+        <div class="score-side">
+          <div class="big-score"><span id="result-score">0 / 40</span></div>
+          <div id="result-meta" class="result-meta"></div>
+        </div>
+      </div>
+      <div id="category-bars" class="category-bars"></div>
+      <div class="pacing-wrap">
+        <div class="side-title">⏱ Pacing by topic</div>
+        <div id="pacing-note" class="pacing-note"></div>
+        <div id="pacing-table" class="history-table pacing-table"></div>
+      </div>
+      <div class="results-actions">
+        <button id="new-test-btn" class="btn primary">↻ Start a New Test (fresh questions)</button>
+        <button id="review-toggle" class="btn ghost">Show / hide answer review</button>
+        <button id="results-export" class="btn ghost">⤓ Export log (.md)</button>
+      </div>
+      <div id="sync-note" class="sync-note"></div>
+      <div id="results-history" class="history-table compact"></div>
+    </div>
+
+    <div class="card review-card">
+      <div class="review-filters">
+        <span>Review:</span>
+        <button class="filter-btn active" data-f="all">All</button>
+        <button class="filter-btn" data-f="bad">Incorrect</button>
+        <button class="filter-btn" data-f="blank">Blank</button>
+        <button class="filter-btn" data-f="ok">Correct</button>
+      </div>
+      <div id="review-list" class="review-list"></div>
+    </div>
+  </section>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

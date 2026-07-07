@@ -151,7 +151,12 @@ const bio = ABOUT.split('\n\n');
         <SectionLabel>Writing</SectionLabel>
         <div class="writing-list">
           {WRITING.map((w) => (
-            <a class="writing-row" href={w.href} target="_blank" rel="noopener">
+            <a
+              class="writing-row"
+              href={w.href}
+              target={w.href.startsWith('http') ? '_blank' : undefined}
+              rel={w.href.startsWith('http') ? 'noopener' : undefined}
+            >
               <span class="writing-row__title">{w.title}</span>
               <span class="writing-row__outlet"><Badge tone="info">{w.outlet}</Badge></span>
               <span class="writing-row__arrow"><Icon name="arrowUpRight" size={18} /></span>

@@ -1,0 +1,90 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import SectionLabel from '../../components/SectionLabel.astro';
+import GlassCard from '../../components/GlassCard.astro';
+import Chip from '../../components/Chip.astro';
+import Button from '../../components/Button.astro';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('writing')).filter((p) => !p.data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const d = post.data;
+const dateStr = d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<Base title={d.title} description={d.summary}>
+  <div class="post-backdrop">
+    <div class="post__body">
+      <a href="/writing" class="post__back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        All writing
+      </a>
+      <GlassCard padding="clamp(26px, 5vw, 52px)">
+        <SectionLabel>Writing</SectionLabel>
+        <h1 class="post__title">{d.title}</h1>
+        <p class="post__meta">{dateStr}</p>
+        {d.tags.length > 0 && (
+          <div class="post__tags">
+            {d.tags.map((t) => <Chip>{t}</Chip>)}
+          </div>
+        )}
+        <div class="prose post__prose">
+          <Content />
+        </div>
+        <div class="post__foot">
+          <Button variant="ghost" href="/writing" iconLeft="back">All writing</Button>
+          <Button variant="primary" href="/#writing" iconRight="arrow">Let's talk</Button>
+        </div>
+      </GlassCard>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .post-backdrop {
+    position: relative;
+    background-image:
+      linear-gradient(180deg, var(--atm-2) 0%, rgba(18,21,42,0.6) clamp(120px, 18vh, 240px), rgba(15,19,38,0.5) 70%, var(--atm-2) 100%),
+      url('/photos/night-machapuchare.webp');
+    background-size: cover, cover;
+    background-position: center, center 38%;
+    background-repeat: no-repeat, no-repeat;
+  }
+  .post__body {
+    max-width: var(--maxw); margin: 0 auto;
+    padding: clamp(32px, 5vw, 52px) var(--gutter) var(--section-y);
+  }
+  .post__back {
+    display: flex; width: fit-content; align-items: center; gap: 8px;
+    padding: 8px 14px; margin-bottom: 22px;
+    border-radius: var(--radius-sm);
+    background: rgba(0,0,0,0.32); color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    font-family: var(--font-sans); font-weight: var(--w-semibold); font-size: 0.86rem;
+  }
+  .post__back:hover { color: #fff; background: rgba(0,0,0,0.45); }
+  .post__title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.12; color: var(--text); margin: 14px 0 0; max-width: 800px;
+  }
+  .post__meta {
+    color: var(--text-soft); font-size: 0.9rem; margin-top: 12px;
+    font-family: var(--font-mono);
+  }
+  .post__tags { display: flex; gap: 7px; flex-wrap: wrap; margin: 20px 0 8px; }
+  .post__prose { max-width: var(--maxw-prose); margin-top: 24px; }
+  .post__foot {
+    margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  }
+</style>

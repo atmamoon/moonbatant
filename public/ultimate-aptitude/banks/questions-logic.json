@@ -1,0 +1,1602 @@
+[
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "very-hard",
+  "promptHTML": "What number comes next in the series 5, 9, 17, 33, 65, ... ?",
+  "options": [
+   "113",
+   "129",
+   "130",
+   "97",
+   "121"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Each term is double the previous term minus 1: 5, 9, 17, 33, 65, then 2 &times; 65 - 1 = 129. The answer is B: 129."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "hard",
+  "promptHTML": "What number comes next in the series 2, 3, 8, 27, 112, ... ?",
+  "options": [
+   "565",
+   "560",
+   "451",
+   "224",
+   "448"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The pattern is term &times; n + n: 2&times;1+1=3, 3&times;2+2=8, 8&times;3+3=27, 27&times;4+4=112, then 112&times;5+5=565. The answer is A: 565."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "hard",
+  "promptHTML": "What number comes next in the series 4, 5, 9, 18, 34, ... ?",
+  "options": [
+   "59",
+   "52",
+   "68",
+   "54",
+   "50"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The differences are perfect squares: 1, 4, 9, 16, so the next difference is 25 and 34 + 25 = 59. The answer is A: 59."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "very-hard",
+  "promptHTML": "What number comes next in the series 2, 5, 10, 17, 26, ... ?",
+  "options": [
+   "37",
+   "36",
+   "35",
+   "42",
+   "33"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Each term is n&sup2; + 1: 2, 5, 10, 17, 26, so the 6th term is 36 + 1 = 37. The answer is A: 37."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "hard",
+  "promptHTML": "What number comes next in the series 32, 48, 72, 108, 162, ... ?",
+  "options": [
+   "324",
+   "216",
+   "234",
+   "248",
+   "243"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Each term is 1.5 times the previous: 162 &times; 1.5 = 243. The answer is E: 243."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "hard",
+  "promptHTML": "What number comes next in the series 4, 7, 14, 17, 34, 37, ... ?",
+  "options": [
+   "40",
+   "68",
+   "74",
+   "71",
+   "44"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The operations alternate: +3, &times;2, +3, &times;2, +3, so the next is 37 &times; 2 = 74. The answer is C: 74."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "very-hard",
+  "promptHTML": "What number comes next in the series 0, 7, 26, 63, 124, ... ?",
+  "options": [
+   "168",
+   "215",
+   "216",
+   "208",
+   "195"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Each term is n&sup3; - 1: 0, 7, 26, 63, 124, so the next is 6&sup3; - 1 = 215. Choosing 216 forgets the minus 1. The answer is B: 215."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "hard",
+  "promptHTML": "What number comes next in the series 2, 4, 9, 28, 125, ... ?",
+  "options": [
+   "625",
+   "730",
+   "726",
+   "626",
+   "720"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Each term is n! + n: 1! + 1 = 2, 2! + 2 = 4, 3! + 3 = 9, 4! + 4 = 28, 5! + 5 = 125, so the next is 6! + 6 = 726. Choosing 720 forgets the +n. The answer is C: 726."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "hard",
+  "promptHTML": "What number comes next in the series 3, 10, 5, 20, 7, 40, ... ?",
+  "options": [
+   "11",
+   "80",
+   "9",
+   "13",
+   "60"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Two interleaved series: odd positions go 3, 5, 7, 9 (add 2) and even positions go 10, 20, 40 (double). The next term sits in the odd-position series: 9. The answer is C: 9."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "very-hard",
+  "promptHTML": "What number comes next in the series 6, 13, 27, 55, 111, ... ?",
+  "options": [
+   "222",
+   "211",
+   "167",
+   "219",
+   "223"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Each term is double the previous plus 1: 111 &times; 2 + 1 = 223. The answer is E: 223."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "hard",
+  "promptHTML": "What number comes next in the series 1, 3, 4, 7, 11, 18, ... ?",
+  "options": [
+   "31",
+   "29",
+   "36",
+   "27",
+   "25"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Each term is the sum of the previous two (a Lucas-style series): 11 + 18 = 29. The answer is B: 29."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "hard",
+  "promptHTML": "What number comes next in the series 4, 9, 25, 49, 121, ... ?",
+  "options": [
+   "144",
+   "196",
+   "169",
+   "225",
+   "132"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "These are squares of primes: 2, 3, 5, 7, 11, so the next is 13&sup2; = 169. 144 = 12&sup2; misses that the bases are prime. The answer is C: 169."
+ },
+ {
+  "category": "Logic",
+  "topic": "letter-series",
+  "difficulty": "hard",
+  "promptHTML": "What comes next in the series C, E, H, L, Q, ... ?",
+  "options": [
+   "X",
+   "V",
+   "U",
+   "R",
+   "W"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "The gaps grow by one each time: +2, +3, +4, +5, so the next gap is +6 and Q + 6 = W. The answer is E: W."
+ },
+ {
+  "category": "Logic",
+  "topic": "letter-series",
+  "difficulty": "very-hard",
+  "promptHTML": "What comes next in the series AZ, BY, CX, DW, ... ?",
+  "options": [
+   "EV",
+   "EU",
+   "FV",
+   "EW",
+   "FU"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The first letters move forward (A, B, C, D, E) while the second letters move backward (Z, Y, X, W, V), giving EV. The answer is A: EV."
+ },
+ {
+  "category": "Logic",
+  "topic": "letter-series",
+  "difficulty": "hard",
+  "promptHTML": "What comes next in the series BD, GI, LN, QS, ... ?",
+  "options": [
+   "VW",
+   "TX",
+   "VX",
+   "UW",
+   "WY"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Each pair has a one-letter gap inside (B-D, G-I) and the pairs jump 5 letters forward each time: B, G, L, Q, V, so the next pair is VX. The answer is C: VX."
+ },
+ {
+  "category": "Logic",
+  "topic": "letter-series",
+  "difficulty": "very-hard",
+  "promptHTML": "What comes next in the series Z, U, Q, N, L, ... ?",
+  "options": [
+   "K",
+   "J",
+   "I",
+   "M",
+   "H"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The backward steps shrink: -5, -4, -3, -2, so the next step is -1 and L - 1 = K. The answer is A: K."
+ },
+ {
+  "category": "Logic",
+  "topic": "letter-series",
+  "difficulty": "hard",
+  "promptHTML": "What comes next in the series AB, DE, HI, MN, ... ?",
+  "options": [
+   "SU",
+   "ST",
+   "TU",
+   "QR",
+   "RS"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Consecutive-letter pairs whose starting points jump by 3, 4, 5, then 6: A, D, H, M, S, so the next pair is ST. The answer is B: ST."
+ },
+ {
+  "category": "Logic",
+  "topic": "letter-series",
+  "difficulty": "very-hard",
+  "promptHTML": "What comes next in the series D, F, I, M, R, ... ?",
+  "options": [
+   "U",
+   "X",
+   "V",
+   "Y",
+   "W"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The gaps grow: +2, +3, +4, +5, so the next gap is +6 and R + 6 = X. The answer is B: X."
+ },
+ {
+  "category": "Logic",
+  "topic": "letter-series",
+  "difficulty": "hard",
+  "promptHTML": "What comes next in the series Y, W, T, P, K, ... ?",
+  "options": [
+   "F",
+   "E",
+   "G",
+   "D",
+   "H"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The backward steps grow: -2, -3, -4, -5, so the next step is -6 and K - 6 = E. The answer is B: E."
+ },
+ {
+  "category": "Logic",
+  "topic": "letter-series",
+  "difficulty": "very-hard",
+  "promptHTML": "What comes next in the series E, J, O, T, ... ?",
+  "options": [
+   "Y",
+   "W",
+   "Z",
+   "X",
+   "V"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Each letter is 5 places after the previous: E, J, O, T, Y. The answer is A: Y."
+ },
+ {
+  "category": "Logic",
+  "topic": "odd-one-out",
+  "difficulty": "hard",
+  "promptHTML": "Find the odd one out: 17, 23, 29, 37, 51.",
+  "options": [
+   "29",
+   "37",
+   "23",
+   "51",
+   "17"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "17, 23, 29 and 37 are all prime numbers, but 51 = 3 &times; 17 is composite. The answer is D: 51."
+ },
+ {
+  "category": "Logic",
+  "topic": "odd-one-out",
+  "difficulty": "hard",
+  "promptHTML": "Find the odd one out: 121, 169, 225, 289, 279.",
+  "options": [
+   "169",
+   "289",
+   "121",
+   "279",
+   "225"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "121, 169, 225 and 289 are perfect squares (11&sup2;, 13&sup2;, 15&sup2;, 17&sup2;), but 279 is not a perfect square. The answer is D: 279."
+ },
+ {
+  "category": "Logic",
+  "topic": "odd-one-out",
+  "difficulty": "medium",
+  "promptHTML": "Find the odd one out: 64, 125, 216, 343, 411.",
+  "options": [
+   "411",
+   "64",
+   "343",
+   "125",
+   "216"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "64, 125, 216 and 343 are perfect cubes (4&sup3;, 5&sup3;, 6&sup3;, 7&sup3;), but 411 is not a cube. The answer is A: 411."
+ },
+ {
+  "category": "Logic",
+  "topic": "odd-one-out",
+  "difficulty": "hard",
+  "promptHTML": "Find the odd one out: 13, 17, 31, 71, 39.",
+  "options": [
+   "31",
+   "71",
+   "39",
+   "13",
+   "17"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "13, 17, 31 and 71 are prime, but 39 = 3 &times; 13 is composite. The answer is C: 39."
+ },
+ {
+  "category": "Logic",
+  "topic": "odd-one-out",
+  "difficulty": "very-hard",
+  "promptHTML": "Find the odd one out: 28, 65, 126, 215, 344.",
+  "options": [
+   "28",
+   "344",
+   "65",
+   "215",
+   "126"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "28, 65, 126 and 344 are each one more than a perfect cube (3&sup3;+1, 4&sup3;+1, 5&sup3;+1, 7&sup3;+1), but 215 = 6&sup3; - 1 is one less than a cube. The answer is D: 215."
+ },
+ {
+  "category": "Logic",
+  "topic": "odd-one-out",
+  "difficulty": "hard",
+  "promptHTML": "Find the odd one out: 132, 176, 264, 396, 342.",
+  "options": [
+   "176",
+   "342",
+   "264",
+   "132",
+   "396"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "132, 176, 264 and 396 are all multiples of 11, but 342 = 2 &times; 171 is not divisible by 11. The answer is B: 342."
+ },
+ {
+  "category": "Logic",
+  "topic": "odd-one-out",
+  "difficulty": "hard",
+  "promptHTML": "Find the odd one out: BDF, HJL, NPR, TVX, DFI.",
+  "options": [
+   "TVX",
+   "BDF",
+   "DFI",
+   "NPR",
+   "HJL"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "In BDF, HJL, NPR and TVX each letter is two places after the previous one. In DFI the second gap is three (F to I), breaking the pattern. The answer is C: DFI."
+ },
+ {
+  "category": "Logic",
+  "topic": "odd-one-out",
+  "difficulty": "very-hard",
+  "promptHTML": "Find the odd one out: CFI, GJM, ORU, SVY, KNP.",
+  "options": [
+   "ORU",
+   "CFI",
+   "KNP",
+   "SVY",
+   "GJM"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "CFI, GJM, ORU and SVY each step forward by 3 letters twice. KNP steps +3 from K to N but only +2 from N to P. The answer is C: KNP."
+ },
+ {
+  "category": "Logic",
+  "topic": "analogies",
+  "difficulty": "hard",
+  "promptHTML": "8 : 65 :: 11 : ?",
+  "options": [
+   "121",
+   "132",
+   "124",
+   "110",
+   "122"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "The rule is n&sup2; + 1: 8&sup2; + 1 = 65, so 11&sup2; + 1 = 122. Choosing 121 forgets the +1. The answer is E: 122."
+ },
+ {
+  "category": "Logic",
+  "topic": "analogies",
+  "difficulty": "very-hard",
+  "promptHTML": "6 : 222 :: 9 : ?",
+  "options": [
+   "819",
+   "729",
+   "738",
+   "90",
+   "728"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The rule is n&sup3; + n: 216 + 6 = 222, so 729 + 9 = 738. Choosing 729 forgets the +n. The answer is C: 738."
+ },
+ {
+  "category": "Logic",
+  "topic": "analogies",
+  "difficulty": "hard",
+  "promptHTML": "ACE : FHJ :: MOQ : ?",
+  "options": [
+   "RSV",
+   "SUW",
+   "RTU",
+   "RTV",
+   "QSU"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Each letter moves forward 5 places: A to F, C to H, E to J. So M to R, O to T, Q to V gives RTV. The answer is D: RTV."
+ },
+ {
+  "category": "Logic",
+  "topic": "analogies",
+  "difficulty": "hard",
+  "promptHTML": "27 : 9 :: 125 : ?",
+  "options": [
+   "75",
+   "5",
+   "15",
+   "25",
+   "45"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "27 is 3&sup3; and 9 is 3&sup2;. Likewise 125 is 5&sup3;, so the answer is 5&sup2; = 25. Choosing 5 takes the cube root but forgets to square. The answer is D: 25."
+ },
+ {
+  "category": "Logic",
+  "topic": "analogies",
+  "difficulty": "very-hard",
+  "promptHTML": "CAT : DCW :: DOG : ?",
+  "options": [
+   "EQI",
+   "EPH",
+   "EPJ",
+   "FQJ",
+   "EQJ"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "The letters shift by +1, +2, +3 in order: C+1=D, A+2=C, T+3=W. So D+1=E, O+2=Q, G+3=J gives EQJ. The answer is E: EQJ."
+ },
+ {
+  "category": "Logic",
+  "topic": "analogies",
+  "difficulty": "hard",
+  "promptHTML": "7 : 56 :: 9 : ?",
+  "options": [
+   "81",
+   "72",
+   "99",
+   "89",
+   "90"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "The rule is n &times; (n + 1): 7 &times; 8 = 56, so 9 &times; 10 = 90. Choosing 81 squares instead. The answer is E: 90."
+ },
+ {
+  "category": "Logic",
+  "topic": "analogies",
+  "difficulty": "hard",
+  "promptHTML": "KING : LJOH :: LAMP : ?",
+  "options": [
+   "MCNQ",
+   "MBNQ",
+   "MBOQ",
+   "KZLO",
+   "NBOQ"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Every letter moves one place forward: K to L, I to J, N to O, G to H. Applying the same shift, LAMP becomes MBNQ. The answer is B: MBNQ."
+ },
+ {
+  "category": "Logic",
+  "topic": "analogies",
+  "difficulty": "very-hard",
+  "promptHTML": "5 : 124 :: 7 : ?",
+  "options": [
+   "335",
+   "343",
+   "348",
+   "342",
+   "216"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "The rule is n&sup3; - 1: 125 - 1 = 124, so 343 - 1 = 342. Choosing 343 forgets the minus 1. The answer is D: 342."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "hard",
+  "promptHTML": "In a certain code, MOBILE is written as OQDKNG. How is SCREEN written in that code?",
+  "options": [
+   "QAPCCL",
+   "PGGTEU",
+   "TDSFFO",
+   "VFUHHQ",
+   "UETGGP"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Each letter moves two places forward: M to O, O to Q, B to D and so on. Applying +2 to SCREEN gives UETGGP. The answer is E: UETGGP."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "hard",
+  "promptHTML": "In a code language, ORANGE is written as LOXKDB. How will GARDEN be written?",
+  "options": [
+   "KBAOXD",
+   "CWNZAJ",
+   "EYPBCL",
+   "DXOABK",
+   "JDUGHQ"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Each letter moves three places back: O to L, R to O, A to X (wrapping past A). Applying -3 to GARDEN gives DXOABK. The answer is D: DXOABK."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "very-hard",
+  "promptHTML": "In a certain code, DARK is written as WZIP. How is LIGHT written in the same code?",
+  "options": [
+   "ORTSG",
+   "JGEFR",
+   "QNLMY",
+   "NKIJV",
+   "GSTRO"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Each letter is replaced by its mirror in the alphabet (A and Z swap, B and Y swap, and so on): D to W, A to Z, R to I, K to P. Mirroring LIGHT gives ORTSG. The answer is A: ORTSG."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "hard",
+  "promptHTML": "In a certain code, CAT = 48. Using the same rule, what is DOG?",
+  "options": [
+   "56",
+   "44",
+   "26",
+   "52",
+   "50"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: CAT uses letter positions 3 + 1 + 20 = 24, and 24 &times; 2 = 48, so the rule is double the position sum. Step 2: DOG = (4 + 15 + 7) &times; 2 = 26 &times; 2 = 52. Answering 26 stops at the plain sum. The answer is D: 52."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "hard",
+  "promptHTML": "If TEA is coded as 26, what is the code for COFFEE?",
+  "options": [
+   "36",
+   "40",
+   "46",
+   "38",
+   "42"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: TEA = 20 + 5 + 1 = 26, the sum of letter positions. Step 2: COFFEE = 3 + 15 + 6 + 6 + 5 + 5 = 40. The answer is B: 40."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "very-hard",
+  "promptHTML": "In a certain code, PLANT is written as QKBMU. How is HORSE written?",
+  "options": [
+   "IPSTF",
+   "GNQRD",
+   "GPQTD",
+   "FRSNI",
+   "INSRF"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "The letters alternate +1 and -1: P+1=Q, L-1=K, A+1=B, N-1=M, T+1=U. Applying the same alternation to HORSE gives INSRF. The answer is E: INSRF."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "very-hard",
+  "promptHTML": "In a code, MIND is written as EOJN. How will STAR be written in that code?",
+  "options": [
+   "SBUT",
+   "RATS",
+   "TUBS",
+   "UVCT",
+   "QZSR"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Reverse the word, then move each letter one place forward: MIND reversed is DNIM, and +1 gives EOJN. STAR reversed is RATS, and +1 gives SBUT. The answer is A: SBUT."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "hard",
+  "promptHTML": "In a code language, SECRET is written as TFDSFU. What does GPDVT stand for?",
+  "options": [
+   "FOCUS",
+   "HQEWU",
+   "SUCOF",
+   "TVDPG",
+   "ENBTR"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Each coded letter is one ahead of the original, so decode by stepping one letter back: G to F, P to O, D to C, V to U, T to S, giving FOCUS. The answer is A: FOCUS."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "very-hard",
+  "promptHTML": "In a certain code, CAT is written as FDW. Using the same rule, how is HOUSE written?",
+  "options": [
+   "KRXVH",
+   "MTZXJ",
+   "NUAYK",
+   "CJPNZ",
+   "LSYWI"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "CAT shifts each letter forward by 3, the length of the word. HOUSE has 5 letters, so each letter shifts +5: H to M, O to T, U to Z, S to X, E to J, giving MTZXJ. The answer is B: MTZXJ."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "medium",
+  "promptHTML": "If each letter is replaced by its position in the alphabet, which word does 20-18-1-9-14 spell?",
+  "options": [
+   "TRAIT",
+   "TRAIN",
+   "BRAIN",
+   "GRAIN",
+   "TRAIL"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Convert each number to a letter: 20 = T, 18 = R, 1 = A, 9 = I, 14 = N, spelling TRAIN. The answer is B: TRAIN."
+ },
+ {
+  "category": "Logic",
+  "topic": "syllogisms",
+  "difficulty": "very-hard",
+  "promptHTML": "Statements: All cups are plates. Some plates are bowls.<br>Conclusion I: Some cups are bowls.<br>Conclusion II: Some plates are cups.<br>Taking the statements as true even if they disagree with common knowledge, decide which conclusions logically follow.",
+  "options": [
+   "Only conclusion I follows",
+   "Only conclusion II follows",
+   "Either conclusion I or II follows",
+   "Neither conclusion I nor II follows",
+   "Both conclusions I and II follow"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "From \"all cups are plates\" we can reverse to \"some plates are cups\", so II follows. But the bowls that overlap with plates need not overlap with cups, so I does not follow. The answer is B: Only conclusion II follows."
+ },
+ {
+  "category": "Logic",
+  "topic": "syllogisms",
+  "difficulty": "hard",
+  "promptHTML": "Statements: All pens are pencils. All pencils are erasers.<br>Conclusion I: All pens are erasers.<br>Conclusion II: Some erasers are pens.<br>Taking the statements as true even if they disagree with common knowledge, decide which conclusions logically follow.",
+  "options": [
+   "Only conclusion I follows",
+   "Only conclusion II follows",
+   "Either conclusion I or II follows",
+   "Neither conclusion I nor II follows",
+   "Both conclusions I and II follow"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "The chain all pens are pencils and all pencils are erasers gives all pens are erasers, so I follows. If all pens are erasers, then some erasers are certainly pens, so II also follows. The answer is E: Both conclusions I and II follow."
+ },
+ {
+  "category": "Logic",
+  "topic": "syllogisms",
+  "difficulty": "very-hard",
+  "promptHTML": "Statements: Some tables are chairs. No chair is a sofa.<br>Conclusion I: Some tables are not sofas.<br>Conclusion II: All tables are sofas.<br>Taking the statements as true even if they disagree with common knowledge, decide which conclusions logically follow.",
+  "options": [
+   "Only conclusion I follows",
+   "Only conclusion II follows",
+   "Either conclusion I or II follows",
+   "Neither conclusion I nor II follows",
+   "Both conclusions I and II follow"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The tables that are chairs cannot be sofas, since no chair is a sofa, so I follows. II is impossible for those same tables, so it does not follow. The answer is A: Only conclusion I follows."
+ },
+ {
+  "category": "Logic",
+  "topic": "syllogisms",
+  "difficulty": "hard",
+  "promptHTML": "Statements: All pens are caps. Some caps are inks.<br>Conclusion I: Some inks are pens.<br>Conclusion II: No ink is a pen.<br>Taking the statements as true even if they disagree with common knowledge, decide which conclusions logically follow.",
+  "options": [
+   "Only conclusion I follows",
+   "Only conclusion II follows",
+   "Either conclusion I or II follows",
+   "Neither conclusion I nor II follows",
+   "Both conclusions I and II follow"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Neither conclusion is certain on its own: the inks may or may not include pens. But I and II are exact opposites covering all possibilities, so either I or II must follow. The answer is C: Either conclusion I or II follows."
+ },
+ {
+  "category": "Logic",
+  "topic": "syllogisms",
+  "difficulty": "very-hard",
+  "promptHTML": "Statements: All keys are locks. No lock is a door.<br>Conclusion I: No key is a door.<br>Conclusion II: Some doors are keys.<br>Taking the statements as true even if they disagree with common knowledge, decide which conclusions logically follow.",
+  "options": [
+   "Only conclusion I follows",
+   "Only conclusion II follows",
+   "Either conclusion I or II follows",
+   "Neither conclusion I nor II follows",
+   "Both conclusions I and II follow"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Every key is a lock and no lock is a door, so no key can be a door: I follows. II directly contradicts that, so it does not follow. The answer is A: Only conclusion I follows."
+ },
+ {
+  "category": "Logic",
+  "topic": "syllogisms",
+  "difficulty": "hard",
+  "promptHTML": "Statements: All bikes are cars. Some cars are trucks.<br>Conclusion I: Some bikes are trucks.<br>Conclusion II: All trucks are cars.<br>Taking the statements as true even if they disagree with common knowledge, decide which conclusions logically follow.",
+  "options": [
+   "Only conclusion I follows",
+   "Only conclusion II follows",
+   "Either conclusion I or II follows",
+   "Neither conclusion I nor II follows",
+   "Both conclusions I and II follow"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "The trucks that overlap with cars need not overlap with bikes, so I is not certain. \"Some cars are trucks\" does not tell us all trucks are cars, so II is not certain either. Neither follows. The answer is D: Neither conclusion I nor II follows."
+ },
+ {
+  "category": "Logic",
+  "topic": "syllogisms",
+  "difficulty": "very-hard",
+  "promptHTML": "Statements: Some dogs are cats. All cats are rats.<br>Conclusion I: All dogs are rats.<br>Conclusion II: Some dogs are rats.<br>Taking the statements as true even if they disagree with common knowledge, decide which conclusions logically follow.",
+  "options": [
+   "Only conclusion I follows",
+   "Only conclusion II follows",
+   "Either conclusion I or II follows",
+   "Neither conclusion I nor II follows",
+   "Both conclusions I and II follow"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The dogs that are cats must be rats, since all cats are rats, so II follows. But dogs that are not cats need not be rats, so I does not follow. The answer is B: Only conclusion II follows."
+ },
+ {
+  "category": "Logic",
+  "topic": "syllogisms",
+  "difficulty": "hard",
+  "promptHTML": "Statements: All doctors are singers. All singers are dancers.<br>Conclusion I: All doctors are dancers.<br>Conclusion II: Some dancers are singers.<br>Taking the statements as true even if they disagree with common knowledge, decide which conclusions logically follow.",
+  "options": [
+   "Only conclusion I follows",
+   "Only conclusion II follows",
+   "Either conclusion I or II follows",
+   "Neither conclusion I nor II follows",
+   "Both conclusions I and II follow"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "The chain gives all doctors are dancers, so I follows. All singers are dancers, so some dancers are singers (singers exist in the dancer group), so II follows too. The answer is E: Both conclusions I and II follow."
+ },
+ {
+  "category": "Logic",
+  "topic": "blood-relations",
+  "difficulty": "hard",
+  "promptHTML": "Pointing to a boy in a photograph, a woman says, \"He is the son of the only daughter of my mother.\" How is the boy related to the woman?",
+  "options": [
+   "Son",
+   "Brother",
+   "Grandson",
+   "Cousin",
+   "Nephew"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The only daughter of the woman's mother is the woman herself. So the boy is the woman's own son. The answer is A: Son."
+ },
+ {
+  "category": "Logic",
+  "topic": "blood-relations",
+  "difficulty": "hard",
+  "promptHTML": "Pointing to a girl, a man says, \"She is the daughter of the only son of my grandfather.\" How is the girl related to the man?",
+  "options": [
+   "Cousin",
+   "Sister",
+   "Daughter",
+   "Aunt",
+   "Niece"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The only son of the man's grandfather is the man's father. The daughter of his father is his sister. The answer is B: Sister."
+ },
+ {
+  "category": "Logic",
+  "topic": "blood-relations",
+  "difficulty": "very-hard",
+  "promptHTML": "If \"P x Q\" means P is the brother of Q, \"P + Q\" means P is the father of Q, and \"P - Q\" means P is the sister of Q, which expression shows that M is the uncle of N?",
+  "options": [
+   "M x O + N",
+   "M - O + N",
+   "M x O - N",
+   "N + O x M",
+   "M + O x N"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "M x O + N reads: M is the brother of O, and O is the father of N. The father's brother is the uncle, so M is N's uncle. M - O + N would make M the father's sister, an aunt, and M + O x N would make M a grandfather. The answer is A: M x O + N."
+ },
+ {
+  "category": "Logic",
+  "topic": "blood-relations",
+  "difficulty": "hard",
+  "promptHTML": "A man says about a woman, \"She is the mother of my son's wife's daughter.\" How is the woman related to the man?",
+  "options": [
+   "Daughter",
+   "Granddaughter",
+   "Sister-in-law",
+   "Daughter-in-law",
+   "Wife"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "The son's wife's daughter's mother is the son's wife herself. The son's wife is the man's daughter-in-law. The answer is D: Daughter-in-law."
+ },
+ {
+  "category": "Logic",
+  "topic": "blood-relations",
+  "difficulty": "very-hard",
+  "promptHTML": "S is a grandparent of U, and T is the father of U. How is S related to T?",
+  "options": [
+   "Mother",
+   "Mother-in-law",
+   "Father",
+   "Father-in-law",
+   "Cannot be determined"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "S could be T's father or mother (paternal side), or T's father-in-law or mother-in-law (maternal side). The information does not fix which, so the relation cannot be determined. The answer is E: Cannot be determined."
+ },
+ {
+  "category": "Logic",
+  "topic": "blood-relations",
+  "difficulty": "hard",
+  "promptHTML": "Introducing a woman, a man says, \"She is the wife of the only son of my mother.\" How is the woman related to the man?",
+  "options": [
+   "Mother",
+   "Sister",
+   "Sister-in-law",
+   "Wife",
+   "Daughter-in-law"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "The only son of the man's mother is the man himself. So the woman is his own wife. The answer is D: Wife."
+ },
+ {
+  "category": "Logic",
+  "topic": "blood-relations",
+  "difficulty": "very-hard",
+  "promptHTML": "A is the sister of B. C is the father of B. D is the mother of C. How is A related to D?",
+  "options": [
+   "Sister",
+   "Niece",
+   "Granddaughter",
+   "Grandmother",
+   "Daughter"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "A is B's sister, so C is also A's father. D is C's mother, which makes D the grandmother of A, so A is D's granddaughter. The answer is C: Granddaughter."
+ },
+ {
+  "category": "Logic",
+  "topic": "blood-relations",
+  "difficulty": "hard",
+  "promptHTML": "M is the daughter of N. N is the son of O. P is the husband of O. How is M related to P?",
+  "options": [
+   "Sister",
+   "Granddaughter",
+   "Grandmother",
+   "Niece",
+   "Daughter"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "N is O's son and P is O's husband, so P is N's father. M is N's daughter, so M is P's granddaughter. The answer is B: Granddaughter."
+ },
+ {
+  "category": "Logic",
+  "topic": "directions",
+  "difficulty": "very-hard",
+  "promptHTML": "A man walks 2 km north, then 6 km east, then 6 km south, and finally 3 km west. How far and in which direction is he from his starting point?",
+  "options": [
+   "5 km north-east",
+   "5 km south-west",
+   "5 km south-east",
+   "7 km south-east",
+   "4 km south-east"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Net east-west: 6 - 3 = 3 km east. Net north-south: 2 - 6 = 4 km south. Distance = the hypotenuse of a 3-4 right triangle = 5 km, toward the south-east. The answer is C: 5 km south-east."
+ },
+ {
+  "category": "Logic",
+  "topic": "directions",
+  "difficulty": "hard",
+  "promptHTML": "A cyclist rides 4 km east, 3 km north, 4 km west, then 2 km north. How far is she from her start and in which direction?",
+  "options": [
+   "9 km north",
+   "5 km north-east",
+   "5 km north-west",
+   "13 km north",
+   "5 km north"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "The east and west legs cancel exactly (4 - 4 = 0). Net northward distance = 3 + 2 = 5 km, so she is 5 km due north. The answer is E: 5 km north."
+ },
+ {
+  "category": "Logic",
+  "topic": "directions",
+  "difficulty": "very-hard",
+  "promptHTML": "A delivery rider goes 5 km south, 2 km west, 3 km south, and then 4 km west. What is his straight-line distance from the start, and in which direction does he lie?",
+  "options": [
+   "10 km south-east",
+   "10 km south-west",
+   "14 km south-west",
+   "8 km south-west",
+   "12 km south-west"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Net south = 5 + 3 = 8 km and net west = 2 + 4 = 6 km. Distance = the hypotenuse of a 6-8 right triangle = 10 km, to the south-west. Adding all legs (14 km) gives the path length, not the displacement. The answer is B: 10 km south-west."
+ },
+ {
+  "category": "Logic",
+  "topic": "directions",
+  "difficulty": "hard",
+  "promptHTML": "A man is facing north. He turns right, then right again, then left, then makes an about turn, and finally turns right. Which direction is he facing now?",
+  "options": [
+   "North-east",
+   "South",
+   "North",
+   "East",
+   "West"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Track the heading: north, right to east, right to south, left to east, about turn to west, right to north. He ends facing north. The answer is C: North."
+ },
+ {
+  "category": "Logic",
+  "topic": "directions",
+  "difficulty": "very-hard",
+  "promptHTML": "A hiker walks 9 km north, 12 km east, then 4 km south. How far is she from her starting point?",
+  "options": [
+   "25 km",
+   "17 km",
+   "13 km",
+   "12 km",
+   "15 km"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Net north = 9 - 4 = 5 km and net east = 12 km. Distance = the hypotenuse of a 5-12 right triangle = 13 km. Adding all legs gives 25 km, the path length. The answer is C: 13 km."
+ },
+ {
+  "category": "Logic",
+  "topic": "directions",
+  "difficulty": "hard",
+  "promptHTML": "One morning after sunrise, Ravi is walking with his back to the sun. In which direction does his shadow fall?",
+  "options": [
+   "North",
+   "West",
+   "East",
+   "North-west",
+   "South"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "In the morning the sun is in the east. With his back to the sun, Ravi faces west, and his shadow falls in front of him, toward the west. The answer is B: West."
+ },
+ {
+  "category": "Logic",
+  "topic": "directions",
+  "difficulty": "hard",
+  "promptHTML": "Point P is 6 km east of point Q. Point R is 8 km north of point P. What is the straight-line distance from Q to R?",
+  "options": [
+   "12 km",
+   "9 km",
+   "10 km",
+   "11 km",
+   "14 km"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Q to P is 6 km east and P to R is 8 km north, forming a right angle at P. QR = the hypotenuse of a 6-8 right triangle = 10 km. The answer is C: 10 km."
+ },
+ {
+  "category": "Logic",
+  "topic": "directions",
+  "difficulty": "very-hard",
+  "promptHTML": "All directions are rotated by the same angle so that south-east becomes north (and north-east becomes west, consistently). What does west become?",
+  "options": [
+   "South-west",
+   "South-east",
+   "North-east",
+   "North-west",
+   "South"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "South-east to north is a rotation of 135 degrees anticlockwise. Check: north-east rotated 135 degrees anticlockwise is west, which matches. Applying the same rotation, west becomes south-east. The answer is B: South-east."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "very-hard",
+  "promptHTML": "If + means multiply, - means divide, x means subtract and ÷ means add, what is the value of 8 + 4 - 2 x 6 ÷ 3?",
+  "options": [
+   "19",
+   "13",
+   "11",
+   "7",
+   "16"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Rewrite with real operators: 8 &times; 4 / 2 - 6 + 3. Step 2: Apply BODMAS: 32 / 2 = 16, then 16 - 6 + 3 = 13. Working strictly left to right without operator priority gives a different, wrong value. The answer is B: 13."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "very-hard",
+  "promptHTML": "If + means divide, ÷ means subtract, - means multiply and x means add, find the value of 36 + 6 x 3 - 2 ÷ 4.",
+  "options": [
+   "14",
+   "10",
+   "8",
+   "6",
+   "4"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Rewrite: 36 / 6 + 3 &times; 2 - 4. Step 2: BODMAS: 6 + 6 - 4 = 8. The answer is C: 8."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "hard",
+  "promptHTML": "If x means add, + means subtract and - means multiply, what is the value of 15 x 5 + 3 - 2?",
+  "options": [
+   "16",
+   "14",
+   "12",
+   "20",
+   "8"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Rewrite: 15 + 5 - 3 &times; 2. Step 2: Multiply first: 3 &times; 2 = 6, then 15 + 5 - 6 = 14. The answer is B: 14."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "very-hard",
+  "promptHTML": "If ÷ means multiply, x means subtract, - means add and + means divide, evaluate 24 + 6 ÷ 2 x 3 - 4.",
+  "options": [
+   "9",
+   "5",
+   "12",
+   "7",
+   "15"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Rewrite: 24 / 6 &times; 2 - 3 + 4. Step 2: Left to right for the division and multiplication: 4 &times; 2 = 8, then 8 - 3 + 4 = 9. The answer is A: 9."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "hard",
+  "promptHTML": "If the signs + and - are interchanged, what is the value of 45 - 15 + 5 - 10 + 2?",
+  "options": [
+   "47",
+   "27",
+   "63",
+   "67",
+   "53"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Swap the signs: 45 + 15 - 5 + 10 - 2. Step 2: 45 + 15 = 60, minus 5 is 55, plus 10 is 65, minus 2 is 63. The answer is C: 63."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "hard",
+  "promptHTML": "If x and ÷ are interchanged, find the value of 48 x 8 ÷ 2 + 6.",
+  "options": [
+   "198",
+   "30",
+   "18",
+   "24",
+   "12"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Swap the operators: 48 / 8 &times; 2 + 6. Step 2: 48 / 8 = 6, times 2 is 12, plus 6 is 18. Evaluating without the swap gives 198. The answer is C: 18."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "very-hard",
+  "promptHTML": "If + means multiply, x means divide, ÷ means subtract and - means add, what is the value of 9 x 3 + 4 ÷ 2 - 1?",
+  "options": [
+   "15",
+   "9",
+   "11",
+   "13",
+   "7"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Rewrite: 9 / 3 &times; 4 - 2 + 1. Step 2: 9 / 3 = 3, times 4 is 12, minus 2 plus 1 gives 11. The answer is C: 11."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "hard",
+  "promptHTML": "An operation # is defined as a # b = ab + a + b. What is the value of 5 # 4?",
+  "options": [
+   "25",
+   "24",
+   "20",
+   "29",
+   "30"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Substitute a = 5 and b = 4: 5 &times; 4 + 5 + 4. Step 2: 20 + 9 = 29. Stopping at the product gives 20. The answer is D: 29."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "very-hard",
+  "promptHTML": "If the signs x and ÷ are interchanged, which one of the following equations becomes correct?",
+  "options": [
+   "8 x 4 ÷ 2 = 4",
+   "12 x 6 ÷ 2 = 16",
+   "16 x 8 ÷ 4 = 32",
+   "9 x 3 ÷ 3 = 1",
+   "10 x 5 ÷ 4 = 12"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Swap x and ÷ in each option and test. For 8 x 4 ÷ 2 = 4: it becomes 8 ÷ 4 &times; 2 = 2 &times; 2 = 4, which is true. The other four options do not balance after the swap. The answer is A: 8 x 4 ÷ 2 = 4."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "very-hard",
+  "promptHTML": "If the signs + and x are interchanged, which one of the following equations becomes correct?",
+  "options": [
+   "5 + 3 x 2 = 16",
+   "6 + 4 x 2 = 20",
+   "3 + 5 x 4 = 23",
+   "7 + 2 x 3 = 13",
+   "4 + 2 x 6 = 14"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Swap + and x in each option. For 4 + 2 x 6 = 14: it becomes 4 &times; 2 + 6 = 8 + 6 = 14, which holds. None of the other options balances after the swap. The answer is E: 4 + 2 x 6 = 14."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "very-hard",
+  "promptHTML": "What number comes next in the series 7, 4, 14, 9, 28, 16, 56, ... ?",
+  "options": [
+   "112",
+   "23",
+   "25",
+   "36",
+   "21"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Two interleaved series: odd positions double each time (7, 14, 28, 56) while even positions are perfect squares (4 = 2<sup>2</sup>, 9 = 3<sup>2</sup>, 16 = 4<sup>2</sup>). The next term is at an even position, so it is 5<sup>2</sup> = 25. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "hard",
+  "promptHTML": "What number comes next in the series 3, 5, 11, 29, 83, ... ?",
+  "options": [
+   "245",
+   "249",
+   "241",
+   "239",
+   "247"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Each term is the previous term multiplied by 3 minus 4: 3&times;3&minus;4 = 5, 5&times;3&minus;4 = 11, 11&times;3&minus;4 = 29, 29&times;3&minus;4 = 83. Therefore the next term is 83&times;3&minus;4 = 245. The answer is A."
+ },
+ {
+  "category": "Logic",
+  "topic": "number-series",
+  "difficulty": "hard",
+  "promptHTML": "What number comes next in the series 5, 7, 13, 25, 45, ... ?",
+  "options": [
+   "65",
+   "70",
+   "77",
+   "75",
+   "80"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "The differences are 2, 6, 12, 20, which follow the pattern n(n+1): 1&times;2, 2&times;3, 3&times;4, 4&times;5. The next difference is 5&times;6 = 30, so the next term is 45 + 30 = 75. The answer is D."
+ },
+ {
+  "category": "Logic",
+  "topic": "letter-series",
+  "difficulty": "very-hard",
+  "promptHTML": "What comes next in the series A, Z, C, X, F, V, J, T, ... ?",
+  "options": [
+   "N",
+   "O",
+   "P",
+   "R",
+   "M"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Two interleaved series: odd positions are A, C, F, J with gaps +2, +3, +4 (so the next gap is +5, giving O), and even positions are Z, X, V, T stepping back by 2. The 9th term belongs to the first branch: J + 5 = O. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "letter-series",
+  "difficulty": "hard",
+  "promptHTML": "What comes next in the series BY, DW, GT, KP, ... ?",
+  "options": [
+   "PL",
+   "OK",
+   "QK",
+   "PJ",
+   "PK"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "First letters advance by increasing gaps: B(2), D(4), G(7), K(11), i.e. +2, +3, +4, so the next is K + 5 = P(16). Second letters retreat by increasing gaps: Y(25), W(23), T(20), P(16), i.e. &minus;2, &minus;3, &minus;4, so the next is P &minus; 5 = K(11). Each pair also sums to 27 (opposite letters), and PK keeps that property. The answer is E."
+ },
+ {
+  "category": "Logic",
+  "topic": "odd-one-out",
+  "difficulty": "very-hard",
+  "promptHTML": "Find the odd one out: 4, 27, 256, 625, 3125.",
+  "options": [
+   "4",
+   "27",
+   "256",
+   "625",
+   "3125"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Each of the others is a number of the form n<sup>n</sup>: 4 = 2<sup>2</sup>, 27 = 3<sup>3</sup>, 256 = 4<sup>4</sup>, 3125 = 5<sup>5</sup>. But 625 = 5<sup>4</sup>, not of the form n<sup>n</sup>. The answer is D."
+ },
+ {
+  "category": "Logic",
+  "topic": "odd-one-out",
+  "difficulty": "hard",
+  "promptHTML": "Find the odd one out: AEJ, DHM, GKP, JNS, MQW.",
+  "options": [
+   "AEJ",
+   "DHM",
+   "GKP",
+   "JNS",
+   "MQW"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "In each valid triplet the second letter is 4 steps after the first and the third letter is 5 steps after the second: A(+4)E(+5)J, D(+4)H(+5)M, G(+4)K(+5)P, J(+4)N(+5)S. In MQW the gaps are +4 and +6 (Q to W is 6 steps), breaking the pattern even though its first letter continues the A, D, G, J, M chain. The answer is E."
+ },
+ {
+  "category": "Logic",
+  "topic": "analogies",
+  "difficulty": "hard",
+  "promptHTML": "6 : 210 :: 9 : ?",
+  "options": [
+   "726",
+   "720",
+   "738",
+   "728",
+   "702"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The rule is n<sup>3</sup> &minus; n: 6<sup>3</sup> &minus; 6 = 216 &minus; 6 = 210. Applying it to 9: 9<sup>3</sup> &minus; 9 = 729 &minus; 9 = 720. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "analogies",
+  "difficulty": "very-hard",
+  "promptHTML": "WOLF : YMND :: BEAR : ?",
+  "options": [
+   "DCCP",
+   "DCCQ",
+   "DGCP",
+   "ZCCP",
+   "DCDP"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Letters are shifted alternately +2 and &minus;2: W+2=Y, O&minus;2=M, L+2=N, F&minus;2=D. Applying the same alternation to BEAR: B+2=D, E&minus;2=C, A+2=C, R&minus;2=P, giving DCCP. The answer is A."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "very-hard",
+  "promptHTML": "In a certain code, BRAIN is written as PKCTD. How is CLOUD written in that code?",
+  "options": [
+   "ENQWF",
+   "DUOLC",
+   "FWQNE",
+   "EWQNE",
+   "FWQNF"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The word is first reversed and then each letter is moved 2 steps forward: BRAIN reversed is NIARB, and N+2=P, I+2=K, A+2=C, R+2=T, B+2=D gives PKCTD. CLOUD reversed is DUOLC, and D+2=F, U+2=W, O+2=Q, L+2=N, C+2=E gives FWQNE. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "hard",
+  "promptHTML": "In a certain code, GO = 44 and EGG = 57. Using the same rule, what is the code for HIVE?",
+  "options": [
+   "44",
+   "132",
+   "88",
+   "176",
+   "180"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "The code is the sum of the letter positions multiplied by the number of letters. GO: (7+15)&times;2 = 44. EGG: (5+7+7)&times;3 = 57. HIVE: (8+9+22+5)&times;4 = 44&times;4 = 176. The answer is D."
+ },
+ {
+  "category": "Logic",
+  "topic": "coding-decoding",
+  "difficulty": "very-hard",
+  "promptHTML": "In a certain code, LOGIC is written as MQJMH. How is TIGER written in that code?",
+  "options": [
+   "UKJIW",
+   "UJJIW",
+   "SKJIW",
+   "UKJIV",
+   "VLKJX"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The nth letter of the word is shifted forward by n: L+1=M, O+2=Q, G+3=J, I+4=M, C+5=H. Applying the same increasing shifts to TIGER: T+1=U, I+2=K, G+3=J, E+4=I, R+5=W, giving UKJIW. The answer is A."
+ },
+ {
+  "category": "Logic",
+  "topic": "syllogisms",
+  "difficulty": "hard",
+  "promptHTML": "Statements: Some artists are engineers. All engineers are dreamers. No dreamer is a banker.<br>Conclusion I: Some artists are not bankers.<br>Conclusion II: No engineer is a banker.<br>Taking the statements as true, which conclusions follow?",
+  "options": [
+   "Only conclusion I follows",
+   "Only conclusion II follows",
+   "Either I or II follows",
+   "Neither I nor II follows",
+   "Both I and II follow"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "The artists who are engineers are all dreamers, and no dreamer is a banker, so those artists are not bankers — Conclusion I follows. Every engineer is a dreamer and no dreamer is a banker, so no engineer is a banker — Conclusion II follows. Both follow. The answer is E."
+ },
+ {
+  "category": "Logic",
+  "topic": "syllogisms",
+  "difficulty": "very-hard",
+  "promptHTML": "Statements: All roses are flowers. No flower is a fruit. Some fruits are seeds.<br>Conclusion I: Some seeds are flowers.<br>Conclusion II: No rose is a fruit.<br>Taking the statements as true, which conclusions follow?",
+  "options": [
+   "Only conclusion I follows",
+   "Only conclusion II follows",
+   "Either I or II follows",
+   "Neither I nor II follows",
+   "Both I and II follow"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Conclusion II follows: all roses are flowers and no flower is a fruit, so no rose can be a fruit. Conclusion I does not follow: the seeds that are fruits are definitely not flowers, and nothing in the statements forces any seed to be a flower. So only Conclusion II follows. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "blood-relations",
+  "difficulty": "very-hard",
+  "promptHTML": "A + B means A is the mother of B; A &minus; B means A is the brother of B; A &times; B means A is the wife of B; A &divide; B means A is the father of B. In the expression P &times; Q &divide; R &minus; S + T, how is P related to T?",
+  "options": [
+   "Mother",
+   "Aunt",
+   "Grandmother",
+   "Mother-in-law",
+   "Great-grandmother"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "P is the wife of Q; Q is the father of R; R is the brother of S, so S is also Q's child and hence P's child; S is the mother of T. Therefore P is the mother of T's mother, i.e. T's grandmother. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "blood-relations",
+  "difficulty": "hard",
+  "promptHTML": "Pointing to a photograph, Ritu says, \"He is the brother of the daughter of the wife of my only son.\" How is the boy related to Ritu?",
+  "options": [
+   "Grandson",
+   "Son",
+   "Nephew",
+   "Brother-in-law",
+   "Cousin"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The wife of Ritu's only son is her daughter-in-law; the daughter of the daughter-in-law is Ritu's granddaughter; the brother of that granddaughter is Ritu's grandson. The answer is A."
+ },
+ {
+  "category": "Logic",
+  "topic": "directions",
+  "difficulty": "hard",
+  "promptHTML": "A man starts walking facing east. He walks 5 km, turns left and walks 4 km, turns left again and walks 8 km, then turns right and walks 3 km, and finally turns right and walks 3 km. How far and in which direction is he from his starting point?",
+  "options": [
+   "7 km, south",
+   "7 km, north",
+   "5 km, north",
+   "9 km, north",
+   "7 km, east"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Track the moves: east 5 km to (5, 0); left turn to north, 4 km to (5, 4); left turn to west, 8 km to (&minus;3, 4); right turn to north, 3 km to (&minus;3, 7); right turn to east, 3 km to (0, 7). He ends 7 km due north of the start. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "directions",
+  "difficulty": "very-hard",
+  "promptHTML": "Riya walks 12 km south, then 3 km east, then 4 km north, then 5 km east, and finally 2 km north. What is her straight-line distance from the starting point, and in which direction is she from it?",
+  "options": [
+   "10 km, north-east",
+   "14 km, south-east",
+   "8 km, south-east",
+   "10 km, south-west",
+   "10 km, south-east"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Net south displacement = 12 &minus; 4 &minus; 2 = 6 km; net east displacement = 3 + 5 = 8 km. Straight-line distance = &#8730;(6<sup>2</sup> + 8<sup>2</sup>) = &#8730;100 = 10 km, towards the south-east. The answer is E."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "hard",
+  "promptHTML": "If + means &minus;, &minus; means &times;, &times; means &divide;, and &divide; means +, what is the value of 20 + 4 &minus; 3 &times; 6 &divide; 2?",
+  "options": [
+   "18",
+   "16",
+   "20",
+   "22",
+   "24"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Substituting gives 20 &minus; 4 &times; 3 &divide; 6 + 2. By order of operations, 4 &times; 3 = 12 and 12 &divide; 6 = 2, so the expression is 20 &minus; 2 + 2 = 20. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "operator-substitution",
+  "difficulty": "very-hard",
+  "promptHTML": "An operation @ is defined as a @ b = a<sup>2</sup> &minus; ab + b<sup>2</sup>. What is the value of (3 @ 5) @ 2?",
+  "options": [
+   "323",
+   "331",
+   "361",
+   "327",
+   "319"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "First compute 3 @ 5 = 9 &minus; 15 + 25 = 19. Then 19 @ 2 = 361 &minus; 38 + 4 = 327. The answer is D."
+ }
+]

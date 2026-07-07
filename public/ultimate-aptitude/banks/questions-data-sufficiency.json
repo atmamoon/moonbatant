@@ -1,0 +1,1650 @@
+[
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A company's revenue rose by p% from 2022 to 2023, then fell by q% from 2023 to 2024 (with p &gt; 0 and q &gt; 0). Was the company's 2024 revenue greater than its 2022 revenue?<br>(1) p = q<br>(2) q = 25",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Let the 2022 revenue be R. After a rise of p% and a fall of q%, the 2024 revenue is R(1 + p/100)(1 &minus; q/100). The question asks whether (1 + p/100)(1 &minus; q/100) &gt; 1.<br><br>Statement (1): p = q. Then the factor is (1 + p/100)(1 &minus; p/100) = 1 &minus; p&sup2;/10000. Since p &gt; 0, this is strictly less than 1, so 2024 revenue is always less than 2022 revenue. The answer is a definite NO. This is the classic trap of assuming an equal up-then-down percentage returns to the start; it never does. SUFFICIENT.<br><br>Statement (2): q = 25 but p is unknown. If p = 40, the factor is 1.40 &times; 0.75 = 1.05 &gt; 1 (YES); if p = 10, the factor is 1.10 &times; 0.75 = 0.825 &lt; 1 (NO). Not a unique answer. NOT sufficient.<br><br>Since (1) alone settles the question and (2) alone does not, the answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A jar contains only red and green marbles. If 4 green marbles are added and no red marbles are added or removed, what is the new ratio of red marbles to green marbles?<br>(1) Currently the ratio of red to green is 7 : 5.<br>(2) There are currently 21 red marbles in the jar.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Let the current counts be R red and G green. We want the new ratio R : (G + 4).<br><br>Statement (1): R : G = 7 : 5, so R = 7k and G = 5k for some positive integer k. The new ratio is 7k : (5k + 4), which depends on k. For k = 1 it is 7 : 9; for k = 3 it is 21 : 19. The added 4 marbles do not scale with the ratio, so a fixed proportion is not enough. NOT sufficient.<br><br>Statement (2): R = 21, but G is unknown, so R : (G + 4) is not determined. NOT sufficient.<br><br>Together: R = 21 forces 7k = 21, so k = 3 and G = 15. The new ratio is 21 : (15 + 4) = 21 : 19, a unique value. SUFFICIENT together but neither alone. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A set consists of 5 distinct positive integers with an arithmetic mean of 20. What is the largest member of the set?<br>(1) The median of the set is 18.<br>(2) The sum of the four members other than the largest is 64.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The five distinct positive integers have mean 20, so their total is 100.<br><br>Statement (1): The median is 18, meaning the middle (3rd) value is 18. The remaining four values sum to 82, but the largest can vary. For example {1, 2, 18, 19, 60} gives a largest of 60, while {1, 17, 18, 19, 45} gives a largest of 45 (both sets are distinct positive integers summing to 100 with median 18). Not unique. NOT sufficient.<br><br>Statement (2): The four members other than the largest sum to 64, so the largest equals total &minus; 64 = 100 &minus; 64 = 36. This is a unique value, and it does not depend on the median. SUFFICIENT.<br><br>Since (2) alone determines the largest member and (1) alone does not, the answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "very-hard",
+  "promptHTML": "A merchant bought two items, X and Y, and sold both. Item X was sold at a 20% profit on its cost. Did the merchant make an overall profit on the two items combined?<br>(1) The combined cost of X and Y was 100.<br>(2) Item Y was sold at a loss.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Let the costs be C&#8339; and C&#8344;, with C&#8339; + C&#8344; possibly known. The profit on X is 0.20&middot;C&#8339;. The overall profit is 0.20&middot;C&#8339; + (profit on Y).<br><br>Statement (1): C&#8339; + C&#8344; = 100, but we know nothing about how Y was sold, so the Y term is unknown and the overall sign is undetermined. NOT sufficient.<br><br>Statement (2): Y was sold at a loss, but the magnitudes of the loss and of the two costs are unknown. A small loss on Y could be outweighed by the gain on X (overall profit), or a large loss could dominate (overall loss). NOT sufficient.<br><br>Together: C&#8339; + C&#8344; = 100 and Y lost some amount L (0 &lt; L &le; C&#8344;). If C&#8339; = 90, C&#8344; = 10, and the Y loss is 1, the overall result is 0.20&middot;90 &minus; 1 = +17 (profit). If C&#8339; = 10, C&#8344; = 90, and the Y loss is 81 (90% of cost), the overall result is 0.20&middot;10 &minus; 81 = &minus;79 (loss). The answer can be YES or NO. NOT sufficient together. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "Two pipes are connected to an empty tank: pipe A fills it and pipe B drains it. If both pipes are opened at the same time with the empty tank, how many hours will it take to fill the tank completely?<br>(1) Pipe A alone can fill the empty tank in 6 hours.<br>(2) Pipe B alone can drain a full tank in 9 hours.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The net filling rate equals A's fill rate minus B's drain rate, and the fill time is the reciprocal of the net rate. Both rates are needed.<br><br>Statement (1): Pipe A's rate is 1/6 tank per hour, but B's drain rate is unknown, so the net rate cannot be found. NOT sufficient.<br><br>Statement (2): Pipe B's rate is 1/9 tank per hour, but A's fill rate is unknown. NOT sufficient.<br><br>Together: net rate = 1/6 &minus; 1/9 = 3/18 &minus; 2/18 = 1/18 tank per hour, so the time to fill is 18 hours. Since the net rate is positive, the tank does fill. SUFFICIENT together but neither alone. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "At a conference attended only by men and women, what percent of the attendees are women?<br>(1) The number of men is 40% of the number of women.<br>(2) There are 120 more women than men at the conference.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Let M be the number of men and W the number of women. We want W/(M + W) as a percent.<br><br>Statement (1): M = 0.40W. Then the fraction of women is W/(W + 0.40W) = 1/1.40 = 5/7 &asymp; 71.4%, independent of the actual counts. A fixed ratio determines a fixed percent. SUFFICIENT.<br><br>Statement (2): W &minus; M = 120. This is an absolute difference, not a ratio. If M = 10, W = 130, the women are 130/140 &asymp; 92.9%; if M = 1000, W = 1120, the women are 1120/2120 &asymp; 52.8%. Not unique. NOT sufficient.<br><br>Since (1) alone fixes the percent and (2) alone does not, the answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A trader makes a mixture using only two types of rice: type A costing 40 per kg and type B costing 60 per kg. What is the average cost per kg of the mixture?<br>(1) In the mixture, type A and type B are present in the ratio 3 : 2 by weight.<br>(2) In every 9 kg of the mixture, exactly 5.4 kg is type A.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "The average cost per kg is a weighted average of 40 and 60, determined entirely by the proportion of type A.<br><br>Statement (1): A : B = 3 : 2, so the average cost is (3&middot;40 + 2&middot;60)/(3 + 2) = (120 + 120)/5 = 240/5 = 48 per kg. SUFFICIENT.<br><br>Statement (2): In every 9 kg, 5.4 kg is type A, so the fraction of A is 5.4/9 = 0.6 and the fraction of B is 0.4. That is the same 3 : 2 split, giving average cost 0.6&middot;40 + 0.4&middot;60 = 24 + 24 = 48 per kg. SUFFICIENT.<br><br>Each statement alone fixes the proportion and hence the average. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A shopkeeper marks up an item by 50% above its cost price and then sells it after applying a single discount on the marked price. What is the shopkeeper's profit percentage on the cost price?<br>(1) The discount applied is 20% of the marked price.<br>(2) The marked price is 600 and the cost price is 400.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The marked price is 1.5 times the cost. The selling price is the marked price times (1 &minus; discount), and profit% = selling price / cost &minus; 1.<br><br>Statement (1): Discount = 20%, so selling price = 1.5 &times; 0.80 = 1.20 times the cost. Profit is 20% of cost, independent of the actual cost. SUFFICIENT.<br><br>Statement (2): Marked price 600 and cost 400 are merely consistent with the 50% markup (600 = 1.5 &times; 400), but the discount is unknown, so the selling price could be anything from just above 0 up to 600. Profit% is not determined. NOT sufficient. (The trap is thinking 600 and 400 alone give a 50% profit, but 600 is the marked price, not the selling price.)<br><br>Since (1) alone fixes the profit% and (2) alone does not, the answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A certain job can be completed by a group of identical workers, where every worker works at the same constant rate. How many days will it take 12 men to complete the entire job?<br>(1) 8 men can complete the same job in 15 days.<br>(2) 12 men together with 6 women can complete the same job in 6 days.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "With identical men working at a constant rate, the total work measured in man-days is fixed.<br><br>Statement (1): 8 men &times; 15 days = 120 man-days of work. Then 12 men require 120/12 = 10 days. SUFFICIENT.<br><br>Statement (2): 12 men plus 6 women finish in 6 days, but the women's rate is unknown, so we cannot isolate the men's contribution or the total work in man-days. For different women's rates, the men's share of the work changes, giving different times for 12 men alone. NOT sufficient.<br><br>Since (1) alone gives the total work and hence the time for 12 men, while (2) alone introduces an unknown rate, the answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "very-hard",
+  "promptHTML": "Six students took a test, each receiving an integer score. Was the average (arithmetic mean) of the six scores greater than 70?<br>(1) Exactly 4 of the students scored above 70.<br>(2) The lowest score among the six students was 55.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "We want to know whether the sum of the six scores exceeds 420.<br><br>Statement (1): 4 students scored above 70, but the other two could be extremely low, dragging the mean below 70, or the four high scores could be huge, pushing it above. Not determined. NOT sufficient.<br><br>Statement (2): The minimum is 55, but the remaining five scores are unknown and could be near 55 (mean below 70) or very high (mean above 70). NOT sufficient.<br><br>Together: 4 students score above 70 (i.e. at least 71) and the lowest of all six is 55, so the other two range from 55 up to 70. Test the extremes: with scores {100, 100, 100, 100, 55, 55} the sum is 510, mean 85 &gt; 70 (YES). With scores {71, 71, 71, 71, 55, 55} the sum is 394, mean &asymp; 65.7 &lt; 70 (NO). Both outcomes are possible. NOT sufficient together. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "In a company the number of managers and the number of staff are in the ratio 2 : 9. If 10 additional staff are hired and the number of managers stays the same, what will be the new ratio of managers to staff?<br>(1) The company currently has 22 managers.<br>(2) The company currently has 121 employees in total.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Let managers = 2k and staff = 9k. After hiring, the new ratio is 2k : (9k + 10), which requires knowing k (the absolute counts), since the +10 does not scale with the ratio.<br><br>Statement (1): Managers = 22, so 2k = 22, k = 11, and staff = 99. The new ratio is 22 : (99 + 10) = 22 : 109. SUFFICIENT.<br><br>Statement (2): Total employees = 121. With ratio 2 : 9, the 11 parts sum to 121, so each part is 11; managers = 22 and staff = 99. The new ratio is again 22 : 109. SUFFICIENT.<br><br>Each statement alone pins down the actual counts, so each gives the new ratio. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A retailer bought a single item at a certain cost price and later sold it. Was the retailer's profit more than 25% of the cost price?<br>(1) The selling price was 5/4 of an amount that is itself 10% above the cost price.<br>(2) The profit on the item was 300.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Let the cost price be C. We want to know whether profit &gt; 0.25C, i.e. whether selling price &gt; 1.25C.<br><br>Statement (1): The selling price = (5/4) &times; (1.10C) = 1.375C. Profit is 0.375C, which is 37.5% of cost &mdash; always more than 25%, regardless of C. SUFFICIENT.<br><br>Statement (2): The absolute profit is 300, but without the cost price the percentage is unknown. If C = 100, profit% = 300% (&gt; 25%); if C = 2000, profit% = 15% (&lt; 25%). Not unique. NOT sufficient. (The trap is treating a fixed rupee profit as a fixed percentage.)<br><br>Since (1) alone settles the question and (2) alone does not, the answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "hard",
+  "promptHTML": "If <i>n</i> is a positive integer, is <i>n</i> divisible by 12?<br>(1) <i>n</i> is divisible by 6.<br>(2) <i>n</i> is divisible by 8.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "We need to know whether 12 | n. Note 12 = 2&sup2; &times; 3.<br>Statement (1): n divisible by 6 = 2 &times; 3. But n could be 6 (not divisible by 12) or 12 (divisible). Not sufficient.<br>Statement (2): n divisible by 8 = 2&sup3;. But n could be 8 (not divisible by 12) or 24 (divisible). Not sufficient.<br>Together: n is divisible by both 6 and 8, so n is divisible by lcm(6, 8) = 24. Since 24 = 2 &times; 12, any multiple of 24 is a multiple of 12. So n is always divisible by 12 — answer is a definite YES. The common trap is multiplying 6 &times; 8 = 48 and worrying n need not be a multiple of 48; but sufficiency only requires the LCM, 24, which already guarantees divisibility by 12. Sufficient together; neither alone works. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "hard",
+  "promptHTML": "For real numbers <i>x</i> and <i>y</i>, what is the value of <i>x</i> + <i>y</i>?<br>(1) <i>x</i>&sup2; &minus; <i>y</i>&sup2; = 15<br>(2) <i>x</i> &minus; <i>y</i> = 3",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "We want x + y.<br>Statement (1): x&sup2; &minus; y&sup2; = (x &minus; y)(x + y) = 15. This is one equation in two unknowns. For example x = 4, y = 1 gives 16 &minus; 1 = 15 with x + y = 5, while x = 8, y = 7 gives 64 &minus; 49 = 15 with x + y = 15. Different values, so not sufficient.<br>Statement (2): x &minus; y = 3 says nothing about the sum; x + y can be anything. Not sufficient.<br>Together: substitute (x &minus; y) = 3 into (x &minus; y)(x + y) = 15 to get 3(x + y) = 15, so x + y = 5, a unique value. The trap is thinking (1) alone already factors into a usable form; but without the value of x &minus; y you cannot isolate x + y. Sufficient only together. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "very-hard",
+  "promptHTML": "If <i>x</i> is a nonzero real number, is <i>x</i> &gt; 0?<br>(1) <i>x</i>&sup3; &gt; <i>x</i><br>(2) <i>x</i>&sup2; &gt; <i>x</i>",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "We want to determine the sign of x.<br>Statement (1): x&sup3; &gt; x means x&sup3; &minus; x &gt; 0, i.e., x(x &minus; 1)(x + 1) &gt; 0. A sign analysis gives the solution set &minus;1 &lt; x &lt; 0 OR x &gt; 1. So x could be negative (e.g., x = &minus;0.5) or positive (e.g., x = 2). Not sufficient.<br>Statement (2): x&sup2; &gt; x means x(x &minus; 1) &gt; 0, giving x &lt; 0 OR x &gt; 1. Again x can be negative or positive. Not sufficient.<br>Together: intersect (&minus;1 &lt; x &lt; 0 or x &gt; 1) with (x &lt; 0 or x &gt; 1). The overlap is (&minus;1 &lt; x &lt; 0) OR (x &gt; 1). The interval (&minus;1, 0) still contains negative values (x = &minus;0.5 satisfies both: (&minus;0.5)&sup3; = &minus;0.125 &gt; &minus;0.5 and 0.25 &gt; &minus;0.5), while x = 2 is positive and satisfies both. So even together the sign is not determined. The trap is assuming the two inequalities pin down x &gt; 1; they don't eliminate the negative sliver. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "hard",
+  "promptHTML": "In an arithmetic sequence <i>a</i><sub>1</sub>, <i>a</i><sub>2</sub>, <i>a</i><sub>3</sub>, &hellip; (each term equals the previous term plus a fixed common difference), what is the value of <i>a</i><sub>10</sub>?<br>(1) <i>a</i><sub>4</sub> + <i>a</i><sub>7</sub> = 30<br>(2) <i>a</i><sub>1</sub> + <i>a</i><sub>10</sub> = 30",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Let the first term be a&#8321; and common difference d, so a&#8344; = a&#8321; + (k &minus; 1)d, and we want a&#8321;&#8320; = a&#8321; + 9d.<br>Statement (1): a&#8324; + a&#8327; = (a&#8321; + 3d) + (a&#8321; + 6d) = 2a&#8321; + 9d = 30. One equation, two unknowns. With a&#8321; = 3, d = 24/9 we get a&#8321;&#8320; = a&#8321; + 9d = 3 + 24 = 27; with a&#8321; = 6, d = 2 we get 2(6) + 18 = 30 and a&#8321;&#8320; = 6 + 18 = 24. Different. Not sufficient.<br>Statement (2): a&#8321; + a&#8321;&#8320; = a&#8321; + (a&#8321; + 9d) = 2a&#8321; + 9d = 30 — the identical equation as (1). Not sufficient.<br>Together: both statements reduce to exactly the same constraint 2a&#8321; + 9d = 30, which is one equation in two unknowns. We want a&#8321;&#8320; = a&#8321; + 9d, but from 2a&#8321; + 9d = 30 we cannot isolate a&#8321; + 9d (they differ by a&#8321;, which is free). The C-trap is assuming the two different-looking statements add information; they are the same equation. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "hard",
+  "promptHTML": "If <i>a</i> and <i>b</i> are positive integers, is <i>a</i><sup><i>b</i></sup> even?<br>(1) <i>a</i> is even.<br>(2) <i>b</i> is even.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The parity of a power a^b is governed entirely by the base a: a^b is even if and only if a is even (for positive integer exponent b &ge; 1).<br>Statement (1): a is even, so a = 2m. Then a^b = (2m)^b is divisible by 2 (since b &ge; 1), hence even. Definite YES — sufficient.<br>Statement (2): b is even tells us nothing about the base. If a = 2, b = 2, then 2&sup2; = 4 is even; but if a = 3, b = 2, then 3&sup2; = 9 is odd. Two different answers — not sufficient.<br>Since (1) alone settles it and (2) alone does not, the answer is A. The trap is the instinct that an even exponent forces evenness; exponents do not change parity — only the base does."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "very-hard",
+  "promptHTML": "If <i>x</i> and <i>y</i> are positive numbers, is <i>x</i> &gt; <i>y</i>?<br>(1) 2<sup><i>x</i></sup> &gt; 3<sup><i>y</i></sup><br>(2) <i>x</i> = <i>y</i> + 1",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "We want to decide whether x &gt; y, with x, y &gt; 0.<br>Statement (1): Suppose, for contradiction, that x &le; y. Then since the base 3 grows faster, 3^y &ge; 3^x &gt; 2^x (because 3^t &gt; 2^t for every t &gt; 0). This gives 2^x &lt; 3^y, contradicting the statement 2^x &gt; 3^y. Therefore x &le; y is impossible, so x &gt; y. Definite YES — sufficient.<br>Statement (2): x = y + 1, and since y &gt; 0, x = y + 1 &gt; y. Definite YES — sufficient.<br>Each statement alone forces x &gt; y, so the answer is D. The trap is treating (1) as ambiguous because the exponents and bases differ; but with positive exponents the larger base dominates, which is exactly what makes (1) sufficient."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "hard",
+  "promptHTML": "If <i>k</i> is an integer greater than 1, is <i>k</i> a perfect square?<br>(1) <i>k</i> has exactly three positive divisors.<br>(2) <i>k</i> is divisible by 4.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "We want to know whether k is a perfect square.<br>Statement (1): An integer has exactly three positive divisors if and only if it is the square of a prime, p&sup2; (its divisors are 1, p, p&sup2;). Any other form has either 2 divisors (a prime) or 4+ divisors. So k = p&sup2; is always a perfect square. Definite YES — sufficient.<br>Statement (2): k divisible by 4. Then k = 4 (perfect square) gives YES, but k = 8 (divisible by 4) is not a perfect square, giving NO. Not sufficient.<br>Since (1) alone determines it and (2) alone does not, the answer is A. The trap is thinking 'divisible by 4 = (2&sup2;) so it must be square'; the rest of the factorization can break the square property (e.g., 8, 12, 20)."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "very-hard",
+  "promptHTML": "What is the value of the real number <i>x</i>?<br>(1) |<i>x</i> &minus; 3| = 2<i>x</i><br>(2) <i>x</i>&sup2; &minus; 4<i>x</i> + 3 = 0",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "We want a single value of x.<br>Statement (1): |x &minus; 3| = 2x. The right side 2x must be &ge; 0, so x &ge; 0. Case x &ge; 3: x &minus; 3 = 2x &rArr; x = &minus;3, which violates x &ge; 3, rejected. Case x &lt; 3: &minus;(x &minus; 3) = 2x &rArr; 3 &minus; x = 2x &rArr; 3 = 3x &rArr; x = 1, which satisfies x &lt; 3 and 2x = 2 &ge; 0. So x = 1 uniquely. Sufficient. The trap is forgetting to discard the extraneous root x = &minus;3 (an absolute value cannot equal a negative number).<br>Statement (2): x&sup2; &minus; 4x + 3 = (x &minus; 1)(x &minus; 3) = 0 gives x = 1 or x = 3 — two values. Not sufficient.<br>Since (1) alone pins x = 1 and (2) alone leaves two options, the answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "hard",
+  "promptHTML": "If <i>x</i> and <i>y</i> are positive integers with <i>x</i> &lt; <i>y</i>, is <i>y</i> &minus; <i>x</i> even?<br>(1) Both <i>x</i> and <i>y</i> are prime numbers.<br>(2) The product <i>xy</i> is odd.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "y &minus; x is even exactly when x and y have the same parity (both odd or both even).<br>Statement (1): both prime. Take x = 2, y = 3: y &minus; x = 1, odd. Take x = 3, y = 5: y &minus; x = 2, even. Different answers — not sufficient. The trap: most primes are odd, but 2 is prime and even, breaking the pattern.<br>Statement (2): xy is odd. A product is odd only if both factors are odd, so x and y are both odd. Then y &minus; x = odd &minus; odd = even. Definite YES — sufficient.<br>Since (2) alone works and (1) alone does not, the answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "hard",
+  "promptHTML": "If <i>x</i> and <i>y</i> are integers, is the product <i>xy</i> negative?<br>(1) <i>x</i> + <i>y</i> = &minus;4<br>(2) <i>x</i> &minus; <i>y</i> = 6",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "xy &lt; 0 means x and y have opposite signs.<br>Statement (1): x + y = &minus;4. Try x = &minus;1, y = &minus;3: xy = 3 &gt; 0 (NO). Try x = 2, y = &minus;6: xy = &minus;12 &lt; 0 (YES). Different — not sufficient.<br>Statement (2): x &minus; y = 6. Try x = 7, y = 1: xy = 7 &gt; 0 (NO). Try x = 1, y = &minus;5: xy = &minus;5 &lt; 0 (YES). Not sufficient.<br>Together: solve the system. Adding the equations: 2x = 2 &rArr; x = 1; then y = &minus;4 &minus; 1 = &minus;5. So xy = (1)(&minus;5) = &minus;5 &lt; 0 — a definite YES. The two linear equations pin down unique x and y, so the answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "hard",
+  "promptHTML": "A geometric sequence has first term <i>a</i> &gt; 0 and common ratio <i>r</i>, so its terms are <i>a</i>, <i>ar</i>, <i>ar</i>&sup2;, <i>ar</i>&sup3;, &hellip; . Is <i>r</i> &gt; 1?<br>(1) The third term is greater than the first term.<br>(2) The second term is greater than the first term.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Since a &gt; 0, we can divide inequalities by a without flipping them.<br>Statement (1): third term &gt; first term means ar&sup2; &gt; a &rArr; r&sup2; &gt; 1 &rArr; r &gt; 1 OR r &lt; &minus;1. For r = 2 the answer is YES; for r = &minus;2 the answer is NO. Not sufficient. The trap: squaring loses the sign, so a 'larger third term' allows a large-magnitude negative ratio.<br>Statement (2): second term &gt; first term means ar &gt; a &rArr; r &gt; 1 (dividing by a &gt; 0). Definite YES — sufficient.<br>Since (2) alone settles it and (1) alone does not, the answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "hard",
+  "promptHTML": "If <i>x</i> is a nonzero real number, is <i>x</i><sup>4</sup> = 16?<br>(1) <i>x</i>&sup2; = 4<br>(2) <i>x</i>&sup3; = 8",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "We need a definite YES/NO for x&#8308; = 16.<br>Statement (1): x&sup2; = 4 gives x = 2 or x = &minus;2. Although x is not uniquely determined, in both cases x&#8308; = (x&sup2;)&sup2; = 4&sup2; = 16. So the answer to the question is a definite YES regardless of the sign. Sufficient. The trap: candidates reject (1) because x itself has two values, but the question only asks about x&#8308;, which is the same for both.<br>Statement (2): x&sup3; = 8 has the single real solution x = 2, so x&#8308; = 16. Definite YES — sufficient.<br>Each statement alone yields a definite YES, so the answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If x and y are positive integers, is the product xy even?<br>(1) x + y is odd.<br>(2) x &minus; y is odd.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "xy is even exactly when at least one of x, y is even.<br><br>Statement (1): x + y is odd. A sum of two integers is odd only when one is even and the other is odd (opposite parity). Then exactly one factor is even, so xy is even. Always yes. Sufficient.<br><br>Statement (2): x &minus; y is odd. A difference is odd under the same condition: x and y have opposite parity. Again one of them is even, so xy is even. Always yes. Sufficient.<br><br>The trap is to think you need both statements to pin down which one is even; you do not, because either parity-clash alone forces an even factor. Each statement alone answers the question. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If k is an integer greater than 1, is k a prime number?<br>(1) k = m&sup2; + m + 1 for some positive integer m.<br>(2) k has exactly two distinct positive divisors.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Statement (1): k = m&sup2; + m + 1. Test values: m = 1 gives k = 3 (prime); m = 4 gives k = 21 = 3&middot;7 (not prime); m = 2 gives 7 (prime); m = 5 gives 31 (prime). Since this expression yields both primes and composites, we cannot answer yes/no. Not sufficient. (The form looks 'special' enough to seem prime-generating, which is the trap.)<br><br>Statement (2): k has exactly two distinct positive divisors. By definition, an integer greater than 1 is prime if and only if its only positive divisors are 1 and itself, i.e. exactly two divisors. So this is precisely the definition of prime, giving a definitive 'yes'. Sufficient.<br><br>Statement (2) alone suffices and (1) does not. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "If x is a positive integer, what is the remainder when x is divided by 12?<br>(1) When x is divided by 9, the remainder is 4.<br>(2) When x is divided by 10, the remainder is 7.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "We want x mod 12.<br><br>Statement (1): x &equiv; 4 (mod 9). Checking x = 4, 13, 22, 31, ... gives x mod 12 = 4, 1, 10, 7, ... &mdash; multiple values. Not sufficient.<br><br>Statement (2): x &equiv; 7 (mod 10). Values 7, 17, 27, 37, ... give x mod 12 = 7, 5, 3, 1, ... &mdash; multiple values. Not sufficient.<br><br>Together: by CRT the pair (x &equiv; 4 mod 9, x &equiv; 7 mod 10) determines x only modulo lcm(9, 10) = 90, not modulo 12. The smallest solutions are x = 67 and x = 157 (67 + 90). Now 67 mod 12 = 7, but 157 mod 12 = 1. Two different remainders survive, so the answer is still not determined. The trap is assuming two congruences always pin a third remainder; here 12 does not divide lcm(9, 10) = 90, so it fails. Not sufficient even together. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If p and q are integers, is p + q even?<br>(1) pq is even.<br>(2) p&sup2; + q&sup2; is even.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "p + q is even exactly when p and q have the same parity (both even or both odd).<br><br>Statement (1): pq is even means at least one of p, q is even. This allows (even, even) &rarr; sum even, but also (even, odd) &rarr; sum odd. Both outcomes possible. Not sufficient.<br><br>Statement (2): p&sup2; + q&sup2; is even. A square has the same parity as its base, so p&sup2; + q&sup2; has the same parity as p + q. Thus p&sup2; + q&sup2; even forces p + q even &mdash; equivalently, p and q must share parity. Definitive 'yes'. Sufficient.<br><br>The trap is treating (1) as if 'product even' tells you about the sum; it does not. Statement (2) alone settles it. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If n is a positive integer, how many positive divisors does n have?<br>(1) n = p&sup3;q, where p and q are distinct prime numbers.<br>(2) n has exactly three distinct prime factors.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The number of positive divisors of n = (e&#8321; + 1)(e&#8322; + 1)&middot;&middot;&middot; where e&#8336; are the exponents in the prime factorization.<br><br>Statement (1): n = p&sup3;q with p, q distinct primes. The exponents are 3 and 1, so the divisor count is (3 + 1)(1 + 1) = 4&middot;2 = 8, regardless of which primes p and q are. A unique value. Sufficient.<br><br>Statement (2): n has three distinct prime factors, but the exponents are unknown. For example pqr has (1+1)&sup3; = 8 divisors, while p&sup2;qr has 3&middot;2&middot;2 = 12 divisors. The count varies. Not sufficient.<br><br>The trap is thinking 'three prime factors' fixes the answer; only the actual exponents do, which (1) supplies. Statement (1) alone suffices. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If n is a positive integer, what is the remainder when n is divided by 6?<br>(1) When n is divided by 2, the remainder is 1.<br>(2) When n is divided by 3, the remainder is 2.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "We want n mod 6.<br><br>Statement (1): n &equiv; 1 (mod 2), i.e. n is odd. Then n mod 6 &isin; {1, 3, 5}. Multiple possibilities. Not sufficient.<br><br>Statement (2): n &equiv; 2 (mod 3). Then n mod 6 &isin; {2, 5}. Multiple possibilities. Not sufficient.<br><br>Together: n is odd AND n &equiv; 2 (mod 3). Since 6 = 2&middot;3 and gcd(2, 3) = 1, the pair of congruences determines n uniquely modulo 6. The only residue that is odd and leaves remainder 2 mod 3 is 5 (5 is odd; 5 = 3+2). So n mod 6 = 5 for every such n. Sufficient together, but neither alone. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "Is the positive integer n a perfect square?<br>(1) n has an odd number of positive divisors.<br>(2) The units digit of n is 6.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Statement (1): A positive integer has an odd number of divisors if and only if it is a perfect square (divisors pair up d &harr; n/d except when d = n/d, which happens only for a square). So an odd divisor count guarantees n is a perfect square. Definitive 'yes'. Sufficient.<br><br>Statement (2): units digit 6. Compare n = 16 = 4&sup2; (a perfect square) with n = 6 or n = 26 (not perfect squares). Both yes and no occur. Not sufficient. (The trap: squares can end in 6, but so can non-squares.)<br><br>Statement (1) alone suffices. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If x and y are positive integers, is the product xy divisible by 4?<br>(1) x is even.<br>(2) y is even.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "4 | xy requires xy to contain at least two factors of 2.<br><br>Statement (1): x is even, contributing at least one factor of 2. But if y is odd, xy may have only one factor of 2: e.g. x = 2, y = 1 gives xy = 2, not divisible by 4; x = 4, y = 1 gives 4, which is. Both outcomes possible. Not sufficient.<br><br>Statement (2): y is even, by the same reasoning with roles swapped (y = 2, x = 1 &rarr; xy = 2). Not sufficient.<br><br>Together: x is even and y is even, so each supplies at least one factor of 2, giving xy at least 2&middot;2 = 4 as a factor. Hence 4 | xy always. The trap is concluding from a single even factor that 4 divides the product. Sufficient together only. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "If n is an integer greater than 1, is n a prime number?<br>(1) Both n &minus; 2 and n + 2 are prime numbers.<br>(2) n is odd.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Statement (1): n &minus; 2 and n + 2 are both prime. Try n = 5: 3 and 7 are prime, and 5 is prime (yes). Try n = 9: 7 and 11 are prime, but 9 = 3&middot;3 is not prime (no). So both answers occur. Not sufficient.<br><br>Statement (2): n is odd. Odd numbers include primes (e.g. 7) and composites (e.g. 9, 15). Not sufficient.<br><br>Together: n is odd AND n&plusmn;2 are both prime. Note 5 (prime) and 9 (composite) are BOTH odd and BOTH satisfy statement (1) &mdash; 3, 7 prime around 5; 7, 11 prime around 9. So even with both statements, n could be prime (5) or composite (9). The trap is assuming that neighbours being prime forces n prime, or that adding 'odd' resolves it; neither does. Not sufficient even together. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "If n is a positive integer, what is the value of n?<br>(1) n&sup2; has exactly 9 positive divisors.<br>(2) n is the smallest integer greater than 50 that is divisible by both 6 and 8.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Statement (1): n&sup2; has exactly 9 divisors. Since 9 = 9 or 3&times;3, n&sup2; is either r&#8312; (so n = r&#8308;) or s&sup2;t&sup2; (so n = st), for primes r, s, t. Many n satisfy this: n = 6 (6&sup2; = 36 = 2&sup2;3&sup2; has 9 divisors), n = 10 (100 = 2&sup2;5&sup2;, 9 divisors), n = 16 (256 = 2&#8312;, 9 divisors), n = 15, etc. The value of n is not unique. Not sufficient.<br><br>Statement (2): the smallest integer greater than 50 divisible by both 6 and 8. The numbers divisible by both are the multiples of lcm(6, 8) = 24: 24, 48, 72, 96, ... The smallest one exceeding 50 is 72. (The trap is using 6&times;8 = 48, which is not greater than 50 and is also the wrong combine.) This determines n = 72 uniquely. Sufficient.<br><br>Statement (2) alone suffices and (1) does not. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If x is a positive integer, is x divisible by 24?<br>(1) x is divisible by 12.<br>(2) x is divisible by 9.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "24 = 2&sup3;&middot;3, so x must contain at least three 2's and one 3.<br><br>Statement (1): 12 | x means x has at least 2&sup2;&middot;3. x = 12 is not divisible by 24, x = 24 is. Not sufficient.<br><br>Statement (2): 9 | x means x has at least 3&sup2;; nothing about factors of 2. x = 9 is not divisible by 24, x = 72 is. Not sufficient.<br><br>Together: x is divisible by 12 and by 9, hence by lcm(12, 9) = 36 = 2&sup2;&middot;3&sup2;. But 36 has only two factors of 2, while 24 needs three. So x = 36 is divisible by both 12 and 9 yet NOT by 24, whereas x = 72 is divisible by 24. Both outcomes survive. The trap is assuming combining the statements automatically yields divisibility by 24; the LCM is 36, which lacks the required 2&sup3;. Not sufficient even together. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "hard",
+  "promptHTML": "What is the area of triangle ABC?<br>(1) The side lengths are AB = 13, BC = 14, and CA = 15.<br>(2) AB = 13 and BC = 14.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "We need a single value for the area.<br><br>Statement (1): All three sides are fixed (13, 14, 15). By SSS, the triangle is rigid, so its area is uniquely determined. Using Heron's formula, s = (13+14+15)/2 = 21, and area = &radic;(21&middot;8&middot;7&middot;6) = &radic;7056 = 84. A definite value exists, so (1) is sufficient.<br><br>Statement (2): Only two sides (13 and 14) are given; the included angle is free, so area = (1/2)(13)(14)sin&theta; can be anything from just above 0 up to 91. For example a third side of 15 gives area 84, while a third side of 5 gives area &asymp; 32.5. Different areas, so (2) is NOT sufficient.<br><br>Statement (1) alone is sufficient; statement (2) alone is not. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "very-hard",
+  "promptHTML": "A circle in the coordinate plane passes through the points (0, 0) and (8, 0). What is the radius of the circle?<br>(1) The center of the circle lies on the line y = x.<br>(2) The circle also passes through the point (4, 4).",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "The center is equidistant from (0,0) and (8,0), so it lies on their perpendicular bisector, the vertical line x = 4. Thus the center is (4, k) for some k, and r&sup2; = 4&sup2; + k&sup2;. We need to pin down k.<br><br>Statement (1): The center also lies on y = x. Setting x = 4 gives the single point (4, 4), so k = 4 uniquely. Then r = &radic;(16 + 16) = 4&radic;2. Sufficient.<br><br>Statement (2): Three non-collinear points (0,0), (8,0), (4,4) determine exactly one circle. Equidistance from (0,0) and (4,4) with center (4,k): 16 + k&sup2; = (k&minus;4)&sup2;, giving 16 = &minus;8k + 16, so k = 0, center (4,0), r = 4. Sufficient.<br><br>Each statement alone determines the radius. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "hard",
+  "promptHTML": "A rectangular garden has length L and width W. What is its perimeter?<br>(1) The area of the garden is 48 square meters.<br>(2) The length of the garden's diagonal is 10 meters.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Perimeter = 2(L + W), so we need L + W.<br><br>Statement (1): LW = 48. Many (L, W) pairs work (e.g., 6&times;8 gives L+W = 14; 4&times;12 gives L+W = 16), so the perimeter is not fixed. NOT sufficient.<br><br>Statement (2): L&sup2; + W&sup2; = 10&sup2; = 100. Again L + W is not determined (e.g., 6&times;8 gives 14; 0&times;10 in the limit gives 10), so NOT sufficient.<br><br>Together: Use (L + W)&sup2; = L&sup2; + W&sup2; + 2LW = 100 + 2(48) = 196, so L + W = 14 (positive). Perimeter = 2(14) = 28. A unique value, so together they are sufficient. The trap is treating the diagonal as if it directly gives L + W; it doesn't without the area. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "very-hard",
+  "promptHTML": "In the coordinate plane, line L crosses the x-axis at a positive value and the y-axis at a positive value, forming a triangle with the two axes. What is the area of that triangle?<br>(1) Line L passes through the point (3, 4).<br>(2) Line L passes through the point (3, 4) and has slope &minus;2.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "If the intercepts are p > 0 and q > 0, the triangle's area is pq/2. We need pq.<br><br>Statement (1): The line passes through (3, 4), so 3/p + 4/q = 1. This is one equation in two unknowns; many lines qualify. For instance p = 6 gives q = 8 (area 24), while p = 9 gives q = 6 (area 27). Different areas, so NOT sufficient.<br><br>Statement (2): Slope &minus;2 through (3, 4) fully determines the line: y &minus; 4 = &minus;2(x &minus; 3), i.e., y = &minus;2x + 10. The y-intercept is 10 and the x-intercept is 5 (both positive), so area = (1/2)(5)(10) = 25. A single value, so sufficient.<br><br>Statement (2) alone is sufficient; statement (1) alone is not. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "very-hard",
+  "promptHTML": "Quadrilateral WXYZ is a parallelogram. Is WXYZ a square?<br>(1) All four interior angles of WXYZ are equal.<br>(2) The two diagonals of WXYZ are equal in length.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "A square requires both equal sides and right angles. WXYZ is given as a parallelogram throughout.<br><br>Statement (1): All four angles equal means each is 90&deg;, so WXYZ is a rectangle. But a 3&times;5 rectangle is not a square, while a 4&times;4 one is. NOT sufficient.<br><br>Statement (2): In a parallelogram, equal diagonals force the figure to be a rectangle. Same situation as above: could be a non-square rectangle or a square. NOT sufficient.<br><br>Together: Both statements say the same thing for a parallelogram (right angles &hArr; equal diagonals), so combining them still only guarantees a rectangle. A 3&times;5 rectangle satisfies both and is not a square; a 4&times;4 square also satisfies both. The answer to 'Is it a square?' remains ambiguous. The trap is assuming equal diagonals adds information to right angles. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "hard",
+  "promptHTML": "A sector is cut from a circle. What is the radius of the circle?<br>(1) The sector's central angle measures 40&deg;.<br>(2) The arc bounding the sector has length 4&pi;.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Arc length = (&theta;/360)&middot;2&pi;r, which links the central angle &theta;, the radius r, and the arc length.<br><br>Statement (1): &theta; = 40&deg; gives a shape (1/9 of the circle) but no scale, so r is unknown. NOT sufficient.<br><br>Statement (2): Arc length 4&pi; without the angle cannot fix r; a small angle on a large circle or a large angle on a small circle can both give arc 4&pi;. NOT sufficient.<br><br>Together: 4&pi; = (40/360)&middot;2&pi;r = (1/9)(2&pi;r) = 2&pi;r/9. So 2&pi;r = 36&pi;, giving r = 18. A unique value, so together they are sufficient. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "hard",
+  "promptHTML": "In triangle ABC, point D lies on side AB and point E lies on side AC, with segment DE parallel to side BC. What is the area of triangle ADE?<br>(1) AD/AB = 2/5 and the area of triangle ABC is 50.<br>(2) The area of trapezoid DBCE is 42.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Since DE &parallel; BC, triangle ADE is similar to triangle ABC with ratio k = AD/AB, so area(ADE) = k&sup2;&middot;area(ABC), and area(trapezoid DBCE) = (1 &minus; k&sup2;)&middot;area(ABC).<br><br>Statement (1): k = 2/5 and area(ABC) = 50, so area(ADE) = (2/5)&sup2;&middot;50 = (4/25)&middot;50 = 8. A unique value, so sufficient.<br><br>Statement (2): area(DBCE) = 42 alone gives (1 &minus; k&sup2;)&middot;area(ABC) = 42, one equation in two unknowns (k and area(ABC)). For k = 1/2, area(ABC) = 56 and area(ADE) = 14; for k = 2/5, area(ABC) = 50 and area(ADE) = 8. Different values, so NOT sufficient.<br><br>Statement (1) alone is sufficient; statement (2) alone is not. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "very-hard",
+  "promptHTML": "A right triangle has legs of length a and b and hypotenuse c, all positive. What is the length of the hypotenuse?<br>(1) The area of the triangle is 6.<br>(2) The three side lengths are consecutive integers.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Let the legs be a and b (right angle between them) and hypotenuse c = &radic;(a&sup2; + b&sup2;).<br><br>Statement (1): Area = (1/2)ab = 6, so ab = 12. The hypotenuse is not fixed: legs 3 and 4 give c = 5, but legs 2 and 6 give c = &radic;40 &asymp; 6.32. Different hypotenuses, so NOT sufficient.<br><br>Statement (2): The sides are consecutive integers n, n+1, n+2, with n+2 the hypotenuse. Then n&sup2; + (n+1)&sup2; = (n+2)&sup2;, i.e., 2n&sup2; + 2n + 1 = n&sup2; + 4n + 4, so n&sup2; &minus; 2n &minus; 3 = 0, giving n = 3 (rejecting n = &minus;1). The sides are 3, 4, 5, so the hypotenuse is 5. A unique value, so sufficient.<br><br>This is a C-trap: it looks like you need both, but (2) alone pins everything down while (1) does not. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "A mother and her daughter have current ages M and D (in years), respectively. What is the daughter's current age?<br>(1) Five years ago, the mother's age was three times the daughter's age at that time.<br>(2) Three years from now, the mother's age will be twice the daughter's age at that time.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Let M and D be the current ages.<br>Statement (1): M &minus; 5 = 3(D &minus; 5), i.e. M = 3D &minus; 10. This is one equation in two unknowns, so D is not determined. NOT sufficient.<br>Statement (2): M + 3 = 2(D + 3), i.e. M = 2D + 3. Again one equation in two unknowns. NOT sufficient.<br>Together: 3D &minus; 10 = 2D + 3 &rArr; D = 13 (and M = 29). A unique value, so the two statements together pin down the daughter's age. A common trap is thinking one age relation alone fixes the answer, but each statement leaves a free variable. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "very-hard",
+  "promptHTML": "Working alone, painter A can paint a fence in some whole number of days. How many days does A take to paint the fence alone?<br>(1) A and B together paint the fence in 6 days, and B works at exactly half of A's daily rate.<br>(2) A and B together paint the fence in 6 days.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Let A's rate be a and B's rate be b (fences per day).<br>Statement (1): a + b = 1/6 and b = a/2. Substituting, a + a/2 = 1/6 &rArr; (3/2)a = 1/6 &rArr; a = 1/9, so A alone takes 9 days. A unique value. SUFFICIENT.<br>Statement (2): a + b = 1/6 only. Even with the whole-number constraint, A's solo time could be 7, 8, 9, ... days (each leaves a valid positive b), so it is not determined. NOT sufficient.<br>Since (1) alone determines the answer and (2) alone does not, the answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "A train travels a fixed distance from station P to station Q at a constant speed. What is the distance from P to Q?<br>(1) Traveling at 60 km/h, the train takes 2 hours longer than it would at 80 km/h.<br>(2) The train's average speed on the trip is 80 km/h.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Let the distance be d km.<br>Statement (1): d/60 &minus; d/80 = 2. Compute d(1/60 &minus; 1/80) = d &middot; (4 &minus; 3)/240 = d/240 = 2 &rArr; d = 480 km. A unique value. SUFFICIENT.<br>Statement (2): knowing only the speed (80 km/h) gives no information about distance or time. NOT sufficient.<br>The C-trap here is assuming you need a speed value from (2) to use the time difference, but the difference of two reciprocal-time expressions already fixes d. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "very-hard",
+  "promptHTML": "Two saline solutions, X and Y, have unknown salt concentrations (by volume). What is the salt concentration of solution X?<br>(1) Mixing 2 L of X with 3 L of Y yields 5 L of solution that is 20% salt.<br>(2) Mixing 4 L of X with 1 L of Y yields 5 L of solution that is 28% salt.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Let x and y be the concentrations (as fractions) of X and Y.<br>Statement (1): 2x + 3y = 0.20 &times; 5 = 1.0. One equation, two unknowns. NOT sufficient.<br>Statement (2): 4x + y = 0.28 &times; 5 = 1.4. One equation, two unknowns. NOT sufficient.<br>Together: from 4x + y = 1.4 we get y = 1.4 &minus; 4x. Substitute into 2x + 3y = 1.0: 2x + 3(1.4 &minus; 4x) = 1.0 &rArr; 2x + 4.2 &minus; 12x = 1.0 &rArr; &minus;10x = &minus;3.2 &rArr; x = 0.32 (32%), and y = 0.12. Unique solution. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "In a class of 40 students, each student may study French, Spanish, both, or neither. How many students study both French and Spanish?<br>(1) 25 students study French.<br>(2) 18 students study Spanish.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Let F = French, S = Spanish, B = both, N = neither. By inclusion-exclusion, (number studying at least one) = F + S &minus; B, and (at least one) = 40 &minus; N.<br>Statement (1): F = 25 only. NOT sufficient.<br>Statement (2): S = 18 only. NOT sufficient.<br>Together: B = F + S &minus; (at least one) = 25 + 18 &minus; (40 &minus; N) = 43 &minus; 40 + N = 3 + N. Because N (the number studying neither) is unknown and can range from 0 up to 15, B is not determined (e.g., N = 0 gives B = 3; N = 5 gives B = 8). The trap is applying B = 25 + 18 &minus; 40 = 3 while ignoring that some students may study neither. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "very-hard",
+  "promptHTML": "A father's current age is F years and his son's current age is S years. What is the son's current age?<br>(1) The father is 30 years older than the son.<br>(2) Five years ago the father's age was 4 times the son's age at that time, and five years from now the father's age will be 2.5 times the son's age at that time.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Statement (1): F = S + 30. One equation, two unknowns; S is not determined. NOT sufficient.<br>Statement (2): F &minus; 5 = 4(S &minus; 5) &rArr; F = 4S &minus; 15, and F + 5 = 2.5(S + 5) &rArr; F = 2.5S + 7.5. Setting equal: 4S &minus; 15 = 2.5S + 7.5 &rArr; 1.5S = 22.5 &rArr; S = 15 (and F = 45). A unique value, so statement (2) by itself fixes the son's age. SUFFICIENT.<br>Since (2) alone works and (1) alone does not, the answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "A water tank is filled by pipe A alone. How many hours does pipe A take to fill the empty tank by itself?<br>(1) Pipes A and B together fill the tank in 4 hours, and pipe B alone fills it in 12 hours.<br>(2) Pipe A fills one-third of the tank in 2 hours.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Statement (1): A's rate = (A and B together) &minus; (B alone) = 1/4 &minus; 1/12 = 3/12 &minus; 1/12 = 2/12 = 1/6 tank per hour, so A alone takes 6 hours. SUFFICIENT.<br>Statement (2): A fills 1/3 of the tank in 2 hours, so A's rate = (1/3)/2 = 1/6 tank per hour, giving 6 hours for the full tank. SUFFICIENT.<br>Each statement alone determines A's solo time (6 hours). The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "very-hard",
+  "promptHTML": "A motorboat travels on a river that has a steady current. What is the speed of the current (in km/h)?<br>(1) The boat's downstream speed is 1.5 times its upstream speed.<br>(2) Traveling downstream, the boat covers a certain stretch of the river in 2 hours.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Let b be the boat's speed in still water and c the current speed. Downstream speed = b + c, upstream speed = b &minus; c.<br>Statement (1): b + c = 1.5(b &minus; c) &rArr; b + c = 1.5b &minus; 1.5c &rArr; 2.5c = 0.5b &rArr; b = 5c. This is only a ratio; c is not determined. NOT sufficient.<br>Statement (2): downstream speed &times; 2 hours = distance, but the distance (the 'certain stretch') is unknown, so neither the downstream speed nor c can be found. NOT sufficient.<br>Together: from (1), b = 5c, so downstream speed = b + c = 6c, and from (2), 6c &times; 2 = distance. With the distance still unknown, c remains undetermined. The C-trap is assuming the two facts must combine to a value; they do not. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "A merchant blends two grades of rice, grade A and grade B, to make a single batch. What is the cost per kilogram of grade A rice?<br>(1) Mixing 8 kg of grade A with 12 kg of grade B produces 20 kg of blend worth 42 currency units per kg.<br>(2) Grade B rice costs 50 currency units per kg.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Let a and b be the per-kg costs of grades A and B.<br>Statement (1): 8a + 12b = 20 &times; 42 = 840. One equation, two unknowns; a not determined. NOT sufficient.<br>Statement (2): b = 50 only, with no mixing relation involving a. NOT sufficient.<br>Together: 8a + 12(50) = 840 &rArr; 8a + 600 = 840 &rArr; 8a = 240 &rArr; a = 30. A unique value. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "At a conference, every one of the 60 attendees speaks English, French, or both (no attendee speaks neither). How many attendees speak both English and French?<br>(1) 45 attendees speak English.<br>(2) 22 attendees speak only English and 23 attendees speak only French.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Let onlyE, onlyF, and B (both) be the three groups. Since no one speaks neither, onlyE + onlyF + B = 60.<br>Statement (1): English speakers = onlyE + B = 45. This gives one equation with onlyE and B both unknown, so B cannot be isolated. NOT sufficient.<br>Statement (2): onlyE = 22 and onlyF = 23, so B = 60 &minus; 22 &minus; 23 = 15. A unique value. SUFFICIENT.<br>Since (2) alone works and (1) alone does not, the answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "Everyone who visited a museum on Saturday was either an adult or a child, and each visitor either did or did not buy a souvenir. What percent of Saturday's visitors bought a souvenir?<br>(1) Adults made up 60% of the visitors; 30% of the adults and 20% of the children bought a souvenir.<br>(2) Exactly 250 visitors bought a souvenir.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "We want the overall percent of visitors who bought a souvenir.<br><b>Statement (1):</b> Children are 40% of visitors. Treat total as 100 visitors: 60 adults, 40 children. Souvenir buyers = 30% of 60 + 20% of 40 = 18 + 8 = 26, i.e., 26% of all visitors. The actual head count is not needed because every quantity is a percent of the same base. SUFFICIENT.<br><b>Statement (2):</b> 250 buyers, but with no total number of visitors the percent is unknown. NOT sufficient.<br>The trap is assuming you need the actual visitor count (so you reach for statement 2). You do not; the percentages alone fix the rate. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A set consists of 8 distinct positive integers. What is the median of the set? (For an 8-element set the median is the average of the 4th and 5th smallest values.)<br>(1) Exactly four of the integers are less than 16, and exactly four of the integers are greater than 18.<br>(2) The 4th smallest and the 5th smallest integers sum to 34.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Median = (4th smallest + 5th smallest)/2.<br><b>Statement (1):</b> 'Exactly four are less than 16' forces the 4th smallest to be below 16; 'exactly four are greater than 18' forces the 5th smallest to be above 18. But these only bound the two middle values, not fix them. For example the two middle values could be 15 and 19 (median 17) or 12 and 25 (median 18.5). NOT sufficient.<br><b>Statement (2):</b> The two middle values sum to 34, so the median is exactly 34/2 = 17, regardless of the other values. SUFFICIENT.<br>The trap in (1) is assuming '<16' and '>18' pin the middle pair tightly enough; they don't. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A delivery van travels from depot P to depot Q and then returns to P along the exact same route. What was the van's average speed for the entire round trip?<br>(1) On the outbound leg the van averaged 60 km/h, and on the return leg it averaged 40 km/h.<br>(2) The total distance covered on the round trip was 240 km, and the total travel time was 5 hours.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Average speed = total distance / total time.<br><b>Statement (1):</b> The two legs cover the same distance d. Total distance = 2d, total time = d/60 + d/40. Average = 2d / (d/60 + d/40) = 2 / (1/60 + 1/40) = 2 / (5/120) = 48 km/h. The unknown d cancels, so a numeric value is fixed. SUFFICIENT.<br><b>Statement (2):</b> Average = total distance / total time = 240/5 = 48 km/h directly. SUFFICIENT.<br>The trap is averaging 60 and 40 to get 50 (the arithmetic mean), or thinking you need d in statement (1). Each statement alone gives 48. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "very-hard",
+  "promptHTML": "The boxes in a shipment have an average (arithmetic mean) weight of 24 kg. One particular box, weighing 60 kg, is removed from the shipment. What is the average weight of the boxes that remain?<br>(1) The shipment originally contained more than 5 boxes.<br>(2) The total weight of the original shipment was greater than 200 kg and less than 260 kg.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Let n be the original number of boxes. Total weight = 24n. After removing the 60 kg box, new average = (24n &minus; 60)/(n &minus; 1). We need n.<br><b>Statement (1):</b> n > 5 leaves n undetermined. NOT sufficient.<br><b>Statement (2):</b> 200 < 24n < 260 means 8.33 < n < 10.83, so n = 9 or n = 10. Two possibilities. NOT sufficient.<br><b>Together:</b> n > 5 doesn't eliminate either of n = 9 or n = 10. If n = 9: (216 &minus; 60)/8 = 19.5. If n = 10: (240 &minus; 60)/9 = 20. Two different answers, so still NOT sufficient. This is a C-trap: the bound feels like it should pin n down, but two integer values survive. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A set of 5 distinct positive integers has a range (largest value minus smallest value) of 12. What is the largest integer in the set?<br>(1) The smallest integer in the set is 7.<br>(2) The median of the set is 14.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Range = largest &minus; smallest = 12, so largest = smallest + 12.<br><b>Statement (1):</b> Smallest = 7, so largest = 7 + 12 = 19. SUFFICIENT.<br><b>Statement (2):</b> The median (3rd value) is 14, but this fixes neither the smallest nor the largest. For instance smallest 5/largest 17, or smallest 3/largest 15, both can have median 14 with distinct integers. NOT sufficient.<br>The trap is treating the median as if it locates the extremes. Only the smallest value, combined with the known range, gives the largest. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "very-hard",
+  "promptHTML": "A shopkeeper bought an article and later sold it. What was his profit, expressed as a percent of the cost price?<br>(1) The article was sold for 1250.<br>(2) Had the article been sold for 250 more than its actual selling price, the profit would have been exactly 50% of the cost price.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Let cost = c and selling price = S. Profit percent = (S &minus; c)/c &times; 100.<br><b>Statement (1):</b> S = 1250, but with cost unknown the profit percent is unknown. NOT sufficient.<br><b>Statement (2):</b> S + 250 = 1.5c, one equation in two unknowns (S and c). NOT sufficient.<br><b>Together:</b> Substitute S = 1250: 1250 + 250 = 1.5c, so 1500 = 1.5c, giving c = 1000. Profit percent = (1250 &minus; 1000)/1000 &times; 100 = 25%. SUFFICIENT. Neither statement alone pins both the selling price and the cost; only together do they determine c and hence the percent. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "Five positive integers (not necessarily distinct) have an average (arithmetic mean) of 30. What is the median of the five integers?<br>(1) The smallest of the integers is 10 and the largest is 50.<br>(2) Four of the five integers are 10, 25, 25, and 50.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The five integers sum to 5 &times; 30 = 150. The median is the 3rd value when sorted.<br><b>Statement (1):</b> Smallest 10, largest 50, so the middle three sum to 150 &minus; 60 = 90. But the median can vary: {10, 10, 40, 40, 50} has median 40, while {10, 30, 30, 30, 50} has median 30. Both have sum 150. NOT sufficient.<br><b>Statement (2):</b> The fifth integer = 150 &minus; (10 + 25 + 25 + 50) = 150 &minus; 110 = 40. The full set is {10, 25, 25, 40, 50}; sorted, the median (3rd value) is 25. SUFFICIENT.<br>The trap is thinking statement (1)'s extremes plus the fixed sum determine the middle; they don't. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "The price of a commodity changed each month from January to March. By what percent was the March price greater than the January price?<br>(1) From January to February the price increased by 10%.<br>(2) From February to March the price increased by 20%.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Successive percent changes multiply.<br><b>Statement (1):</b> Only the Jan&rarr;Feb change (10%) is known; the Feb&rarr;Mar change is unknown, so the Jan&rarr;Mar change is unknown. NOT sufficient.<br><b>Statement (2):</b> Only the Feb&rarr;Mar change (20%) is known; the Jan&rarr;Feb change is unknown. NOT sufficient.<br><b>Together:</b> March price = January &times; 1.10 &times; 1.20 = January &times; 1.32, an increase of 32%. SUFFICIENT. The classic trap is adding 10% + 20% = 30%; the correct compounding gives 32%, and that value is fixed without knowing the actual price. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "very-hard",
+  "promptHTML": "At a training program, all participants are divided into a morning batch and an evening batch. The average (arithmetic mean) score of all participants combined is 78. What is the average score of the morning batch?<br>(1) The average score of the evening batch is 84.<br>(2) The morning batch has 10 more participants than the evening batch.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Let the evening batch have e participants (average 84) and the morning batch have m participants (average M). Overall: (mM + 84e)/(m + e) = 78.<br><b>Statement (1):</b> Gives the evening average 84 but no batch sizes. NOT sufficient.<br><b>Statement (2):</b> m = e + 10, but no scores. NOT sufficient.<br><b>Together:</b> m = e + 10 and mM + 84e = 78(m + e). Solving for M gives M = [78(m + e) &minus; 84e]/m, which still depends on e. For e = 5 (m = 15): M = 76; for e = 15 (m = 25): M = 74.4; for e = 40 (m = 50): M = 73.2. Different answers. NOT sufficient. This is a C-trap: a fixed head-count difference is not the same as a fixed ratio, so the weighted average can't be inverted. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A furniture dealer bought a chair and later sold it at a profit. What was the cost price of the chair?<br>(1) The chair was sold for 1500, which represented a 25% profit on its cost price.<br>(2) The chair's selling price exceeded its cost price by 200, and this profit was exactly one-sixth of the cost price.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Let cost = c.<br><b>Statement (1):</b> Selling price 1500 is 125% of cost, so c = 1500/1.25 = 1200. SUFFICIENT.<br><b>Statement (2):</b> Profit = selling price &minus; cost = 200, and profit = c/6. So c/6 = 200, giving c = 1200. SUFFICIENT.<br>Each statement independently determines c = 1200. The trap is assuming you need to combine them (the figures are deliberately consistent), or misreading 'one-sixth of cost' as one-sixth of selling price. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-arithmetic",
+  "difficulty": "hard",
+  "promptHTML": "A cyclist rode for a total of 3 hours without stopping. She covered the first part of the ride at a constant 12 km/h and the remaining part at a constant 18 km/h. What total distance did she cover?<br>(1) She spent twice as long riding at 12 km/h as she spent riding at 18 km/h.<br>(2) Her average speed for the entire ride was less than 15 km/h.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Let t&#8321; be the time at 12 km/h and t&#8322; the time at 18 km/h, with t&#8321; + t&#8322; = 3.<br><b>Statement (1):</b> t&#8321; = 2t&#8322;, so 2t&#8322; + t&#8322; = 3, giving t&#8322; = 1 and t&#8321; = 2. Total distance = 12&times;2 + 18&times;1 = 24 + 18 = 42 km. SUFFICIENT.<br><b>Statement (2):</b> Average speed = total distance / 3 < 15 means total distance < 45 km. Writing total distance = 36 + 6t&#8322; with t&#8322; in (0, 3), the constraint < 45 still allows a range of values (e.g., 42 km at t&#8322; = 1, or 43.2 km at t&#8322; = 1.2). NOT a single value. NOT sufficient.<br>The trap is thinking the average-speed inequality narrows things to one distance; it only gives a range. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "very-hard",
+  "promptHTML": "Let <i>f</i>(<i>x</i>) = <i>ax</i>&sup2; + <i>bx</i> + <i>c</i>, where <i>a</i>, <i>b</i>, and <i>c</i> are real constants. What is the value of <i>f</i>(2)?<br>(1) <i>f</i>(1) = 5<br>(2) <i>f</i>(&minus;1) = 1",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "We need f(2) = 4a + 2b + c. Statement (1): a + b + c = 5 — one equation, three unknowns, so f(2) is not determined; insufficient. Statement (2): a − b + c = 1 — similarly insufficient. Together: adding the two equations gives 2a + 2c = 6, so a + c = 3; subtracting gives 2b = 4, so b = 2. Now f(2) = 4a + 2b + c = 4a + c + 4. The trap is to think two equations always pin a quadratic's value — but we only know a + c = 3, not a and c separately, so 4a + c is not fixed. For example a = 1, c = 2 gives f(2) = 10, while a = 2, c = 1 gives f(2) = 13; both satisfy (1) and (2). Even together, the value is not determined. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "hard",
+  "promptHTML": "What is the value of the real number <i>x</i>?<br>(1) <i>x</i>&sup2; = 5<i>x</i> &minus; 6<br>(2) <i>x</i>&sup3; = 27",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Statement (1): x² − 5x + 6 = 0 factors as (x − 2)(x − 3) = 0, giving x = 2 or x = 3 — two values, so insufficient. Statement (2): x³ = 27 has exactly one real solution, x = 3 (the other two cube roots are complex, not real), so x is uniquely determined; sufficient. The trap is assuming a quadratic 'with nice roots' must be enough, or worrying that a cube root could be ambiguous like a square root — for real numbers, cubes are one-to-one. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "very-hard",
+  "promptHTML": "A sequence is defined for all integers <i>n</i> &ge; 3 by <i>a</i><sub><i>n</i></sub> = <i>a</i><sub><i>n</i>&minus;1</sub> + <i>a</i><sub><i>n</i>&minus;2</sub>, where <i>a</i><sub>1</sub> and <i>a</i><sub>2</sub> are real numbers. What is the value of <i>a</i><sub>6</sub>?<br>(1) <i>a</i><sub>3</sub> = 5<br>(2) <i>a</i><sub>5</sub> = 13",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Express everything in a₁ and a₂: a₃ = a₁ + a₂, a₄ = a₁ + 2a₂, a₅ = 2a₁ + 3a₂, a₆ = 3a₁ + 5a₂. Statement (1): a₁ + a₂ = 5. Then a₆ = 3a₁ + 5a₂ is not fixed — e.g. (a₁,a₂) = (2,3) gives a₆ = 21, while (0,5) gives a₆ = 25; insufficient. Statement (2): 2a₁ + 3a₂ = 13, one equation in two unknowns, so a₆ varies — (2,3) gives a₆ = 21, (−1,5) gives a₆ = 22; insufficient. Together: a₁ + a₂ = 5 and 2a₁ + 3a₂ = 13 solve to a₁ = 2, a₂ = 3, so a₆ = 3(2) + 5(3) = 21; sufficient. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "very-hard",
+  "promptHTML": "If <i>x</i> is a positive real number, is <i>x</i> an integer?<br>(1) <i>x</i> + 1/<i>x</i> is an integer.<br>(2) <i>x</i>&sup2; is an integer.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Statement (1): x + 1/x = k integer means x² − kx + 1 = 0, so x = (k + √(k²−4))/2. For k = 3, x = (3 + √5)/2 ≈ 2.618, not an integer, yet x + 1/x = 3. So x need not be an integer; insufficient. Statement (2): x² integer allows x = √2 (not an integer) or x = 2 (integer); insufficient. Together: if x were irrational, then x² = n integer means x = √n with n a non-perfect-square, and then x + 1/x = (n+1)/√n is irrational — contradicting (1). So x must be rational; and a rational x with x² an integer must itself be an integer (if x = p/q in lowest terms, x² integer forces q = 1). Hence x is an integer; sufficient. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "hard",
+  "promptHTML": "Is the real number <i>x</i> less than 2?<br>(1) <i>x</i>&sup2; &lt; 5<i>x</i> &minus; 6<br>(2) <i>x</i>&sup2; &lt; 4",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Statement (1): x² < 5x − 6 means x² − 5x + 6 < 0, i.e. (x − 2)(x − 3) < 0, so 2 < x < 3. Every such x exceeds 2, so the answer to 'is x < 2?' is a definite NO; a definite answer means sufficient. Statement (2): x² < 4 means −2 < x < 2, so x is always less than 2 — a definite YES; sufficient. The common error is to discard a statement that yields a firm NO (statement 1) as 'not helpful' — but in Data Sufficiency a consistent NO is just as sufficient as a consistent YES. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "very-hard",
+  "promptHTML": "Let <i>f</i>(<i>x</i>) = <i>x</i>&sup2; &minus; 6<i>x</i> + <i>c</i>, where <i>c</i> is a real constant. Is <i>f</i>(<i>x</i>) &ge; 0 for every real number <i>x</i>?<br>(1) <i>f</i>(3) = &minus;4<br>(2) <i>c</i> &lt; 10",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The upward parabola f(x) = x² − 6x + c is nonnegative for all x exactly when its discriminant 36 − 4c ≤ 0, i.e. c ≥ 9. Statement (1): f(3) = 9 − 18 + c = c − 9 = −4 gives c = 5. Since 5 < 9, the parabola dips below zero — a definite NO; sufficient. Statement (2): c < 10 is consistent with c = 9.5 (≥ 9, answer YES) and with c = 5 (< 9, answer NO), so it gives both outcomes; insufficient. The trap is reading f(3) = −4 as merely 'one data point' rather than realizing it pins c, which decides the whole question. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "very-hard",
+  "promptHTML": "If <i>x</i> and <i>y</i> are nonzero real numbers, is 1/<i>x</i> &lt; 1/<i>y</i>?<br>(1) <i>x</i> &gt; <i>y</i><br>(2) <i>xy</i> &gt; 0",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Statement (1): x > y alone is not enough — with x = 3, y = 2, 1/x = 1/3 < 1/2 = 1/y (YES), but with x = 1, y = −1, 1/x = 1 and 1/y = −1, so 1/x < 1/y is FALSE (NO). Insufficient. Statement (2): xy > 0 (same sign) without order is insufficient — x = 2, y = 1 gives 1/2 < 1 (YES), x = 1, y = 2 gives 1 < 1/2 (NO). Together: x and y share a sign and x > y. If both positive, x > y > 0 gives 1/x < 1/y (YES). If both negative, x > y means x is the less-negative one, and 1/x < 1/y still holds (e.g. x = −1, y = −2: −1 < −0.5, YES). In every case the answer is YES; sufficient. The trap is dividing the inequality x > y by xy without tracking that the sign of xy controls whether the inequality flips — knowing xy > 0 fixes that the inequality reverses consistently. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-algebra",
+  "difficulty": "very-hard",
+  "promptHTML": "If <i>n</i> is a positive integer, what is the value of <i>n</i>?<br>(1) <i>n</i>&sup2; &minus; 9<i>n</i> + 20 = 0<br>(2) 2<sup><i>n</i></sup> + 2<sup><i>n</i>&minus;1</sup> = 96",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Statement (1): n² − 9n + 20 = (n − 4)(n − 5) = 0, so n = 4 or n = 5 — two valid positive integers, insufficient. Statement (2): factor 2^(n−1) out: 2^(n−1)(2 + 1) = 3·2^(n−1) = 96, so 2^(n−1) = 32 = 2⁵, giving n − 1 = 5, n = 6 — a unique value; sufficient. The trap is assuming the exponential equation is messy or has multiple roots, when factoring out the common power reduces it to a single clean answer, while the 'simpler-looking' quadratic is the ambiguous one. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If a and b are positive integers, what is the value of the product ab?<br>(1) The greatest common divisor of a and b is 6.<br>(2) The least common multiple of a and b is 90.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The key identity is gcd(a,b) &times; lcm(a,b) = ab for positive integers.<br>(1) Alone: gcd = 6 fixes only the common part. ab could be 6&times;6=36, or 6&times;12=72, etc. Not sufficient.<br>(2) Alone: lcm = 90 leaves ab undetermined; e.g. (a,b)=(9,10) gives ab=90, while (a,b)=(18,15) gives ab=270. Not sufficient.<br>Together: ab = gcd &times; lcm = 6 &times; 90 = 540, a single value regardless of the actual pair (e.g. (6,90) or (18,30) both give ab=540). Sufficient. The trap is thinking you must pin down a and b individually; the product is fully determined by gcd&times;lcm. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If n is a positive integer, is the product n(n + 1)(n + 2) divisible by 24?<br>(1) n is even.<br>(2) n + 1 is divisible by 3.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "24 = 8 &times; 3. The product of three consecutive integers always contains a multiple of 3, so divisibility by 3 is automatic; the question reduces to whether the product is divisible by 8.<br>(1) Alone: if n is even, then n and n+2 are two consecutive even numbers, one of which is a multiple of 4. Their product is divisible by 2 &times; 4 = 8. Combined with the guaranteed factor 3, the product is divisible by 24. Always YES. Sufficient.<br>(2) Alone: n+1 divisible by 3 just relocates the multiple of 3 that already exists; it says nothing about the power of 2. For n=2: 2&middot;3&middot;4=24 (divisible). For n=5: 5&middot;6&middot;7=210, and 210/24 is not an integer (NO). Mixed answers. Not sufficient. The trap is treating the factor of 3 as if it were the binding constraint. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If n is a positive integer, what is the units digit of 3<sup>n</sup>?<br>(1) n is odd.<br>(2) n + 1 is a multiple of 4.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The units digit of 3<sup>n</sup> cycles with period 4: n&equiv;1&rarr;3, n&equiv;2&rarr;9, n&equiv;3&rarr;7, n&equiv;0&rarr;1 (mod 4). So the answer depends only on n mod 4.<br>(1) Alone: n odd means n&equiv;1 or 3 (mod 4), giving units digit 3 or 7. Two possibilities. Not sufficient.<br>(2) Alone: n+1 a multiple of 4 means n&equiv;3 (mod 4), so the units digit is always 7. Sufficient.<br>The trap is assuming 'odd' is enough to fix a power's units digit; for base 3 the cycle length is 4, so you need n mod 4, which only statement (2) supplies. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "If k is a positive integer, is k! divisible by 2<sup>10</sup>?<br>(1) k &ge; 12.<br>(2) k is even and k &le; 10.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "The exponent of 2 in k! is &lfloor;k/2&rfloor; + &lfloor;k/4&rfloor; + &lfloor;k/8&rfloor; + &hellip; (Legendre's formula). We need this to be at least 10.<br>(1) Alone: at k=12 the count is 6+3+1 = 10, exactly meeting the threshold, and the count only grows for larger k. So for every k &ge; 12 the answer is YES. Sufficient.<br>(2) Alone: for even k &le; 10 the counts are k=2:1, k=4:3, k=6:4, k=8:7, k=10:8 &mdash; all below 10. So the answer is always NO. A definite, consistent answer is still sufficient.<br>Since each statement forces a single yes/no answer (one always YES, one always NO), each alone is sufficient. The trap is dismissing statement (2) for giving 'NO' &mdash; a guaranteed NO is fully sufficient. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If a and b are positive integers, what is the greatest common divisor of a and b?<br>(1) a = 2<sup>4</sup> &times; 3<sup>2</sup> &times; 5.<br>(2) b = 2<sup>2</sup> &times; 3<sup>3</sup> &times; 7.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The gcd is built from the minimum exponent of each shared prime.<br>(1) Alone: only a is known; gcd depends on b, which is unknown. Not sufficient.<br>(2) Alone: only b is known; gcd depends on a, which is unknown. Not sufficient.<br>Together: a = 2<sup>4</sup>&middot;3<sup>2</sup>&middot;5 and b = 2<sup>2</sup>&middot;3<sup>3</sup>&middot;7. For each prime take the smaller exponent: 2&rarr;min(4,2)=2, 3&rarr;min(2,3)=2, 5 appears only in a (exponent 0 in b), 7 appears only in b. So gcd = 2<sup>2</sup>&middot;3<sup>2</sup> = 4&middot;9 = 36. Sufficient. The trap is mistakenly including 5 or 7, or taking the maximum exponent (which would give the lcm). The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If n is a positive integer, is n divisible by 8?<br>(1) n is divisible by 4.<br>(2) n is divisible by 6.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "8 = 2<sup>3</sup>, so we need three factors of 2 in n.<br>(1) Alone: divisible by 4 gives only two factors of 2. n=4 is not divisible by 8, n=8 is. Not sufficient.<br>(2) Alone: divisible by 6 = 2&middot;3 gives one factor of 2. n=6 (no), n=24 (yes). Not sufficient.<br>Together: n divisible by both 4 and 6 means n is divisible by lcm(4,6) = 12 = 2<sup>2</sup>&middot;3. This still guarantees only two factors of 2, not three. n=12 is not divisible by 8, but n=24 is. Mixed answers remain. Not sufficient. The classic C-trap: people multiply 4&times;6=24 (assuming divisibility by 24) instead of taking the lcm 12, so they wrongly conclude 'together sufficient.' The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If n is a positive integer, what is the remainder when n<sup>2</sup> is divided by 12?<br>(1) n is odd.<br>(2) The greatest common divisor of n and 6 is 1.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "We need n<sup>2</sup> mod 12.<br>(1) Alone: n odd. Test 1<sup>2</sup>=1 (rem 1), 3<sup>2</sup>=9 (rem 9), 5<sup>2</sup>=25 (rem 1), 9<sup>2</sup>=81 (rem 9). The remainder is 1 or 9 &mdash; two values. Not sufficient.<br>(2) Alone: gcd(n,6)=1 means n shares no factor of 2 or 3, so n &equiv; 1 or 5 (mod 6). Then n<sup>2</sup> &equiv; 1<sup>2</sup>=1 or 5<sup>2</sup>=25&equiv;1 (mod 12) in every case. The remainder is always 1. Sufficient.<br>The trap is that 'odd' alone leaves a residue of 3 (like n=3, n=9) in play, which squares to 9 mod 12; requiring n coprime to 6 removes the multiples of 3 and locks the remainder at 1. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "If a and b are positive integers with a &lt; b, what is the value of b?<br>(1) The least common multiple of a and b is 36.<br>(2) The greatest common divisor of a and b is 3.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "(1) Alone: lcm = 36 allows many pairs (e.g. (4,9), (9,12), (12,36)), so b varies. Not sufficient.<br>(2) Alone: gcd = 3 allows pairs like (3,6), (3,12), giving different b. Not sufficient.<br>Together: write a = 3a', b = 3b' with gcd(a',b') = 1. Then lcm(a,b) = 3a'b' = 36, so a'b' = 12. The coprime factorizations of 12 with a' &lt; b' are (1,12) and (3,4). These give (a,b) = (3,36) and (9,12) &mdash; both satisfy gcd 3 and lcm 36, yet b = 36 or b = 12. Two valid values remain. Not sufficient. The C-trap is recalling ab = gcd&middot;lcm = 108 and assuming that, with a&lt;b, b is forced; but multiple coprime splits of 12 survive, so b is not unique. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "If n is a positive integer, is n divisible by 12?<br>(1) n is divisible by 6.<br>(2) n<sup>2</sup> is divisible by 24.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "12 = 2<sup>2</sup>&middot;3, so n is divisible by 12 iff n has at least two factors of 2 and at least one factor of 3.<br>(1) Alone: n divisible by 6 = 2&middot;3 guarantees only one factor of 2. n=6 (not divisible by 12), n=12 (divisible). Mixed. Not sufficient.<br>(2) Alone: 24 = 2<sup>3</sup>&middot;3. If n<sup>2</sup> is divisible by 2<sup>3</sup>, then the exponent of 2 in n<sup>2</sup> is at least 3; but exponents in a perfect square are even, so it must be at least 4, meaning n has at least 2<sup>2</sup>. Also 3 | n<sup>2</sup> forces 3 | n. Hence n is divisible by 2<sup>2</sup>&middot;3 = 12. Always YES. Sufficient.<br>The trap is reading 'n<sup>2</sup> divisible by 24' as merely n divisible by something less than 12; the even-exponent rule for squares actually upgrades 2<sup>3</sup> to 2<sup>4</sup>, forcing 12 | n outright. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "very-hard",
+  "promptHTML": "Points A, B, and C lie on a circle with center O. What is the measure of inscribed angle ABC?<br>(1) The arc AC that does not contain B measures 100&deg;.<br>(2) The central angle AOC measures 100&deg;.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The inscribed angle ABC equals half of the arc AC that the angle subtends, namely the arc AC NOT containing the vertex B. Statement (1): it directly tells us the arc AC not containing B is 100&deg;, so angle ABC = 100/2 = 50&deg;. This is sufficient. Statement (2): the central angle AOC = 100&deg; tells us one of the two arcs AC is 100&deg; (and the other is 260&deg;), but it does NOT tell us on which arc vertex B sits. If B is on the major (260&deg;) arc, the inscribed angle subtends the 100&deg; arc and equals 50&deg;; if B is on the minor (100&deg;) arc, it subtends the 260&deg; arc and equals 130&deg;. So (2) yields 50&deg; or 130&deg; and is not sufficient. The classic trap is treating the central angle as automatically half-able into the inscribed angle without checking which side B lies on. Statement (1) alone is sufficient. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "hard",
+  "promptHTML": "In the coordinate plane, points A = (0, 0) and B = (8, 0) are fixed, and point C has a positive y-coordinate. Is triangle ABC isosceles?<br>(1) The area of triangle ABC is 24.<br>(2) Point C lies on the line x = 4.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Base AB lies on the x-axis with length 8. Statement (1): area = (1/2)(8)(height) = 24 forces the height (the y-coordinate of C) to be 6, so C = (x, 6) for some x. But x is free: if C = (4, 6) then CA = CB = &radic;52 and the triangle is isosceles (YES); if C = (0, 6) then CA = 6, CB = 10, AB = 8, no two sides equal (NO). Both YES and NO occur, so (1) is not sufficient. Statement (2): x = 4 is exactly the perpendicular bisector of AB, so any point on it is equidistant from A and B, giving CA = CB regardless of the height. The triangle is always isosceles, a definite YES, so (2) is sufficient. The trap is assuming a fixed area pins the shape; it only fixes the height, not the horizontal position. Statement (2) alone is sufficient. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "hard",
+  "promptHTML": "In trapezoid ABCD, side AB is parallel to side CD. What is the area of the trapezoid?<br>(1) AB = 18 and CD = 12.<br>(2) The perpendicular distance between lines AB and CD is 9.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The area of a trapezoid is (1/2)(sum of the two parallel sides)(height between them). Statement (1): it gives the two parallel sides, 18 and 12, but says nothing about the height; the area scales with height, so it is not determined. Not sufficient. Statement (2): the height is 9, but with the bases unknown the sum of parallel sides is unknown, so the area is not determined. Not sufficient. Together: sum of parallel sides = 18 + 12 = 30, height = 9, so area = (1/2)(30)(9) = 135, a single value. The non-parallel sides and the exact shape do not affect this formula, so both statements together are sufficient and neither alone is. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "very-hard",
+  "promptHTML": "In triangle ABC, point D lies on side BC. What is the length of segment AD?<br>(1) AB = AC = 10.<br>(2) BD = DC.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Statement (1): AB = AC = 10 makes the triangle isosceles but says nothing about where D sits on BC or how long BC is, so AD is not determined. Not sufficient. Statement (2): D is the midpoint of BC, but with no side lengths AD is not determined. Not sufficient. Together: the triangle is apex-isosceles (AB = AC) and D is the midpoint of the base BC, so AD is the median-to-base, which here is also the altitude, and AD = &radic;(AC&sup2; &minus; (BC/2)&sup2;) = &radic;(100 &minus; (BC/2)&sup2;). This still depends on BC, which is never given. For example, BC = 12 gives AD = &radic;(100 &minus; 36) = 8, while BC = 16 gives AD = &radic;(100 &minus; 64) = 6. The tempting C-trap is to assume 'isosceles plus midpoint' nails a unique length, but without the base length the altitude is undetermined. Even together the statements are not sufficient. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "hard",
+  "promptHTML": "In the coordinate plane, what is the area of circle C?<br>(1) One diameter of circle C has endpoints (&minus;3, 4) and (5, &minus;2).<br>(2) Circle C passes through the points (0, 0) and (6, 8).",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Statement (1): the two given points are endpoints of a diameter, so the diameter length is the distance between them = &radic;((5&minus;(&minus;3))&sup2; + (&minus;2&minus;4)&sup2;) = &radic;(8&sup2; + 6&sup2;) = &radic;100 = 10. The radius is 5, so the area = &pi;(5)&sup2; = 25&pi;, a single value. Sufficient. Statement (2): two points the circle passes through form just one chord; the center can lie anywhere on the perpendicular bisector of that chord, giving infinitely many radii and hence infinitely many areas. Not sufficient. The trap is to treat any two given points as if they fix the circle (they fix it only when they are stated to be diameter endpoints, as in statement 1). Statement (1) alone is sufficient. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "very-hard",
+  "promptHTML": "Two chords AB and CD of a circle intersect at an interior point P. What is the length of chord AB?<br>(1) PC = 8 and PD = 3.<br>(2) PA = PB.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "By the intersecting-chords (power of a point) relation, PA &times; PB = PC &times; PD. Statement (1): PC &times; PD = 8 &times; 3 = 24, so PA &times; PB = 24, but the two segments PA and PB can split this many ways (e.g. 4 and 6 giving AB = 10, or 8 and 3 giving AB = 11), so AB is not determined. Not sufficient. Statement (2): PA = PB tells us P is the midpoint of AB, so AB = 2&middot;PA, but PA itself is unknown. Not sufficient. Together: PA &times; PB = 24 and PA = PB give PA&sup2; = 24, so PA = &radic;24 = 2&radic;6, and AB = 2&middot;PA = 4&radic;6. This is a single determined value. Both statements together are sufficient and neither alone is. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-geometry",
+  "difficulty": "hard",
+  "promptHTML": "In the coordinate plane, point P lies somewhere in the plane. What is the distance from P to the origin O?<br>(1) P is the midpoint of the segment joining (2, 3) and (10, 13).<br>(2) P lies on the circle whose equation is x&sup2; + y&sup2; = 100.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Statement (1): the midpoint of (2, 3) and (10, 13) is ((2+10)/2, (3+13)/2) = (6, 8), so P is the specific point (6, 8) and its distance to the origin is &radic;(6&sup2; + 8&sup2;) = &radic;100 = 10. Sufficient. Statement (2): the equation x&sup2; + y&sup2; = 100 is a circle centered at the origin with radius &radic;100 = 10; the distance from the origin to ANY point on that circle is exactly the radius, 10, no matter where P sits on it. Sufficient. The trap is thinking statement (2) leaves P 'undetermined' and therefore the distance unknown, but the question asks only for the distance to the origin, which is fixed at the radius. Each statement alone is sufficient. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "A father has two children, a son and a daughter. Let F be the father's present age and let s and d be the present ages (in years) of the son and daughter, respectively. What is the father's present age F?<br>(1) The father's present age equals the sum of his two children's present ages plus 10.<br>(2) Ten years from now, the father's age will equal the sum of his two children's ages at that time.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "We want F. Statement (1): F = (s + d) + 10. This is one equation in three unknowns, so F is not determined (s + d can be anything). Not sufficient. Statement (2): in 10 years the father is F + 10 and the children are s + 10 and d + 10, so F + 10 = (s + 10) + (d + 10), which simplifies to F = s + d + 10. This is the SAME equation as statement (1), so it is likewise not sufficient. Taking both together adds no new information: both reduce to the single relation F = s + d + 10, leaving F undetermined. This is the classic trap of two differently-worded statements collapsing to one equation. Not sufficient even together. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "Three workers A, B, and C can each work alone at a constant rate. Working alone, how many hours does worker C take to complete a certain job?<br>(1) A and B working together complete the job in 12 hours, while A, B, and C working all together complete it in 8 hours.<br>(2) Working alone, A takes 18 hours and B takes 36 hours to complete the job.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "We want C's solo time. Statement (1): the combined rate of A + B is 1/12 job/hour and of A + B + C is 1/8 job/hour. Subtracting isolates C's rate: 1/8 &minus; 1/12 = 3/24 &minus; 2/24 = 1/24, so C alone takes 24 hours. Sufficient. Statement (2): this gives only A's and B's individual rates (combined 1/18 + 1/36 = 1/12), but says nothing connecting C to the others, so C's rate cannot be found. Not sufficient. Since statement (1) alone already answers the question (and statement (2) does not), there is no need to combine them. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "A car makes a round trip from town A to town B and back to A along the same road. What is the car's average speed (in km/h) for the entire round trip?<br>(1) On the outbound leg from A to B, the car travels at a constant 50 km/h.<br>(2) The total round-trip distance is 360 km and the total travel time is 9 hours.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Average speed = total distance &divide; total time. Statement (1): we know only the outbound speed (50 km/h) with no information about the return leg's speed or time, so the round-trip average (which is the harmonic-type combination of both legs) cannot be computed. Not sufficient. Statement (2): average speed = total distance / total time = 360 / 9 = 40 km/h directly, regardless of the individual leg speeds. Sufficient. The tempting trap is to average the leg speeds, but statement (1) gives only one leg. Statement (2) alone suffices. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "very-hard",
+  "promptHTML": "Two trains start at the same instant from stations P and Q and travel toward each other on the same track, each at its own constant speed. What is the speed (in km/h) of the faster train?<br>(1) The faster train travels 10 km/h faster than the slower train, and the two trains meet 3 hours after starting.<br>(2) Before meeting, the two trains together cover a total of 330 km.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Let the speeds be f (faster) and s (slower). Statement (1): f = s + 10 and they meet after 3 hours, so the distance PQ = 3(f + s). But PQ is unknown, so f + s is unknown and f cannot be found. Not sufficient. Statement (2): together they cover 330 km before meeting, i.e. (f + s)t = 330 where t is the meeting time, also unknown; nothing about the speed difference. Not sufficient. Together: from statement (2) the trains close the 330 km gap, and from statement (1) they meet in 3 hours, so f + s = 330 / 3 = 110; combined with f = s + 10 we get 2f = 120, f = 60 km/h. Both are needed. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "very-hard",
+  "promptHTML": "A vessel is completely filled with pure milk. The following operation is performed twice in succession: remove some fixed quantity of the mixture from the vessel and replace it with the same quantity of water (the replacement quantity is the same on both operations). What is the capacity of the vessel (in litres)?<br>(1) On each operation exactly 10 litres is removed and replaced, and after the two operations the milk concentration in the vessel is 64%.<br>(2) After the two operations, exactly 32 litres of milk remains in the vessel.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Let V be the capacity and a the quantity removed/replaced each time. After two operations the milk fraction is (1 &minus; a/V)<sup>2</sup>. Statement (1): a = 10 and (1 &minus; 10/V)<sup>2</sup> = 0.64, so 1 &minus; 10/V = 0.8 (taking the positive root, since the fraction is between 0 and 1), giving 10/V = 0.2 and V = 50 litres. Sufficient. Statement (2): the milk remaining is V(1 &minus; a/V)<sup>2</sup> = 32, which is one equation in the two unknowns V and a; many pairs work (e.g. different a give different V), so V is not determined. Not sufficient. Statement (1) alone resolves V. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "Two copper-zinc alloys are melted together to form a single new alloy. What is the percentage of copper, by mass, in the resulting alloy?<br>(1) The first alloy is 40% copper by mass and the second alloy is 64% copper by mass.<br>(2) The resulting alloy has a total mass of 50 kg and contains 27 kg of copper.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "We want the copper percentage of the blend. Statement (1): we know each component alloy's copper percentage (40% and 64%) but not the proportions in which they are mixed, so the resulting percentage can be anything between 40% and 64% depending on the ratio. Not sufficient. Statement (2): the resulting alloy is fully described by its totals: 27 kg copper out of 50 kg, so the copper percentage is 27/50 = 54%, no matter how the two source alloys contributed. Sufficient. The trap is assuming you must know the component percentages and mixing ratio; the totals in statement (2) settle it directly. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "In a group of 100 people, each person plays cricket only, tennis only, both cricket and tennis, or neither sport. How many people play neither sport?<br>(1) 60 people play cricket and 45 people play tennis.<br>(2) 25 people play both cricket and tennis.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "By inclusion-exclusion, the number playing at least one sport is |C| + |T| &minus; |both|, and neither = 100 minus that. Statement (1): |C| = 60 and |T| = 45, but without the overlap |both| the union is unknown (it could range as the overlap varies), so 'neither' is undetermined. Not sufficient. Statement (2): |both| = 25 alone, with no totals for cricket or tennis, gives no way to find the union. Not sufficient. Together: union = 60 + 45 &minus; 25 = 80, so neither = 100 &minus; 80 = 20. Both statements are required. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "very-hard",
+  "promptHTML": "In a survey of 200 people, each person was asked which of three brands A, B, and C they like (a person may like any number of the three, including none). How many of the 200 people like all three brands?<br>(1) 120 people like brand A, 100 people like brand B, and 90 people like brand C.<br>(2) Exactly 30 of the 200 people like none of the three brands.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Let S1 = |A| + |B| + |C|, S2 = sum of the three pairwise intersections, and S3 = the number liking all three. Inclusion-exclusion gives the number liking at least one = S1 &minus; S2 + S3. Statement (1): S1 = 120 + 100 + 90 = 310, but this says nothing about S2 or S3. Not sufficient. Statement (2): 30 like none, so 170 like at least one; alone this gives no marginals. Not sufficient. Together: 170 = 310 &minus; S2 + S3, i.e. S2 &minus; S3 = 140. This single equation in two unknowns does not fix S3 &mdash; for instance S3 = 20 (with regions A-only 50, A&amp;B-only 30, A&amp;C-only 20, B&amp;C-only 50) and S3 = 30 (with A-only 60, A&amp;B-only 20, A&amp;C-only 10, B&amp;C-only 50) both yield valid non-negative region counts consistent with all the marginals. The C-trap here is assuming the marginals plus the 'none' count must pin the triple overlap; they do not. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-word-problems",
+  "difficulty": "hard",
+  "promptHTML": "A storage tank has a single inlet pipe and a leak at its bottom, each operating at a constant rate. How long, in hours, would the leak alone take to drain a completely full tank?<br>(1) The inlet pipe alone fills the empty tank in 6 hours, but with the leak also open the tank fills in 8 hours.<br>(2) With the inlet pipe closed, the leak drains a completely full tank in 24 hours.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "We want the leak's solo draining time. Statement (1): the inlet rate is 1/6 tank/hour; with the leak open the net filling rate is 1/8 tank/hour. The leak's rate is the difference: 1/6 &minus; 1/8 = 4/24 &minus; 3/24 = 1/24 tank/hour, so the leak alone empties a full tank in 24 hours. Sufficient. Statement (2): this states directly that the leak drains a full tank in 24 hours. Sufficient. Each statement alone gives 24 hours, and they are consistent. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If n is a positive integer, is n a perfect cube?<br>(1) n<sup>2</sup> is a perfect cube.<br>(2) n is a perfect square.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Write n in prime-factored form with exponents e&#8336;. n is a perfect cube exactly when every e&#8336; is a multiple of 3.<br><br>Statement (1): n<sup>2</sup> is a perfect cube. The exponents of n<sup>2</sup> are 2e&#8336;, and these must each be divisible by 3. Since gcd(2, 3) = 1, 3 | 2e&#8336; forces 3 | e&#8336; for every prime. So every exponent of n is a multiple of 3, meaning n itself is a perfect cube. A definite YES. The trap is thinking 'n<sup>2</sup> cube' only weakly constrains n; in fact the coprimality of 2 and 3 transfers the cube property all the way down to n. SUFFICIENT.<br><br>Statement (2): n is a perfect square. Then n = 64 = 4<sup>3</sup> is a perfect cube (YES), but n = 9 = 3<sup>2</sup> is not a perfect cube (NO). Both outcomes occur. NOT sufficient.<br><br>Since (1) alone settles it and (2) alone does not, the answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "If x is a positive integer, is x divisible by 6?<br>(1) x<sup>2</sup> is divisible by 12.<br>(2) x<sup>3</sup> is divisible by 9.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "6 = 2 &times; 3, so x is divisible by 6 exactly when x has at least one factor of 2 and one factor of 3.<br><br>Statement (1): 12 = 2<sup>2</sup> &times; 3 divides x<sup>2</sup>. The exponent of 2 in x<sup>2</sup> is even and at least 2, so the exponent of 2 in x is at least 1. The exponent of 3 in x<sup>2</sup> is at least 1, but exponents in a perfect square are even, so it is at least 2, forcing the exponent of 3 in x to be at least 1. Hence x has a factor of 2 and a factor of 3, so 6 | x. The even-exponent rule for squares is what upgrades the lone factor of 3 in 12 into a guaranteed factor of 3 in x. A definite YES. SUFFICIENT.<br><br>Statement (2): 9 = 3<sup>2</sup> divides x<sup>3</sup>. The exponent of 3 in x<sup>3</sup> is 3 times that in x and is at least 2, which forces at least one factor of 3 in x &mdash; but the statement says nothing about factors of 2. x = 3 gives x<sup>3</sup> = 27 (divisible by 9) yet 3 is not divisible by 6; x = 6 gives 216 (divisible by 9) and is divisible by 6. Both outcomes. NOT sufficient.<br><br>Since (1) alone determines a definite YES and (2) alone does not, the answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "If a and b are positive integers, what is the value of a + b?<br>(1) The greatest common divisor of a and b is 4, and the least common multiple of a and b is 60.<br>(2) ab = 240 and a &lt; b.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Recall ab = gcd(a, b) &times; lcm(a, b).<br><br>Statement (1): gcd = 4 and lcm = 60. Write a = 4m, b = 4n with gcd(m, n) = 1; then lcm = 4mn = 60, so mn = 15. The coprime factor pairs of 15 are (1, 15) and (3, 5), giving (a, b) = (4, 60) with a + b = 64, or (a, b) = (12, 20) with a + b = 32. Two different sums. NOT sufficient.<br><br>Statement (2): ab = 240 with a &lt; b allows (1, 240), (2, 120), (3, 80), (4, 60), (12, 20), ... &mdash; many different sums. NOT sufficient.<br><br>Together: note ab = gcd &times; lcm = 4 &times; 60 = 240, so statement (2)'s product is automatically consistent and adds no real constraint beyond a &lt; b. Both surviving pairs from (1) already satisfy a &lt; b: (4, 60) and (12, 20), with sums 64 and 32. The C-trap is recalling that ab is fixed at 240 and assuming a + b must follow; but two distinct coprime splits of 15 remain, so a + b is still not unique. NOT sufficient even together. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "If n is a positive integer, what is the remainder when n is divided by 8?<br>(1) When n is divided by 4, the remainder is 2.<br>(2) When n is divided by 6, the remainder is 2.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "We want n mod 8.<br><br>Statement (1): n &equiv; 2 (mod 4). Such n give n mod 8 &isin; {2, 6} (e.g. 2, 6, 10, 14, ... map to 2, 6, 2, 6, ...). Two values. NOT sufficient.<br><br>Statement (2): n &equiv; 2 (mod 6). Such n (2, 8, 14, 20, 26, ...) give n mod 8 &isin; {0, 2, 4, 6}. Multiple values. NOT sufficient.<br><br>Together: n &equiv; 2 (mod 4) and n &equiv; 2 (mod 6). Both reduce to n &equiv; 2 modulo lcm(4, 6) = 12, so n &isin; {2, 14, 26, 38, ...}. Reducing these mod 8 gives 2, 6, 2, 6, ... &mdash; the remainder is still either 2 or 6. The C-trap is assuming two congruences must combine to fix the mod-8 remainder; but lcm(4, 6) = 12 carries only one factor of 2 beyond 4 (12 = 2<sup>2</sup>&middot;3), which is not enough to determine a residue mod 8 = 2<sup>3</sup>. NOT sufficient even together. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "If n is an integer greater than 1, how many positive divisors does n have?<br>(1) n<sup>2</sup> has exactly 15 positive divisors.<br>(2) n is the product of two distinct prime numbers.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "If n = p&#8321;<sup>e&#8321;</sup>p&#8322;<sup>e&#8322;</sup>&middot;&middot;&middot;, the divisor count is (e&#8321; + 1)(e&#8322; + 1)&middot;&middot;&middot;, and n<sup>2</sup> has divisor count (2e&#8321; + 1)(2e&#8322; + 1)&middot;&middot;&middot;.<br><br>Statement (1): n<sup>2</sup> has 15 divisors, so (2e&#8321; + 1)(2e&#8322; + 1)&middot;&middot;&middot; = 15. Each factor 2e + 1 is odd, matching 15's odd factorizations. Two cases: 15 = 15 means a single prime with 2e + 1 = 15, so e = 7 and n = p<sup>7</sup>, giving n the divisor count 7 + 1 = 8; or 15 = 3 &times; 5 means two primes with 2e + 1 = 3 and 2f + 1 = 5, so e = 1, f = 2 and n = p&middot;q<sup>2</sup>, giving (1 + 1)(2 + 1) = 6 divisors. So n has either 8 or 6 divisors. NOT sufficient.<br><br>Statement (2): n is the product of two distinct primes, n = pq, with exponents 1 and 1, so the divisor count is (1 + 1)(1 + 1) = 4 regardless of which primes. A unique value. SUFFICIENT.<br><br>The trap is assuming the more 'data-rich' statement about n<sup>2</sup> must pin the count; the odd factorization of 15 leaves two structures. Statement (2) alone works and (1) does not. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ds-number-properties",
+  "difficulty": "hard",
+  "promptHTML": "If x is a positive integer, what is the units digit of x?<br>(1) The units digit of x<sup>2</sup> is 6.<br>(2) The units digit of x<sup>3</sup> is 4.",
+  "options": [
+   "Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.",
+   "Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.",
+   "BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.",
+   "EACH statement ALONE is sufficient.",
+   "Statements (1) and (2) TOGETHER are NOT sufficient."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The units digit of a power depends only on the units digit of x.<br><br>Statement (1): the units digit of x<sup>2</sup> is 6. Squaring each digit 0&ndash;9 gives units digits 0, 1, 4, 9, 6, 5, 6, 9, 4, 1; the value 6 arises from a units digit of 4 (4<sup>2</sup> = 16) or 6 (6<sup>2</sup> = 36). So x ends in 4 or 6 &mdash; two possibilities. NOT sufficient.<br><br>Statement (2): the units digit of x<sup>3</sup> is 4. Cubing the digits 0&ndash;9 gives units digits 0, 1, 8, 7, 4, 5, 6, 3, 2, 9. The value 4 occurs only for a units digit of 4 (4<sup>3</sup> = 64). Cubing is a bijection on units digits (unlike squaring, which collapses pairs), so the units digit of x is forced to be 4. SUFFICIENT.<br><br>The trap is treating the square and cube conditions as equally ambiguous; squaring maps two digits to 6, but cubing is one-to-one on units digits, so (2) pins the answer while (1) does not. The answer is B."
+ }
+]

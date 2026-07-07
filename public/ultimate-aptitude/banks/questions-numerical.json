@@ -1,0 +1,4047 @@
+[
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "hard",
+  "promptHTML": "A number is increased by 25% and the result is then decreased by 12%. The final value is 880. What was the original number?",
+  "options": [
+   "800",
+   "848",
+   "880",
+   "968",
+   "779"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let the original number be N. After the two changes the value is N &times; 1.25 &times; 0.88. Step 2: So N &times; 1.1 = 880. Step 3: N = 880 / 1.1 = 800. Do not add the percentages: a 25% rise followed by a 12% fall is not a 13% net change. The answer is A: 800."
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "hard",
+  "promptHTML": "A price is increased by 25%. By what percentage must the new price be reduced to bring it back to the original price?",
+  "options": [
+   "25%",
+   "22.5%",
+   "20%",
+   "18%",
+   "15%"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The reduction acts on the <i>larger</i> base: required cut = 25/(100 + 25) &times; 100 = <b>20%</b>. Check: 1.25 &times; 0.80 = 1. Percent changes are never symmetric &mdash; down x% does not undo up x%.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "very-hard",
+  "promptHTML": "A quantity undergoes three successive changes: +12%, then &minus;25%, then +50%. What is the net percentage change?",
+  "options": [
+   "+37%",
+   "+26%",
+   "+30.5%",
+   "+22%",
+   "+18.4%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Multiply the factors: 1.12 &times; 0.75 &times; 1.50 = 1.26 &rarr; <b>+26%</b>. Adding the percentages (+37%) is the designed trap; each change compounds on a new base.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "hard",
+  "promptHTML": "In an election between two candidates, 20% of the votes polled were invalid. The winner received 55% of the valid votes and won by 1,440 votes. How many votes were polled in total?",
+  "options": [
+   "16,200",
+   "14,400",
+   "16,000",
+   "15,840",
+   "18,000"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Valid votes are 80% of the total, so valid = 0.80T. Step 2: The winner got 55% of valid votes and the loser got 45%, so the margin is 10% of the valid votes. Step 3: 1,440 = 0.1 &times; 0.80T. Step 4: Valid votes = 14,400, so T = 14,400 / 0.80 = 18,000. The answer is E: 18,000."
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "hard",
+  "promptHTML": "A&rsquo;s salary is 25% more than B&rsquo;s, and B&rsquo;s salary is 20% less than C&rsquo;s. A&rsquo;s salary is what percent of C&rsquo;s salary?",
+  "options": [
+   "95%",
+   "100%",
+   "105%",
+   "112.5%",
+   "125%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "A = 1.25B and B = 0.80C, so A = 1.25 &times; 0.80 &times; C = 1.00C &mdash; exactly <b>100%</b>. The +25% and &minus;20% cancel because 5/4 &times; 4/5 = 1; adding the percentages (+5%) is the trap.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "hard",
+  "promptHTML": "In a two-candidate election with no invalid votes, the losing candidate received 42% of the votes and lost by 1,920 votes. How many votes were cast?",
+  "options": [
+   "12,000",
+   "9,600",
+   "15,000",
+   "10,000",
+   "24,000"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: The winner got 58% and the loser 42%, so the margin is 16% of all votes. Step 2: 0.16T = 1,920. Step 3: T = 1,920 / 0.16 = 12,000. A common slip is using 50% minus 42% = 8%, which wrongly gives 24,000. The answer is A: 12,000."
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "hard",
+  "promptHTML": "A's salary is 25% more than B's salary. B's salary is 20% less than C's salary. If C earns $50,000, how much does A earn?",
+  "options": [
+   "$50,000",
+   "$40,000",
+   "$48,000",
+   "$45,000",
+   "$52,000"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: B = 0.8 &times; 50,000 = 40,000. Step 2: A = 1.25 &times; 40,000 = 50,000. The 25% rise exactly cancels the 20% fall because 1.25 &times; 0.8 = 1, so A earns the same as C. The answer is A: $50,000."
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "hard",
+  "promptHTML": "A is 20% more than B, and B is 25% more than C. By what percentage is A more than C?",
+  "options": [
+   "45%",
+   "55%",
+   "35%",
+   "40%",
+   "50%"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: A = 1.2B and B = 1.25C. Step 2: A = 1.2 &times; 1.25 &times; C = 1.5C. Step 3: So A is 50% more than C. Adding 20 + 25 = 45 is the classic mistake. The answer is E: 50%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "very-hard",
+  "promptHTML": "The price of sugar rises by 25%. By what percentage must a family cut its consumption so that its spending on sugar rises by only 5%?",
+  "options": [
+   "25%",
+   "20%",
+   "15%",
+   "12%",
+   "16%"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Spending = price &times; quantity. New spending target is 1.05 of old, new price is 1.25 of old. Step 2: New quantity factor = 1.05 / 1.25 = 0.84. Step 3: Consumption must fall by 1 minus 0.84 = 16%. Answering 20% assumes spending stays constant, which is not what was asked. The answer is E: 16%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "hard",
+  "promptHTML": "The price of fuel falls by 20%. By what percentage can a driver increase consumption so that total spending on fuel stays the same?",
+  "options": [
+   "30%",
+   "20%",
+   "16%",
+   "25%",
+   "18%"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: New price factor is 0.8. For spending to stay equal, quantity factor must be 1 / 0.8 = 1.25. Step 2: That is a 25% increase. The fall and the allowed rise are not the same percentage. The answer is D: 25%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "very-hard",
+  "promptHTML": "A person saves 25% of income. Next year income rises by 20% and expenditure rises by 10%. By what percentage do savings rise?",
+  "options": [
+   "40%",
+   "20%",
+   "30%",
+   "50%",
+   "10%"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Take income 100, so expenditure 75 and savings 25. Step 2: New income 120, new expenditure 75 &times; 1.1 = 82.5, new savings 120 minus 82.5 = 37.5. Step 3: Savings rise from 25 to 37.5, an increase of 12.5 on 25, which is 50%. The answer is D: 50%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "very-hard",
+  "promptHTML": "A person spends 80% of income. Income then increases by 25% and spending increases by 15%. By what percentage do savings change?",
+  "options": [
+   "50%",
+   "40%",
+   "25%",
+   "65%",
+   "10%"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Take income 100, spending 80, savings 20. Step 2: New income 125, new spending 80 &times; 1.15 = 92, new savings 125 minus 92 = 33. Step 3: Savings move from 20 to 33, a rise of 13 on 20, which is 65%. The answer is D: 65%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "hard",
+  "promptHTML": "A shopkeeper marks goods 40% above cost price and then allows a 15% discount on the marked price. What is the profit percentage?",
+  "options": [
+   "19%",
+   "25%",
+   "15%",
+   "21%",
+   "31%"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Take cost price 100, so marked price is 140. Step 2: Selling price = 140 &times; 0.85 = 119. Step 3: Profit = 19 on 100, so 19%. Subtracting 40 minus 15 = 25 is the trap. The answer is A: 19%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "hard",
+  "promptHTML": "An article is marked 45% above cost and sold after a 20% discount, giving a profit of $32. What is the cost price?",
+  "options": [
+   "$240",
+   "$128",
+   "$160",
+   "$200",
+   "$220"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Selling price = CP &times; 1.45 &times; 0.8 = 1.16 &times; CP. Step 2: Profit = 0.16 &times; CP = $32. Step 3: CP = $32 / 0.16 = $200. The answer is D: $200."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "hard",
+  "promptHTML": "A wholesaler gives a retailer 12 pens for the marked price of 9 pens. If the retailer sells the pens at marked price, what is his profit percentage?",
+  "options": [
+   "25%",
+   "30%",
+   "33.33%",
+   "36%",
+   "40%"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Cost of 12 pens = marked price of 9 pens; revenue = marked price of 12. Profit = 3/9 = 1/3 = <b>33.33%</b>. Computing 3/12 = 25% (profit over revenue instead of cost) is the designed wrong answer.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "hard",
+  "promptHTML": "A trader sells two articles at $240 each. On one she gains 20% and on the other she loses 20%. What is the overall result?",
+  "options": [
+   "Profit of $24",
+   "Loss of $24",
+   "No profit, no loss",
+   "Profit of $20",
+   "Loss of $20"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: CP of the first = $240 / 1.2 = $200. Step 2: CP of the second = $240 / 0.8 = $300. Step 3: Total CP = $500 against total SP = $480, a loss of $20. Equal gain and loss percentages on the same selling price always produce a net loss. The answer is E: Loss of $20."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "very-hard",
+  "promptHTML": "On selling 17 balls for $720, a shopkeeper&rsquo;s loss equals the cost price of 5 balls. What is the cost price of one ball?",
+  "options": [
+   "$45",
+   "$50",
+   "$55",
+   "$60",
+   "$72"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Loss = 17&middot;CP &minus; 720 = 5&middot;CP, so 12&middot;CP = 720 and CP = <b>$60</b>. Translate the verbal condition into the equation before touching numbers &mdash; the &ldquo;loss equals cost of 5 balls&rdquo; phrasing is the whole difficulty.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "hard",
+  "promptHTML": "A dishonest dealer claims to sell rice at cost price but uses a weight of 800 g instead of 1 kg. What is his gain percentage?",
+  "options": [
+   "30%",
+   "22%",
+   "15%",
+   "20%",
+   "25%"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: He charges for 1,000 g but gives only 800 g. Step 2: Gain percent is measured on what he gives, so gain = (1000 - 800) / 800 &times; 100 = 25%. Dividing by 1,000 instead of 800 gives 20%, the standard error. The answer is E: 25%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "hard",
+  "promptHTML": "A grocer mixes 26 kg of rice at $2.00 per kg with 30 kg of rice at $3.60 per kg and sells the mixture at $3.00 per kg. What is his profit percentage?",
+  "options": [
+   "4%",
+   "5%",
+   "6.25%",
+   "8%",
+   "12.5%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Cost = 26 &times; 2 + 30 &times; 3.6 = 52 + 108 = $160. Revenue = 56 &times; 3 = $168. Profit = 8/160 = <b>5%</b>. Averaging the two prices instead of weighting by quantity misprices the cost.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "hard",
+  "promptHTML": "By selling a cycle for $1,140, a dealer loses 5%. At what price should it be sold to gain 14%?",
+  "options": [
+   "$1,357",
+   "$1,368",
+   "$1,436",
+   "$1,299.6",
+   "$1,300"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: CP = $1,140 / 0.95 = $1,200. Step 2: Required SP = $1,200 &times; 1.1400000000000001 = $1,368. Applying 14% to the old selling price instead of the cost price is the usual mistake. The answer is B: $1,368."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "hard",
+  "promptHTML": "By selling a cycle for $920, a dealer loses 8%. At what price should it be sold to gain 15%?",
+  "options": [
+   "$1,092",
+   "$1,208",
+   "$1,058",
+   "$1,132",
+   "$1,150"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: CP = $920 / 0.92 = $1,000. Step 2: Required SP = $1,000 &times; 1.15 = $1,150. Applying 15% to the old selling price instead of the cost price is the usual mistake. The answer is E: $1,150."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "very-hard",
+  "promptHTML": "An article is marked at $8,000. A dealer allows successive discounts of 10% and 5% and still gains 14%. What is the cost price?",
+  "options": [
+   "$5,700",
+   "$6,000",
+   "$6,270",
+   "$6,500",
+   "$6,840"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Selling price = 8,000 &times; 0.90 &times; 0.95 = $6,840. Cost = 6,840 &divide; 1.14 = <b>$6,000</b>. Two traps: adding the discounts (15% &rarr; $6,800 SP), and stopping at $6,840 (the SP, not the CP).",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "hard",
+  "promptHTML": "A trader's profit on an article equals one-fifth of its selling price. What is the profit as a percentage of cost price?",
+  "options": [
+   "25%",
+   "30%",
+   "22%",
+   "17%",
+   "20%"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Profit = SP / 5, so CP = SP - SP / 5 = 4SP / 5. Step 2: Profit percent on cost = (SP / 5) / (4SP / 5) &times; 100 = 100 / 4 = 25%. Quoting 20% confuses profit on selling price with profit on cost. The answer is A: 25%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "very-hard",
+  "promptHTML": "A trader's profit on an article equals one-third of its selling price. What is the profit as a percentage of cost price?",
+  "options": [
+   "25%",
+   "50%",
+   "33%",
+   "42%",
+   "55%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Profit = SP / 3, so CP = SP - SP / 3 = 2SP / 3. Step 2: Profit percent on cost = (SP / 3) / (2SP / 3) &times; 100 = 100 / 2 = 50%. Quoting 33% confuses profit on selling price with profit on cost. The answer is B: 50%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "very-hard",
+  "promptHTML": "A vendor buys oranges at 6 for $5 and sells them at 5 for $6. What is the profit percentage?",
+  "options": [
+   "36%",
+   "44%",
+   "53%",
+   "22%",
+   "20%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Cost per orange = 5/6 dollars. Selling price per orange = 6/5 dollars. Step 2: Ratio SP/CP = (6/5) / (5/6) = 1.44. Step 3: Profit = 44%. Compare per-unit prices, not the two bundle prices. The answer is B: 44%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "very-hard",
+  "promptHTML": "By selling 45 lemons for $40, a vendor loses 20%. How many lemons should he sell for $24 to gain 20% on that sale?",
+  "options": [
+   "15",
+   "16",
+   "18",
+   "20",
+   "24"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "CP of 45 lemons = 40 &divide; 0.8 = $50, so CP per lemon = 10/9 dollars. Target SP per lemon = (10/9) &times; 1.2 = 4/3 dollars. Number for $24 = 24 &divide; 4/3 = <b>18</b>. Working per-lemon in fractions beats scaling whole lots.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "successive-discounts",
+  "difficulty": "medium",
+  "promptHTML": "Successive discounts of 20% and 10% are given on an article. What single discount is equivalent?",
+  "options": [
+   "28%",
+   "30%",
+   "31%",
+   "25%",
+   "27%"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Price factor = 0.8 &times; 0.9 = 0.72. Step 2: Equivalent single discount = 100 - 72.0 = 28%. Adding the discounts to get 30% overstates the reduction. The answer is A: 28%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "successive-discounts",
+  "difficulty": "very-hard",
+  "promptHTML": "Selling at the marked price would give a shopkeeper a 40% profit. After allowing a discount he still makes a 12% profit. What discount percentage did he give?",
+  "options": [
+   "12%",
+   "20%",
+   "25%",
+   "28%",
+   "30%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Let CP = 100: MP = 140 and SP = 112. Discount = (140 &minus; 112)/140 = 28/140 = <b>20%</b>. The discount is measured off the marked price &mdash; 28% (off CP) is the trap option.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "successive-discounts",
+  "difficulty": "very-hard",
+  "promptHTML": "Three successive discounts of 10%, 20% and 25% are applied. What is the equivalent single discount?",
+  "options": [
+   "55%",
+   "46%",
+   "42%",
+   "50%",
+   "48%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Price factor = 0.9 &times; 0.8 &times; 0.75 = 0.54. Step 2: Equivalent discount = 100 - 54 = 46%. Adding 10 + 20 + 25 = 55% is the trap. The answer is B: 46%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "successive-discounts",
+  "difficulty": "hard",
+  "promptHTML": "An item listed at $500 is sold for $360 after a discount of 20% followed by a second discount. What is the second discount?",
+  "options": [
+   "6%",
+   "8%",
+   "10%",
+   "14%",
+   "20%"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: After the first discount the price is $400. Step 2: The second discount takes it to $360, so the factor is 360/400 = 0.9. Step 3: Second discount = 10%. Subtracting the overall discount minus 20 treats the discounts as additive. The answer is C: 10%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "successive-discounts",
+  "difficulty": "very-hard",
+  "promptHTML": "An item listed at $1,200 is sold for $756 after a discount of 25% followed by a second discount. What is the second discount?",
+  "options": [
+   "16%",
+   "12%",
+   "25%",
+   "14%",
+   "20%"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: After the first discount the price is $900. Step 2: The second discount takes it to $756, so the factor is 756/900 = 0.84. Step 3: Second discount = 16%. Subtracting the overall discount minus 25 treats the discounts as additive. The answer is A: 16%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "successive-discounts",
+  "difficulty": "hard",
+  "promptHTML": "A retailer wants a 20% profit even after giving a 25% discount on the marked price. By what percentage above cost should the goods be marked?",
+  "options": [
+   "45%",
+   "69%",
+   "51%",
+   "60%",
+   "40%"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let markup be m. Then (1 + m) &times; 0.75 = 1.2. Step 2: 1 + m = 1.2 / 0.75 = 1.6. Step 3: m = 60%. Simply adding 20 + 25 = 45% undershoots because the discount applies to the marked price. The answer is D: 60%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "successive-discounts",
+  "difficulty": "hard",
+  "promptHTML": "A trader marks his goods 60% above cost price and still makes a 28% profit after allowing a discount on the marked price. What is the discount percentage?",
+  "options": [
+   "15%",
+   "18%",
+   "20%",
+   "24%",
+   "32%"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Let cost = 100: marked = 160, selling price needed = 128. Discount = (160 &minus; 128)/160 = <b>20%</b>. Subtracting percentages directly (60 &minus; 28 = 32) ignores that the discount applies to the marked price.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "successive-discounts",
+  "difficulty": "very-hard",
+  "promptHTML": "A dealer marks his rice 8% above cost price and also cheats by using a 900-gram weight in place of a 1-kilogram weight. What is his overall profit percentage?",
+  "options": [
+   "8%",
+   "17.4%",
+   "18%",
+   "20%",
+   "25.7%"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Two effects multiply: the customer pays for 1,000 g at an 8% markup but receives 900 g. Gain factor = 1.08 &times; (1000/900) = 1.08 &times; 10/9 = 1.20 &rarr; <b>20%</b>. Adding 8% to the weight gain (~11.1%) gives ~19.1% &mdash; close but wrong, because the effects compound.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "hard",
+  "promptHTML": "Two numbers are in the ratio 3 : 5. When 10 is added to each, the ratio becomes 5 : 7. What are the numbers?",
+  "options": [
+   "9 and 15",
+   "15 and 25",
+   "25 and 15",
+   "18 and 30",
+   "25 and 35"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let the numbers be 3x and 5x. Then (3x + 10) / (5x + 10) = 5/7. Step 2: Cross-multiply: 7(3x + 10) = 5(5x + 10), which gives x = 5. Step 3: The numbers are 15 and 25. The answer is B: 15 and 25."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "hard",
+  "promptHTML": "Two numbers are in the ratio 4 : 7. When 6 is subtracted from each, the ratio becomes 2 : 5. What are the numbers?",
+  "options": [
+   "12 and 21",
+   "21 and 12",
+   "18 and 27",
+   "4 and 7",
+   "16 and 28"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let the numbers be 4x and 7x. Then (4x - 6) / (7x - 6) = 2/5. Step 2: Cross-multiply: 5(4x - 6) = 2(7x - 6), which gives x = 3. Step 3: The numbers are 12 and 21. The answer is A: 12 and 21."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "very-hard",
+  "promptHTML": "The incomes of A and B are in the ratio 3 : 2 and their expenditures are in the ratio 5 : 3. If each saves $2,000, what is A&rsquo;s income?",
+  "options": [
+   "$8,000",
+   "$10,000",
+   "$12,000",
+   "$15,000",
+   "$16,000"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Let incomes be 3x, 2x and expenditures 5y, 3y: 3x &minus; 5y = 2,000 and 2x &minus; 3y = 2,000. Subtracting: x = 2y, so y = 2,000, x = 4,000 &rArr; A&rsquo;s income = 3x = <b>$12,000</b>. Check B: 8,000 &minus; 6,000 = 2,000. &#10003;",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "very-hard",
+  "promptHTML": "A box has $1, 50-cent and 25-cent coins in the ratio 5 : 6 : 8, worth $250 in total. How many 25-cent coins are there?",
+  "options": [
+   "250",
+   "125",
+   "100",
+   "200",
+   "150"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Take 5x, 6x and 8x coins. Value = 5x(1) + 6x(0.5) + 8x(0.25) = 5x + 3x + 2x = 10x dollars. Step 2: 10x = 250, so x = 25. Step 3: 25-cent coins = 8x = 200. Convert coin counts to value before adding; the count ratio is not the value ratio. The answer is D: 200."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "hard",
+  "promptHTML": "A jar holds 25-cent, 10-cent and 5-cent coins in the ratio 1 : 2 : 3, with total value $12. How many 10-cent coins are there?",
+  "options": [
+   "24",
+   "60",
+   "40",
+   "20",
+   "30"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Take x, 2x, 3x coins. Value = 0.25x + 0.10(2x) + 0.05(3x) = 0.25x + 0.2x + 0.15x = 0.6x. Step 2: 0.6x = 12, so x = 20. Step 3: 10-cent coins = 2x = 40. The answer is C: 40."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "hard",
+  "promptHTML": "A invests $5,000 for 12 months and B invests $6,000 for 8 months in a business. Out of a profit of $27,000, what is B's share?",
+  "options": [
+   "$13,500",
+   "$15,000",
+   "$12,000",
+   "$10,800",
+   "$16,200"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Shares follow capital multiplied by time. A : B = 5,000 &times; 12 : 6,000 &times; 8 = 60,000 : 48,000 = 5 : 4. Step 2: B's share = 4/9 of 27,000 = $12,000. Splitting by capital alone ignores the unequal durations. The answer is C: $12,000."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "hard",
+  "promptHTML": "A starts a business with $8,000. After 4 months B joins with $9,600. What is A's share of a year-end profit of $36,000?",
+  "options": [
+   "$16,000",
+   "$24,000",
+   "$21,600",
+   "$18,000",
+   "$20,000"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: A : B = 8,000 &times; 12 : 9,600 &times; 8 = 96,000 : 76,800 = 5 : 4. Step 2: A's share = 5/9 of 36,000 = $20,000. The answer is E: $20,000."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "very-hard",
+  "promptHTML": "Three partners invest $10,000 for 6 months, $12,000 for 5 months and $15,000 for 4 months respectively. What is the third partner's share of a $45,000 profit?",
+  "options": [
+   "$20,000",
+   "$18,000",
+   "$12,000",
+   "$15,000",
+   "$22,500"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Capital-time products are 60,000, 60,000 and 60,000, all equal. Step 2: So the profit splits equally: each gets 45,000 / 3 = $15,000. The largest investor does not get the largest share here because the durations offset the capitals. The answer is D: $15,000."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "hard",
+  "promptHTML": "If A : B = 2 : 3 and B : C = 4 : 5, what is A : B : C?",
+  "options": [
+   "2 : 3 : 5",
+   "8 : 12 : 20",
+   "2 : 4 : 5",
+   "8 : 12 : 15",
+   "4 : 6 : 5"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Make the B terms equal. Multiply the first ratio by 4 and the second by 3. Step 2: A : B = 8 : 12 and B : C = 12 : 15. Step 3: A : B : C = 8 : 12 : 15. Writing 2 : 3 : 5 just strings the numbers together without matching B. The answer is D: 8 : 12 : 15."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "very-hard",
+  "promptHTML": "A : B = 3 : 4 and B : C = 2 : 3. If A, B and C together get $416, what is A's share?",
+  "options": [
+   "$90",
+   "$104",
+   "$128",
+   "$96",
+   "$112"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Equalise B: A : B = 3 : 4 and B : C = 4 : 6, so A : B : C = 3 : 4 : 6. Step 2: Total parts = 13, each part = 416 / 13 = 32. Step 3: A = 3 &times; 32 = $96. The answer is D: $96."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "very-hard",
+  "promptHTML": "The incomes of two friends are in the ratio 4 : 5 and their expenditures in the ratio 7 : 9. Each saves $50. What is the smaller income?",
+  "options": [
+   "$400",
+   "$450",
+   "$320",
+   "$500",
+   "$350"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let incomes be 4x, 5x and expenditures 7y, 9y. Then 4x - 7y = 50 and 5x - 9y = 50. Step 2: Multiply the first by 9 and the second by 7: 36x - 63y = 450 and 35x - 63y = 350. Subtract: x = 100. Step 3: Incomes are 400 and 500, so the smaller income is $400. The answer is A: $400."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "very-hard",
+  "promptHTML": "Two colleagues have incomes in the ratio 3 : 4 and expenditures in the ratio 5 : 7. Each saves $80. What is the larger income?",
+  "options": [
+   "$600",
+   "$640",
+   "$480",
+   "$720",
+   "$560"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: 3x - 5y = 80 and 4x - 7y = 80. Step 2: Multiply the first by 7 and the second by 5: 21x - 35y = 560 and 20x - 35y = 400. Subtract: x = 160. Step 3: Incomes are 480 and 640, so the larger income is $640. The answer is B: $640."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "hard",
+  "promptHTML": "A vessel holds 80 litres of pure milk. 8 litres are drawn off and replaced with water, and this is done once more. What percentage of the final mixture is milk?",
+  "options": [
+   "82%",
+   "79%",
+   "90%",
+   "80%",
+   "81%"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Each operation keeps a fraction (80 - 8)/80 = 0.9 of the milk. Step 2: After two operations, milk fraction = 0.9 &times; 0.9 = 0.81. Step 3: Milk is 81% of the mixture. Subtracting 8 litres twice from 80 ignores that the second draw removes a mix. The answer is E: 81%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "hard",
+  "promptHTML": "A drum has 50 litres of milk. 10 litres are removed and replaced with water, and the process is repeated once. How many litres of water are in the drum now?",
+  "options": [
+   "10",
+   "20",
+   "18",
+   "15",
+   "16"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Milk left = 50 &times; (40/50)&sup2; = 50 &times; 0.64 = 32 litres. Step 2: Water = 50 - 32 = 18 litres. Counting 10 + 10 = 20 litres of water forgets that the second removal takes out some water too. The answer is C: 18."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "very-hard",
+  "promptHTML": "From 100 litres of pure alcohol, 20 litres are drawn out and replaced with water. This is done three times in all. How much alcohol remains?",
+  "options": [
+   "40",
+   "60",
+   "48.8",
+   "64",
+   "51.2"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Each cycle keeps 80/100 = 0.8 of the alcohol. Step 2: After three cycles, alcohol = 100 &times; 0.8&sup3; = 100 &times; 0.512 = 51.2 litres. 48.8 litres is the amount of water, not alcohol. The answer is E: 51.2."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "very-hard",
+  "promptHTML": "Tea costing $30 per kg is mixed with tea costing $45 per kg, and the blend is sold at $43.20 per kg at a profit of 20%. In what ratio were the teas mixed?",
+  "options": [
+   "4 : 3",
+   "3 : 2",
+   "1 : 2",
+   "2 : 3",
+   "5 : 4"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Cost of the blend = 43.20 / 1.2 = $36 per kg. Step 2: By alligation, ratio = (45 - 36) : (36 - 30) = 9 : 6 = 3 : 2. Using the selling price 43.20 directly in the alligation, instead of stripping the profit first, gives a wrong ratio. The answer is B: 3 : 2."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "hard",
+  "promptHTML": "Rice at $24 per kg is mixed with rice at $36 per kg so that the mixture costs $33 per kg. How many kg of the cheaper rice are in 48 kg of mixture?",
+  "options": [
+   "12",
+   "16",
+   "24",
+   "36",
+   "18"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Alligation: cheaper : dearer = (36 - 33) : (33 - 24) = 3 : 9 = 1 : 3. Step 2: Cheaper rice = 48 &times; 1/4 = 12 kg. The answer 36 kg is the dearer rice's share. The answer is A: 12."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "hard",
+  "promptHTML": "A 30% acid solution is mixed with a 75% acid solution to make 36 litres of 45% solution. How many litres of the 30% solution are needed?",
+  "options": [
+   "27",
+   "18",
+   "20",
+   "12",
+   "24"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Alligation: ratio of 30% to 75% = (75 - 45) : (45 - 30) = 30 : 15 = 2 : 1. Step 2: 30% solution = 36 &times; 2/3 = 24 litres. 12 litres is the 75% solution's quantity. The answer is E: 24."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "very-hard",
+  "promptHTML": "How many litres of a 90% alcohol solution must be added to 30 litres of a 40% solution to obtain a 60% solution?",
+  "options": [
+   "10",
+   "25",
+   "15",
+   "20",
+   "30"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Alcohol balance: 0.9x + 0.4 &times; 30 = 0.6(x + 30). Step 2: 0.9x + 12 = 0.6x + 18, so 0.3x = 6 and x = 20 litres. The answer is D: 20."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "hard",
+  "promptHTML": "A chemist mixes a 25% solution with a 55% solution to make 40 litres of a 46% solution. How many litres of the 55% solution are used?",
+  "options": [
+   "28",
+   "30",
+   "24",
+   "20",
+   "12"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Alligation: 25% : 55% = (55 - 46) : (46 - 25) = 9 : 21 = 3 : 7. Step 2: The 55% solution = 40 &times; 7/10 = 28 litres. 12 litres is the 25% portion. The answer is A: 28."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "hard",
+  "promptHTML": "A 50-litre mixture has milk and water in the ratio 7 : 3. How much water must be added to make the ratio 7 : 5?",
+  "options": [
+   "10",
+   "5",
+   "20",
+   "8",
+   "15"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Milk = 35 litres, water = 15 litres. Milk does not change. Step 2: 35 / (15 + x) = 7/5, so 15 + x = 25 and x = 10 litres. The answer is A: 10."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "medium",
+  "promptHTML": "A 60-litre mixture contains milk and water in the ratio 2 : 1. How much water should be added so the ratio becomes 1 : 1?",
+  "options": [
+   "20",
+   "10",
+   "30",
+   "25",
+   "15"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Milk = 40 litres, water = 20 litres. Step 2: For 1 : 1 we need 40 litres of water, so add 40 - 20 = 20 litres. The answer is A: 20."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "very-hard",
+  "promptHTML": "Alloy A has copper and zinc in the ratio 7 : 2, and alloy B has them in the ratio 7 : 11. Equal weights of A and B are melted together. What is the ratio of copper to zinc in the new alloy?",
+  "options": [
+   "2 : 1",
+   "7 : 6",
+   "5 : 7",
+   "7 : 5",
+   "14 : 13"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Take 18 units of each alloy (18 is divisible by 9 and 18). A gives copper 14, zinc 4. B gives copper 7, zinc 11. Step 2: Total copper = 21, total zinc = 15. Step 3: Ratio = 21 : 15 = 7 : 5. You cannot just add the ratio numbers 7+7 and 2+11 unless the bases are first made equal, which taking equal weights does. The answer is D: 7 : 5."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "very-hard",
+  "promptHTML": "Alloy P has gold and silver in the ratio 5 : 3, and alloy Q has them in the ratio 1 : 3. Equal weights of P and Q are combined. What is the gold to silver ratio of the result?",
+  "options": [
+   "5 : 6",
+   "3 : 5",
+   "9 : 7",
+   "7 : 9",
+   "6 : 6"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Take 8 units of each. P gives gold 5, silver 3. Q gives gold 2, silver 6. Step 2: Gold = 7, silver = 9, so the ratio is 7 : 9. The answer is D: 7 : 9."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "The average of 40 numbers is 38. It is later found that 56 was wrongly read as 36. What is the correct average?",
+  "options": [
+   "39",
+   "37.5",
+   "38.2",
+   "38.5",
+   "38.8"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: The recorded total is short by 56 - 36 = 20. Step 2: Correct average = 38 + 20/40 = 38.5. The answer is D: 38.5."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "The average of 25 numbers is 18. One entry, 73, was mistakenly recorded as 23. Find the correct average.",
+  "options": [
+   "20",
+   "19",
+   "22",
+   "18.5",
+   "21"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: The total is short by 73 - 23 = 50. Step 2: Correct average = 18 + 50/25 = 20. The answer is A: 20."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "very-hard",
+  "promptHTML": "A batsman scores 87 in his 17th innings, which raises his average by 3 runs. What is his average after the 17th innings?",
+  "options": [
+   "39",
+   "45",
+   "38",
+   "42",
+   "36"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let the old average be a. Then 16a + 87 = 17(a + 3). Step 2: 16a + 87 = 17a + 51, so a = 36. Step 3: New average = 36 + 3 = 39. Stopping at a = 36 answers the old average, not the one asked for. The answer is A: 39."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "A batsman has scored 1,350 runs in 30 innings, an average of 45. How many runs must he score in his 31st innings to raise his average to 48?",
+  "options": [
+   "138",
+   "144",
+   "126",
+   "93",
+   "135"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Required total after 31 innings = 31 &times; 48 = 1,488. Step 2: Runs needed = 1,488 - 1,350 = 138. The answer is A: 138."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "A bowler's average runs conceded per match is 50 after 11 matches. After the 12th match the average falls by 2. How many runs did he concede in the 12th match?",
+  "options": [
+   "26",
+   "48",
+   "30",
+   "24",
+   "36"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: New total = 12 &times; 48 = 576. Old total = 11 &times; 50 = 550. Step 2: Runs in the 12th match = 576 - 550 = 26. The answer is A: 26."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "The average age of 30 students is 14 years. When the teacher's age is included, the average becomes 15. How old is the teacher?",
+  "options": [
+   "50",
+   "45",
+   "44",
+   "31",
+   "35"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Total with teacher = 31 &times; 15 = 465. Students alone total 30 &times; 14 = 420. Step 2: Teacher's age = 465 - 420 = 45 years. The teacher must cover the new average plus the rise for every student, not just be 15. The answer is B: 45."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "The average age of 24 students is 11. Including the class teacher raises the average by 1 year. What is the teacher's age?",
+  "options": [
+   "35",
+   "25",
+   "30",
+   "12",
+   "36"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: New average = 12 over 25 people, total = 300. Students total = 264. Step 2: Teacher = 300 - 264 = 36 years. The answer is E: 36."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "When a 65 kg member of an 8-person team is replaced by a new member, the average weight rises by 2.5 kg. What does the new member weigh?",
+  "options": [
+   "82.5",
+   "85",
+   "90",
+   "70",
+   "76"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: The team total rises by 8 &times; 2.5 = 20 kg. Step 2: New member = 65 + 20 = 85 kg. Adding 2.5 only to the old weight ignores the team size. The answer is B: 85."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "A 92 kg rower in a crew of 10 is replaced, and the average weight of the crew falls by 1.8 kg. What is the new rower's weight?",
+  "options": [
+   "80",
+   "75.6",
+   "74",
+   "90.2",
+   "73"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: The total falls by 10 &times; 1.8 = 18 kg. Step 2: New rower = 92 - 18 = 74 kg. The answer is C: 74."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "very-hard",
+  "promptHTML": "The average of 7 consecutive even numbers is 32. If the smallest is removed, what is the new average?",
+  "options": [
+   "34",
+   "35",
+   "31",
+   "32",
+   "33"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: The numbers are 26, 28, 30, 32, 34, 36, 38 with the middle one 32. Step 2: Removing 26 leaves six numbers from 28 to 38, whose average is the middle value (28 + 38)/2 = 33. The answer is E: 33."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "The average of 5 consecutive odd numbers is 27. What is the sum of the largest and smallest of them?",
+  "options": [
+   "58",
+   "27",
+   "54",
+   "50",
+   "52"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: The middle number equals the average, so the numbers are 23, 25, 27, 29, 31. Step 2: Largest plus smallest = 31 + 23 = 54, which is always twice the average for a symmetric list. The answer is C: 54."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "The sum of four consecutive multiples of 5 is 230. What is the largest of them?",
+  "options": [
+   "70",
+   "60",
+   "65",
+   "75",
+   "55"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let the numbers be x, x+5, x+10, x+15. Sum = 4x + 30 = 230, so x = 50. Step 2: The numbers are 50, 55, 60, 65 and the largest is 65. The answer is C: 65."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "hard",
+  "promptHTML": "Walking at 4 km/h, a student reaches school 10 minutes late. Walking at 5 km/h, she arrives 8 minutes early. How far is the school?",
+  "options": [
+   "4.5 km",
+   "8 km",
+   "4 km",
+   "9 km",
+   "6 km"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: The time difference between the two walks is 10 + 8 = 18 minutes = 0.3 hours. Step 2: D/4 - D/5 = 0.3. Step 3: D &times; (5 - 4)/20 = 0.3, so D = 6 km. Use the sum of late and early times, not their difference. The answer is E: 6 km."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "hard",
+  "promptHTML": "Cycling at 12 km/h, a courier reaches the depot 6 minutes late; at 18 km/h he arrives 4 minutes early. How far away is the depot?",
+  "options": [
+   "5 km",
+   "6 km",
+   "7.2 km",
+   "8 km",
+   "9 km"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The time difference between the two speeds is 10 minutes = 1/6 h. So d/12 &minus; d/18 = d/36 = 1/6 &rArr; d = <b>6 km</b>. Using only the &ldquo;late&rdquo; leg (6 min) instead of the full late-to-early swing is the classic slip.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "hard",
+  "promptHTML": "A walks from the office toward the station at 4 km/h. B leaves the same office 15 minutes later at 5 km/h along the same road. How far from the office does B catch up with A?",
+  "options": [
+   "4 km",
+   "4.5 km",
+   "5 km",
+   "6 km",
+   "7.5 km"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "A&rsquo;s head start = 4 &times; &frac14; = 1 km. Closing speed = 1 km/h, so B needs 1 hour, covering 5 &times; 1 = <b>5 km</b>. (Equivalently A has walked 1.25 h &times; 4 = 5 km. &#10003;)",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "hard",
+  "promptHTML": "Moving at 3/4 of his usual speed, a commuter is 20 minutes late. What is his usual travel time?",
+  "options": [
+   "80 minutes",
+   "48 minutes",
+   "54 minutes",
+   "60 minutes",
+   "72 minutes"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: At 3/4 speed the journey takes 4/3 of the usual time T. Step 2: Extra time = (4/3 - 1) &times; T = T &times; 1/3 = 20 minutes. Step 3: T = 20 &times; 3/1 = 60 minutes. The answer is D: 60 minutes."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "hard",
+  "promptHTML": "Excluding stoppages, a bus averages 60 km/h; including stoppages, it averages 48 km/h. For how many minutes per hour does the bus stop?",
+  "options": [
+   "8",
+   "10",
+   "12",
+   "15",
+   "20"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Each hour it effectively loses 12 km of the 60 km it could cover: stopped fraction = 12/60 = 1/5 of the hour = <b>12 minutes</b>.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "very-hard",
+  "promptHTML": "A train covers 300 km at a uniform speed. Had the speed been 10 km/h more, the journey would have taken one hour less. What is the actual speed?",
+  "options": [
+   "40 km/h",
+   "45 km/h",
+   "50 km/h",
+   "60 km/h",
+   "75 km/h"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "300/v &minus; 300/(v + 10) = 1 &rArr; 3000 = v(v + 10) &rArr; v&sup2; + 10v &minus; 3000 = 0 &rArr; (v + 60)(v &minus; 50) = 0 &rArr; v = <b>50 km/h</b>. Reject the negative root.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "very-hard",
+  "promptHTML": "Towns A and B are 295 km apart. A car leaves A at 8:00 AM at 50 km/h toward B. A second car leaves B at 9:30 AM at 60 km/h toward A. At what time do they meet?",
+  "options": [
+   "10:30 AM",
+   "12:30 PM",
+   "11:30 AM",
+   "12:00 noon",
+   "11:00 AM"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: By 9:30 AM the first car has covered 1.5 &times; 50 = 75 km, leaving a 220 km gap. Step 2: Together they close the gap at 50 + 60 = 110 km/h, taking 220/110 = 2 hours. Step 3: They meet at 9:30 + 2:00 = 11:30 AM. The answer is C: 11:30 AM."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "very-hard",
+  "promptHTML": "P and Q are 180 km apart. A cyclist leaves P at 9:00 AM at 36 km/h. Another leaves Q at 10:00 AM at 36 km/h toward P. How far from P do they meet?",
+  "options": [
+   "72 km",
+   "126 km",
+   "144 km",
+   "108 km",
+   "90 km"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: By 10:00 AM the first cyclist has done 36 km, leaving 144 km between them. Step 2: Closing speed = 72 km/h, so they meet 2 hours later at 12:00. Step 3: The first cyclist rides 3 hours in total: 3 &times; 36 = 108 km from P. The midpoint answer 90 km ignores the one-hour head start. The answer is D: 108 km."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "very-hard",
+  "promptHTML": "Two trains start at the same time from stations X and Y toward each other. After they meet, the first takes 4 hours to reach Y and the second takes 9 hours to reach X. If the second train runs at 40 km/h, what is the first train's speed?",
+  "options": [
+   "80 km/h",
+   "60 km/h",
+   "45 km/h",
+   "90 km/h",
+   "50 km/h"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: For trains meeting and continuing, speed ratio = square root of the inverse time ratio: v1/v2 = sqrt(9/4) = 3/2. Step 2: v1 = 40 &times; 3/2 = 60 km/h. Using 9/4 directly without the square root gives 90, the standard error. The answer is B: 60 km/h."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "very-hard",
+  "promptHTML": "Two buses leave towns M and N at the same time toward each other. After crossing, one takes 1 hour to finish and the other takes 4 hours. If the bus from M travels at 80 km/h, find the speed of the bus from N.",
+  "options": [
+   "40 km/h",
+   "50 km/h",
+   "70 km/h",
+   "60 km/h",
+   "20 km/h"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: vM/vN = sqrt(4/1) = 2. Step 2: vN = 80 / 2 = 40 km/h. The answer is A: 40 km/h."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "hard",
+  "promptHTML": "A driver covers the first half of a journey at 40 km/h and the second half (equal distance) at 60 km/h. What is the average speed for the whole trip?",
+  "options": [
+   "50 km/h",
+   "52 km/h",
+   "45 km/h",
+   "48 km/h",
+   "55 km/h"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Average speed for equal distances is the harmonic mean: 2 &times; 40 &times; 60 / (40 + 60). Step 2: = 4800 / 100 = 48 km/h. The arithmetic mean 50 is wrong because more time is spent at the slower speed. The answer is D: 48 km/h."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "very-hard",
+  "promptHTML": "A courier rides three equal stretches of road at 30 km/h, 40 km/h and 60 km/h. What is the average speed over the whole distance?",
+  "options": [
+   "50 km/h",
+   "42 km/h",
+   "45 km/h",
+   "40 km/h",
+   "43.33 km/h"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: For three equal distances, average = 3 / (1/30 + 1/40 + 1/60). Step 2: The denominators sum to 4/120 + 3/120 + 2/120 = 9/120. Step 3: Average = 3 &times; 120/9 = 40 km/h. The arithmetic mean 43.33 overweights the fast stretch. The answer is D: 40 km/h."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "hard",
+  "promptHTML": "A hiker walks half the distance of a trail at 20 km/h equivalent pace and the other half at 30 km/h. What is the average speed?",
+  "options": [
+   "26 km/h",
+   "24 km/h",
+   "25 km/h",
+   "27.5 km/h",
+   "22 km/h"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Harmonic mean for equal distances: 2 &times; 20 &times; 30 / (20 + 30) = 1200/50. Step 2: Average = 24 km/h, not the simple mean 25. The answer is B: 24 km/h."
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "hard",
+  "promptHTML": "A train crosses a pole in 12 seconds and a 300 m long platform in 27 seconds. What is the length of the train?",
+  "options": [
+   "199 m",
+   "300 m",
+   "226 m",
+   "240 m",
+   "269 m"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: The extra 15 seconds are spent covering the platform, so speed = 300/15 = 20 m/s. Step 2: Train length = speed &times; pole time = 20 &times; 12 = 240 m. The answer is D: 240 m."
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "very-hard",
+  "promptHTML": "A train passes a signal post in 15 seconds and a 350 m platform in 29 seconds. Find the speed of the train in km/h.",
+  "options": [
+   "96 km/h",
+   "90 km/h",
+   "75 km/h",
+   "84 km/h",
+   "25 km/h"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Speed = 350/(29 - 15) = 25 m/s. Step 2: Convert: 25 &times; 3.6 = 90 km/h. Forgetting the 3.6 conversion leaves the m/s figure. The answer is B: 90 km/h."
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "hard",
+  "promptHTML": "A 240 m long train crosses a 360 m long bridge in 30 seconds. How long will it take to pass a man standing on the bridge?",
+  "options": [
+   "9 s",
+   "12 s",
+   "15 s",
+   "18 s",
+   "24 s"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Crossing the bridge covers 240 + 360 = 600 m in 30 s &rarr; 20 m/s. Passing a man needs only the train&rsquo;s own length: 240/20 = <b>12 s</b>. Including the bridge length again (30 s &times; 240/600) is the error the question is fishing for.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "hard",
+  "promptHTML": "Two trains 220 m and 130 m long run toward each other on parallel tracks at 54 km/h and 72 km/h. How long do they take to cross each other?",
+  "options": [
+   "10 seconds",
+   "70 seconds",
+   "14 seconds",
+   "8 seconds",
+   "12 seconds"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Relative speed = 54 + 72 = 126 km/h = 35 m/s. Step 2: Distance to cover = 220 + 130 = 350 m. Step 3: Time = 350/35 = 10 seconds. Both lengths count, and opposite directions means speeds add. The answer is A: 10 seconds."
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "hard",
+  "promptHTML": "A 150 m long train moving at 72 km/h passes a man running at 8 km/h in the opposite direction. In how many seconds does the train pass him?",
+  "options": [
+   "6.75",
+   "7.5",
+   "8.44",
+   "9.375",
+   "13.5"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Relative speed = 72 + 8 = 80 km/h = 80 &times; 5/18 = 200/9 m/s. Time = 150 &divide; (200/9) = <b>6.75 s</b>. Only the train&rsquo;s length matters &mdash; a man has no length to cross; 72 &minus; 8 (same-direction) gives the 8.44 trap.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "very-hard",
+  "promptHTML": "Two trains of equal length cross a telegraph pole in 6 seconds and 9 seconds respectively. Running in opposite directions, in how many seconds do they cross each other?",
+  "options": [
+   "7.2",
+   "7.5",
+   "8",
+   "10.8",
+   "15"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Let each length be L: speeds are L/6 and L/9. Crossing each other needs 2L at combined speed: 2L &divide; (L/6 + L/9) = 2 &divide; (5/18) = <b>7.2 s</b>. Averaging 6 and 9 to get 7.5 is the trap &mdash; time is not additive, speed is.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "very-hard",
+  "promptHTML": "A 150 m train at 72 km/h overtakes a 100 m train moving at 54 km/h in the same direction. How long does the overtake take?",
+  "options": [
+   "30 seconds",
+   "50 seconds",
+   "60 seconds",
+   "7 seconds",
+   "40 seconds"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Same direction, so relative speed = 72 - 54 = 18 km/h = 5 m/s. Step 2: Distance = 150 + 100 = 250 m. Step 3: Time = 250/5 = 50 seconds. Adding the speeds (as if they ran toward each other) gives 7 seconds, the trap. The answer is B: 50 seconds."
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "very-hard",
+  "promptHTML": "Stations P and Q are 390 km apart. A train leaves P toward Q at 7:00 am at 60 km/h; another leaves Q toward P at 8:00 am at 90 km/h. At what time do they meet?",
+  "options": [
+   "9:48 am",
+   "10:00 am",
+   "10:12 am",
+   "10:30 am",
+   "10:48 am"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "By 8:00 am the first train has covered 60 km, leaving 330 km. Closing speed = 150 km/h &rarr; 330/150 = 2.2 h = 2 h 12 min after 8:00 am = <b>10:12 am</b>. Forgetting the one-hour head start gives 10:36; splitting 390 directly gives 10:36-ish traps.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "very-hard",
+  "promptHTML": "A 240 m long train moving at 54 km/h crosses a man walking at 6 km/h in the opposite direction. How long does it take to pass him?",
+  "options": [
+   "18 seconds",
+   "14.4 seconds",
+   "12 seconds",
+   "16 seconds",
+   "15 seconds"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Opposite directions, so relative speed = 54 + 6 = 60 km/h = 50/3 m/s. Step 2: Time = 240 / (50/3) = 14.4 seconds. Ignoring the man's speed gives 16 seconds. The answer is B: 14.4 seconds."
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "very-hard",
+  "promptHTML": "A 180 m train travelling at 66 km/h passes a jogger moving at 6 km/h in the same direction. How long does it take to pass the jogger?",
+  "options": [
+   "9.8 seconds",
+   "12 seconds",
+   "9 seconds",
+   "10.8 seconds",
+   "10 seconds"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Same direction, so relative speed = 66 - 6 = 60 km/h = 50/3 m/s. Step 2: Time = 180 / (50/3) = 10.8 seconds. Adding the speeds instead gives 9 seconds. The answer is D: 10.8 seconds."
+ },
+ {
+  "category": "Numerical",
+  "topic": "boats-streams",
+  "difficulty": "very-hard",
+  "promptHTML": "A boat's speed in still water is 8 km/h. It travels 30 km downstream and returns. The upstream leg takes 2 hours longer than the downstream leg. What is the speed of the stream?",
+  "options": [
+   "1.5 km/h",
+   "2.5 km/h",
+   "2 km/h",
+   "4 km/h",
+   "3 km/h"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: 30/(8 - s) - 30/(8 + s) = 2. Step 2: 30(8 + s) - 30(8 - s) = 2(64 - s&sup2;), so 60s = 128 - 2s&sup2;. Step 3: s&sup2; + 30s - 64 = 0, which factors as (s + 32)(s - 2) = 0, so s = 2 km/h. The answer is C: 2 km/h."
+ },
+ {
+  "category": "Numerical",
+  "topic": "boats-streams",
+  "difficulty": "very-hard",
+  "promptHTML": "A boat goes 24 km downstream and 24 km back. Its still-water speed is 10 km/h and the upstream trip takes 1 hour more than the downstream trip. Find the stream's speed.",
+  "options": [
+   "5 km/h",
+   "3 km/h",
+   "4 km/h",
+   "2 km/h",
+   "2.5 km/h"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: 24/(10 - s) - 24/(10 + s) = 1. Step 2: 48s = 100 - s&sup2;, so s&sup2; + 48s - 100 = 0. Step 3: (s + 50)(s - 2) = 0, so s = 2 km/h. The answer is D: 2 km/h."
+ },
+ {
+  "category": "Numerical",
+  "topic": "boats-streams",
+  "difficulty": "hard",
+  "promptHTML": "A boat with still-water speed 8 km/h sails in a stream flowing at 2 km/h. It goes a certain distance downstream and returns, taking 8 hours in total. How far downstream did it go?",
+  "options": [
+   "30 km",
+   "24 km",
+   "36 km",
+   "40 km",
+   "32 km"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Downstream speed 10 km/h, upstream 6 km/h. Step 2: D/10 + D/6 = 8, so (3D + 5D)/30 = 8 and 8D = 240. Step 3: D = 30 km. The answer is A: 30 km."
+ },
+ {
+  "category": "Numerical",
+  "topic": "boats-streams",
+  "difficulty": "hard",
+  "promptHTML": "A swimmer's still-water speed is 6 km/h and the river flows at 2 km/h. He swims to a point downstream and back in 6 hours. How far away is the point?",
+  "options": [
+   "20 km",
+   "18 km",
+   "12 km",
+   "24 km",
+   "16 km"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Down 8 km/h, up 4 km/h. Step 2: D/8 + D/4 = 6, so 3D/8 = 6. Step 3: D = 16 km. The answer is E: 16 km."
+ },
+ {
+  "category": "Numerical",
+  "topic": "boats-streams",
+  "difficulty": "hard",
+  "promptHTML": "A ferry has a still-water speed of 9 km/h in a current of 3 km/h. It makes a round trip to a dock and back in 9 hours. How far is the dock?",
+  "options": [
+   "45 km",
+   "54 km",
+   "30 km",
+   "36 km",
+   "27 km"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Down 12 km/h, up 6 km/h. Step 2: D/12 + D/6 = 9, so D/4 = 9. Step 3: D = 36 km. The answer is D: 36 km."
+ },
+ {
+  "category": "Numerical",
+  "topic": "boats-streams",
+  "difficulty": "hard",
+  "promptHTML": "A boat takes 3 times as long to row a stretch upstream as to row the same stretch downstream. What is the ratio of the boat's speed in still water to the speed of the stream?",
+  "options": [
+   "2 : 1",
+   "4 : 3",
+   "3 : 1",
+   "4 : 1",
+   "1 : 2"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Time ratio up : down = 3 : 1, so the speed ratio down : up = 3 : 1. Step 2: (b + s)/(b - s) = 3/1. Cross-multiplying: 1b + 1s = 3b - 3s. Step 3: 4s = 2b, so b : s = 4 : 2 = 2 : 1. Quoting the raw time ratio 3 : 1 as the answer skips the algebra. The answer is A: 2 : 1."
+ },
+ {
+  "category": "Numerical",
+  "topic": "boats-streams",
+  "difficulty": "very-hard",
+  "promptHTML": "A boat&rsquo;s speed in still water is 15 km/h. It travels 30 km upstream and returns to the start in 4 hours 30 minutes. What is the speed of the stream?",
+  "options": [
+   "3 km/h",
+   "4 km/h",
+   "5 km/h",
+   "6 km/h",
+   "7.5 km/h"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "30/(15 &minus; s) + 30/(15 + s) = 4.5 &rArr; 30 &times; 30/(225 &minus; s&sup2;) = 4.5 &rArr; 225 &minus; s&sup2; = 200 &rArr; s = <b>5 km/h</b>. Clear the denominators via the difference-of-squares product &mdash; expanding both fractions separately wastes a minute.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "boats-streams",
+  "difficulty": "very-hard",
+  "promptHTML": "The times taken by a boat to cover the same distance upstream and downstream are in the ratio 5 : 3. What is the ratio of the boat's still-water speed to the stream's speed?",
+  "options": [
+   "6 : 1",
+   "8 : 5",
+   "5 : 3",
+   "1 : 4",
+   "4 : 1"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Time ratio up : down = 5 : 3, so the speed ratio down : up = 5 : 3. Step 2: (b + s)/(b - s) = 5/3. Cross-multiplying: 3b + 3s = 5b - 5s. Step 3: 8s = 2b, so b : s = 8 : 2 = 4 : 1. Quoting the raw time ratio 5 : 3 as the answer skips the algebra. The answer is E: 4 : 1."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "hard",
+  "promptHTML": "A can finish a job in 12 days and B in 18 days. They work together for 4 days, after which A leaves. How many more days does B need to finish?",
+  "options": [
+   "6 days",
+   "10 days",
+   "8 days",
+   "14 days",
+   "12 days"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: In 4 days they complete 4 &times; (1/12 + 1/18) = 5/9 of the job. Step 2: Remaining work = 4/9. Step 3: B alone needs 4/9 &times; 18 = 8 days. The answer is C: 8 days."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "very-hard",
+  "promptHTML": "A and B together can finish a job in 12 days, B and C in 15 days, and A and C in 20 days. In how many days can C alone finish the job?",
+  "options": [
+   "30",
+   "45",
+   "60",
+   "90",
+   "120"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Adding the three pair-rates counts each worker twice: (1/12 + 1/15 + 1/20) = 12/60 = 1/5, so A + B + C = 1/10 per day. C = (A+B+C) &minus; (A+B) = 1/10 &minus; 1/12 = 1/60 &rArr; <b>60 days</b>.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "hard",
+  "promptHTML": "A completes half of a job in 6 days. B then finishes the remaining half in 3 days. Working together from the start, in how many days would they have completed the whole job?",
+  "options": [
+   "3",
+   "4",
+   "4.5",
+   "5",
+   "6"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "A does the full job in 12 days (rate 1/12); B does half in 3 &rArr; full in 6 (rate 1/6). Together: 1/12 + 1/6 = 1/4 &rArr; <b>4 days</b>.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "very-hard",
+  "promptHTML": "A and B can do a job in 12 days, B and C in 15 days, and C and A in 20 days. How long will all three working together take?",
+  "options": [
+   "8 days",
+   "10 days",
+   "15 days",
+   "9 days",
+   "12 days"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Adding the three pair rates counts each person twice: 2(A + B + C) = 1/12 + 1/15 + 1/20 = 5/60 + 4/60 + 3/60 = 12/60 = 1/5. Step 2: A + B + C = 1/10 per day. Step 3: Together they take 10 days. Forgetting to halve the sum gives 5 days, an impossible answer here. The answer is B: 10 days."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "very-hard",
+  "promptHTML": "A and B together finish a task in 10 days, B and C in 12 days, and C and A in 15 days. In how many days will A, B and C finish it working together?",
+  "options": [
+   "10 days",
+   "6 days",
+   "12 days",
+   "9 days",
+   "8 days"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: 2(A + B + C) = 1/10 + 1/12 + 1/15 = 6/60 + 5/60 + 4/60 = 15/60 = 1/4. Step 2: A + B + C = 1/8 per day, so 8 days together. The answer is E: 8 days."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "very-hard",
+  "promptHTML": "A and B can complete a piece of work in 8 days, B and C in 12 days, and C and A in 24 days. How long would A take working alone?",
+  "options": [
+   "18 days",
+   "24 days",
+   "20 days",
+   "12 days",
+   "30 days"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: 2(A + B + C) = 1/8 + 1/12 + 1/24 = 3/24 + 2/24 + 1/24 = 6/24 = 1/4, so A + B + C = 1/8. Step 2: A's rate = (A + B + C) - (B + C) = 1/8 - 1/12 = 3/24 - 2/24 = 1/24. Step 3: A alone takes 24 days. The answer is B: 24 days."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "very-hard",
+  "promptHTML": "36 workers finish a project in 25 days working 8 hours a day. How many workers are needed to finish a project 1.5 times as large in 30 days working 6 hours a day?",
+  "options": [
+   "60 workers",
+   "45 workers",
+   "54 workers",
+   "48 workers",
+   "72 workers"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Use M1 D1 H1 / W1 = M2 D2 H2 / W2. Step 2: M2 = 36 &times; 25 &times; 8 &times; 1.5 / (30 &times; 6) = 10,800 / 180 = 60 workers. The answer is A: 60 workers."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "hard",
+  "promptHTML": "15 men can do a piece of work in 12 days. How many days will 20 men take to do twice as much work?",
+  "options": [
+   "9 days",
+   "16 days",
+   "18 days",
+   "24 days",
+   "12 days"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Total effort needed = 15 &times; 12 &times; 2 = 360 man-days. Step 2: Days for 20 men = 360 / 20 = 18 days. The answer is C: 18 days."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "very-hard",
+  "promptHTML": "24 men plan to build a wall in 18 days. After 6 days, 8 men leave. How many more days will the remaining men take to finish the wall?",
+  "options": [
+   "24 days",
+   "16 days",
+   "18 days",
+   "12 days",
+   "20 days"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Total job = 24 &times; 18 = 432 man-days. Work done in 6 days = 144 man-days, leaving 288. Step 2: Remaining crew = 16 men, so time = 288 / 16 = 18 more days. The answer is C: 18 days."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "hard",
+  "promptHTML": "A camp has food for 400 people for 45 days. After 15 days, 200 more people arrive. How long will the remaining food last?",
+  "options": [
+   "18 days",
+   "15 days",
+   "25 days",
+   "30 days",
+   "20 days"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Food left after 15 days = 400 &times; 30 = 12,000 person-days. Step 2: New strength = 600 people, so the food lasts 12,000 / 600 = 20 days. The answer is E: 20 days."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "hard",
+  "promptHTML": "A fort has provisions for 1,200 soldiers for 60 days. After 20 days, 400 soldiers are transferred out. For how many more days will the provisions last?",
+  "options": [
+   "40 days",
+   "50 days",
+   "55 days",
+   "60 days",
+   "45 days"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Provisions left = 1,200 &times; 40 = 48,000 soldier-days. Step 2: Soldiers remaining = 800, so 48,000 / 800 = 60 more days. The answer is D: 60 days."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "very-hard",
+  "promptHTML": "A is three times as efficient as B and finishes a job 24 days before B would. How long do they take working together?",
+  "options": [
+   "10 days",
+   "9 days",
+   "18 days",
+   "12 days",
+   "8 days"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: If A takes t days, B takes 3t. Then 3t - t = 24, so t = 12 and B takes 36 days. Step 2: Combined rate = 1/12 + 1/36 = 4/36 = 1/9. Step 3: Together they take 9 days. The answer is B: 9 days."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "hard",
+  "promptHTML": "A works twice as fast as B. Together they finish a job in 12 days. How long would B alone take?",
+  "options": [
+   "36 days",
+   "18 days",
+   "30 days",
+   "48 days",
+   "24 days"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let B's rate be r, so A's is 2r and 3r = 1/12, giving r = 1/36. Step 2: B alone takes 36 days. The answer 24 wrongly assigns the combined logic to A. The answer is A: 36 days."
+ },
+ {
+  "category": "Numerical",
+  "topic": "pipes-cisterns",
+  "difficulty": "hard",
+  "promptHTML": "Pipe A fills a tank in 6 hours and pipe B fills it in 8 hours, while drain C empties the full tank in 12 hours. If all three are opened together on an empty tank, how long does it take to fill?",
+  "options": [
+   "4 hours 12 minutes",
+   "6 hours",
+   "5 hours",
+   "4 hours 30 minutes",
+   "4 hours 48 minutes"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Net rate per hour = 1/6 + 1/8 - 1/12 = 5/24 of the tank. Step 2: Time = 24/5 hours = 4 hours 48 minutes. The drain subtracts; it does not add. The answer is E: 4 hours 48 minutes."
+ },
+ {
+  "category": "Numerical",
+  "topic": "pipes-cisterns",
+  "difficulty": "very-hard",
+  "promptHTML": "Pipe A fills a tank in 12 hours and pipe B in 18 hours. They are opened alternately for one hour each, starting with A. In how much time will the tank be full?",
+  "options": [
+   "14 h",
+   "14 h 15 min",
+   "14 h 20 min",
+   "14 h 30 min",
+   "15 h"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Each 2-hour cycle adds 1/12 + 1/18 = 5/36. After 7 cycles (14 h): 35/36 full. The 15th hour belongs to A (rate 1/12 = 3/36): the remaining 1/36 takes (1/36)/(1/12) = 1/3 h. Total = <b>14 h 20 min</b>. Blindly dividing 1 by the average rate gives 14 h 24 min &mdash; wrong because the last stretch is A alone.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "pipes-cisterns",
+  "difficulty": "hard",
+  "promptHTML": "A tank is two-fifths full. An inlet pipe can fill the empty tank in 10 hours, and an outlet pipe can empty the full tank in 6 hours. If both pipes are opened together, in how many hours will the tank be emptied?",
+  "options": [
+   "4",
+   "5",
+   "6",
+   "7.5",
+   "9"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Net emptying rate = 1/6 &minus; 1/10 = 1/15 of the tank per hour. Emptying 2/5 of the tank: (2/5) &divide; (1/15) = <b>6 hours</b>. Forgetting the tank starts partly full (using the whole tank) gives 15.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "pipes-cisterns",
+  "difficulty": "hard",
+  "promptHTML": "A pipe can fill a tank in 6 hours, but because of a leak it takes 9 hours. How long would the leak alone take to empty a full tank?",
+  "options": [
+   "30 hours",
+   "12 hours",
+   "16 hours",
+   "3 hours",
+   "18 hours"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Leak rate = 1/6 - 1/9 = 1/18 per hour. Step 2: The leak empties the tank in 18 hours. Subtracting the times (9 - 6 = 3) is meaningless here. The answer is E: 18 hours."
+ },
+ {
+  "category": "Numerical",
+  "topic": "pipes-cisterns",
+  "difficulty": "very-hard",
+  "promptHTML": "Two pipes can fill a tank in 12 minutes and 15 minutes. Both are opened together, but the faster pipe is turned off after 3 minutes. In how much total time is the tank filled?",
+  "options": [
+   "10 min 30 s",
+   "11 min",
+   "11 min 15 s",
+   "11 min 45 s",
+   "12 min 30 s"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "First 3 minutes: 3 &times; (1/12 + 1/15) = 3 &times; 9/60 = 9/20 of the tank. The rest, 11/20, is filled by the slower pipe alone: (11/20) &divide; (1/15) = 8.25 min. Total = 3 + 8.25 = 11.25 min = <b>11 min 15 s</b>.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "pipes-cisterns",
+  "difficulty": "very-hard",
+  "promptHTML": "Pipes A and B can fill a tank in 10 and 15 hours respectively. Both are opened, but A is shut after 3 hours. What is the total time taken to fill the tank?",
+  "options": [
+   "10 hours 30 minutes",
+   "12 hours",
+   "9 hours",
+   "10 hours",
+   "11 hours 30 minutes"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: In 3 hours together they fill 3 &times; (1/10 + 1/15) = 3 &times; 1/6 = 1/2. Step 2: B alone fills the remaining 1/2 at 1/15 per hour, taking 7.5 hours. Step 3: Total = 3 + 7.5 = 10 hours 30 minutes. The answer is A: 10 hours 30 minutes."
+ },
+ {
+  "category": "Numerical",
+  "topic": "pipes-cisterns",
+  "difficulty": "hard",
+  "promptHTML": "Pipes A and B fill a tank in 8 and 12 hours. They start together and A is closed after 3 hours. How long does the whole filling take?",
+  "options": [
+   "7 hours 30 minutes",
+   "7 hours",
+   "8 hours",
+   "9 hours",
+   "6 hours 45 minutes"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: In 3 hours: 3 &times; (1/8 + 1/12) = 3 &times; 5/24 = 5/8 done. Step 2: B fills the remaining 3/8 at 1/12 per hour: 4.5 hours. Step 3: Total = 3 + 4.5 = 7 hours 30 minutes. The answer is A: 7 hours 30 minutes."
+ },
+ {
+  "category": "Numerical",
+  "topic": "pipes-cisterns",
+  "difficulty": "hard",
+  "promptHTML": "Pipes A and B can fill a cistern in 9 and 18 hours. Both are opened, and B is turned off after 2 hours. In how many hours in total is the cistern filled?",
+  "options": [
+   "6 hours",
+   "9 hours",
+   "10 hours",
+   "8 hours",
+   "7 hours"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: In 2 hours: 2 &times; (1/9 + 1/18) = 2 &times; 1/6 = 1/3 done. Step 2: A fills the remaining 2/3 at 1/9 per hour: 6 hours. Step 3: Total = 2 + 6 = 8 hours. The answer is D: 8 hours."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "very-hard",
+  "promptHTML": "The difference between compound interest and simple interest on a sum for 2 years at 8% per annum is $80. Find the sum.",
+  "options": [
+   "$1,000",
+   "$10,000",
+   "$13,750",
+   "$12,500",
+   "$15,625"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: For 2 years, CI - SI = P(r/100)&sup2;. Step 2: P &times; 0.0064 = 80. Step 3: P = $12,500. Dividing by r/100 once instead of twice gives $1,000. The answer is D: $12,500."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "hard",
+  "promptHTML": "The compound interest on a sum for 2 years at 10% per annum is $2,100. What is the simple interest on the same sum for the same period at the same rate?",
+  "options": [
+   "$1,900",
+   "$2,000",
+   "$2,050",
+   "$2,100",
+   "$2,200"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "CI factor over 2 years at 10% = 1.1&sup2; &minus; 1 = 21%, so the sum = 2,100/0.21 = $10,000. SI = 10,000 &times; 10% &times; 2 = <b>$2,000</b>. Shortcut: SI = CI &times; 20/21 for 2 years at 10%.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "hard",
+  "promptHTML": "What is the difference between compound and simple interest on $8,000 for 2 years at 5% per annum?",
+  "options": [
+   "$40",
+   "$25",
+   "$16",
+   "$10",
+   "$20"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Difference = P(r/100)&sup2; = 8,000 &times; 0.0025. Step 2: = $20. The answer is E: $20."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "very-hard",
+  "promptHTML": "Find the difference between compound interest and simple interest on $8,000 for 3 years at 10% per annum.",
+  "options": [
+   "$273",
+   "$2,400",
+   "$248",
+   "$198",
+   "$80"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: SI = $8,000 &times; 10% &times; 3 = $2,400. Step 2: CI = $8,000 &times; 1.331 - $8,000 = $2,648. Step 3: Difference = $248. The two-year shortcut P(r/100)&sup2; undercounts for 3 years. The answer is C: $248."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "hard",
+  "promptHTML": "At simple interest a sum doubles in 5 years. In how many years will it become 3.5 times itself?",
+  "options": [
+   "10",
+   "11.5",
+   "12.5",
+   "14",
+   "17.5"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Doubling in 5 years means the interest adds 100% per 5 years, i.e. 20% per year. Becoming 3.5&times; needs 250% in interest: 250/20 = <b>12.5 years</b>. Simple interest accrues linearly &mdash; no compounding shortcut needed.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "hard",
+  "promptHTML": "A sum doubles in 6 years at compound interest. In how many years will it become 8 times itself?",
+  "options": [
+   "24 years",
+   "48 years",
+   "12 years",
+   "21 years",
+   "18 years"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: 8 = 2&sup3;, so the sum must double three times. Step 2: Time = 3 &times; 6 = 18 years. Scaling 6 years by 8/2 = 4 to get 24 treats compound growth as linear. The answer is E: 18 years."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "hard",
+  "promptHTML": "An investment triples in 5 years at compound interest. In how many years will it grow to 9 times its value?",
+  "options": [
+   "15 years",
+   "12 years",
+   "10 years",
+   "25 years",
+   "45 years"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: 9 = 3&sup2;, so it must triple twice. Step 2: Time = 2 &times; 5 = 10 years. The answer is C: 10 years."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "very-hard",
+  "promptHTML": "At compound interest, a sum amounts to $2,420 in 2 years and $2,662 in 3 years. What is the principal?",
+  "options": [
+   "$2,100",
+   "$2,000",
+   "$1,936",
+   "$1,800",
+   "$2,200"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: The third-year growth gives the rate: r = (2,662 - 2,420)/2,420 = 242/2,420 = 10%. Step 2: P = 2,420 / 1.1&sup2; = 2,420 / 1.21 = $2,000. The answer is B: $2,000."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "hard",
+  "promptHTML": "A sum at compound interest becomes $2,880 after 2 years and $3,456 after 3 years. What is the annual rate of interest?",
+  "options": [
+   "15%",
+   "20%",
+   "18%",
+   "24%",
+   "16%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: One year's growth on $2,880 is 3,456 - 2,880 = $576. Step 2: Rate = 576/2,880 &times; 100 = 20% per annum. The answer is B: 20%."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "very-hard",
+  "promptHTML": "A loan of $1,050 at 10% per annum compound interest is to be repaid in two equal annual installments. What is each installment?",
+  "options": [
+   "$578",
+   "$525",
+   "$635",
+   "$575",
+   "$605"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Each installment x, discounted to today: x/1.1 + x/1.21 = 1,050. Step 2: Multiply through by 1.21: 1.1x + x = 1.21 &times; 1,050, so 2.1x = 1,270.5. Step 3: x = $605. Check: $605/1.1 + $605/1.21 = $550 + $500 = $1,050. Halving the loan ignores the interest entirely. The answer is E: $605."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "hard",
+  "promptHTML": "A sum at compound interest amounts to $4,840 in 2 years and to $5,324 in 3 years. What is the annual rate of interest?",
+  "options": [
+   "8%",
+   "9%",
+   "10%",
+   "11%",
+   "12%"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The year-3 amount is the year-2 amount grown one more year: rate = (5,324 &minus; 4,840)/4,840 = 484/4,840 = <b>10%</b>. Consecutive CI amounts always encode the rate directly &mdash; no need to find the principal.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "hard",
+  "promptHTML": "Find the compound interest on $8,000 at 20% per annum for 1 year, compounded half-yearly.",
+  "options": [
+   "$1,680",
+   "$1,814",
+   "$1,600",
+   "$1,764",
+   "$840"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Half-yearly means 10.0% per half-year for 2 periods. Step 2: Amount = $8,000 &times; 1.1&sup2; = $9,680. Step 3: CI = $1,680. Annual compounding would give only $1,600. The answer is A: $1,680."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "very-hard",
+  "promptHTML": "On $8,000 at 10% per annum for one year, what is the difference between compound interest compounded half-yearly and simple interest?",
+  "options": [
+   "$0",
+   "$16",
+   "$20",
+   "$25",
+   "$40"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Half-yearly compounding: 8,000 &times; (1.05&sup2; &minus; 1) = 8,000 &times; 0.1025 = $820. SI = 8,000 &times; 0.10 = $800. Difference = <b>$20</b>. The extra $20 is exactly the second half-year&rsquo;s interest on the first half-year&rsquo;s interest: 5% of $400.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "hard",
+  "promptHTML": "What is the smallest number which when divided by 8, 12 and 18 leaves a remainder of 5 in each case?",
+  "options": [
+   "149",
+   "83",
+   "72",
+   "5",
+   "77"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: The number must be 5 more than a common multiple of 8, 12 and 18. Step 2: LCM(8, 12, 18) = 72. Step 3: Smallest such number = 72 + 5 = 77. Answering 72 forgets to add the remainder. The answer is E: 77."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "Find the smallest 4-digit number which leaves a remainder of 3 when divided by each of 12, 15 and 20.",
+  "options": [
+   "1,003",
+   "1,063",
+   "1,020",
+   "1,083",
+   "1,023"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: The number has the form 60k + 3, since LCM(12, 15, 20) = 60. Step 2: The smallest multiple of 60 at or above 997 is 1,020. Step 3: Number = 1,020 + 3 = 1,023. The answer is E: 1,023."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "Find the smallest number that leaves a remainder of 4 when divided by 6, 7 or 8, and is exactly divisible by 13.",
+  "options": [
+   "844",
+   "676",
+   "508",
+   "340",
+   "172"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: The number is of the form 168k + 4, since LCM(6, 7, 8) = 168. Step 2: Test k = 1, 2, 3, 4: the values are 172, 340, 508, 676. Step 3: Check divisibility by 13: 676 = 13 &times; 52. So the answer is 676. The answer is B: 676."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "Find the greatest number that divides 62, 132 and 237 leaving the same remainder in each case.",
+  "options": [
+   "70",
+   "25",
+   "7",
+   "35",
+   "5"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: If the remainder is the same, the divisor must divide the differences: 132 - 62 = 70, 237 - 132 = 105, 237 - 62 = 175. Step 2: HCF(70, 105, 175) = 35. Step 3: Check: 62, 132, 237 all leave remainder 27 on division by 35. The answer is D: 35."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "hard",
+  "promptHTML": "What is the largest number that divides 110, 158 and 254 leaving the same remainder each time?",
+  "options": [
+   "96",
+   "48",
+   "16",
+   "24",
+   "12"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Differences: 158 - 110 = 48, 254 - 158 = 96, 254 - 110 = 144. Step 2: HCF(48, 96, 144) = 48. Step 3: Each of 110, 158 and 254 leaves remainder 14 on division by 48. The answer is B: 48."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "hard",
+  "promptHTML": "The HCF and LCM of two numbers are 11 and 7,700. If one number is 275, what is the other?",
+  "options": [
+   "385",
+   "700",
+   "231",
+   "308",
+   "3,025"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: For two numbers, product = HCF &times; LCM = 11 &times; 7,700 = 84,700. Step 2: Other number = 84,700 / 275 = 308. The answer is D: 308."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "hard",
+  "promptHTML": "The HCF and LCM of two numbers are 13 and 455. If one number is 65, what is the other?",
+  "options": [
+   "91",
+   "68",
+   "114",
+   "845",
+   "35"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: For two numbers, product = HCF &times; LCM = 13 &times; 455 = 5,915. Step 2: Other number = 5,915 / 65 = 91. The answer is A: 91."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "hard",
+  "promptHTML": "How many positive factors does 360 have?",
+  "options": [
+   "12",
+   "30",
+   "20",
+   "24",
+   "18"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: 360 = 2&sup3; &times; 3&sup2; &times; 5. Step 2: Number of factors = (3+1)(2+1)(1+1) = 4 &times; 3 &times; 2 = 24. The answer is D: 24."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "How many even factors does 720 have?",
+  "options": [
+   "18",
+   "12",
+   "24",
+   "30",
+   "15"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: 720 = 2&#8308; &times; 3&sup2; &times; 5. An even factor must include at least one 2, so the power of 2 can be 1 to 4 (4 choices). Step 2: Even factors = 4 &times; (2+1) &times; (1+1) = 24. The total factor count is 30; 6 of those are odd. The answer is C: 24."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "How many factors of 3,600 are perfect squares?",
+  "options": [
+   "45",
+   "8",
+   "6",
+   "12",
+   "9"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: 3,600 = 2&#8308; &times; 3&sup2; &times; 5&sup2;. A perfect-square factor needs even exponents. Step 2: Power of 2: 0, 2 or 4 (3 ways). Power of 3: 0 or 2 (2 ways). Power of 5: 0 or 2 (2 ways). Step 3: Total = 3 &times; 2 &times; 2 = 12. The answer is D: 12."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "How many trailing zeros are there at the end of 145! (145 factorial)?",
+  "options": [
+   "35",
+   "28",
+   "36",
+   "34",
+   "29"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Count factors of 5: 145/5 = 29, 145/25 = 5 (take the whole part), 145/125 = 1. Step 2: Total = 29 + 5 + 1 = 35 trailing zeros. Stopping at 29 misses the extra fives in 25, 50, 75... and 125. The answer is A: 35."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "What is the smallest number n such that n! ends in exactly 31 zeros?",
+  "options": [
+   "120",
+   "130",
+   "155",
+   "125",
+   "124"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Zeros in n! jump at multiples of 5. 124! has 24 + 4 = 28 zeros. Step 2: At n = 125 the count jumps by 3 (125 = 5&sup3;), giving 25 + 5 + 1 = 31 zeros. Step 3: So n = 125. Counts of 29 and 30 are skipped entirely. The answer is D: 125."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "hard",
+  "promptHTML": "What is the unit digit of 7 raised to the power 245?",
+  "options": [
+   "1",
+   "9",
+   "5",
+   "7",
+   "3"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Powers of 7 end in a cycle of 4: 7, 9, 3, 1. Step 2: 245 = 4 &times; 61 + 1, so the unit digit matches 7&sup1;. Step 3: Unit digit = 7. The answer is D: 7."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "hard",
+  "promptHTML": "What is the unit digit of 3 raised to the power 2,026?",
+  "options": [
+   "9",
+   "1",
+   "6",
+   "7",
+   "3"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Powers of 3 end in a cycle of 4: 3, 9, 7, 1. Step 2: 2,026 = 4 &times; 506 + 2, so the unit digit matches 3&sup2;. Step 3: Unit digit = 9. The answer is A: 9."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "hard",
+  "promptHTML": "Two numbers are in the ratio 3 : 4 and their HCF is 5. What is their LCM?",
+  "options": [
+   "35",
+   "60",
+   "12",
+   "120",
+   "20"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: The numbers are 3 &times; 5 = 15 and 4 &times; 5 = 20. Step 2: LCM(15, 20) = 60. Equivalently LCM = HCF &times; 3 &times; 4 = 5 &times; 12 = 60. The answer is B: 60."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ages",
+  "difficulty": "very-hard",
+  "promptHTML": "Five years ago, a father was four times as old as his son. Five years from now, he will be two and a half times as old. What is the father's present age?",
+  "options": [
+   "45",
+   "50",
+   "35",
+   "40",
+   "48"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let present ages be F and S. F - 5 = 4(S - 5) and F + 5 = 2.5(S + 5). Step 2: From the first, F = 4S - 15. Substitute: 4S - 10 = 2.5S + 12.5, so 1.5S = 22.5 and S = 15. Step 3: F = 4 &times; 15 - 15 = 45 years. The answer is A: 45."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ages",
+  "difficulty": "hard",
+  "promptHTML": "A father is three times as old as his son. In 8 years, he will be two and a half times as old as the son. How old is the son now?",
+  "options": [
+   "24",
+   "16",
+   "20",
+   "18",
+   "32"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: F = 3S. In 8 years: 3S + 8 = 2.5(S + 8). Step 2: 3S + 8 = 2.5S + 20, so 0.5S = 12 and S = 24 years. The answer is A: 24."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ages",
+  "difficulty": "very-hard",
+  "promptHTML": "Ten years ago, a man was seven times as old as his daughter. Ten years from now, he will be three times as old as her. What is the sum of their present ages?",
+  "options": [
+   "90",
+   "110",
+   "100",
+   "96",
+   "80"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: M - 10 = 7(D - 10) and M + 10 = 3(D + 10). Step 2: From these, M = 7D - 60 and M = 3D + 20. So 7D - 60 = 3D + 20, giving D = 20 and M = 80. Step 3: Sum = 20 + 80 = 100 years. The answer is C: 100."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ages",
+  "difficulty": "very-hard",
+  "promptHTML": "A says to B: \"I am twice as old as you were when I was as old as you are.\" The sum of their ages is 63 years. How old is B?",
+  "options": [
+   "24",
+   "36",
+   "21",
+   "27",
+   "30"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: This classic statement forces the age ratio A : B = 4 : 3. Briefly: let the gap be g, so when A was B's age, B was B - g. The claim is A = 2(B - g) and g = A - B, which gives A = 2B - 2A + 2B, so 3A = 4B. Step 2: With A : B = 4 : 3 and sum 63, each part is 9. Step 3: B = 3 &times; 9 = 27 years. The answer is D: 27."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ages",
+  "difficulty": "very-hard",
+  "promptHTML": "P tells Q: \"I am twice as old as you were when I was your age.\" Their ages add up to 49 years. How old is P?",
+  "options": [
+   "21",
+   "28",
+   "35",
+   "24",
+   "32"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: The statement gives the ratio P : Q = 4 : 3 (same algebra as the classic puzzle: 3P = 4Q). Step 2: Sum 49 means each part is 7. Step 3: P = 4 &times; 7 = 28 years. The answer is B: 28."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ages",
+  "difficulty": "hard",
+  "promptHTML": "The ages of two sisters are in the ratio 5 : 7. Eight years from now, the ratio will be 7 : 9. How old is the younger sister?",
+  "options": [
+   "12",
+   "28",
+   "25",
+   "15",
+   "20"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let the ages be 5x and 7x. Then (5x + 8)/(7x + 8) = 7/9. Step 2: 45x + 72 = 49x + 56, so 4x = 16 and x = 4. Step 3: Younger sister = 5 &times; 4 = 20 years. The answer is E: 20."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ages",
+  "difficulty": "hard",
+  "promptHTML": "Two friends have ages in the ratio 3 : 5. In 6 years, the ratio of their ages will be 2 : 3. What is the older friend's present age?",
+  "options": [
+   "27",
+   "18",
+   "36",
+   "30",
+   "24"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Ages 3x and 5x. (3x + 6)/(5x + 6) = 2/3. Step 2: 9x + 18 = 10x + 12, so x = 6. Step 3: Older friend = 5 &times; 6 = 30 years. The answer is D: 30."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ages",
+  "difficulty": "very-hard",
+  "promptHTML": "The present ages of a couple are in the ratio 4 : 5. Six years ago, the ratio was 7 : 9. What is the sum of their present ages?",
+  "options": [
+   "96",
+   "99",
+   "108",
+   "117",
+   "90"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Ages 4x and 5x. (4x - 6)/(5x - 6) = 7/9. Step 2: 36x - 54 = 35x - 42, so x = 12. Step 3: Ages are 48 and 60, and the sum is 108 years. The answer is C: 108."
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "very-hard",
+  "promptHTML": "A factory's monthly output and defect rate: January 1,200 units with 5% defective, February 1,500 units with 4% defective, March 1,350 units with 6% defective, April 1,800 units with 5% defective. How many defect-free units were produced in February and March combined?",
+  "options": [
+   "2,715",
+   "2,709",
+   "2,850",
+   "2,649",
+   "2,769"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: February defect-free = 1,500 &times; 0.96 = 1,440. Step 2: March defect-free = 1,350 &times; 0.94 = 1,269. Step 3: Combined = 1,440 + 1,269 = 2,709 units. The answer is B: 2,709."
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "hard",
+  "promptHTML": "A plant runs three production lines P, Q and R producing 40%, 35% and 25% of total output, with defect rates of 2%, 4% and 8% respectively. What percentage of the plant&rsquo;s total output is defective?",
+  "options": [
+   "3.8%",
+   "4.2%",
+   "4.5%",
+   "4.7%",
+   "5.0%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Weighted average of defect rates: 0.40&times;2 + 0.35&times;4 + 0.25&times;8 = 0.8 + 1.4 + 2.0 = <b>4.2%</b>. The unweighted average (2+4+8)/3 &asymp; 4.7% is the trap &mdash; the worst line has the smallest share.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "very-hard",
+  "promptHTML": "Machine M1 produced 3,600 units of which 3% were defective. Machine M2 produced 2,400 units. If exactly 4.2% of the combined 6,000 units were defective, what percentage of M2&rsquo;s units were defective?",
+  "options": [
+   "4.8%",
+   "5.4%",
+   "6%",
+   "6.6%",
+   "7.2%"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Total defects = 4.2% of 6,000 = 252. M1&rsquo;s defects = 3% of 3,600 = 108, so M2 contributed 144 out of 2,400 = <b>6%</b>. This is reverse-alligation: check 3% and 6% mix 3:2 &rarr; 3.6&times;3+2.4&times;6 = 25.2 per 600. &#10003;",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "very-hard",
+  "promptHTML": "A startup's quarterly figures in thousands of dollars: Q1 revenue 240 and cost 180, Q2 revenue 300 and cost 210, Q3 revenue 280 and cost 224, Q4 revenue 320 and cost 240. In which quarter was the profit margin (profit as a percentage of revenue) the highest?",
+  "options": [
+   "Q1",
+   "Q2",
+   "Q1 and Q4 equally",
+   "Q3",
+   "Q4"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Margins: Q1 = 60/240 = 25%, Q2 = 90/300 = 30%, Q3 = 56/280 = 20%, Q4 = 80/320 = 25%. Step 2: Q2 is highest at 30%. Picking Q4 confuses the largest absolute profit (it is not even that: Q2's 90 beats Q4's 80) with the best margin. The answer is B: Q2."
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "hard",
+  "promptHTML": "A firm&rsquo;s quarterly revenue ($ thousand): Q1 = 480.00, Q2 = 552.00, Q3 = 496.80, Q4 = 596.16. Measured as percentage growth over the previous quarter, which quarter recorded the highest growth?",
+  "options": [
+   "Q2",
+   "Q3",
+   "Q4",
+   "Q2 and Q4 are equal",
+   "Cannot be determined"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Q2: 552/480 &minus; 1 = +15%. Q3: 496.8/552 &minus; 1 = &minus;10%. Q4: 596.16/496.8 &minus; 1 = +20%. Highest is <b>Q4</b>. Comparing absolute increases (72 vs 99.36) also favours Q4 here, but only the percentage comparison was asked &mdash; note Q4&rsquo;s growth is computed off a <i>lower</i> base after the Q3 dip.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "very-hard",
+  "promptHTML": "Store A&rsquo;s sales grow by 20% per year for two consecutive years. Store B&rsquo;s sales grow by a total of 44% over the same two years. If they started at the same sales level, how do their sales compare at the end of the two years?",
+  "options": [
+   "A is 4% higher",
+   "B is 4% higher",
+   "They are exactly equal",
+   "A is 1.44% higher",
+   "Cannot be determined"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "A&rsquo;s two years compound: 1.20 &times; 1.20 = 1.44 &rarr; +44% total &mdash; identical to B&rsquo;s stated total. <b>They are exactly equal.</b> The instinct that &ldquo;20 + 20 = 40 &lt; 44&rdquo; forgets compounding.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "hard",
+  "promptHTML": "A city has a population of 480,000, of whom 55% are male. 60% of the males are literate and 40% of the females are literate. How many people in the city are literate in total?",
+  "options": [
+   "220,800",
+   "244,800",
+   "254,400",
+   "230,400",
+   "240,000"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Males = 264,000 and females = 216,000. Step 2: Literate males = 264,000 &times; 0.6 = 158,400. Literate females = 216,000 &times; 0.4 = 86,400. Step 3: Total literate = 158,400 + 86,400 = 244,800. Taking 50% of the whole population (the average of 60 and 40) ignores the unequal group sizes. The answer is B: 244,800."
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "very-hard",
+  "promptHTML": "In a survey of 8,000 households, 62.5% own a car. Of the car-owning households, 44% also own a bike; of the households without a car, only 24% own a bike. How many of the surveyed households own a bike?",
+  "options": [
+   "2,200",
+   "2,680",
+   "2,920",
+   "3,120",
+   "3,440"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Car owners: 62.5% of 8,000 = 5,000; non-owners 3,000. Bike owners = 0.44 &times; 5,000 + 0.24 &times; 3,000 = 2,200 + 720 = <b>2,920</b>. Answer 2,200 counts only car-owning bike owners &mdash; the partial-reading trap.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "hard",
+  "promptHTML": "A professional spends 65% of her salary on expenses, invests 40% of the remainder, and saves the rest. If her monthly savings are $4,200, what is her monthly salary?",
+  "options": [
+   "$16,800",
+   "$18,500",
+   "$20,000",
+   "$21,000",
+   "$24,000"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "After expenses 35% remains; saving = 60% of that = 0.60 &times; 0.35 = 21% of salary. So salary = 4,200 &divide; 0.21 = <b>$20,000</b>. Multiplying the percentage steps &mdash; never adding them &mdash; is the whole game.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "very-hard",
+  "promptHTML": "In a three-candidate election every vote was valid. The winner got 45% of the votes, the runner-up 38%, and the rest went to the third candidate. The winner beat the runner-up by 2,100 votes. How many votes did the third candidate receive?",
+  "options": [
+   "4,200",
+   "5,100",
+   "5,700",
+   "6,300",
+   "7,100"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Winning margin = 45% &minus; 38% = 7% of total = 2,100, so total = 30,000. Third candidate: 100 &minus; 83 = 17% &rarr; 0.17 &times; 30,000 = <b>5,100</b>.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "hard",
+  "promptHTML": "Two cards are drawn at random from a standard 52-card deck without replacement. What is the probability that both are kings?",
+  "options": [
+   "1/121",
+   "1/169",
+   "3/676",
+   "1/221",
+   "1/26"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: P(first king) = 4/52 = 1/13. Step 2: P(second king given first) = 3/51 = 1/17. Step 3: P(both) = 1/13 &times; 1/17 = 1/221. Using 4/52 twice (1/169) ignores that the first king is gone. The answer is D: 1/221."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "hard",
+  "promptHTML": "Two cards are drawn without replacement from a 52-card deck. What is the probability that both are hearts?",
+  "options": [
+   "1/16",
+   "1/4",
+   "1/13",
+   "3/52",
+   "1/17"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: P(first heart) = 13/52 = 1/4. Step 2: P(second heart given first) = 12/51 = 4/17. Step 3: P(both) = 1/4 &times; 4/17 = 1/17. With replacement the answer would be 1/16, the trap. The answer is E: 1/17."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "very-hard",
+  "promptHTML": "Two cards are drawn one after another without replacement. What is the probability that the first is a king and the second is a queen?",
+  "options": [
+   "4/663",
+   "8/663",
+   "16/663",
+   "1/169",
+   "1/663"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: P(king first) = 4/52 = 1/13. Step 2: P(queen second) = 4/51, since all four queens remain. Step 3: P = 1/13 &times; 4/51 = 4/663. Doubling to 8/663 would answer the unordered question, not this one. The answer is A: 4/663."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "hard",
+  "promptHTML": "Two fair dice are rolled. What is the probability of getting at least one six?",
+  "options": [
+   "11/36",
+   "1/3",
+   "25/36",
+   "1/6",
+   "5/18"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: P(no six on a die) = 5/6, so P(no six on either) = 25/36. Step 2: P(at least one six) = 1 - 25/36 = 11/36. Adding 1/6 + 1/6 = 1/3 double-counts the double-six outcome. The answer is A: 11/36."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "hard",
+  "promptHTML": "Two dice are thrown together. What is the probability that the sum is 10 or more?",
+  "options": [
+   "1/4",
+   "1/6",
+   "1/9",
+   "5/36",
+   "1/12"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Favourable sums: 10 (3 ways), 11 (2 ways), 12 (1 way) = 6 outcomes. Step 2: P = 6/36 = 1/6. The answer is B: 1/6."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "very-hard",
+  "promptHTML": "Two fair dice are rolled. What is the probability that the sum of the two numbers is a prime number?",
+  "options": [
+   "13/36",
+   "5/12",
+   "1/2",
+   "7/18",
+   "11/36"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Prime sums possible: 2, 3, 5, 7, 11. Step 2: Ways: sum 2 has 1, sum 3 has 2, sum 5 has 4, sum 7 has 6, sum 11 has 2, total 15. Step 3: P = 15/36 = 5/12. Forgetting that 2 is prime gives 14/36 = 7/18. The answer is B: 5/12."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "very-hard",
+  "promptHTML": "A bag contains 5 red and 4 blue balls. Three balls are drawn at random. What is the probability that exactly two are red?",
+  "options": [
+   "25/42",
+   "4/9",
+   "10/21",
+   "5/42",
+   "1/2"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Ways to choose 2 red from 5 = 10, and 1 blue from 4 = 4, so favourable = 40. Step 2: Total ways = C(9, 3) = 84. Step 3: P = 40/84 = 10/21. The answer is C: 10/21."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "very-hard",
+  "promptHTML": "A box has 6 white and 5 black balls. Two balls are drawn together. What is the probability that both are the same colour?",
+  "options": [
+   "61/121",
+   "5/11",
+   "4/11",
+   "1/2",
+   "6/11"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Both white: C(6,2) = 15. Both black: C(5,2) = 10. Favourable = 25. Step 2: Total = C(11, 2) = 55. Step 3: P = 25/55 = 5/11. The answer is B: 5/11."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "hard",
+  "promptHTML": "An urn holds 3 red, 5 green and 2 blue marbles. Two marbles are drawn at random. What is the probability that neither is blue?",
+  "options": [
+   "4/5",
+   "28/45",
+   "8/45",
+   "17/45",
+   "14/45"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Non-blue marbles = 8. Favourable = C(8, 2) = 28. Step 2: Total = C(10, 2) = 45. Step 3: P = 28/45. Computing 8/10 &times; 8/10 forgets the draw is without replacement. The answer is B: 28/45."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "hard",
+  "promptHTML": "What is the probability that a leap year, chosen at random, has 53 Sundays?",
+  "options": [
+   "2/7",
+   "3/7",
+   "53/366",
+   "1/7",
+   "1/2"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: A leap year has 366 days = 52 weeks + 2 extra days. Step 2: The two extra days are one of 7 consecutive pairs, and 2 of those pairs include a Sunday (Saturday-Sunday and Sunday-Monday). Step 3: P = 2/7. A non-leap year would give 1/7. The answer is A: 2/7."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "hard",
+  "promptHTML": "A can solve a problem with probability 3/5 and B with probability 2/3, independently. What is the probability that the problem gets solved by at least one of them?",
+  "options": [
+   "11/15",
+   "2/15",
+   "13/15",
+   "14/15",
+   "2/5"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: P(A fails) = 2/5 and P(B fails) = 1/3. Step 2: P(both fail) = 2/5 &times; 1/3 = 2/15. Step 3: P(solved) = 1 - 2/15 = 13/15. Adding 3/5 + 2/3 exceeds 1, a sign that simple addition is wrong. The answer is C: 13/15."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "hard",
+  "promptHTML": "Two shooters fire at a target independently. Their hit probabilities are 1/4 and 1/3. What is the probability that the target is hit at least once?",
+  "options": [
+   "7/12",
+   "1/2",
+   "1/3",
+   "5/12",
+   "1/12"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: P(both miss) = 3/4 &times; 2/3 = 1/2. Step 2: P(at least one hit) = 1 - 1/2 = 1/2. Adding 1/4 + 1/3 = 7/12 double-counts the both-hit case. The answer is B: 1/2."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "very-hard",
+  "promptHTML": "In how many distinct ways can the letters of the word SUCCESS be arranged?",
+  "options": [
+   "840",
+   "5,040",
+   "1,260",
+   "420",
+   "210"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: SUCCESS has 7 letters with S appearing 3 times and C appearing 2 times. Step 2: Arrangements = 7! / (3! &times; 2!) = 5,040 / 12 = 420. Plain 7! = 5,040 ignores the repeated letters. The answer is D: 420."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "hard",
+  "promptHTML": "How many distinct arrangements are there of the letters of the word BALLOON?",
+  "options": [
+   "840",
+   "2,520",
+   "1,260",
+   "630",
+   "5,040"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: BALLOON has 7 letters with L twice and O twice. Step 2: Arrangements = 7! / (2! &times; 2!) = 5,040 / 4 = 1,260. The answer is C: 1,260."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "very-hard",
+  "promptHTML": "In how many ways can the letters of TRIANGLE be arranged so that the vowels are always together?",
+  "options": [
+   "40,320",
+   "4,320",
+   "1,440",
+   "720",
+   "2,160"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Treat the vowels I, A, E as one block, giving 6 units to arrange: 6! = 720 ways. Step 2: The vowels inside the block can be ordered in 3! = 6 ways. Step 3: Total = 720 &times; 6 = 4,320. Forgetting the internal orderings gives 720. The answer is B: 4,320."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "very-hard",
+  "promptHTML": "In how many arrangements of the word MACHINE do the vowels A, E, I appear in alphabetical order (not necessarily together)?",
+  "options": [
+   "720",
+   "840",
+   "5,040",
+   "240",
+   "1,680"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: MACHINE has 7 distinct letters, so 7! = 5,040 total arrangements. Step 2: The three vowels can be ordered among their positions in 3! = 6 equally likely ways, and only one of those is alphabetical. Step 3: Count = 5,040 / 6 = 840. The answer is B: 840."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "very-hard",
+  "promptHTML": "A committee of 4 is to be formed from 5 men and 4 women. In how many ways can it be formed if it must include at least 2 women?",
+  "options": [
+   "80",
+   "126",
+   "105",
+   "60",
+   "81"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Exactly 2 women: C(4,2) &times; C(5,2) = 6 &times; 10 = 60. Step 2: Exactly 3 women: C(4,3) &times; C(5,1) = 4 &times; 5 = 20. Exactly 4 women: C(4,4) = 1. Step 3: Total = 60 + 20 + 1 = 81. Stopping at the exactly-2 case gives 60. The answer is E: 81."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "hard",
+  "promptHTML": "From 6 men and 5 women, a team of 5 is chosen with exactly 3 women. How many such teams are possible?",
+  "options": [
+   "150",
+   "200",
+   "100",
+   "462",
+   "120"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Choose 3 women from 5: C(5,3) = 10. Step 2: Choose 2 men from 6: C(6,2) = 15. Step 3: Teams = 10 &times; 15 = 150. The answer is A: 150."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "very-hard",
+  "promptHTML": "A panel of 3 is selected from 4 doctors and 5 engineers. How many panels include at least one doctor?",
+  "options": [
+   "84",
+   "74",
+   "64",
+   "80",
+   "10"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Total panels = C(9,3) = 84. Step 2: Panels with no doctor = C(5,3) = 10. Step 3: At least one doctor = 84 - 10 = 74. The complement method beats adding cases here. The answer is B: 74."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "hard",
+  "promptHTML": "At a meeting, every person shakes hands with every other person exactly once, making 66 handshakes in total. How many people attended?",
+  "options": [
+   "11",
+   "12",
+   "33",
+   "10",
+   "13"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Handshakes = n(n - 1)/2 = 66, so n(n - 1) = 132. Step 2: 12 &times; 11 = 132, so n = 12. The answer is B: 12."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "very-hard",
+  "promptHTML": "In a league, every team plays every other team twice. If 72 games are played in total, how many teams are in the league?",
+  "options": [
+   "9",
+   "12",
+   "8",
+   "10",
+   "36"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Games = 2 &times; C(n, 2) = n(n - 1) = 72. Step 2: 9 &times; 8 = 72, so there are 9 teams. Using n(n-1)/2 = 72 forgets the double round and gives no integer near the options except wrong ones. The answer is A: 9."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "hard",
+  "promptHTML": "How many 3-digit even numbers can be formed using the digits 1, 2, 3, 4, 5 without repetition?",
+  "options": [
+   "60",
+   "48",
+   "30",
+   "24",
+   "20"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: The last digit must be 2 or 4: 2 choices. Step 2: The remaining two places take 4 &times; 3 = 12 ordered choices. Step 3: Total = 2 &times; 12 = 24. All 60 permutations counts odd numbers too. The answer is D: 24."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "very-hard",
+  "promptHTML": "Using the digits 0, 2, 3, 5, 7 without repetition, how many 3-digit numbers divisible by 5 can be formed?",
+  "options": [
+   "16",
+   "21",
+   "24",
+   "18",
+   "12"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: The number must end in 0 or 5. Step 2: Ending in 0: the first two places use 4 &times; 3 = 12 ways. Step 3: Ending in 5: the first digit cannot be 0 (3 choices), the middle has 3 choices, so 9 ways. Total = 12 + 9 = 21. Forgetting the leading-zero restriction gives 24. The answer is B: 21."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "hard",
+  "promptHTML": "How many 4-digit odd numbers can be formed from the digits 1, 2, 3, 4, 5 without repeating any digit?",
+  "options": [
+   "120",
+   "48",
+   "72",
+   "60",
+   "96"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: The unit digit must be 1, 3 or 5: 3 choices. Step 2: The other three places take 4 &times; 3 &times; 2 = 24 ordered choices. Step 3: Total = 3 &times; 24 = 72. The answer is C: 72."
+ },
+ {
+  "category": "Numerical",
+  "topic": "numeric-sequences",
+  "difficulty": "very-hard",
+  "promptHTML": "The sum of the first n terms of a sequence is given by S(n) = 3n&sup2; + 5n. What is the 15th term?",
+  "options": [
+   "86",
+   "92",
+   "90",
+   "98",
+   "95"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: The nth term = S(n) - S(n - 1). Step 2: S(15) = 3 &times; 225 + 75 = 750 and S(14) = 3 &times; 196 + 70 = 658. Step 3: 15th term = 750 - 658 = 92. The answer is B: 92."
+ },
+ {
+  "category": "Numerical",
+  "topic": "numeric-sequences",
+  "difficulty": "very-hard",
+  "promptHTML": "In an arithmetic progression, the 3rd term is 14 and the 7th term is 34. What is the sum of the first 10 terms?",
+  "options": [
+   "530",
+   "265",
+   "245",
+   "285",
+   "235"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: a + 2d = 14 and a + 6d = 34, so 4d = 20, d = 5 and a = 4. Step 2: S(10) = 10/2 &times; (2 &times; 4 + 9 &times; 5) = 5 &times; 53 = 265. The answer is B: 265."
+ },
+ {
+  "category": "Numerical",
+  "topic": "numeric-sequences",
+  "difficulty": "hard",
+  "promptHTML": "In the arithmetic sequence 7, 13, 19, 25, ... which term equals 157?",
+  "options": [
+   "26",
+   "25",
+   "27",
+   "30",
+   "24"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: a = 7 and d = 6, so the nth term is 7 + 6(n - 1). Step 2: 7 + 6(n - 1) = 157, so n - 1 = 25 and n = 26. An off-by-one slip gives 25. The answer is A: 26."
+ },
+ {
+  "category": "Numerical",
+  "topic": "numeric-sequences",
+  "difficulty": "very-hard",
+  "promptHTML": "In a geometric progression, the 3rd term is 18 and the 6th term is 486. What is the 8th term?",
+  "options": [
+   "4,374",
+   "13,122",
+   "2,187",
+   "1,458",
+   "6,561"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: t6/t3 = r&sup3; = 486/18 = 27, so r = 3 and a = 18/9 = 2. Step 2: t8 = 2 &times; 3&#8311; = 2 &times; 2,187 = 4,374. The answer is A: 4,374."
+ },
+ {
+  "category": "Numerical",
+  "topic": "numeric-sequences",
+  "difficulty": "hard",
+  "promptHTML": "A bacteria culture starts at 500 cells and doubles every 3 hours. How many cells are there after 24 hours?",
+  "options": [
+   "256,000",
+   "64,000",
+   "4,000",
+   "96,000",
+   "128,000"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: 24 hours contains 24/3 = 8 doubling periods. Step 2: Count = 500 &times; 2&#8312; = 500 &times; 256 = 128,000. Using 7 doublings gives 64,000, the off-by-one trap. The answer is E: 128,000."
+ },
+ {
+  "category": "Numerical",
+  "topic": "numeric-sequences",
+  "difficulty": "hard",
+  "promptHTML": "What is the next number in the sequence 2, 6, 12, 20, 30, ... ?",
+  "options": [
+   "46",
+   "42",
+   "36",
+   "40",
+   "44"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: The differences are 4, 6, 8, 10, increasing by 2 each time. Step 2: The next difference is 12, so the next term = 30 + 12 = 42. The answer is B: 42."
+ },
+ {
+  "category": "Numerical",
+  "topic": "numeric-sequences",
+  "difficulty": "very-hard",
+  "promptHTML": "What is the next term of the sequence 2, 3, 6, 15, 42, 123, &hellip; ?",
+  "options": [
+   "246",
+   "297",
+   "344",
+   "366",
+   "369"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Differences are 1, 3, 9, 27, 81 &mdash; powers of 3. Next difference is 243, so the next term is 123 + 243 = <b>366</b>. (Equivalently a&#8342;&#8330;&#8321; = 3a&#8342; &minus; 3.)",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "numeric-sequences",
+  "difficulty": "hard",
+  "promptHTML": "What is the next term of the sequence 5, 7, 10, 14, 20, 28, 40, &hellip; ?",
+  "options": [
+   "48",
+   "52",
+   "56",
+   "60",
+   "80"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Two interleaved chains, each doubling: positions 1,3,5,7 give 5, 10, 20, 40 and positions 2,4,6 give 7, 14, 28. The 8th term continues the second chain: 28 &times; 2 = <b>56</b>. A single-chain difference pattern (+2,+3,+4,&hellip;) breaks at the 5th term &mdash; the test is spotting the interleave.",
+  "renewed": "2026-07-04"
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "hard",
+  "promptHTML": "In an examination, a candidate who scores 32% of the maximum marks fails by 24 marks, while a candidate who scores 42% gets 26 marks more than the pass mark. What is the maximum mark of the examination?",
+  "options": [
+   "400",
+   "440",
+   "460",
+   "480",
+   "500"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Both statements describe the same pass mark, so 0.32M + 24 = 0.42M &minus; 26. Step 2: Collecting terms, 0.10M = 50, so M = 500. Check: pass mark = 0.32 &times; 500 + 24 = 184, and 0.42 &times; 500 &minus; 26 = 184. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "very-hard",
+  "promptHTML": "In a test, 65% of the students passed in English and 55% passed in Mathematics, while 20% failed in both subjects. If 320 students passed in both subjects, how many students took the test?",
+  "options": [
+   "640",
+   "720",
+   "800",
+   "900",
+   "1,600"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Since 20% failed both, 80% passed at least one subject. Step 2: Passed both = 65% + 55% &minus; 80% = 40% of all students. Step 3: 40% of total = 320, so total = 320 &divide; 0.40 = 800. (Using 65 + 55 &minus; 100 = 20% ignores the students who failed both and gives the trap answer 1,600.) The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "percentages",
+  "difficulty": "hard",
+  "promptHTML": "X is 20% of Y, and Y is 30% more than Z. If X = 156, what is the value of Z?",
+  "options": [
+   "546",
+   "585",
+   "600",
+   "624",
+   "650"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: X = 0.20Y, so Y = 156 &divide; 0.20 = 780. Step 2: Y = 1.3Z, so Z = 780 &divide; 1.3 = 600. (Taking Z as 30% less than Y, i.e. 0.7 &times; 780 = 546, is the classic wrong-base trap.) The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "very-hard",
+  "promptHTML": "A man buys two watches for a total of $650. He sells one at a 20% profit and the other at a 25% loss, and the two selling prices turn out to be equal. What was the cost price of the cheaper watch?",
+  "options": [
+   "$250",
+   "$300",
+   "$350",
+   "$400",
+   "$450"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Equal selling prices give 1.2 &times; C<sub>1</sub> = 0.75 &times; C<sub>2</sub>, so C<sub>1</sub> : C<sub>2</sub> = 0.75 : 1.2 = 5 : 8. Step 2: The 13 parts total $650, so one part = $50. Step 3: The cheaper watch cost 5 &times; 50 = $250 (the other cost $400; both sell at $300, confirming the setup). The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "hard",
+  "promptHTML": "A trader allows a 10% discount on the marked price of an article and still makes a 20% profit on cost. If the discount given amounts to $48, what is the cost price of the article?",
+  "options": [
+   "$336",
+   "$360",
+   "$384",
+   "$400",
+   "$432"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: The discount is 10% of the marked price, so 0.10 &times; MP = 48, giving MP = $480. Step 2: Selling price = 480 &minus; 48 = $432. Step 3: SP = 1.2 &times; CP, so CP = 432 &divide; 1.2 = $360. (Dividing $432 by 1.2 incorrectly as 432 &minus; 20% = 345.6, or treating $432 itself as the cost, are the common slips.) The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "profit-loss",
+  "difficulty": "very-hard",
+  "promptHTML": "A fruit seller buys 120 apples for $180. On the way to the market, 20% of the apples are spoiled and cannot be sold. At what price per apple must he sell the remaining apples to make an overall profit of 28% on his total outlay?",
+  "options": [
+   "$1.92",
+   "$2.10",
+   "$2.25",
+   "$2.35",
+   "$2.40"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Required total revenue = 180 &times; 1.28 = $230.40. Step 2: Sellable apples = 80% of 120 = 96. Step 3: Price per apple = 230.40 &divide; 96 = $2.40. (Applying 28% to the per-apple cost of $1.50 gives $1.92, which ignores the spoiled stock.) The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "successive-discounts",
+  "difficulty": "hard",
+  "promptHTML": "A television is listed at $2,000. Shop A offers a single discount of 40%, while Shop B offers successive discounts of 30% and 15% on the same list price. How much less does a buyer pay at the cheaper shop?",
+  "options": [
+   "$0",
+   "$10",
+   "$20",
+   "$50",
+   "$100"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Shop A price = 2,000 &times; 0.60 = $1,200. Step 2: Shop B price = 2,000 &times; 0.70 &times; 0.85 = $1,190 (an effective 40.5% discount, not 45%). Step 3: Shop B is cheaper by 1,200 &minus; 1,190 = $10. (Adding 30 + 15 = 45% would wrongly suggest a $100 gap.) The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "successive-discounts",
+  "difficulty": "hard",
+  "promptHTML": "After successive discounts of 10% and 15%, a jacket is sold for $612. What was its marked price?",
+  "options": [
+   "$750",
+   "$765",
+   "$780",
+   "$800",
+   "$816"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: The combined multiplier is 0.90 &times; 0.85 = 0.765. Step 2: Marked price = 612 &divide; 0.765 = $800. (Treating the discounts as a flat 25% gives 612 &divide; 0.75 = $816, the trap answer.) The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "hard",
+  "promptHTML": "The ratio of boys to girls in a class is 7 : 5. If 6 boys leave the class and 6 girls join it, the numbers of boys and girls become equal. How many students were in the class originally?",
+  "options": [
+   "66",
+   "68",
+   "70",
+   "72",
+   "78"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let boys = 7x and girls = 5x. Step 2: After the change, 7x &minus; 6 = 5x + 6, so 2x = 12 and x = 6. Step 3: Original total = 12x = 72 (42 boys and 30 girls; 36 = 36 after the change confirms it). The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "very-hard",
+  "promptHTML": "$1,560 is divided among A, B and C such that A receives half of what B and C together receive, and B receives one-third of what A and C together receive. What is C's share?",
+  "options": [
+   "$390",
+   "$520",
+   "$585",
+   "$650",
+   "$715"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: A = (1/2)(1,560 &minus; A) gives 1.5A = 780, so A = $520. Step 2: B = (1/3)(1,560 &minus; B) gives (4/3)B = 520, so B = $390. Step 3: C = 1,560 &minus; 520 &minus; 390 = $650. Check: 520 = (390 + 650)/2 and 390 = (520 + 650)/3. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ratios-proportion",
+  "difficulty": "hard",
+  "promptHTML": "The seats for Science, Arts and Commerce in a college are in the ratio 5 : 7 : 8. Next year the seats are to be increased by 40%, 50% and 75% respectively. What will be the new ratio of seats?",
+  "options": [
+   "2 : 3 : 4",
+   "6 : 7 : 8",
+   "7 : 10 : 14",
+   "4 : 5 : 6",
+   "3 : 4 : 5"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: New quantities are proportional to 5 &times; 1.4 : 7 &times; 1.5 : 8 &times; 1.75 = 7 : 10.5 : 14. Step 2: Doubling to clear the fraction gives 14 : 21 : 28. Step 3: Dividing by 7 gives 2 : 3 : 4. (Rounding 10.5 down to 10 gives the trap 7 : 10 : 14.) The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "very-hard",
+  "promptHTML": "Vessel P contains milk and water in the ratio 3 : 1, and vessel Q contains them in the ratio 5 : 3. The contents are mixed by taking 1 part by volume from P and 2 parts by volume from Q. What is the ratio of milk to water in the resulting mixture?",
+  "options": [
+   "2 : 1",
+   "3 : 2",
+   "11 : 5",
+   "13 : 7",
+   "7 : 4"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Milk fractions are 3/4 in P and 5/8 in Q. Step 2: Taking 8 litres from P and 16 litres from Q, milk = 6 + 10 = 16 litres and water = 2 + 6 = 8 litres. Step 3: Ratio = 16 : 8 = 2 : 1. (Adding the ratio numbers directly, 3+5 : 1+3 = 8 : 4, happens to equal 2 : 1 only by weighting equally &mdash; the weighted calculation above is what confirms it for the 1 : 2 mix.) The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "hard",
+  "promptHTML": "A 40-litre mixture of milk and water contains 10% water. How many litres of pure milk must be added so that the water content falls to 4% of the new mixture?",
+  "options": [
+   "24",
+   "40",
+   "50",
+   "56",
+   "60"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Water in the mixture = 10% of 40 = 4 litres, and adding milk does not change this amount. Step 2: For water to be 4%, the total must satisfy 4 = 0.04 &times; (40 + x), so 40 + x = 100. Step 3: x = 60 litres. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "mixtures-alligation",
+  "difficulty": "very-hard",
+  "promptHTML": "A vessel contains 60 litres of a solution that is 25% alcohol. 15 litres of the solution are removed and replaced with 15 litres of pure alcohol. What is the alcohol concentration of the new solution?",
+  "options": [
+   "40%",
+   "41.25%",
+   "43.75%",
+   "45%",
+   "50%"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: After removing 15 litres, 45 litres remain containing 45 &times; 0.25 = 11.25 litres of alcohol. Step 2: Adding 15 litres of pure alcohol gives 11.25 + 15 = 26.25 litres of alcohol in 60 litres. Step 3: Concentration = 26.25 &divide; 60 = 43.75%. (Averaging 25% and 100% as (25 + 100)/2 or forgetting that the removed 15 litres carried alcohol out gives the traps.) The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "A class of 60 students has an average score of 65. The average score of the boys is 61 and the average score of the girls is 71. How many girls are in the class?",
+  "options": [
+   "24",
+   "26",
+   "30",
+   "36",
+   "40"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: By alligation, boys : girls = (71 &minus; 65) : (65 &minus; 61) = 6 : 4 = 3 : 2. Step 2: Girls = 60 &times; 2/5 = 24. Check: 36 &times; 61 + 24 &times; 71 = 2,196 + 1,704 = 3,900 = 60 &times; 65. (Splitting 50-50 because 65 looks close to the middle of 61 and 71 gives the trap 30.) The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "very-hard",
+  "promptHTML": "Three years ago, the average age of a family of 5 members was 30 years. A child was born during this period, and today the average age of the family (now 6 members) is 28 years. How old is the child today?",
+  "options": [
+   "1",
+   "2",
+   "3",
+   "6",
+   "18"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Three years ago the 5 members' ages summed to 150; today those same 5 members sum to 150 + 5 &times; 3 = 165. Step 2: Today's total for 6 members = 6 &times; 28 = 168. Step 3: Child's age = 168 &minus; 165 = 3 years. (Forgetting that the original members aged 3 years each gives 168 &minus; 150 = 18, the trap.) The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "averages",
+  "difficulty": "hard",
+  "promptHTML": "The average mark of 35 students in a test is 72. If the top 5 scorers have an average of 90, what is the average mark of the remaining 30 students?",
+  "options": [
+   "64",
+   "65",
+   "66",
+   "68",
+   "69"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Total marks = 35 &times; 72 = 2,520. Step 2: Top 5 total = 5 &times; 90 = 450. Step 3: Remaining average = (2,520 &minus; 450) &divide; 30 = 2,070 &divide; 30 = 69. (Simply subtracting the averages, 72 &minus; (90 &minus; 72), or averaging 72 and 90 in some way, gives the traps.) The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ages",
+  "difficulty": "hard",
+  "promptHTML": "The sum of the present ages of a mother and her daughter is 60 years. Six years ago, the mother was five times as old as the daughter. How old will the mother be in 4 years?",
+  "options": [
+   "44",
+   "46",
+   "48",
+   "50",
+   "52"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let the daughter's present age be D; the mother's is 60 &minus; D. Step 2: Six years ago, 60 &minus; D &minus; 6 = 5(D &minus; 6), so 54 &minus; D = 5D &minus; 30 and 6D = 84, giving D = 14. Step 3: The mother is 46 now, so in 4 years she will be 50. (Answering her present age, 46, is the trap for those who stop early.) The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "ages",
+  "difficulty": "very-hard",
+  "promptHTML": "The ages of A and B differ by 16 years. Six years ago, A was three times as old as B. What is the sum of their present ages?",
+  "options": [
+   "40",
+   "44",
+   "46",
+   "48",
+   "52"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let A = B + 16 (A is older, since A was three times B's age). Step 2: Six years ago, B + 16 &minus; 6 = 3(B &minus; 6), so B + 10 = 3B &minus; 18 and 2B = 28, giving B = 14. Step 3: A = 30, so the sum of present ages = 30 + 14 = 44. Check: six years ago they were 24 and 8, and 24 = 3 &times; 8. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "hard",
+  "promptHTML": "A bookstore's sales for a month were: Fiction &mdash; 400 books at an average price of $12; Non-fiction &mdash; 300 books at an average price of $16; Children's &mdash; 200 books at an average price of $6. By what percentage does the revenue from Fiction exceed the revenue from Children's books?",
+  "options": [
+   "25%",
+   "75%",
+   "200%",
+   "300%",
+   "400%"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Fiction revenue = 400 &times; 12 = $4,800. Step 2: Children's revenue = 200 &times; 6 = $1,200. Step 3: Excess = (4,800 &minus; 1,200) &divide; 1,200 = 3, i.e. 300%. (Fiction is 4 times Children's revenue, but 4 times means 300% MORE &mdash; answering 400% confuses the multiple with the percentage excess.) The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "very-hard",
+  "promptHTML": "A retail chain compares two stores for a week. Store X: 2,400 visitors, of whom 35% made a purchase, with an average purchase value of $50. Store Y: 1,800 visitors, of whom 45% made a purchase, with an average purchase value of $40. How much more revenue did Store X generate than Store Y?",
+  "options": [
+   "$8,400",
+   "$9,600",
+   "$10,800",
+   "$12,000",
+   "$14,400"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Store X revenue = 2,400 &times; 0.35 &times; 50 = 840 &times; 50 = $42,000. Step 2: Store Y revenue = 1,800 &times; 0.45 &times; 40 = 810 &times; 40 = $32,400. Step 3: Difference = 42,000 &minus; 32,400 = $9,600. (Comparing visitor counts or purchase rates alone, without multiplying all three factors, leads to the traps.) The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "data-interpretation",
+  "difficulty": "hard",
+  "promptHTML": "Of 1,500 candidates in an exam, 60% appeared in the morning session and the rest in the evening session. The pass rate was 40% in the morning session and 55% in the evening session. What percentage of all candidates passed?",
+  "options": [
+   "44%",
+   "46%",
+   "46.5%",
+   "47.5%",
+   "50%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Morning: 60% of 1,500 = 900 candidates, of whom 900 &times; 0.40 = 360 passed. Step 2: Evening: 600 candidates, of whom 600 &times; 0.55 = 330 passed. Step 3: Overall pass rate = (360 + 330) &divide; 1,500 = 690 &divide; 1,500 = 46%. (Taking the simple average of 40% and 55%, i.e. 47.5%, ignores the unequal session sizes.) The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "hard",
+  "promptHTML": "A policeman spots a thief 250 m ahead of him. The thief starts running at 10 km/h and the policeman chases at 12 km/h. What distance does the thief cover before being caught?",
+  "options": [
+   "1,000 m",
+   "1,500 m",
+   "250 m",
+   "1,250 m",
+   "1,100 m"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Relative speed of the policeman = 12 &minus; 10 = 2 km/h, and the gap is 250 m = 0.25 km. Step 2: Time to close the gap = 0.25 &divide; 2 = 1/8 hour. Step 3: In that time the thief runs 10 &times; 1/8 = 1.25 km = 1,250 m. (1,500 m is the distance the policeman covers, not the thief.) The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "hard",
+  "promptHTML": "Two runners start from the same point on a 500 m circular track at the same time and run in opposite directions at 6 m/s and 4 m/s. How many times do they meet on the track in the first 4 minutes?",
+  "options": [
+   "5",
+   "8",
+   "4",
+   "6",
+   "10"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Running in opposite directions, their relative speed = 6 + 4 = 10 m/s. Step 2: They meet each time they together cover one full lap: 500 &divide; 10 = 50 seconds per meeting. Step 3: In 4 minutes = 240 seconds, number of meetings = 240 &divide; 50 = 4.8, i.e. 4 complete meetings (at 50 s, 100 s, 150 s, 200 s). The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-speed-distance",
+  "difficulty": "hard",
+  "promptHTML": "A man covers a total distance of 300 km, partly by train at 60 km/h and partly by car at 80 km/h, in 4 hours 30 minutes. How far did he travel by train?",
+  "options": [
+   "120 km",
+   "150 km",
+   "200 km",
+   "240 km",
+   "180 km"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let the train distance be x km, so the car distance is (300 &minus; x) km. Step 2: x/60 + (300 &minus; x)/80 = 4.5. Multiply through by 240: 4x + 3(300 &minus; x) = 1,080. Step 3: x + 900 = 1,080, so x = 180 km. (120 km is the car distance.) The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "very-hard",
+  "promptHTML": "Two trains of equal length take 8 seconds and 12 seconds respectively to cross a telegraph pole. If they run in the same direction, how long will the faster train take to completely pass the slower one?",
+  "options": [
+   "9.6 s",
+   "24 s",
+   "36 s",
+   "48 s",
+   "20 s"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let each train have length L. Their speeds are L/8 and L/12. Step 2: Same direction, so relative speed = L/8 &minus; L/12 = L/24. Step 3: To pass completely they must cover both lengths, 2L: time = 2L &divide; (L/24) = 48 seconds. (9.6 s is the answer if you wrongly add the speeds as for opposite directions.) The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "trains",
+  "difficulty": "very-hard",
+  "promptHTML": "A train crosses two people walking in the same direction as the train, at 4 km/h and 8 km/h, in 18 seconds and 20 seconds respectively. What is the length of the train?",
+  "options": [
+   "160 m",
+   "200 m",
+   "180 m",
+   "220 m",
+   "240 m"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let the train's speed be v km/h and length L m. Crossing the first walker: L = (v &minus; 4) &times; (5/18) &times; 18 = 5(v &minus; 4). Step 2: Crossing the second: L = (v &minus; 8) &times; (5/18) &times; 20 = (50/9)(v &minus; 8). Step 3: Equate: 45(v &minus; 4) = 50(v &minus; 8), so 45v &minus; 180 = 50v &minus; 400, giving 5v = 220 and v = 44 km/h. Step 4: L = 5 &times; (44 &minus; 4) = 200 m. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "boats-streams",
+  "difficulty": "very-hard",
+  "promptHTML": "A motorboat covers 40 km upstream and 55 km downstream in 13 hours. It also covers 30 km upstream and 44 km downstream in 10 hours. What is the speed of the stream?",
+  "options": [
+   "3 km/h",
+   "5 km/h",
+   "8 km/h",
+   "11 km/h",
+   "4 km/h"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let upstream speed be u and downstream speed be d. Then 40/u + 55/d = 13 and 30/u + 44/d = 10. Step 2: Multiply the first by 3 and the second by 4: 120/u + 165/d = 39 and 120/u + 176/d = 40. Subtract: 11/d = 1, so d = 11 km/h. Step 3: Then 40/u = 13 &minus; 55/11 = 8, so u = 5 km/h. Step 4: Stream speed = (d &minus; u)/2 = (11 &minus; 5)/2 = 3 km/h. (8 km/h is the still-water speed.) The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "boats-streams",
+  "difficulty": "hard",
+  "promptHTML": "A boat's downstream speed is twice its upstream speed. If the stream flows at 3 km/h, how long will the boat take to cover 27 km in still water?",
+  "options": [
+   "2 hours 15 minutes",
+   "3 hours",
+   "4 hours 30 minutes",
+   "2 hours",
+   "3 hours 45 minutes"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Let still-water speed be b. Downstream = b + 3, upstream = b &minus; 3, and b + 3 = 2(b &minus; 3). Step 2: b + 3 = 2b &minus; 6, so b = 9 km/h. Step 3: Time for 27 km in still water = 27 &divide; 9 = 3 hours. (2 h 15 min comes from wrongly using the downstream speed of 12 km/h.) The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "hard",
+  "promptHTML": "A completes half of a job in 9 days. Then A and B together finish the remaining half in 3 days. How long would B alone take to do the entire job?",
+  "options": [
+   "6 days",
+   "12 days",
+   "18 days",
+   "15 days",
+   "9 days"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: A does half the job in 9 days, so A's rate = (1/2)/9 = 1/18 of the job per day. Step 2: A and B do the other half in 3 days, so their combined rate = (1/2)/3 = 1/6 per day. Step 3: B's rate = 1/6 &minus; 1/18 = 2/18 = 1/9 per day, so B alone takes 9 days. (18 days is A's full-job time, a tempting mix-up.) The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "hard",
+  "promptHTML": "A can do a job in 6 days and B in 8 days. With the help of C, they finish the job in 3 days and receive $3,200 in total. If payment is shared in proportion to work done, what is C's share?",
+  "options": [
+   "$400",
+   "$533",
+   "$800",
+   "$1,200",
+   "$1,600"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Combined rate of all three = 1/3 per day. C's rate = 1/3 &minus; 1/6 &minus; 1/8 = 8/24 &minus; 4/24 &minus; 3/24 = 1/24 per day. Step 2: In 3 days, C does 3/24 = 1/8 of the job (A does 1/2, B does 3/8). Step 3: C's share = 3,200 &times; 1/8 = $400. ($1,600 and $1,200 are A's and B's shares.) The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "time-work",
+  "difficulty": "very-hard",
+  "promptHTML": "A can finish a job in 9 days and B in 12 days. They work on alternate days with A working the first day, B the second, and so on. In how many days is the job completed?",
+  "options": [
+   "10 days",
+   "10&frac14; days",
+   "10&frac13; days",
+   "10&frac12; days",
+   "11 days"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: In each 2-day cycle, work done = 1/9 + 1/12 = 4/36 + 3/36 = 7/36. Step 2: After 4 cycles (8 days), work done = 28/36. Day 9 (A): 28/36 + 4/36 = 32/36. Day 10 (B): 32/36 + 3/36 = 35/36. Step 3: Remaining 1/36 is done by A on day 11 at 4/36 per day, taking (1/36) &divide; (4/36) = 1/4 day. Total = 10 + 1/4 = 10&frac14; days. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "pipes-cisterns",
+  "difficulty": "very-hard",
+  "promptHTML": "Pipe A can fill a tank in 4 hours and pipe B in 6 hours. They are opened alternately for 1 hour each, starting with pipe A. In how much total time will the tank be full?",
+  "options": [
+   "4 h 30 min",
+   "5 h",
+   "4 h 48 min",
+   "4 h 40 min",
+   "4 h 20 min"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: In each 2-hour cycle (A then B), the fill = 1/4 + 1/6 = 5/12. Step 2: After 2 cycles (4 hours), the tank is 10/12 = 5/6 full. Step 3: Hour 5 is A's turn: the remaining 1/6 at rate 1/4 per hour takes (1/6) &divide; (1/4) = 2/3 hour = 40 minutes. Total = 4 h 40 min. (5 h is the answer if B starts first.) The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "pipes-cisterns",
+  "difficulty": "hard",
+  "promptHTML": "A pipe can fill a tank in 4 hours while an outlet at the bottom can empty the full tank in 6 hours. The tank is already one-third full when both are opened together. How long will it take to fill the tank completely?",
+  "options": [
+   "6 hours",
+   "12 hours",
+   "8 hours",
+   "4 hours",
+   "10 hours"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Net filling rate = 1/4 &minus; 1/6 = 3/12 &minus; 2/12 = 1/12 of the tank per hour. Step 2: Since the tank is already 1/3 full, only 2/3 remains. Step 3: Time = (2/3) &divide; (1/12) = 8 hours. (12 hours is the trap answer for filling from empty.) The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "hard",
+  "promptHTML": "At simple interest, a sum amounts to $9,200 in 3 years and to $10,000 in 5 years. What is the principal?",
+  "options": [
+   "$7,600",
+   "$8,000",
+   "$8,400",
+   "$8,800",
+   "$9,200"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: At simple interest, interest accrues equally each year. Interest for 2 years (year 3 to year 5) = 10,000 &minus; 9,200 = $800, so yearly interest = $400. Step 2: Principal = amount after 3 years minus 3 years' interest = 9,200 &minus; 3 &times; 400 = $8,000. (Rate = 400/8,000 = 5%, confirming consistency.) The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "very-hard",
+  "promptHTML": "A sum of money grows to 1.44 times itself in 2 years at compound interest, compounded annually. At the same rate, what compound interest is earned on $5,000 in 3 years?",
+  "options": [
+   "$3,000",
+   "$3,300",
+   "$4,640",
+   "$2,200",
+   "$3,640"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: (1 + r)<sup>2</sup> = 1.44, so 1 + r = 1.2 and r = 20%. Step 2: In 3 years, $5,000 grows to 5,000 &times; (1.2)<sup>3</sup> = 5,000 &times; 1.728 = $8,640. Step 3: Compound interest = 8,640 &minus; 5,000 = $3,640. ($3,000 is the simple-interest trap: 5,000 &times; 0.20 &times; 3.) The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "simple-compound-interest",
+  "difficulty": "hard",
+  "promptHTML": "The simple interest on a sum at 10% per annum for 4 years is $1,440. What is the compound interest on the same sum at the same rate for 2 years, compounded annually?",
+  "options": [
+   "$756",
+   "$720",
+   "$792",
+   "$1,440",
+   "$684"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Simple interest for 4 years at 10% = 40% of the principal, so 0.4P = 1,440 and P = $3,600. Step 2: Compound interest for 2 years at 10% = P[(1.1)<sup>2</sup> &minus; 1] = 3,600 &times; 0.21 = $756. ($720 is the simple-interest value for 2 years.) The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "hard",
+  "promptHTML": "What is the remainder when 2<sup>100</sup> is divided by 7?",
+  "options": [
+   "1",
+   "4",
+   "0",
+   "2",
+   "3"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: Powers of 2 mod 7 cycle with period 3: 2, 4, 1, 2, 4, 1, &hellip; since 2<sup>3</sup> = 8 &equiv; 1 (mod 7). Step 2: 100 = 3 &times; 33 + 1, so 2<sup>100</sup> = (2<sup>3</sup>)<sup>33</sup> &times; 2<sup>1</sup> &equiv; 1 &times; 2 = 2 (mod 7). The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "very-hard",
+  "promptHTML": "How many integers from 1 to 500 (inclusive) are divisible by 3 or by 5, but NOT by 15?",
+  "options": [
+   "200",
+   "233",
+   "266",
+   "167",
+   "234"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Step 1: Multiples of 3 up to 500: 166. Multiples of 5: 100. Multiples of 15: 33. Step 2: Divisible by 3 or 5 = 166 + 100 &minus; 33 = 233. Step 3: Exclude the multiples of 15 themselves: 233 &minus; 33 = 200. Equivalently (166 &minus; 33) + (100 &minus; 33) = 133 + 67 = 200. (233 forgets to remove the multiples of 15.) The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "number-properties",
+  "difficulty": "hard",
+  "promptHTML": "Find the largest 3-digit number which leaves a remainder of 2 when divided by each of 6, 9 and 12.",
+  "options": [
+   "938",
+   "962",
+   "974",
+   "986",
+   "998"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: The number must be of the form LCM(6, 9, 12) &times; k + 2 = 36k + 2. Step 2: Largest 36k + 2 &le; 999: 36 &times; 27 = 972, and 972 + 2 = 974 (36 &times; 28 = 1,008 is too big). Step 3: Check: 974 &divide; 6, 9, 12 all leave remainder 2. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "very-hard",
+  "promptHTML": "Three fair coins are tossed together. Given that at least one head appears, what is the probability that exactly two heads appear?",
+  "options": [
+   "3/8",
+   "1/2",
+   "2/7",
+   "1/3",
+   "3/7"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Step 1: Of the 8 equally likely outcomes, 7 have at least one head (only TTT is excluded). Step 2: Exactly two heads occurs in 3 outcomes (HHT, HTH, THH). Step 3: Conditional probability = 3/7. (3/8 is the unconditional probability &mdash; the trap is ignoring the given condition.) The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "probability",
+  "difficulty": "hard",
+  "promptHTML": "A box contains 4 defective and 6 good bulbs. Two bulbs are drawn at random without replacement. What is the probability that at least one of them is defective?",
+  "options": [
+   "1/3",
+   "2/15",
+   "8/15",
+   "2/3",
+   "3/5"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Step 1: P(at least one defective) = 1 &minus; P(both good). Step 2: P(both good) = C(6,2)/C(10,2) = 15/45 = 1/3. Step 3: So the required probability = 1 &minus; 1/3 = 2/3. (1/3 is the complement left unfinished; 2/15 is P(both defective).) The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "very-hard",
+  "promptHTML": "In how many ways can 5 boys and 3 girls be seated around a circular table so that no two girls sit next to each other?",
+  "options": [
+   "720",
+   "2,880",
+   "1,440",
+   "5,040",
+   "480"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Step 1: Seat the 5 boys around the circle first: (5 &minus; 1)! = 24 ways. Step 2: This creates 5 gaps between boys; the 3 girls must occupy 3 different gaps so no two are adjacent: P(5,3) = 5 &times; 4 &times; 3 = 60 ways. Step 3: Total = 24 &times; 60 = 1,440. (5,040 = 7! ignores the girls-apart condition.) The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "permutations-combinations",
+  "difficulty": "hard",
+  "promptHTML": "A question paper has two sections, each containing 5 questions. A student must answer exactly 6 questions, choosing at least 2 from each section. In how many ways can the questions be chosen?",
+  "options": [
+   "100",
+   "200",
+   "150",
+   "210",
+   "250"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Step 1: Valid splits (Section 1, Section 2): (2,4), (3,3), (4,2). Step 2: Count each: C(5,2)&times;C(5,4) = 10&times;5 = 50; C(5,3)&times;C(5,3) = 10&times;10 = 100; C(5,4)&times;C(5,2) = 5&times;10 = 50. Step 3: Total = 50 + 100 + 50 = 200. (210 = C(10,6) ignores the at-least-2-per-section restriction.) The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "statistics",
+  "difficulty": "hard",
+  "promptHTML": "In a survey, the mean rating given by all respondents is 7.2. Male respondents average 6.8 and female respondents average 7.8. What percentage of the respondents are female?",
+  "options": [
+   "35%",
+   "40%",
+   "45%",
+   "55%",
+   "60%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Alligation: female : male = (7.2 &minus; 6.8) : (7.8 &minus; 7.2) = 0.4 : 0.6 = 2 : 3. Female share = 2/5 = <b>40%</b>. The classic mistake is inverting the ratio (60%): the group whose mean is <i>farther</i> from the overall mean is the <i>smaller</i> group.",
+  "skill": "statistics"
+ },
+ {
+  "category": "Numerical",
+  "topic": "statistics",
+  "difficulty": "hard",
+  "promptHTML": "A batsman&rsquo;s average rises by exactly 2 after he scores 94 in his 17th innings. What is his average after the 17th innings?",
+  "options": [
+   "58",
+   "60",
+   "62",
+   "64",
+   "66"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Let the new average be x. Old total = 16(x &minus; 2), so 16(x &minus; 2) + 94 = 17x &rArr; 94 &minus; 32 = x &rArr; x = <b>62</b>. Sanity check: 16 innings at 60 = 960; 960 + 94 = 1054 = 17 &times; 62. &#10003;",
+  "skill": "statistics"
+ },
+ {
+  "category": "Numerical",
+  "topic": "statistics",
+  "difficulty": "very-hard",
+  "promptHTML": "A car covers a route in three equal-distance legs at 30 km/h, 40 km/h and 60 km/h. What is its average speed for the whole journey?",
+  "options": [
+   "38 km/h",
+   "40 km/h",
+   "43.3 km/h",
+   "42 km/h",
+   "45 km/h"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Equal distances &rArr; harmonic mean: 3 &divide; (1/30 + 1/40 + 1/60) = 3 &divide; (9/120) = <b>40 km/h</b>. The arithmetic mean 43.3 is the trap &mdash; it is only valid for equal <i>times</i>.",
+  "skill": "statistics"
+ },
+ {
+  "category": "Numerical",
+  "topic": "statistics",
+  "difficulty": "very-hard",
+  "promptHTML": "The mean of 40 recorded values is 50. Later it is found that one value was recorded as 83 instead of the correct 38, and another as 27 instead of the correct 72. What is the correct mean?",
+  "options": [
+   "48.875",
+   "50",
+   "51.125",
+   "49.5",
+   "52.25"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Corrections: 38 &minus; 83 = &minus;45 and 72 &minus; 27 = +45. Net change to the total is zero, so the mean is unchanged: <b>50</b>. The problem is testing whether you compute blindly or notice the corrections cancel.",
+  "skill": "statistics"
+ },
+ {
+  "category": "Numerical",
+  "topic": "statistics",
+  "difficulty": "hard",
+  "promptHTML": "A squad of 10 players has an average age of 27. Two players with average age 33 leave, and four players with average age 24 join. What is the new average age of the squad?",
+  "options": [
+   "24.5",
+   "25",
+   "25.5",
+   "26",
+   "26.5"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "New total = 10&middot;27 &minus; 2&middot;33 + 4&middot;24 = 270 &minus; 66 + 96 = 300 over 12 players = <b>25</b>. Keep track of the changing headcount &mdash; dividing by 10 (giving 30) or by 14 is the standard slip.",
+  "skill": "statistics"
+ },
+ {
+  "category": "Numerical",
+  "topic": "statistics",
+  "difficulty": "hard",
+  "promptHTML": "Eight observations are listed in ascending order: 8, 11, x, x + 2, x + 4, 21, 23, 25. If the median of the data is 16, what is x?",
+  "options": [
+   "12",
+   "13",
+   "14",
+   "15",
+   "16"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "For 8 values the median is the average of the 4th and 5th: [(x + 2) + (x + 4)]/2 = x + 3 = 16 &rArr; x = <b>13</b>. Check ordering: 8, 11, 13, 15, 17, 21, 23, 25 &mdash; valid ascending list. &#10003;",
+  "skill": "statistics"
+ }
+]

@@ -32,4 +32,16 @@ const work = defineCollection({
   }),
 });
 
-export const collections = { work };
+// On-site posts — project write-ups and essays, rendered at /writing/<slug>.
+const writing = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    date: z.coerce.date(),
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { work, writing };

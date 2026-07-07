@@ -29,7 +29,7 @@ export const SOCIALS = {
   linkedin: 'https://www.linkedin.com/in/mamoon-mondal',
   medium: 'https://medium.com/@sheikh.mamoon.mondal',
   // Optional: add a GitHub URL to show it in the header/footer
-  github: '',
+  github: 'https://github.com/atmamoon',
   location: 'Bengaluru, India',
   phone: '+91 7022382627',
 };
@@ -58,6 +58,16 @@ export const FOOTER_PHOTO = '/photos/night-milkyway-pano.webp';
 
 // ── Writing ─────────────────────────────────────────────────────────────
 export const WRITING: { title: string; outlet: string; href: string }[] = [
+  {
+    title: 'Ultimate Aptitude: free, no-login GMAT/CAT-level practice tests',
+    outlet: 'moonbatant',
+    href: '/writing/ultimate-aptitude-free-gmat-cat-practice/',
+  },
+  {
+    title: '1,098 AI-written exam questions, zero wrong answer keys: how Ultimate Aptitude was built',
+    outlet: 'moonbatant',
+    href: '/writing/building-ultimate-aptitude-ai-question-banks/',
+  },
   {
     title: 'Building a 5x PM Agent',
     outlet: 'Medium',

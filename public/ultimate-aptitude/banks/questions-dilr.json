@@ -1,0 +1,1458 @@
+[
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "hard",
+  "promptHTML": "Six interns &mdash; A, B, C, D, E and F &mdash; are to be seated in a single row of six seats numbered 1 to 6 from left to right. The following conditions hold:<br><br><b>(i)</b> C sits immediately to the left of D (so D's seat number is exactly one more than C's).<br><b>(ii)</b> A sits at one of the two ends of the row (seat 1 or seat 6).<br><b>(iii)</b> E and F are <i>not</i> seated next to each other.<br><b>(iv)</b> B sits in seat 3.<br><br>How many distinct seating arrangements satisfy all four conditions?",
+  "options": [
+   "2",
+   "3",
+   "4",
+   "5",
+   "6"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "From (iv) B is fixed in seat 3, leaving seats 1, 2, 4, 5, 6 for A, C, D, E, F. By (i) the C&ndash;D block occupies two consecutive seats; the available consecutive pairs (avoiding seat 3) are (4,5) and (5,6). By (ii) A is at seat 1 or seat 6.<br><br><b>Case C&ndash;D at (4,5):</b> remaining seats for A, E, F are 1, 2, 6. A must be at 1 or 6.<br>&bull; A=1: E, F take 2 and 6 (seats 2 and 6 are not adjacent), so both orders work &rarr; 2 arrangements.<br>&bull; A=6: E, F take 1 and 2, but seats 1 and 2 are adjacent, violating (iii) &rarr; 0.<br><b>Case C&ndash;D at (5,6):</b> remaining seats for A, E, F are 1, 2, 4. A must be at 1 (seat 6 is taken by D).<br>&bull; A=1: E, F take 2 and 4 (not adjacent), both orders work &rarr; 2 arrangements.<br><br>Total = 2 + 0 + 2 = 4. The four arrangements are (A,E,B,C,D,F), (A,E,B,F,C,D), (A,F,B,C,D,E), (A,F,B,E,C,D). A common error is to forget condition (iii) and count the A=6 sub-case (giving 6), or to miss one valid case (giving 3). The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Six interns &mdash; A, B, C, D, E and F &mdash; are seated in a single row of six seats numbered 1 to 6 from left to right, subject to:<br><br><b>(i)</b> C sits immediately to the left of D.<br><b>(ii)</b> A sits at one of the two ends (seat 1 or seat 6).<br><b>(iii)</b> E and F are not seated next to each other.<br><b>(iv)</b> B sits in seat 3.<br><br>If, in addition, E occupies seat 6, who must occupy seat 2?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D",
+   "F"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "The four arrangements consistent with conditions (i)&ndash;(iv) are: (A,E,B,C,D,F), (A,E,B,F,C,D), (A,F,B,C,D,E), (A,F,B,E,C,D). We now impose E in seat 6. Scanning the four, only (A,F,B,C,D,E) has E in seat 6 (in the others seat 6 holds F, D, or D). In that unique arrangement, seat 2 is occupied by F. A tempting wrong pick is A (since A heads the row), but seat 2 is F. The answer is E."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "hard",
+  "promptHTML": "Six interns &mdash; A, B, C, D, E and F &mdash; are seated in a single row of six seats numbered 1 to 6 from left to right, subject to:<br><br><b>(i)</b> C sits immediately to the left of D.<br><b>(ii)</b> A sits at one of the two ends (seat 1 or seat 6).<br><b>(iii)</b> E and F are not seated next to each other.<br><b>(iv)</b> B sits in seat 3.<br><br>Across <i>all</i> valid arrangements, which seat is guaranteed to be occupied by the same intern every time?",
+  "options": [
+   "Seat 1, always occupied by A",
+   "Seat 2, always occupied by E",
+   "Seat 4, always occupied by C",
+   "Seat 5, always occupied by D",
+   "Seat 6, always occupied by F"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "The four valid arrangements are (A,E,B,C,D,F), (A,E,B,F,C,D), (A,F,B,C,D,E), (A,F,B,E,C,D). Checking each seat across all four:<br>&bull; Seat 1: A, A, A, A &rarr; always A. (Although (ii) allows A at seat 1 or 6, the C&ndash;D block forces A to seat 1 in every surviving case.)<br>&bull; Seat 2: E, E, F, F &rarr; not fixed.<br>&bull; Seat 4: C, F, C, E &rarr; not fixed.<br>&bull; Seat 5: D, C, D, C &rarr; not fixed.<br>&bull; Seat 6: F, D, E, D &rarr; not fixed.<br>Only seat 1 is invariant, always A. Choosing seat 5 = D is a classic trap (D is at seat 5 in two of four cases). The answer is A."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Eight friends &mdash; P, Q, R, S, T, U, V and W &mdash; sit around a circular table, equally spaced, all facing the centre. (Because they face the centre, a person's <b>immediate left</b> is the neighbour in the clockwise direction and their <b>immediate right</b> is the neighbour in the anticlockwise direction.) The following hold:<br><br><b>(i)</b> P sits directly opposite Q.<br><b>(ii)</b> R sits immediately to the left of P.<br><b>(iii)</b> S sits immediately to the right of Q.<br><b>(iv)</b> T and U sit next to each other.<br><b>(v)</b> V does not sit next to P.<br><br>Considering every valid arrangement, in how many <i>distinct</i> seats could V possibly be seated?",
+  "options": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Place P at a fixed seat and number the eight seats 0&ndash;7 going clockwise, with P at 0. By (ii) R is the clockwise neighbour of P, so R = seat 1. By (i) Q is opposite P, so Q = seat 4. By (iii) S is the anticlockwise neighbour of Q, so S = seat 3. The four free seats are 2, 5, 6 and 7, to be filled by T, U, V, W.<br><br>By (v) V is not next to P; P's neighbours are seat 1 (R) and seat 7, so V cannot be in seat 7. That leaves seats 2, 5, 6 as candidates for V. But seat 6 is also impossible: if V = 6, then T, U, W fill seats 2, 5, 7, and none of those three seats are mutually adjacent (seat 2's neighbours 1,3 are taken; seat 5's neighbours are 4=Q and 6=V; seat 7's neighbours are 6=V and 0=P), so condition (iv) T&ndash;U adjacent cannot be met. Hence V can only sit in seat 2 or seat 5. Direct enumeration of the six valid arrangements confirms V occupies seat 2 in three of them and seat 5 in the other three. So V can occupy exactly <b>2</b> distinct seats &mdash; uniquely the most restricted of the four free people (T, U and W can each reach 3 different seats). The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Eight friends &mdash; P, Q, R, S, T, U, V and W &mdash; sit around a circular table, equally spaced, all facing the centre. (Facing the centre, a person's <b>immediate left</b> is the clockwise neighbour and their <b>immediate right</b> is the anticlockwise neighbour.) The conditions are:<br><br><b>(i)</b> P sits directly opposite Q.<br><b>(ii)</b> R sits immediately to the left of P.<br><b>(iii)</b> S sits immediately to the right of Q.<br><b>(iv)</b> T and U sit next to each other.<br><b>(v)</b> V does not sit next to P.<br><br>If T sits immediately to the left of Q, then who sits directly opposite V?",
+  "options": [
+   "P",
+   "R",
+   "S",
+   "U",
+   "T"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Set P at seat 0 and number clockwise 0&ndash;7. Then R = seat 1 (left of P, by ii), Q = seat 4 (opposite P, by i), S = seat 3 (right of Q, by iii). 'Immediately to the left of Q' is the clockwise neighbour of Q = seat 5, so T = seat 5. By (iv) U must be adjacent to T; seat 5's free neighbour is seat 6 (seat 4 is Q), so U = seat 6. That leaves seats 2 and 7 for V and W. By (v) V cannot be next to P, and seat 7 is a neighbour of P, so V = seat 2 and W = seat 7. The seat opposite V (seat 2) is seat 6, which is U. A common slip is to read 'left' as anticlockwise (giving the mirror layout) and land on T. The answer is D."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "hard",
+  "promptHTML": "Eight friends &mdash; P, Q, R, S, T, U, V and W &mdash; sit around a circular table, equally spaced, all facing the centre. (Facing the centre, a person's immediate left is the clockwise neighbour and immediate right is the anticlockwise neighbour.) The conditions are:<br><br><b>(i)</b> P sits directly opposite Q.<br><b>(ii)</b> R sits immediately to the left of P.<br><b>(iii)</b> S sits immediately to the right of Q.<br><b>(iv)</b> T and U sit next to each other.<br><b>(v)</b> V does not sit next to P.<br><br>Which one of the following statements must be true in <i>every</i> valid arrangement?",
+  "options": [
+   "T always sits directly opposite R",
+   "V is always seated next to S",
+   "R and S are never seated next to each other",
+   "W always sits immediately to the right of P",
+   "U is never seated next to Q"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Put P at seat 0, clockwise 0&ndash;7: R = 1, Q = 4 (opposite P), S = 3 (right of Q). Seats 2, 5, 6, 7 hold T, U, V, W subject to (iv) T&ndash;U adjacent and (v) V not in seat 7. R is at seat 1 and S is at seat 3; these seats are never adjacent (seat 2 always lies between them), so 'R and S are never seated next to each other' holds in every arrangement &mdash; TRUE. Testing the distractors against the six valid layouts: 'T opposite R' fails (R's opposite, seat 5, varies); 'V next to S' fails (V can sit at seat 5, away from S at seat 3); 'W immediately right of P' (seat 7) fails (seat 7 can be T, U or W); 'U never next to Q' fails (U can occupy seat 5, beside Q at seat 4). Only the third statement is forced. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "hard",
+  "promptHTML": "Four analysts &mdash; Ira, Jai, Kim and Leo &mdash; occupy four desks in a single row, numbered 1 to 4 from left to right. Each ordered a different lunch: Pasta, Quiche, Rolls or Sushi. The clues are:<br><br><b>(i)</b> Kim sits at desk 2.<br><b>(ii)</b> The analyst at desk 1 ordered Sushi.<br><b>(iii)</b> Ira sits immediately to the right of Jai (Ira's desk number is one more than Jai's).<br><b>(iv)</b> Leo did not order Pasta.<br><b>(v)</b> The Quiche eater sits at an odd-numbered desk.<br><b>(vi)</b> Kim did not order Rolls.<br><br>Who ordered Rolls?",
+  "options": [
+   "Jai",
+   "Ira",
+   "Kim",
+   "Leo",
+   "Cannot be determined"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "By (i) Kim is at desk 2. By (iii) Jai&ndash;Ira occupy consecutive desks with Ira to the right; the only consecutive pair leaving desk 2 for Kim is desks 3&ndash;4 (Jai = 3, Ira = 4), which forces Leo into desk 1. So desks are Leo(1), Kim(2), Jai(3), Ira(4). By (ii) Leo (desk 1) ordered Sushi. By (v) the Quiche eater is at desk 1 or 3; desk 1 is Sushi, so Quiche is at desk 3 = Jai. The remaining lunches Pasta and Rolls go to Kim (desk 2) and Ira (desk 4). By (vi) Kim is not Rolls, so Kim = Pasta and Ira = Rolls. (Check (iv): Leo = Sushi, consistent.) Thus Ira ordered Rolls. A common error is to put Jai&ndash;Ira at desks 1&ndash;2, which clashes with Kim at desk 2. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "hard",
+  "promptHTML": "Four analysts &mdash; Ira, Jai, Kim and Leo &mdash; occupy four desks in a single row, numbered 1 to 4 from left to right. Each ordered a different lunch: Pasta, Quiche, Rolls or Sushi.<br><br><b>(i)</b> Kim sits at desk 2.<br><b>(ii)</b> The analyst at desk 1 ordered Sushi.<br><b>(iii)</b> Ira sits immediately to the right of Jai.<br><b>(iv)</b> Leo did not order Pasta.<br><b>(v)</b> The Quiche eater sits at an odd-numbered desk.<br><b>(vi)</b> Kim did not order Rolls.<br><br>Who sits at desk 3, and what did that person order?",
+  "options": [
+   "Ira, who ordered Rolls",
+   "Jai, who ordered Pasta",
+   "Kim, who ordered Quiche",
+   "Leo, who ordered Sushi",
+   "Jai, who ordered Quiche"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "From (i) Kim = desk 2. By (iii) Jai&ndash;Ira are consecutive with Ira on the right; the only placement compatible with Kim at desk 2 is Jai = desk 3 and Ira = desk 4, forcing Leo = desk 1. By (ii) Leo (desk 1) = Sushi. By (v) Quiche sits at an odd desk (1 or 3); desk 1 is Sushi, so the Quiche eater is at desk 3 = Jai. Hence desk 3 is Jai, who ordered Quiche. (The remaining Pasta/Rolls split to Kim and Ira; by (vi) Kim = Pasta, Ira = Rolls, but that is not needed here.) The answer is E."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Four analysts &mdash; Ira, Jai, Kim and Leo &mdash; occupy four desks in a single row, numbered 1 to 4 from left to right. Each ordered a different lunch: Pasta, Quiche, Rolls or Sushi.<br><br><b>(i)</b> Kim sits at desk 2.<br><b>(ii)</b> The analyst at desk 1 ordered Sushi.<br><b>(iii)</b> Ira sits immediately to the right of Jai.<br><b>(iv)</b> Leo did not order Pasta.<br><b>(v)</b> The Quiche eater sits at an odd-numbered desk.<br><b>(vi)</b> Kim did not order Rolls.<br><br>The desks of the Pasta eater and the Quiche eater are which two numbers?",
+  "options": [
+   "1 and 2",
+   "2 and 3",
+   "3 and 4",
+   "1 and 3",
+   "2 and 4"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Solving the grid: Kim = desk 2 (i); by (iii) the only fit is Jai = 3, Ira = 4, so Leo = 1. By (ii) Leo (desk 1) = Sushi. By (v) Quiche is at an odd desk (1 or 3); desk 1 is Sushi, so Quiche = desk 3 (Jai). The remaining Pasta and Rolls go to Kim (desk 2) and Ira (desk 4); by (vi) Kim &ne; Rolls, so Kim = Pasta (desk 2) and Ira = Rolls (desk 4). Therefore Pasta is at desk 2 and Quiche at desk 3 &mdash; desks 2 and 3. A common trap is to pair Pasta with Rolls' desk (2 and 4) by forgetting clue (vi). The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "very-hard",
+  "promptHTML": "A firm forms a task force by choosing some of seven analysts: P, Q, R, S, T, U, V. The selection must obey ALL of these rules:<br><br><b>Rule 1:</b> If P is chosen, then Q is chosen.<br><b>Rule 2:</b> R and S are never both chosen.<br><b>Rule 3:</b> At least one of T, U is chosen.<br><b>Rule 4:</b> If Q is chosen, then R is not chosen.<br><b>Rule 5:</b> If U is chosen, then V is chosen.<br><br>The task force must contain <b>exactly 4</b> analysts. How many distinct task forces are possible?",
+  "options": [
+   "6",
+   "7",
+   "8",
+   "9",
+   "10"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "List size-4 selections satisfying every rule. By Rule 2 at most one of R,S is in. By Rule 4, Q and R cannot coexist, and by Rule 1 P forces Q, so P and R cannot coexist. Work by whether R is in:<br>If R is in: then Q out (Rule 4), so P out (Rule 1), and S out (Rule 2). Remaining R,T,U,V must fill all 4 slots; check U->V (ok). One force: {R,T,U,V}.<br>If R is out: choose 4 from {P,Q,S,T,U,V} obeying Rule 1 (P->Q), Rule 3 (T or U), Rule 5 (U->V). Enumerating gives: {P,Q,S,T}, {P,Q,T,V}, {P,Q,U,V}, {Q,S,T,V}, {Q,S,U,V}, {Q,T,U,V}, {S,T,U,V} — that is 7.<br>Total = 1 + 7 = 8. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "A firm forms a task force by choosing some of seven analysts: P, Q, R, S, T, U, V. The selection must obey ALL of these rules:<br><br><b>Rule 1:</b> If P is chosen, then Q is chosen.<br><b>Rule 2:</b> R and S are never both chosen.<br><b>Rule 3:</b> At least one of T, U is chosen.<br><b>Rule 4:</b> If Q is chosen, then R is not chosen.<br><b>Rule 5:</b> If U is chosen, then V is chosen.<br><br>Suppose the task force has <b>exactly 4</b> members and R is one of them. Which analyst MUST also be on the task force?",
+  "options": [
+   "P",
+   "Q",
+   "S",
+   "V",
+   "None of these is forced"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "R being selected triggers Rule 4: Q is not chosen. Since P would force Q (Rule 1), P is also out. Rule 2 forbids S alongside R, so S is out. That eliminates P, Q, and S, leaving only T, U, V to fill the remaining three of the four slots. Hence the only valid size-4 force containing R is {R, T, U, V} (Rule 5, U->V, is satisfied). Among the options, P, Q, and S are excluded, so the only analyst that must be present is V. The answer is D."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "A firm forms a task force by choosing some of seven analysts: P, Q, R, S, T, U, V. The selection must obey ALL of these rules:<br><br><b>Rule 1:</b> If P is chosen, then Q is chosen.<br><b>Rule 2:</b> R and S are never both chosen.<br><b>Rule 3:</b> At least one of T, U is chosen.<br><b>Rule 4:</b> If Q is chosen, then R is not chosen.<br><b>Rule 5:</b> If U is chosen, then V is chosen.<br><br>Which of the following pairs of analysts can NEVER both serve on the same valid task force (of any size)?",
+  "options": [
+   "P and R",
+   "Q and U",
+   "S and V",
+   "T and V",
+   "Q and S"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Test each pair. P and R: P forces Q (Rule 1), and Q forbids R (Rule 4), so P and R together are impossible — this pair can never coexist. The others are all achievable: {Q,T,U,V} contains Q and U; {S,T,U,V} contains S and V; {Q,S,T,V} contains both T and V as well as Q and S. Only P and R is impossible. The answer is A."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "very-hard",
+  "promptHTML": "Exactly 12 trophies are placed on four shelves W, X, Y, Z. Each shelf holds at least one trophy, and the following hold:<br><br><b>C1:</b> Shelf W holds exactly twice as many trophies as shelf X.<br><b>C2:</b> Shelf Y holds more trophies than shelf Z.<br><b>C3:</b> Shelf Z holds at least 2 trophies.<br><b>C4:</b> No shelf holds more than 6 trophies.<br><br>How many distinct distributions (W, X, Y, Z) are possible?",
+  "options": [
+   "2",
+   "3",
+   "4",
+   "5",
+   "6"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "By C1, (X,W) is (1,2), (2,4), or (3,6). Then Y+Z = 12 - W - X with Y>Z, Z&ge;2, all &le;6.<br>X=1,W=2: Y+Z=9, Y>Z, both &le;6, Z&ge;2 -> (Y,Z)=(5,4) or (6,3). Two distributions.<br>X=2,W=4: Y+Z=6, Y>Z, Z&ge;2 -> (Y,Z)=(4,2). One distribution.<br>X=3,W=6: Y+Z=3, but Z&ge;2 forces Y&le;1, contradicting Y>Z. None.<br>Total = 2 + 1 = 3 distributions: (2,1,5,4), (2,1,6,3), (4,2,4,2). The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "Exactly 12 trophies are placed on four shelves W, X, Y, Z. Each shelf holds at least one trophy, and the following hold:<br><br><b>C1:</b> Shelf W holds exactly twice as many trophies as shelf X.<br><b>C2:</b> Shelf Y holds more trophies than shelf Z.<br><b>C3:</b> Shelf Z holds at least 2 trophies.<br><b>C4:</b> No shelf holds more than 6 trophies.<br><br>What is the greatest number of trophies that shelf Y can hold?",
+  "options": [
+   "4",
+   "5",
+   "6",
+   "7",
+   "8"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The valid distributions (W,X,Y,Z) are (2,1,5,4), (2,1,6,3), and (4,2,4,2). The Y-values are 5, 6, and 4. The maximum is 6, achieved by (2,1,6,3): W=2 (twice X=1), Y=6 > Z=3, Z&ge;2, and no shelf exceeds 6. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "Exactly 12 trophies are placed on four shelves W, X, Y, Z. Each shelf holds at least one trophy, and the following hold:<br><br><b>C1:</b> Shelf W holds exactly twice as many trophies as shelf X.<br><b>C2:</b> Shelf Y holds more trophies than shelf Z.<br><b>C3:</b> Shelf Z holds at least 2 trophies.<br><b>C4:</b> No shelf holds more than 6 trophies.<br><br>If shelf W holds 4 trophies, how many trophies does shelf Z hold?",
+  "options": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "Cannot be determined"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "W=4 forces X=2 by C1 (W = 2X). The remaining trophies are 12 - 4 - 2 = 6, split between Y and Z with Y > Z and Z &ge; 2, each &le; 6. The only split is Y=4, Z=2 (Y=5,Z=1 violates Z&ge;2; Y=6,Z=0 violates Z&ge;2 and the at-least-one rule). So Z = 2, uniquely determined. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "very-hard",
+  "promptHTML": "Five cars &mdash; red, blue, green, white, and black &mdash; are parked in five spots numbered 1 to 5 from left to right, one car per spot. The arrangement satisfies ALL of:<br><br><b>D1:</b> The red car is somewhere to the left of the blue car.<br><b>D2:</b> The green car and the white car occupy adjacent spots (in either order).<br><b>D3:</b> The black car is in neither spot 1 nor spot 5.<br><b>D4:</b> The blue car is NOT in a spot adjacent to the black car.<br><br>How many distinct valid arrangements are possible?",
+  "options": [
+   "2",
+   "3",
+   "4",
+   "5",
+   "6"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "By D2, the green-white pair occupies an adjacent block. By D3 black is in 2, 3, or 4. By D4 blue is not next to black, and by D1 red is left of blue.<br>Testing systematically, the only arrangements that satisfy every clue are:<br>1) red, black, green, white, blue<br>2) red, black, white, green, blue<br>3) green, white, black, red, blue<br>4) white, green, black, red, blue<br>In each, red<blue (D1), green&amp;white adjacent (D2), black in 2 or 3 (D3), and blue (spot 5) not adjacent to black (D4). That is 4 valid arrangements. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "Five cars &mdash; red, blue, green, white, and black &mdash; are parked in five spots numbered 1 to 5 from left to right, one car per spot. The arrangement satisfies ALL of:<br><br><b>D1:</b> The red car is somewhere to the left of the blue car.<br><b>D2:</b> The green car and the white car occupy adjacent spots (in either order).<br><b>D3:</b> The black car is in neither spot 1 nor spot 5.<br><b>D4:</b> The blue car is NOT in a spot adjacent to the black car.<br><br>Which one of the following MUST be true in every valid arrangement?",
+  "options": [
+   "The red car is in spot 1.",
+   "The blue car is in spot 5.",
+   "The black car is in spot 3.",
+   "The green car is to the left of the white car.",
+   "The red car is adjacent to the green car."
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The four valid arrangements are: (red,black,green,white,blue), (red,black,white,green,blue), (green,white,black,red,blue), (white,green,black,red,blue). In all four, the blue car is in spot 5, so that must be true. The other options fail: red is in spot 1 only sometimes (it can be in spot 4); black is in spot 2 in two cases, not always 3; green is left of white in only some cases; and red is not always adjacent to green. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "Five cars &mdash; red, blue, green, white, and black &mdash; are parked in five spots numbered 1 to 5 from left to right, one car per spot. The arrangement satisfies ALL of:<br><br><b>D1:</b> The red car is somewhere to the left of the blue car.<br><b>D2:</b> The green car and the white car occupy adjacent spots (in either order).<br><b>D3:</b> The black car is in neither spot 1 nor spot 5.<br><b>D4:</b> The blue car is NOT in a spot adjacent to the black car.<br><br>If the green car is parked in spot 1, which car is parked in spot 4?",
+  "options": [
+   "white",
+   "black",
+   "red",
+   "blue",
+   "green"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Among the four valid arrangements, the only one with green in spot 1 is (green, white, black, red, blue): green-white are adjacent (D2), black in spot 3 (D3), red<blue (D1), and blue in spot 5 is not adjacent to black in spot 3 (D4). In that arrangement, spot 4 holds the red car. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "very-hard",
+  "promptHTML": "Five candidates &mdash; <b>A, B, C, D, E</b> &mdash; are each interviewed on exactly one day, Monday through Friday, with exactly one interview per day. The schedule must satisfy ALL of the following:<br><br>&bull; A is interviewed on an earlier day than B.<br>&bull; C is interviewed on an earlier day than D.<br>&bull; E is interviewed on neither Monday nor Friday.<br>&bull; A and C are <b>not</b> interviewed on consecutive days.<br><br><b>How many distinct interview schedules satisfy all four conditions?</b>",
+  "options": [
+   "8",
+   "10",
+   "9",
+   "12",
+   "6"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Number the days Mon=1 through Fri=5 and require A&lt;B, C&lt;D, E&isin;{2,3,4}, and |A&minus;C|&ne;1. Systematically filtering all 120 day-assignments leaves exactly these ten (written Mon&hellip;Fri):<br>(1) A,B,C,E,D &nbsp;(2) A,B,E,C,D &nbsp;(3) A,E,B,C,D &nbsp;(4) A,E,C,B,D &nbsp;(5) A,E,C,D,B<br>(6) C,E,A,B,D &nbsp;(7) C,D,A,E,B &nbsp;(8) C,E,A,D,B &nbsp;(9) C,D,E,A,B &nbsp;(10) C,E,D,A,B.<br>Each obeys A before B, C before D, E off the endpoints, and A and C never adjacent. Common errors: forgetting the non-consecutive A/C rule (gives 18) or dropping the E-endpoint rule. The disciplined filtered count is 10. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "very-hard",
+  "promptHTML": "Five candidates &mdash; <b>A, B, C, D, E</b> &mdash; are each interviewed on exactly one day, Monday through Friday, one interview per day, subject to ALL of:<br><br>&bull; A is interviewed on an earlier day than B.<br>&bull; C is interviewed on an earlier day than D.<br>&bull; E is interviewed on neither Monday nor Friday.<br>&bull; A and C are <b>not</b> interviewed on consecutive days.<br><br><b>Which of the following is a complete and accurate list of the days on which A could be interviewed?</b>",
+  "options": [
+   "Monday only",
+   "Monday or Wednesday",
+   "Monday, Wednesday, or Thursday",
+   "Wednesday or Thursday",
+   "Monday, Tuesday, or Wednesday"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "A must precede B, so A cannot be on Friday. If A were on Tuesday, then |A&minus;C|&ne;1 forbids C on Monday or Wednesday, leaving C on Thursday or Friday; combined with C&lt;D and E restricted to days 2&ndash;4, no completion survives &mdash; so A is never on Tuesday. Scanning the ten valid schedules, A actually appears on Monday (5 schedules), Wednesday (3), and Thursday (2), and never on Tuesday or Friday. A trap answer omits Thursday or wrongly includes Tuesday. The complete list is Monday, Wednesday, or Thursday. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "very-hard",
+  "promptHTML": "Five candidates &mdash; <b>A, B, C, D, E</b> &mdash; are each interviewed on exactly one day, Monday through Friday, one interview per day, subject to ALL of:<br><br>&bull; A is interviewed on an earlier day than B.<br>&bull; C is interviewed on an earlier day than D.<br>&bull; E is interviewed on neither Monday nor Friday.<br>&bull; A and C are <b>not</b> interviewed on consecutive days.<br><br><b>If A is interviewed on Wednesday, which of the following MUST be true?</b>",
+  "options": [
+   "B is interviewed on Friday",
+   "D is interviewed on Tuesday",
+   "E is interviewed on Thursday",
+   "C is interviewed on Monday",
+   "B is interviewed before C"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Fix A on Wednesday (day 3). Then B must be after A, so B is Thursday or Friday. Because |A&minus;C|&ne;1, C cannot be Tuesday or Thursday; with C also before D and E confined to days 2&ndash;4 (day 3 taken), the only day left for C is Monday. The three completions are: (A=Wed, B=Thu, C=Mon, D=Fri, E=Tue), (A=Wed, B=Fri, C=Mon, D=Tue, E=Thu), and (A=Wed, B=Fri, C=Mon, D=Thu, E=Tue). Across all three, only 'C on Monday' is forced &mdash; B is Thu or Fri, and D and E vary, so the other options are merely possible. The answer is D."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "hard",
+  "promptHTML": "A courier drives through a one-way road network from the hub <b>S</b> to the depot <b>D</b>. All roads are one-way in the direction listed, with travel times in minutes:<br><br><table border=\"1\" cellpadding=\"4\"><tr><th>Road</th><th>Min</th><th>Road</th><th>Min</th></tr><tr><td>S &rarr; P</td><td>6</td><td>Q &rarr; R</td><td>4</td></tr><tr><td>S &rarr; Q</td><td>9</td><td>Q &rarr; T</td><td>11</td></tr><tr><td>P &rarr; Q</td><td>3</td><td>R &rarr; T</td><td>2</td></tr><tr><td>P &rarr; R</td><td>8</td><td>R &rarr; D</td><td>7</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>T &rarr; D</td><td>3</td></tr></table><br><b>What is the minimum total travel time from S to D?</b>",
+  "options": [
+   "18 minutes",
+   "17 minutes",
+   "19 minutes",
+   "20 minutes",
+   "23 minutes"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Compute earliest arrival at each node. P = 6; Q = min(S&rarr;Q = 9, S&rarr;P&rarr;Q = 6+3 = 9) = 9. R = min(P+8 = 14, Q+4 = 13) = 13. T = min(R+2 = 15, Q+11 = 20) = 15. D = min(R+7 = 20, T+3 = 18) = 18. The optimal route S&rarr;Q&rarr;R&rarr;T&rarr;D (or S&rarr;P&rarr;Q&rarr;R&rarr;T&rarr;D) totals 18. A common slip is taking R&rarr;D directly (20) instead of the R&rarr;T&rarr;D shortcut. The answer is A."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "hard",
+  "promptHTML": "A courier drives through a one-way road network from the hub <b>S</b> to the depot <b>D</b>. All roads are one-way in the direction listed, with travel times in minutes:<br><br><table border=\"1\" cellpadding=\"4\"><tr><th>Road</th><th>Min</th><th>Road</th><th>Min</th></tr><tr><td>S &rarr; P</td><td>6</td><td>Q &rarr; R</td><td>4</td></tr><tr><td>S &rarr; Q</td><td>9</td><td>Q &rarr; T</td><td>11</td></tr><tr><td>P &rarr; Q</td><td>3</td><td>R &rarr; T</td><td>2</td></tr><tr><td>P &rarr; R</td><td>8</td><td>R &rarr; D</td><td>7</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>T &rarr; D</td><td>3</td></tr></table><br><b>How many distinct one-way routes lead from S to D?</b> (A route never revisits a node.)",
+  "options": [
+   "6",
+   "7",
+   "9",
+   "10",
+   "8"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Count routes by node. R is reachable three ways: S&rarr;P&rarr;R, S&rarr;P&rarr;Q&rarr;R, S&rarr;Q&rarr;R. T is reachable five ways: each of the three R-routes via R&rarr;T, plus S&rarr;P&rarr;Q&rarr;T and S&rarr;Q&rarr;T. Every R-route can finish via R&rarr;D (3 routes) and every T-route finishes via T&rarr;D (5 routes), giving 3 + 5 = 8. Enumerating: S-P-Q-R-T-D, S-P-Q-R-D, S-P-Q-T-D, S-P-R-T-D, S-P-R-D, S-Q-R-T-D, S-Q-R-D, S-Q-T-D &mdash; 8 routes. The answer is E."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "hard",
+  "promptHTML": "A courier drives through a one-way road network from the hub <b>S</b> to the depot <b>D</b>. All roads are one-way in the direction listed, with travel times in minutes:<br><br><table border=\"1\" cellpadding=\"4\"><tr><th>Road</th><th>Min</th><th>Road</th><th>Min</th></tr><tr><td>S &rarr; P</td><td>6</td><td>Q &rarr; R</td><td>4</td></tr><tr><td>S &rarr; Q</td><td>9</td><td>Q &rarr; T</td><td>11</td></tr><tr><td>P &rarr; Q</td><td>3</td><td>R &rarr; T</td><td>2</td></tr><tr><td>P &rarr; R</td><td>8</td><td>R &rarr; D</td><td>7</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>T &rarr; D</td><td>3</td></tr></table><br><b>If the road R &rarr; T is closed, what is the new minimum travel time from S to D?</b>",
+  "options": [
+   "18 minutes",
+   "19 minutes",
+   "20 minutes",
+   "21 minutes",
+   "25 minutes"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The original optimum (18 min) used R&rarr;T&rarr;D, so closing R&rarr;T removes it. R is still reached in 13 (S&rarr;Q&rarr;R). Without R&rarr;T, T is reachable only via Q&rarr;T = 9+11 = 20, giving T&rarr;D = 23. The other finish is R&rarr;D = 13+7 = 20. The best is min(20, 23) = 20 via S&rarr;Q&rarr;R&rarr;D. Answering 18 ignores that the shortcut is gone; the correct new minimum is 20. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "hard",
+  "promptHTML": "A firm's quarterly revenue (in &#8377; crore) across four regions is shown below.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Region</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th></tr><tr><td>North</td><td>120</td><td>150</td><td>135</td><td>180</td></tr><tr><td>South</td><td>80</td><td>96</td><td>132</td><td>110</td></tr><tr><td>East</td><td>60</td><td>75</td><td>90</td><td>108</td></tr><tr><td>West</td><td>140</td><td>126</td><td>168</td><td>154</td></tr></table><br>Which region recorded the <b>highest percentage growth</b> from Q1 to Q4?",
+  "options": [
+   "North",
+   "South",
+   "East",
+   "West",
+   "East and South tie"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Compute Q1&rarr;Q4 percentage growth = (Q4 &minus; Q1) &divide; Q1 for each region. North: (180&minus;120)/120 = 60/120 = 50%. South: (110&minus;80)/80 = 30/80 = 37.5%. East: (108&minus;60)/60 = 48/60 = 80%. West: (154&minus;140)/140 = 14/140 = 10%. The largest is East at 80%. A common error is to compare absolute increases (North gains 60, the biggest absolute jump) rather than percentage growth. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "hard",
+  "promptHTML": "A firm's quarterly revenue (in &#8377; crore) across four regions is shown below.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Region</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th></tr><tr><td>North</td><td>120</td><td>150</td><td>135</td><td>180</td></tr><tr><td>South</td><td>80</td><td>96</td><td>132</td><td>110</td></tr><tr><td>East</td><td>60</td><td>75</td><td>90</td><td>108</td></tr><tr><td>West</td><td>140</td><td>126</td><td>168</td><td>154</td></tr></table><br>For the <b>South</b> region, what was the percentage change in revenue from Q3 to Q4?",
+  "options": [
+   "A decrease of 16.67%",
+   "A decrease of 20%",
+   "An increase of 16.67%",
+   "A decrease of 25%",
+   "A decrease of 13.33%"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "South goes from 132 (Q3) to 110 (Q4). Percentage change = (110 &minus; 132) &divide; 132 = &minus;22/132 = &minus;1/6 = &minus;16.67%, i.e. a decrease of 16.67%. A frequent mistake is dividing the drop of 22 by the new value 110 (giving 20%) instead of the original value 132. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "hard",
+  "promptHTML": "A firm's quarterly revenue (in &#8377; crore) across four regions is shown below.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Region</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th></tr><tr><td>North</td><td>120</td><td>150</td><td>135</td><td>180</td></tr><tr><td>South</td><td>80</td><td>96</td><td>132</td><td>110</td></tr><tr><td>East</td><td>60</td><td>75</td><td>90</td><td>108</td></tr><tr><td>West</td><td>140</td><td>126</td><td>168</td><td>154</td></tr></table><br>In which quarter was the <b>combined revenue of all four regions</b> the highest, and what was that combined total (in &#8377; crore)?",
+  "options": [
+   "Q1, 400",
+   "Q2, 447",
+   "Q3, 525",
+   "Q4, 552",
+   "Q3, 552"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Sum each column. Q1: 120+80+60+140 = 400. Q2: 150+96+75+126 = 447. Q3: 135+132+90+168 = 525. Q4: 180+110+108+154 = 552. The maximum is Q4 with 552. Note Q3 (525) is a tempting trap because three of its four regions peak there, but South's Q4 dip is outweighed by North, East, and West rising in Q4. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "hard",
+  "promptHTML": "An online bookstore tracks units sold and price per unit for two formats over a quarter.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Format</th><th colspan=\"2\">Jan</th><th colspan=\"2\">Feb</th><th colspan=\"2\">Mar</th></tr><tr><th></th><th>Units</th><th>&#8377;/unit</th><th>Units</th><th>&#8377;/unit</th><th>Units</th><th>&#8377;/unit</th></tr><tr><td>Print</td><td>250</td><td>40</td><td>300</td><td>40</td><td>240</td><td>50</td></tr><tr><td>Ebook</td><td>200</td><td>20</td><td>300</td><td>20</td><td>400</td><td>25</td></tr></table><br>By what percentage did <b>Ebook revenue</b> change from January to March?",
+  "options": [
+   "60%",
+   "120%",
+   "150%",
+   "100%",
+   "250%"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Ebook revenue = units &times; price. Jan: 200 &times; 20 = &#8377;4,000. Mar: 400 &times; 25 = &#8377;10,000. Percentage change = (10,000 &minus; 4,000) &divide; 4,000 = 6,000/4,000 = 1.5 = 150% increase. A common slip is to compute the change as a fraction of the new (March) value: 6,000/10,000 = 60%. Another is to only double the units (100%) and ignore the price rise. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "very-hard",
+  "promptHTML": "An online bookstore tracks units sold and price per unit for two formats over a quarter.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Format</th><th colspan=\"2\">Jan</th><th colspan=\"2\">Feb</th><th colspan=\"2\">Mar</th></tr><tr><th></th><th>Units</th><th>&#8377;/unit</th><th>Units</th><th>&#8377;/unit</th><th>Units</th><th>&#8377;/unit</th></tr><tr><td>Print</td><td>250</td><td>40</td><td>300</td><td>40</td><td>240</td><td>50</td></tr><tr><td>Ebook</td><td>200</td><td>20</td><td>300</td><td>20</td><td>400</td><td>25</td></tr></table><br>Over the full quarter (Jan + Feb + Mar), what is the ratio of <b>total Print revenue to total Ebook revenue</b>, in lowest terms?",
+  "options": [
+   "10 : 17",
+   "17 : 10",
+   "6 : 5",
+   "5 : 6",
+   "27 : 20"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Print revenue: Jan 250&times;40 = 10,000; Feb 300&times;40 = 12,000; Mar 240&times;50 = 12,000; total = &#8377;34,000. Ebook revenue: Jan 200&times;20 = 4,000; Feb 300&times;20 = 6,000; Mar 400&times;25 = 10,000; total = &#8377;20,000. Ratio Print : Ebook = 34,000 : 20,000 = 17 : 10 (divide both by 2,000). Reversing the order gives the trap 10 : 17; using only March (12,000 : 10,000 = 6 : 5) ignores the full quarter. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "very-hard",
+  "promptHTML": "An online bookstore tracks units sold and price per unit for two formats over a quarter.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Format</th><th colspan=\"2\">Jan</th><th colspan=\"2\">Feb</th><th colspan=\"2\">Mar</th></tr><tr><th></th><th>Units</th><th>&#8377;/unit</th><th>Units</th><th>&#8377;/unit</th><th>Units</th><th>&#8377;/unit</th></tr><tr><td>Print</td><td>250</td><td>40</td><td>300</td><td>40</td><td>240</td><td>50</td></tr><tr><td>Ebook</td><td>200</td><td>20</td><td>300</td><td>20</td><td>400</td><td>25</td></tr></table><br>Suppose the March <b>Print</b> price had stayed at its January level of &#8377;40 instead of rising to &#8377;50, with all unit counts unchanged. By how much would <b>total March revenue (both formats combined)</b> have been lower than its actual value?",
+  "options": [
+   "Rs 2,400",
+   "Rs 12,000",
+   "Rs 2,000",
+   "Rs 9,600",
+   "Rs 22,000"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Actual March revenue: Print 240&times;50 = 12,000; Ebook 400&times;25 = 10,000; total = &#8377;22,000. Hypothetical March (Print at &#8377;40): Print 240&times;40 = 9,600; Ebook unchanged 10,000; total = &#8377;19,600. Shortfall = 22,000 &minus; 19,600 = &#8377;2,400. Equivalently, the shortfall is just the Print difference: 240 &times; (50&minus;40) = 240 &times; 10 = &#8377;2,400. The trap &#8377;9,600 is the hypothetical Print revenue itself, not the difference; &#8377;12,000 is the actual Print revenue. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "hard",
+  "promptHTML": "<b>Set A &mdash; Marketplace revenue by category (figures in &#8377; crore).</b><br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Category</th><th>FY22</th><th>FY23</th></tr><tr><td>Electronics</td><td>480</td><td>624</td></tr><tr><td>Fashion</td><td>360</td><td>414</td></tr><tr><td>Grocery</td><td>250</td><td>350</td></tr><tr><td>Home</td><td>210</td><td>252</td></tr><tr><td>Books</td><td>80</td><td>72</td></tr></table><br><b>Q1.</b> Considering the marketplace's <b>overall</b> revenue growth from FY22 to FY23, which single category's own year-on-year growth rate is <b>closest</b> to that overall growth rate?",
+  "options": [
+   "Home",
+   "Electronics",
+   "Grocery",
+   "Fashion",
+   "Books"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Totals: FY22 = 480+360+250+210+80 = &#8377;1380 cr; FY23 = 624+414+350+252+72 = &#8377;1712 cr. Overall growth = (1712&minus;1380)/1380 = 332/1380 = 24.06%. Per-category growth: Electronics 144/480 = 30%, Fashion 54/360 = 15%, Grocery 100/250 = 40%, Home 42/210 = 20%, Books &minus;10%. Distances from 24.06%: Home |20&minus;24.06| = 4.06, Electronics |30&minus;24.06| = 5.94, all others larger. Home is closest. A common trap is picking Electronics (30%) by eyeballing the biggest category, or Grocery (40%) as the fastest grower; but the overall rate is held down to ~24% by Books' decline, so Home wins. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Set A &mdash; Marketplace revenue by category (figures in &#8377; crore).</b><br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Category</th><th>FY22</th><th>FY23</th></tr><tr><td>Electronics</td><td>480</td><td>624</td></tr><tr><td>Fashion</td><td>360</td><td>414</td></tr><tr><td>Grocery</td><td>250</td><td>350</td></tr><tr><td>Home</td><td>210</td><td>252</td></tr><tr><td>Books</td><td>80</td><td>72</td></tr></table><br><b>Q2.</b> Electronics' increase in revenue (in &#8377; crore) from FY22 to FY23 is what <b>percent more</b> than Grocery's increase in revenue over the same period?",
+  "options": [
+   "30.56%",
+   "44%",
+   "69.44%",
+   "144%",
+   "31.43%"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Electronics increase = 624&minus;480 = &#8377;144 cr. Grocery increase = 350&minus;250 = &#8377;100 cr. 'Percent more' compares the difference to Grocery's increase: (144&minus;100)/100 = 44/100 = 44%. Traps: dividing by the wrong base (144&minus;100)/144 = 30.56%; taking the raw ratio 144/100 = 144% ('144% of', not 'more than'); inverting to Grocery-vs-Electronics 100/144 &asymp; 69.44%; or comparing FY23 levels instead of increases. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Set A &mdash; Marketplace revenue by category (figures in &#8377; crore).</b><br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Category</th><th>FY22</th><th>FY23</th></tr><tr><td>Electronics</td><td>480</td><td>624</td></tr><tr><td>Fashion</td><td>360</td><td>414</td></tr><tr><td>Grocery</td><td>250</td><td>350</td></tr><tr><td>Home</td><td>210</td><td>252</td></tr><tr><td>Books</td><td>80</td><td>72</td></tr></table><br><b>Q3.</b> Books actually declined in FY23. Suppose instead Books had grown by <b>40%</b> over its FY22 figure (matching the fastest-growing category, Grocery), with every other category unchanged. By how many &#8377; crore would the FY23 <b>grand total</b> have been higher than its actual value?",
+  "options": [
+   "8 cr",
+   "32 cr",
+   "40 cr",
+   "48 cr",
+   "112 cr"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Books FY22 = &#8377;80 cr. Hypothetical FY23 at +40% = 80 &times; 1.40 = &#8377;112 cr. Actual FY23 = &#8377;72 cr. The grand total only changes through Books, so the increase = hypothetical Books &minus; actual Books = 112&minus;72 = &#8377;40 cr. Traps: 112&minus;80 = 32 (comparing to the FY22 level instead of the actual FY23 value); 80&minus;72 = 8 (just the original decline); 112 (the hypothetical figure itself, forgetting to subtract the actual 72). The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "hard",
+  "promptHTML": "<b>Set B &mdash; Paid subscribers by region (figures in lakhs).</b><br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Region</th><th>H1</th><th>H2</th></tr><tr><td>North</td><td>100</td><td>150</td></tr><tr><td>West</td><td>250</td><td>300</td></tr><tr><td>South</td><td>180</td><td>225</td></tr><tr><td>East</td><td>60</td><td>75</td></tr></table><br><b>Q1.</b> Each region's <b>share</b> of total subscribers can change between H1 and H2. Which region's share of the total <b>fell the most</b> (in percentage points)?",
+  "options": [
+   "North",
+   "South",
+   "East",
+   "West",
+   "No region's share fell"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Totals: H1 = 100+250+180+60 = 590 lakh; H2 = 150+300+225+75 = 750 lakh. Shares (H1 &rarr; H2): North 100/590 = 16.95% &rarr; 150/750 = 20.0% (+3.05 pp); West 250/590 = 42.37% &rarr; 300/750 = 40.0% (&minus;2.37 pp); South 180/590 = 30.51% &rarr; 225/750 = 30.0% (&minus;0.51 pp); East 60/590 = 10.17% &rarr; 75/750 = 10.0% (&minus;0.17 pp). West's share fell the most, by 2.37 pp. Note every region grew in absolute subscribers, so 'no region fell' is a trap for those who only check raw counts; share is relative to a growing total. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Set B &mdash; Paid subscribers by region (figures in lakhs).</b><br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Region</th><th>H1</th><th>H2</th></tr><tr><td>North</td><td>100</td><td>150</td></tr><tr><td>West</td><td>250</td><td>300</td></tr><tr><td>South</td><td>180</td><td>225</td></tr><tr><td>East</td><td>60</td><td>75</td></tr></table><br><b>Q2.</b> Consider only those regions whose <b>share</b> of the total subscriber base <b>fell</b> from H1 to H2. By how many lakhs did the subscriber counts of those regions, taken together, grow from H1 to H2?",
+  "options": [
+   "50",
+   "60",
+   "95",
+   "160",
+   "110"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "First find which regions' shares fell. Totals: H1 = 590 lakh, H2 = 750 lakh. Shares: North 16.95% &rarr; 20.0% (rose); West 42.37% &rarr; 40.0% (fell); South 30.51% &rarr; 30.0% (fell); East 10.17% &rarr; 10.0% (fell). So West, South and East lost share while North gained. Their combined absolute growth = (300&minus;250)+(225&minus;180)+(75&minus;60) = 50+45+15 = 110 lakh. Traps: 160 (total growth of ALL regions, ignoring the share filter); 50 (taking only North, the one region whose share rose, or only West's increase); 95 (West+South only, dropping East); 60 (South+East only, dropping West). You must first determine share movement, then sum the absolute increases of only the share-losing regions. The answer is E."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Set B &mdash; Paid subscribers by region (figures in lakhs).</b><br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Region</th><th>H1</th><th>H2</th></tr><tr><td>North</td><td>100</td><td>150</td></tr><tr><td>West</td><td>250</td><td>300</td></tr><tr><td>South</td><td>180</td><td>225</td></tr><tr><td>East</td><td>60</td><td>75</td></tr></table><br><b>Q3.</b> Suppose in the next half-year (H3) <b>each region repeats its own H1&rarr;H2 percentage growth rate</b>. What would the <b>total</b> number of subscribers (in lakhs) be in H3?",
+  "options": [
+   "910",
+   "900",
+   "960",
+   "990",
+   "953"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Each region's H1&rarr;H2 growth: North 150/100 = 1.50 (+50%); West 300/250 = 1.20 (+20%); South 225/180 = 1.25 (+25%); East 75/60 = 1.25 (+25%). Apply each rate to its H2 value: North 150&times;1.50 = 225; West 300&times;1.20 = 360; South 225&times;1.25 = 281.25; East 75&times;1.25 = 93.75. Total H3 = 225+360+281.25+93.75 = 960 lakh. Traps: 910 (adding the same absolute +160 again instead of compounding by rate); 953 (applying the blended overall rate 750/590 &asymp; 1.271 to the 750 total, which mixes the region rates incorrectly); 900/990 (rounding errors). You must apply each region's own rate to its own base. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "hard",
+  "promptHTML": "<b>Riverside Cup (single round-robin).</b> Four clubs &mdash; Arrows, Bolts, Comets and Drakes &mdash; each played every other club exactly once (6 matches in all). A win earned 3 points, a draw 1 point each, and a loss 0. The final points table was:<br><br><table border='1' cellpadding='4'><tr><th>Club</th><th>Points</th></tr><tr><td>Arrows</td><td>7</td></tr><tr><td>Bolts</td><td>4</td></tr><tr><td>Comets</td><td>4</td></tr><tr><td>Drakes</td><td>1</td></tr></table><br>How many of the 6 matches ended in a draw?",
+  "options": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Each match puts a fixed number of points into the pool: a decisive match (win/loss) adds 3 points, a drawn match adds 1+1 = 2 points. With 6 matches, if d of them are drawn then the total points awarded equal 3(6&minus;d) + 2d = 18 &minus; d. The actual total is 7 + 4 + 4 + 1 = 16. So 18 &minus; d = 16, giving d = 2. (The trap answer 4 comes from solving 18 &minus; d = 14, i.e. misreading the total.) The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "hard",
+  "promptHTML": "<b>Riverside Cup (single round-robin).</b> Four clubs &mdash; Arrows, Bolts, Comets and Drakes &mdash; each played every other club exactly once (6 matches). Win = 3 points, draw = 1 point each, loss = 0. Final points:<br><br><table border='1' cellpadding='4'><tr><th>Club</th><th>Points</th></tr><tr><td>Arrows</td><td>7</td></tr><tr><td>Bolts</td><td>4</td></tr><tr><td>Comets</td><td>4</td></tr><tr><td>Drakes</td><td>1</td></tr></table><br>It is also known that <b>Arrows lost none of its 3 matches.</b> How many matches did Arrows <b>win</b>?",
+  "options": [
+   "0",
+   "1",
+   "2",
+   "3",
+   "Cannot be determined"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Arrows played 3 matches and lost none, so each of its matches was a win (3 pts) or a draw (1 pt). If Arrows won w and drew (3 &minus; w) matches, its points are 3w + 1&middot;(3 &minus; w) = 2w + 3. Setting 2w + 3 = 7 gives w = 2. So Arrows won 2 and drew 1. (The trap answer 3 assumes all three games were wins, which would give 9 points, not 7.) The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Riverside Cup (single round-robin).</b> Four clubs &mdash; Arrows, Bolts, Comets and Drakes &mdash; each played every other club exactly once (6 matches). Win = 3, draw = 1 each, loss = 0. Final points:<br><br><table border='1' cellpadding='4'><tr><th>Club</th><th>Points</th></tr><tr><td>Arrows</td><td>7</td></tr><tr><td>Bolts</td><td>4</td></tr><tr><td>Comets</td><td>4</td></tr><tr><td>Drakes</td><td>1</td></tr></table><br>You are further told that <b>Arrows lost none of its matches</b>, and that <b>both Bolts and Comets beat Drakes</b>. Drakes finished with exactly 1 point. That single point came from a draw with which club?",
+  "options": [
+   "Arrows",
+   "Bolts",
+   "Comets",
+   "No draw &mdash; the point is impossible",
+   "Drakes drew with both Bolts and Comets"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Drakes has 1 point. One point in this scoring system can only come from a single draw (a win gives 3, a loss gives 0), so Drakes drew exactly one match and lost the other two. Drakes played Arrows, Bolts and Comets. We are told Bolts beat Drakes and Comets beat Drakes, so those two matches were Drakes' losses. The only remaining match is Drakes vs Arrows, which must therefore be Drakes' lone draw &mdash; consistent with Arrows being unbeaten (a draw is not a loss). (Check: Arrows then needs 7 points from a draw with Drakes plus its other two games, both wins: 1 + 3 + 3 = 7; and the unique full schedule is A beats B and C, A draws D, B draws C, B beats D, C beats D, giving B = 4 and C = 4. Consistent.) The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "hard",
+  "promptHTML": "<b>Guild Chair election (instant-runoff).</b> 1200 members each ranked the 5 candidates P, Q, R, S, T. A candidate wins by gaining an outright majority (more than 600) of the active votes; otherwise the lowest candidate is eliminated and that candidate's current votes are redistributed by the fixed proportions in the table. Round-1 first preferences:<br><br><table border='1' cellpadding='4'><tr><th>Candidate</th><th>P</th><th>Q</th><th>R</th><th>S</th><th>T</th></tr><tr><th>Votes</th><td>372</td><td>288</td><td>240</td><td>192</td><td>108</td></tr></table><br><b>Transfer of T's votes when T is eliminated:</b> &frac12; to S, &#8531; to R, &#8537; to Q (none to P).<br><br>No one has a majority in Round 1, so T (lowest, 108) is eliminated and the votes transferred. After this redistribution, which candidate is now in <b>last place</b> (and would be eliminated next)?",
+  "options": [
+   "P",
+   "Q",
+   "R",
+   "S",
+   "T"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "T's 108 votes split: &frac12;&times;108 = 54 to S, &#8531;&times;108 = 36 to R, &#8537;&times;108 = 18 to Q. New totals: P = 372, Q = 288 + 18 = 306, R = 240 + 36 = 276, S = 192 + 54 = 246. T is gone. The smallest total is S with 246, so S is now last and would be eliminated next. (A common slip is to keep R at the bottom because it started lower than S, forgetting that S received the largest share of T's votes.) The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Guild Chair election (instant-runoff).</b> 1200 members ranked candidates P, Q, R, S, T. A candidate wins on reaching a majority (more than 600) of active votes; otherwise the lowest is eliminated and redistributed by the fixed proportions below. Round-1 first preferences:<br><br><table border='1' cellpadding='4'><tr><th>Candidate</th><th>P</th><th>Q</th><th>R</th><th>S</th><th>T</th></tr><tr><th>Votes</th><td>372</td><td>288</td><td>240</td><td>192</td><td>108</td></tr></table><br><b>Transfer proportions when a candidate is eliminated:</b><br>&bull; T: &frac12; to S, &#8531; to R, &#8537; to Q<br>&bull; S: &frac12; to R, &#8531; to Q, &#8537; to P<br>&bull; Q: &frac34; to R, &frac14; to P<br>&bull; P: all to R<br><br>Eliminate the lowest candidate each round until someone has a majority. By how much did the eventual <b>winner's</b> total <b>increase</b> compared with that winner's Round-1 first-preference count?",
+  "options": [
+   "36",
+   "159",
+   "291",
+   "450",
+   "690"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Round 1: eliminate T (108). T &rarr; S +54, R +36, Q +18. Totals: P 372, Q 306, R 276, S 246. Round 2: eliminate S (246). S &rarr; R +123, Q +82, P +41. Totals: P 413, Q 388, R 399. Round 3: lowest is Q (388), so eliminate Q. Q &rarr; R +291, P +97. Totals: P 510, R 690. R has 690 > 600, so R wins. R started with 240 first-preference votes and finished with 690, an increase of 690 &minus; 240 = 450. (Trap 690 forgets to subtract the Round-1 count; 159 stops after Round 2; 36 counts only T's transfer; 291 counts only Q's transfer.) The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Guild Chair election (instant-runoff).</b> 1200 members ranked candidates P, Q, R, S, T. A candidate wins on reaching a majority (more than 600) of active votes; otherwise the lowest is eliminated and redistributed by the fixed proportions below. Round-1 first preferences:<br><br><table border='1' cellpadding='4'><tr><th>Candidate</th><th>P</th><th>Q</th><th>R</th><th>S</th><th>T</th></tr><tr><th>Votes</th><td>372</td><td>288</td><td>240</td><td>192</td><td>108</td></tr></table><br><b>Transfer proportions when a candidate is eliminated:</b><br>&bull; T: &frac12; to S, &#8531; to R, &#8537; to Q<br>&bull; S: &frac12; to R, &#8531; to Q, &#8537; to P<br>&bull; Q: &frac34; to R, &frac14; to P<br>&bull; P: all to R<br><br>Eliminate the lowest candidate each round until someone holds a majority. Who <b>wins</b> the election?",
+  "options": [
+   "P",
+   "Q",
+   "R",
+   "S",
+   "T"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Round 1: eliminate T (108): S +54, R +36, Q +18 &rarr; P 372, Q 306, R 276, S 246. Round 2: eliminate S (246): R +123, Q +82, P +41 &rarr; P 413, Q 388, R 399. Round 3: the lowest of the three is Q (388), so Q is eliminated (not R): Q sends &frac34;&times;388 = 291 to R and &frac14;&times;388 = 97 to P &rarr; P 510, R 690. R now has 690, which exceeds the 600 majority threshold, so R wins. (Trap P: the Round-1 leader who never reaches a majority. Trap Q: leads at no point past Round 2 and is actually eliminated in Round 3.) The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "hard",
+  "promptHTML": "Seven athletes &mdash; G, H, I, J, K, L and M &mdash; stand in a single row of seven positions numbered 1 to 7 from left to right. The following conditions hold:<br><br><b>(i)</b> G stands at position 4 (the exact middle).<br><b>(ii)</b> H stands somewhere to the left of K (H's position number is smaller than K's).<br><b>(iii)</b> Exactly two athletes stand between I and J (so |position of I &minus; position of J| = 3).<br><b>(iv)</b> L and M stand next to each other (adjacent positions).<br><b>(v)</b> K does not stand at either end (not position 1 or 7).<br><b>(vi)</b> H is not adjacent to G.<br><br>How many distinct arrangements of the seven athletes satisfy all six conditions?",
+  "options": [
+   "3",
+   "4",
+   "5",
+   "6",
+   "7"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "G is fixed at position 4. By (iii) the pair {I,J} must occupy two positions three apart: the available pairs are {1,4},{2,5},{3,6},{4,7} but position 4 is taken by G, so only {2,5} and {3,6} remain. By (iv) L and M are an adjacent block, and by (v)-(vi) K is interior (2,3,5,6) and H is not adjacent to G (not 3 or 5), with H left of K. Test {I,J}={2,5}: then positions 1,3,6,7 hold H,K,L,M; the adjacent L-M block must fit, leaving 6-7 for L,M (2 orders), forcing H=1, K=3 (K interior, H<K, H not adjacent to G). I and J fill 2 and 5 in 2 orders -> 2&times;2 = 4 solutions. Test {I,J}={3,6}: then 1,2,5,7 hold H,K,L,M; L-M adjacent forces L,M into 1-2; that leaves 5,7 for H,K, but H not adjacent to G means H&ne;5, and K interior rules out 7, so K=5,H=7 violates H<K. No solutions here. Total = 4. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Seven athletes &mdash; G, H, I, J, K, L and M &mdash; stand in a single row of seven positions numbered 1 to 7 from left to right, subject to:<br><br><b>(i)</b> G stands at position 4.<br><b>(ii)</b> H stands to the left of K.<br><b>(iii)</b> Exactly two athletes stand between I and J (|position of I &minus; position of J| = 3).<br><b>(iv)</b> L and M stand next to each other.<br><b>(v)</b> K is not at either end.<br><b>(vi)</b> H is not adjacent to G.<br><br>Which one of the following statements must be true in <i>every</i> valid arrangement?",
+  "options": [
+   "I always stands at position 2",
+   "K always stands at position 3",
+   "L always stands at position 6",
+   "J is always adjacent to G",
+   "H and I are always adjacent"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "From the analysis of this set, every valid arrangement has G fixed at 4, with {I,J} occupying positions {2,5} (in some order), {L,M} occupying positions {6,7} (in some order), H at position 1 and K at position 3. So I can be at 2 or 5 (not always 2) - eliminates the first option. L can be at 6 or 7 (not always 6) - eliminates the third. J is at 2 or 5; position 5 is adjacent to G(4) but position 2 is not, so J is not always adjacent to G - eliminates the fourth. H is at 1 and I is at 2 or 5, so they are adjacent only when I=2, not always - eliminates the fifth. K is at position 3 in all four arrangements, so 'K always stands at position 3' must be true. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Seven athletes &mdash; G, H, I, J, K, L and M &mdash; stand in a single row of seven positions numbered 1 to 7 from left to right, subject to:<br><br><b>(i)</b> G stands at position 4.<br><b>(ii)</b> H stands to the left of K.<br><b>(iii)</b> Exactly two athletes stand between I and J (|position of I &minus; position of J| = 3).<br><b>(iv)</b> L and M stand next to each other.<br><b>(v)</b> K is not at either end.<br><b>(vi)</b> H is not adjacent to G.<br><br>If, in addition, J stands to the left of I (J's position number is smaller than I's), at which position must I stand?",
+  "options": [
+   "Position 2",
+   "Position 3",
+   "Position 5",
+   "Position 6",
+   "It cannot be determined"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "In every valid arrangement the pair {I,J} occupies positions 2 and 5 (with H at 1, K at 3, G at 4, and {L,M} at 6,7). With the extra condition that J is to the left of I, J takes the smaller of the two positions and I the larger: J = 2 and I = 5. A solver who reverses the order (placing I to the left) would wrongly pick position 2. Thus I must stand at position 5. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Six guests &mdash; A, B, C, D, E and F &mdash; sit at a hexagonal table, one per side, in seats numbered 1 to 6 in clockwise order. The seats themselves fix the facing direction: <b>seats 1, 3 and 5 face the centre</b>, while <b>seats 2, 4 and 6 face outward</b> (away from the centre). For a guest facing the centre, their immediate left is their clockwise neighbour and immediate right is their anticlockwise neighbour; for a guest facing outward this reverses (immediate left = anticlockwise neighbour, immediate right = clockwise neighbour). 'Directly opposite' means the seat three places away (1&harr;4, 2&harr;5, 3&harr;6). The conditions are:<br><br><b>(i)</b> A sits in seat 3.<br><b>(ii)</b> B sits immediately to the left of A.<br><b>(iii)</b> C sits directly opposite B.<br><b>(iv)</b> D does not sit next to A (not in a seat physically adjacent to seat 3).<br><b>(v)</b> E faces outward.<br><br>How many distinct seating arrangements satisfy all the conditions?",
+  "options": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "A is in seat 3, which faces the centre, so A's immediate left is the clockwise neighbour, seat 4. By (ii) B is in seat 4. By (iii) C is directly opposite B (seat 4), i.e. seat 1. The remaining guests D, E, F fill seats 2, 5, 6. Seat 3's physical neighbours are seats 2 and 4; seat 4 is taken, so (iv) means D is not in seat 2, leaving D in seat 5 or 6. By (v) E faces outward, so E is in an even seat (2 or 6). Enumerate: if E=2, then {D,F} fill {5,6} in two ways (D5F6, D6F5) -> 2 arrangements. If E=6, then seat 2 must be D or F; since D&ne;2, F=2 and D=5 -> 1 arrangement. Total = 3 valid arrangements: (C1,E2,A3,B4,D5,F6), (C1,E2,A3,B4,F5,D6), (C1,F2,A3,B4,D5,E6). The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Six guests &mdash; A, B, C, D, E and F &mdash; sit at a hexagonal table, one per side, in seats numbered 1 to 6 in clockwise order. The seats fix the facing direction: <b>seats 1, 3 and 5 face the centre</b>, <b>seats 2, 4 and 6 face outward</b>. For a guest facing the centre, immediate left = clockwise neighbour and immediate right = anticlockwise neighbour; for a guest facing outward this reverses. 'Directly opposite' means three seats away (1&harr;4, 2&harr;5, 3&harr;6). The conditions are:<br><br><b>(i)</b> A sits in seat 3.<br><b>(ii)</b> B sits immediately to the left of A.<br><b>(iii)</b> C sits directly opposite B.<br><b>(iv)</b> D does not sit next to A.<br><b>(v)</b> E faces outward.<br><br>Which one of the following statements must be true in <i>every</i> valid arrangement?",
+  "options": [
+   "C sits immediately to the right of E",
+   "D always faces the centre",
+   "B sits directly opposite C",
+   "F always sits immediately to the left of A",
+   "E sits directly opposite F"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The three valid arrangements are (C1,E2,A3,B4,D5,F6), (C1,E2,A3,B4,F5,D6) and (C1,F2,A3,B4,D5,E6). In all three, B is in seat 4 and C is in seat 1, and seats 1 and 4 are directly opposite, so 'B sits directly opposite C' is always true. Checking the distractors, each is true in at least one arrangement but not all: D faces the centre only when D is in odd seat 5 (fails when D is in seat 6); F is immediately to A's left only when F is in seat 4, but seat 4 is always B; E is opposite F only in some cases; and C immediately right of E holds only in particular layouts. Only the opposite-pair statement holds universally. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Six guests &mdash; A, B, C, D, E and F &mdash; sit at a hexagonal table, one per side, in seats numbered 1 to 6 in clockwise order. The seats fix the facing direction: <b>seats 1, 3 and 5 face the centre</b>, <b>seats 2, 4 and 6 face outward</b>. For a guest facing the centre, immediate left = clockwise neighbour and immediate right = anticlockwise neighbour; for a guest facing outward this reverses. 'Directly opposite' means three seats away (1&harr;4, 2&harr;5, 3&harr;6). The conditions are:<br><br><b>(i)</b> A sits in seat 3.<br><b>(ii)</b> B sits immediately to the left of A.<br><b>(iii)</b> C sits directly opposite B.<br><b>(iv)</b> D does not sit next to A.<br><b>(v)</b> E faces outward.<br><br>If, in addition, F faces the centre, who sits directly opposite E?",
+  "options": [
+   "C",
+   "D",
+   "F",
+   "B",
+   "It cannot be determined"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The three valid arrangements place F in seat 6 (faces outward), seat 5 (faces centre), and seat 2 (faces outward) respectively. 'F faces the centre' means F is in an odd seat, which selects exactly the arrangement (C1,E2,A3,B4,F5,D6). Here E is in seat 2, and the seat directly opposite seat 2 is seat 5, which is occupied by F. Therefore F sits directly opposite E. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "hard",
+  "promptHTML": "Five contestants &mdash; Priya, Ravi, Sona, Tarun and Uma &mdash; stand in a row of five positions numbered 1 to 5 from left to right. Each wears a cap of a different colour (Red, Green, Blue, White, Yellow) and each scored a different number of points from {10, 20, 30, 40, 50}.<br><table border='1' cellpadding='4'><tr><th>Clue</th><th>Statement</th></tr><tr><td>(i)</td><td>Sona stands at position 3 (the middle).</td></tr><tr><td>(ii)</td><td>The contestant at position 1 wears the Red cap.</td></tr><tr><td>(iii)</td><td>Ravi stands immediately to the right of the Blue-cap contestant.</td></tr><tr><td>(iv)</td><td>Tarun scored 50 points and does not wear White.</td></tr><tr><td>(v)</td><td>The contestant at position 2 scored 20 points.</td></tr><tr><td>(vi)</td><td>Priya wears Green and stands somewhere to the left of Uma.</td></tr><tr><td>(vii)</td><td>The Yellow cap scored more points than the Blue cap.</td></tr><tr><td>(viii)</td><td>Uma scored 30 points.</td></tr></table><br>Which one of the following must be true?",
+  "options": [
+   "Sona scored 10 points",
+   "Tarun wears the Red cap and scored 50 points",
+   "Ravi stands at position 4",
+   "Uma wears the Yellow cap",
+   "Sona wears the Blue cap"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Sona is at position 3. By (vi) Priya wears Green, so Priya is not at position 1 (Red); since the position-2 contestant scored 20 (v) and Tarun scored 50 (iv), Tarun is not at 2. Working through, Priya must be at position 2 (Green, scoring 20) and Tarun at position 1 (Red, 50), with Priya left of Uma satisfied. Sona is at 3, and Ravi/Uma fill 4 and 5. By (iii) Ravi is just right of the Blue cap, and by (viii) Uma scored 30. Solving the score/colour constraints with (vii) yields four consistent full grids, but in all of them Tarun is fixed at position 1 wearing Red and scoring 50, and Priya at position 2 wearing Green scoring 20. The other options vary across grids: Sona's score is 10 or 40, Ravi can be at 4 or 5, and the Yellow/Blue/White caps shift among Sona, Ravi and Uma. Only 'Tarun wears Red and scored 50' is forced. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Five contestants &mdash; Priya, Ravi, Sona, Tarun and Uma &mdash; stand in a row of five positions numbered 1 to 5 from left to right. Each wears a cap of a different colour (Red, Green, Blue, White, Yellow) and each scored a different number of points from {10, 20, 30, 40, 50}.<br><table border='1' cellpadding='4'><tr><th>Clue</th><th>Statement</th></tr><tr><td>(i)</td><td>Sona stands at position 3.</td></tr><tr><td>(ii)</td><td>The contestant at position 1 wears the Red cap.</td></tr><tr><td>(iii)</td><td>Ravi stands immediately to the right of the Blue-cap contestant.</td></tr><tr><td>(iv)</td><td>Tarun scored 50 points and does not wear White.</td></tr><tr><td>(v)</td><td>The contestant at position 2 scored 20 points.</td></tr><tr><td>(vi)</td><td>Priya wears Green and stands to the left of Uma.</td></tr><tr><td>(vii)</td><td>The Yellow cap scored more points than the Blue cap.</td></tr><tr><td>(viii)</td><td>Uma scored 30 points.</td></tr></table><br>If, in addition, the Yellow cap is worn by the contestant at position 4, then who stands at position 5 and which cap do they wear?",
+  "options": [
+   "Ravi, wearing White",
+   "Uma, wearing White",
+   "Uma, wearing Yellow",
+   "Ravi, wearing Yellow",
+   "Sona, wearing White"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Across all consistent grids, Tarun is at position 1 (Red, 50) and Priya at position 2 (Green, 20), with Sona at 3. By (iii) Ravi is immediately right of the Blue cap, so Blue is at position 3 or 4 and Ravi at 4 or 5. Now impose that Yellow is at position 4. The position-4 contestant then wears Yellow, so Blue must be at position 3 (Sona), forcing Ravi to position 4 (Yellow) and Uma to position 5. The remaining scores 10, 30, 40 go to Sona, Ravi and Uma; Uma scored 30 (viii), leaving 10 and 40 for Sona and Ravi. By (vii) Yellow (Ravi) > Blue (Sona), so Ravi = 40 and Sona = 10. The only cap left for position 5 (Uma) is White (Red, Green, Blue, Yellow are used). So Uma stands at position 5 wearing White. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Five contestants &mdash; Priya, Ravi, Sona, Tarun and Uma &mdash; stand in a row of five positions numbered 1 to 5 from left to right. Each wears a cap of a different colour (Red, Green, Blue, White, Yellow) and each scored a different number of points from {10, 20, 30, 40, 50}.<br><table border='1' cellpadding='4'><tr><th>Clue</th><th>Statement</th></tr><tr><td>(i)</td><td>Sona stands at position 3.</td></tr><tr><td>(ii)</td><td>The contestant at position 1 wears the Red cap.</td></tr><tr><td>(iii)</td><td>Ravi stands immediately to the right of the Blue-cap contestant.</td></tr><tr><td>(iv)</td><td>Tarun scored 50 points and does not wear White.</td></tr><tr><td>(v)</td><td>The contestant at position 2 scored 20 points.</td></tr><tr><td>(vi)</td><td>Priya wears Green and stands to the left of Uma.</td></tr><tr><td>(vii)</td><td>The Yellow cap scored more points than the Blue cap.</td></tr><tr><td>(viii)</td><td>Uma scored 30 points.</td></tr></table><br>Using only the clues in the table, for how many of the five contestants are the position, cap colour AND score all three fully determined (the same in every consistent arrangement)?",
+  "options": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The clues admit exactly four consistent full grids. In all of them Tarun is fixed at position 1, wearing Red, scoring 50, and Priya is fixed at position 2, wearing Green, scoring 20 - so these two contestants are pinned down on all three attributes. The remaining three vary: Sona stays at position 3 but her cap (Blue/White/Yellow) and score (10 or 40) change; Ravi and Uma swap between positions 4 and 5 with differing caps, and although Uma's score is fixed at 30, her position and cap are not. Hence only Priya and Tarun are fully determined on position, colour and score. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "very-hard",
+  "promptHTML": "Eight employees &mdash; A, B, C, D, E, F, G, H &mdash; are split into two project teams, <b>Alpha</b> and <b>Beta</b>, with <b>exactly 4 members on each team</b>. The split must satisfy ALL of:<br><br><b>T1:</b> A and B are on the same team.<br><b>T2:</b> C and D are on different teams.<br><b>T3:</b> E and F are on different teams.<br><b>T4:</b> If A is on Alpha, then G is on Beta.<br><b>T5:</b> H is on the same team as C.<br><br>The teams are distinct (Alpha and Beta are labelled). How many distinct valid splits are possible?",
+  "options": [
+   "2",
+   "4",
+   "6",
+   "8",
+   "10"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Treat each team as a 4-person group. From T1, A and B move together; from T5, H moves with C. Consider C's team. Case C on Alpha: then H on Alpha (T5), D on Beta (T2). If A,B were also on Alpha, Alpha would already be {A,B,C,H} = 4, leaving G on Beta automatically &mdash; but then Beta = {D,G,?,?} must take two of {E,F}, impossible since T3 forbids E,F together. So A,B are on Beta. Beta then contains A,B,D plus one of E/F (T3 splits E,F), giving Beta = {A,B,D,E} or {A,B,D,F}; Alpha = {C,H,G, the other of E/F}. Check T4: A is on Beta so T4 is vacuously satisfied, and G is on Alpha &mdash; fine. That is 2 splits. Case C on Beta is the mirror image: by the same reasoning A,B land on Alpha, but T4 then forces G to Beta, so Alpha = {A,B,D,E/F} and Beta = {C,H,G, other of E/F} &mdash; another 2 splits. Total = 2 + 2 = 4 distinct labelled splits. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "Eight employees &mdash; A, B, C, D, E, F, G, H &mdash; are split into two project teams, <b>Alpha</b> and <b>Beta</b>, with <b>exactly 4 members on each team</b>. The split must satisfy ALL of:<br><br><b>T1:</b> A and B are on the same team.<br><b>T2:</b> C and D are on different teams.<br><b>T3:</b> E and F are on different teams.<br><b>T4:</b> If A is on Alpha, then G is on Beta.<br><b>T5:</b> H is on the same team as C.<br><br>Which one of the following pairs of employees is guaranteed to be on the <b>same team</b> in every valid split?",
+  "options": [
+   "A and G",
+   "C and D",
+   "E and F",
+   "A and B",
+   "B and C"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Enumerating all valid splits, every solution has the block {A, B, D} together on one team and the block {C, G, H} together on the other (with E and F separated). So A and B are always on the same team (T1 guarantees this directly). A and G are always on opposite teams (when A is on Alpha, T4 puts G on Beta; when A is on Beta, the count forces G onto Alpha) &mdash; never together. C and D are always different (T2). E and F are always different (T3). B and C are always on opposite teams (B rides with A,D; C rides with G,H). Only 'A and B' is forced to share a team. The answer is D."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "Eight employees &mdash; A, B, C, D, E, F, G, H &mdash; are split into two project teams, <b>Alpha</b> and <b>Beta</b>, with <b>exactly 4 members on each team</b>. The split must satisfy ALL of:<br><br><b>T1:</b> A and B are on the same team.<br><b>T2:</b> C and D are on different teams.<br><b>T3:</b> E and F are on different teams.<br><b>T4:</b> If A is on Alpha, then G is on Beta.<br><b>T5:</b> H is on the same team as C.<br><br>If E and D end up on the <b>same team</b>, which one of the following MUST be true?",
+  "options": [
+   "F and C are on the same team",
+   "E and G are on the same team",
+   "A and F are on the same team",
+   "H and D are on the same team",
+   "B and C are on the same team"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Across all valid splits, the recurring blocks are {A,B,D} on one side and {C,G,H} on the other, with E and F separated. If E is on the same team as D, then E joins the {A,B,D} block, so that team is exactly {A,B,D,E} and the other team is {C,F,G,H}. Now check the options against this forced configuration: F sits with C, G, H &mdash; so 'F and C same team' is true. 'E and G' is false (E is with A,B,D; G is opposite). 'A and F' is false (opposite teams). 'H and D' is false (H is with C; D is with A,B). 'B and C' is false (opposite). The answer is A."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "very-hard",
+  "promptHTML": "A museum allocates exactly <b>24 new artworks</b> among five galleries G1, G2, G3, G4, G5. Each gallery receives a whole number of artworks, <b>at least 2 and at most 8</b>. The allocation obeys ALL of:<br><br><b>C1:</b> G1 receives exactly twice as many artworks as G2.<br><b>C2:</b> G3 receives an odd number of artworks.<br><b>C3:</b> G4 and G5 together receive exactly 10 artworks.<br><b>C4:</b> G3 receives more artworks than G2.<br><b>C5:</b> G4 receives strictly more artworks than G5.<br><br>How many distinct allocations (G1, G2, G3, G4, G5) are possible?",
+  "options": [
+   "2",
+   "3",
+   "4",
+   "5",
+   "6"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "By C3, G4 + G5 = 10, so G1 + G2 + G3 = 24 &minus; 10 = 14. From C1, G1 = 2&middot;G2 with both in [2,8], so G2 &isin; {2,3,4} giving (G1,G2) &isin; {(4,2),(6,3),(8,4)}. Then G3 = 14 &minus; G1 &minus; G2 = 14 &minus; 3&middot;G2, so G2=2&rarr;G3=8, G2=3&rarr;G3=5, G2=4&rarr;G3=2. Apply C2 (G3 odd) and C4 (G3 > G2): G3=8 is even (rejected); G3=2 is even and not > 4 (rejected); only G3=5 survives, forcing (G1,G2,G3) = (6,3,5). Now place G4+G5=10 with each in [2,8] and G4 > G5 (C5): (G4,G5) &isin; {(6,4),(7,3),(8,2)} &mdash; the pair (5,5) is excluded by C5, and (9,1) etc. violate the [2,8] band. That is 3 valid allocations. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "A museum allocates exactly <b>24 new artworks</b> among five galleries G1, G2, G3, G4, G5. Each gallery receives a whole number of artworks, <b>at least 2 and at most 8</b>. The allocation obeys ALL of:<br><br><b>C1:</b> G1 receives exactly twice as many artworks as G2.<br><b>C2:</b> G3 receives an odd number of artworks.<br><b>C3:</b> G4 and G5 together receive exactly 10 artworks.<br><b>C4:</b> G3 receives more artworks than G2.<br><b>C5:</b> G4 receives strictly more artworks than G5.<br><br>Which one of the following MUST be true in every valid allocation?",
+  "options": [
+   "G3 receives more artworks than G1",
+   "G4 receives exactly 7 artworks",
+   "G5 receives more artworks than G2",
+   "G2 and G5 receive the same number",
+   "G1 receives exactly 6 artworks"
+  ],
+  "correct": 4,
+  "optionsHTML": false,
+  "explanation": "Since G4 + G5 = 10 (C3), the first three galleries must total 14. With G1 = 2&middot;G2 and both in [2,8], G2 &isin; {2,3,4}; then G3 = 14 &minus; 3&middot;G2 takes values 8, 5, 2 respectively. Only G2 = 3 yields G3 = 5, which is odd (C2) and exceeds G2 (C4); the others fail. So G1 = 6, G2 = 3, G3 = 5 are <i>forced</i> in every valid allocation, while only G4/G5 vary over (6,4), (7,3), (8,2). Testing the options: 'G3 > G1' is 5 > 6, false; 'G4 = 7' holds in only one of three cases; 'G5 > G2' compares G5 &isin; {4,3,2} to 3, not always true; 'G2 = G5' holds only when G5 = 3, not always. Only 'G1 = 6' is true in every case. The answer is E."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "A museum allocates exactly <b>24 new artworks</b> among five galleries G1, G2, G3, G4, G5. Each gallery receives a whole number of artworks, <b>at least 2 and at most 8</b>. The allocation obeys ALL of:<br><br><b>C1:</b> G1 receives exactly twice as many artworks as G2.<br><b>C2:</b> G3 receives an odd number of artworks.<br><b>C3:</b> G4 and G5 together receive exactly 10 artworks.<br><b>C4:</b> G3 receives more artworks than G2.<br><b>C5:</b> G4 receives strictly more artworks than G5.<br><br>If gallery G5 receives exactly 4 artworks, how many artworks does gallery G4 receive?",
+  "options": [
+   "5",
+   "6",
+   "7",
+   "8",
+   "Cannot be determined"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Constraints C1, C2, C4 force (G1, G2, G3) = (6, 3, 5), leaving G4 + G5 = 10 (C3) with G4 > G5 (C5). If G5 = 4, then G4 = 10 &minus; 4 = 6, and indeed 6 > 4 satisfies C5 with both inside the [2,8] band. So G4 = 6, uniquely determined. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "very-hard",
+  "promptHTML": "A 4-member committee is selected from seven candidates drawn from three departments:<br>&bull; <b>Finance:</b> F1, F2<br>&bull; <b>Marketing:</b> M1, M2, M3<br>&bull; <b>Operations:</b> O1, O2<br><br>The selection must obey ALL of:<br><b>R1:</b> The committee has exactly 4 members.<br><b>R2:</b> At least one member from each of the three departments.<br><b>R3:</b> At most two members from Marketing.<br><b>R4:</b> F1 and F2 are not both selected.<br><b>R5:</b> M1 and O1 are not both selected.<br><b>R6:</b> If O2 is selected, then M2 is selected.<br><br>How many distinct valid committees are possible?",
+  "options": [
+   "6",
+   "7",
+   "8",
+   "9",
+   "10"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "By R2 every department appears, and R4 forces exactly one of F1/F2, so the Finance seat is one of 2 choices. With 4 seats and 1 Finance, the remaining 3 split between Marketing (1 or 2, by R2/R3) and Operations (1 or 2). Two department-count patterns are possible: (Mkt 2, Ops 1) or (Mkt 1, Ops 2).<br>Pattern Mkt2/Ops1: choose 2 of {M1,M2,M3} and 1 of {O1,O2}. R5 bans {M1 with O1}; R6 says picking O2 requires M2 present. Valid Marketing pairs with O1: {M2,M3} (M1 excluded by R5) &rarr; 1. With O2: pair must contain M2 &rarr; {M1,M2} or {M2,M3} &rarr; 2. That is 3 department-side choices.<br>Pattern Mkt1/Ops2: Operations must be {O1,O2}; R6 then forces M2, so the single Marketing pick is M2; R5 (M1,O1) is irrelevant. That is 1 department-side choice.<br>So 3 + 1 = 4 department-side configurations, each combinable with either Finance choice (F1 or F2): 4 &times; 2 = 8 valid committees. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "A 4-member committee is selected from seven candidates drawn from three departments:<br>&bull; <b>Finance:</b> F1, F2<br>&bull; <b>Marketing:</b> M1, M2, M3<br>&bull; <b>Operations:</b> O1, O2<br><br>The selection must obey ALL of:<br><b>R1:</b> The committee has exactly 4 members.<br><b>R2:</b> At least one member from each of the three departments.<br><b>R3:</b> At most two members from Marketing.<br><b>R4:</b> F1 and F2 are not both selected.<br><b>R5:</b> M1 and O1 are not both selected.<br><b>R6:</b> If O2 is selected, then M2 is selected.<br><br>Which candidate must be a member of <b>every</b> valid committee?",
+  "options": [
+   "F1",
+   "O2",
+   "M2",
+   "M3",
+   "O1"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Consider whether M2 can ever be omitted. The Marketing seats are 1 or 2 (R2, R3). If M2 is excluded, the available Marketing candidates are M1 and M3, and Operations needs O1 and/or O2. R6 says any committee using O2 must include M2, so excluding M2 bans O2 &mdash; forcing O1 as the only Operations option. But then R5 bans M1, leaving M3 as the sole usable Marketing candidate, i.e. only one Marketing seat can be filled. That gives at most Finance(1) + Marketing(1: M3) + Operations(1: O1) = 3 members &mdash; short of the required 4, with no fourth eligible candidate. Hence M2 cannot be omitted; it is in every valid committee. (F1 fails because F2 can replace it; O1, O2, M3 each appear in only some committees.) The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-grouping",
+  "difficulty": "hard",
+  "promptHTML": "A 4-member committee is selected from seven candidates drawn from three departments:<br>&bull; <b>Finance:</b> F1, F2<br>&bull; <b>Marketing:</b> M1, M2, M3<br>&bull; <b>Operations:</b> O1, O2<br><br>The selection must obey ALL of:<br><b>R1:</b> The committee has exactly 4 members.<br><b>R2:</b> At least one member from each of the three departments.<br><b>R3:</b> At most two members from Marketing.<br><b>R4:</b> F1 and F2 are not both selected.<br><b>R5:</b> M1 and O1 are not both selected.<br><b>R6:</b> If O2 is selected, then M2 is selected.<br><br>If M1 is selected for the committee, which two candidates MUST also be selected?",
+  "options": [
+   "M2 and O2",
+   "M3 and O1",
+   "F1 and M2",
+   "M2 and O1",
+   "F2 and O2"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Suppose M1 is on the committee. By R5, O1 is excluded, so the only Operations candidate available is O2 &mdash; and R2 requires at least one Operations member, so O2 must be selected. Once O2 is in, R6 forces M2 in as well. That already fills Marketing with M1 and M2 (2 members, the R3 maximum, so M3 is out) and Operations with O2; the fourth seat is the single Finance member (F1 or F2, R4). Thus selecting M1 compels both M2 and O2. The answer is A."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "very-hard",
+  "promptHTML": "A college schedules six lectures &mdash; <b>Physics (P), Chemistry (C), Math (M), Biology (B), History (H), and Geography (G)</b> &mdash; in six consecutive slots numbered 1 through 6, with exactly one lecture per slot. The timetable must satisfy ALL of the following:<br><br>&bull; Physics is in an earlier slot than Chemistry.<br>&bull; Math and Biology are in consecutive slots (in either order).<br>&bull; History is in neither slot 1 nor slot 6.<br>&bull; Geography is in the slot immediately after Chemistry.<br><br><b>How many distinct timetables satisfy all four conditions?</b>",
+  "options": [
+   "10",
+   "12",
+   "16",
+   "24",
+   "8"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Geography must immediately follow Chemistry, so treat (C,G) as a fixed adjacent block with C first. Chemistry can sit in slot 2, 3, or 5 (G then fills 3, 4, or 6); slot 1 is impossible (P must precede C) and slots 4, 6 leave no valid completion. For each position of the (C,G) block, place Physics before Chemistry, the (M,B) consecutive pair (either order), and History off the two endpoints. A complete enumeration of all 720 permutations filtered by the four rules yields exactly 12 valid timetables. Trap checks: ignoring the History endpoint rule inflates the count to 24; wrongly forcing Math before Biology (instead of either order) collapses it to 6. The disciplined total is 12. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "very-hard",
+  "promptHTML": "A college schedules six lectures &mdash; <b>Physics (P), Chemistry (C), Math (M), Biology (B), History (H), and Geography (G)</b> &mdash; in six consecutive slots numbered 1 through 6, with exactly one lecture per slot. The timetable must satisfy ALL of the following:<br><br>&bull; Physics is in an earlier slot than Chemistry.<br>&bull; Math and Biology are in consecutive slots (in either order).<br>&bull; History is in neither slot 1 nor slot 6.<br>&bull; Geography is in the slot immediately after Chemistry.<br><br><b>Which of the following is a complete and accurate list of the slots in which Physics could be scheduled?</b>",
+  "options": [
+   "Slot 1 only",
+   "Slot 1 or 3",
+   "Slot 1, 3, or 4",
+   "Slot 3 or 4",
+   "Slot 1, 2, or 3"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Geography immediately follows Chemistry, so the (C,G) block occupies two adjacent slots with Physics strictly before Chemistry. Physics therefore cannot be in slot 5 or 6 (no room for the later C,G block). Testing each remaining placement against the Math/Biology adjacency and the History endpoint rule, valid timetables exist with Physics in slot 1, slot 3, or slot 4, while slots 2, 5, and 6 admit no completion. Enumerating the 12 valid timetables confirms Physics appears only in slots 1, 3, and 4. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "very-hard",
+  "promptHTML": "A college schedules six lectures &mdash; <b>Physics (P), Chemistry (C), Math (M), Biology (B), History (H), and Geography (G)</b> &mdash; in six consecutive slots numbered 1 through 6, with exactly one lecture per slot. The timetable must satisfy ALL of the following:<br><br>&bull; Physics is in an earlier slot than Chemistry.<br>&bull; Math and Biology are in consecutive slots (in either order).<br>&bull; History is in neither slot 1 nor slot 6.<br>&bull; Geography is in the slot immediately after Chemistry.<br><br><b>If History is scheduled in slot 2, which of the following MUST be true?</b>",
+  "options": [
+   "Chemistry is scheduled in slot 3",
+   "Geography is scheduled in slot 4",
+   "Physics is scheduled in slot 1",
+   "Math is scheduled in slot 5",
+   "Biology is scheduled before Chemistry"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Fix History in slot 2. Slot 1 cannot be Chemistry (Geography would need slot 2, taken by H), cannot be Geography, cannot be History, and cannot be part of the Math/Biology pair while still leaving room for Physics before Chemistry. Enumerating the valid timetables with H in slot 2 gives exactly four solutions: (P,H,C,G,M,B), (P,H,C,G,B,M), (P,H,M,B,C,G), and (P,H,B,M,C,G). In every one, Physics occupies slot 1. Each other statement holds in only some of the four (Chemistry sits in slot 3 or 5; Geography in slot 4 or 6; Math in slot 5 or 6; Biology is sometimes after Chemistry), so they are merely 'could be true'. Only 'Physics in slot 1' is forced. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "very-hard",
+  "promptHTML": "A coordinator assigns five staff members &mdash; <b>A, B, C, D, E</b> &mdash; to lead workshops on five different days (Monday through Friday), exactly one staff member per day. In the grid below, a check (&#10003;) marks a day on which that member <b>is available</b>; a blank cell means the member is <b>not available</b> that day. Each member may be assigned only to a day on which they are available.<br><br><table border=\"1\" cellpadding=\"4\"><tr><th>Staff</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr><tr><td>A</td><td>&#10003;</td><td>&#10003;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>B</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&nbsp;</td></tr><tr><td>C</td><td>&nbsp;</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr><tr><td>D</td><td>&#10003;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td></tr><tr><td>E</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td><td>&nbsp;</td><td>&#10003;</td></tr></table><br>Two additional rules apply:<br>&bull; A is assigned to an earlier day than B.<br>&bull; C is assigned to a later day than E.<br><br><b>How many distinct valid assignments are possible?</b>",
+  "options": [
+   "4",
+   "5",
+   "6",
+   "8",
+   "9"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "First count bijections honoring availability alone. A is available only Mon/Tue, so consider both. Working through the grid (B: Tue&ndash;Thu; C: Wed&ndash;Fri; D: Mon/Thu/Fri; E: Tue/Wed/Fri), exactly 9 availability-respecting assignments exist. Now impose A before B and E before C, removing every assignment that violates either order rule. Six survive: (A=Mon,B=Tue,C=Thu,D=Fri,E=Wed), (A=Mon,B=Tue,C=Fri,D=Thu,E=Wed), (A=Mon,B=Wed,C=Thu,D=Fri,E=Tue), (A=Mon,B=Wed,C=Fri,D=Thu,E=Tue), (A=Mon,B=Thu,C=Wed,D=Fri,E=Tue), and (A=Tue,B=Thu,C=Fri,D=Mon,E=Wed). That is 6 valid assignments. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "hard",
+  "promptHTML": "A coordinator assigns five staff members &mdash; <b>A, B, C, D, E</b> &mdash; to lead workshops on five different days (Monday through Friday), exactly one staff member per day. In the grid below, a check (&#10003;) marks a day on which that member <b>is available</b>; a blank cell means the member is <b>not available</b> that day. Each member may be assigned only to a day on which they are available.<br><br><table border=\"1\" cellpadding=\"4\"><tr><th>Staff</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr><tr><td>A</td><td>&#10003;</td><td>&#10003;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>B</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&nbsp;</td></tr><tr><td>C</td><td>&nbsp;</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr><tr><td>D</td><td>&#10003;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td></tr><tr><td>E</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td><td>&nbsp;</td><td>&#10003;</td></tr></table><br>Two additional rules apply:<br>&bull; A is assigned to an earlier day than B.<br>&bull; C is assigned to a later day than E.<br><br><b>Which one of the following COULD be true?</b>",
+  "options": [
+   "B is assigned to Monday",
+   "C is assigned to Wednesday",
+   "E is assigned to Thursday",
+   "D is assigned to Tuesday",
+   "A is assigned to Wednesday"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Eliminate options that violate availability outright: B has no check on Monday, E has none on Thursday, D has none on Tuesday, and A has none on Wednesday, so those four are impossible in any assignment. Only 'C is assigned to Wednesday' survives, and it is realized by the valid assignment A=Mon, E=Tue, C=Wed, B=Thu, D=Fri (each day is available for its member, A precedes B, and E precedes C). It is therefore the only statement that could be true. The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-scheduling",
+  "difficulty": "very-hard",
+  "promptHTML": "A coordinator assigns five staff members &mdash; <b>A, B, C, D, E</b> &mdash; to lead workshops on five different days (Monday through Friday), exactly one staff member per day. In the grid below, a check (&#10003;) marks a day on which that member <b>is available</b>; a blank cell means the member is <b>not available</b> that day. Each member may be assigned only to a day on which they are available.<br><br><table border=\"1\" cellpadding=\"4\"><tr><th>Staff</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr><tr><td>A</td><td>&#10003;</td><td>&#10003;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>B</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&nbsp;</td></tr><tr><td>C</td><td>&nbsp;</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr><tr><td>D</td><td>&#10003;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td></tr><tr><td>E</td><td>&nbsp;</td><td>&#10003;</td><td>&#10003;</td><td>&nbsp;</td><td>&#10003;</td></tr></table><br>Two additional rules apply:<br>&bull; A is assigned to an earlier day than B.<br>&bull; C is assigned to a later day than E.<br><br><b>If C is assigned to Thursday, which of the following MUST be true?</b>",
+  "options": [
+   "A is assigned to Monday",
+   "E is assigned to Tuesday",
+   "C is assigned to Friday",
+   "B is assigned to Wednesday",
+   "E is assigned to Wednesday"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Fix C=Thursday. E must precede C and be available earlier, so E is Tuesday or Wednesday. D is available only Mon, Thu, or Fri; Thursday is taken by C, so D is Monday or Friday. A is available only Monday or Tuesday, and A must precede B. Working both E-branches, the only consistent assignments are (A=Mon, B=Tue, C=Thu, D=Fri, E=Wed) and (A=Mon, B=Wed, C=Thu, D=Fri, E=Tue). In both, A is assigned to Monday (and D to Friday). Each other option fails in at least one branch &mdash; E is Tue in one and Wed in the other, C is Thursday not Friday, and B is Tue or Wed &mdash; so only 'A is assigned to Monday' must be true. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "hard",
+  "promptHTML": "A courier company operates four delivery hubs. The table shows, for one month, the parcels dispatched, the number delivered on time, the total operating cost, and the daily route distance covered by each hub.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Hub</th><th>Parcels Dispatched</th><th>On-time Deliveries</th><th>Operating Cost (&#8377;)</th><th>Route Distance (km)</th></tr><tr><td>Alpha</td><td>5000</td><td>4600</td><td>1,15,000</td><td>2000</td></tr><tr><td>Bravo</td><td>4000</td><td>3520</td><td>1,05,600</td><td>1600</td></tr><tr><td>Charlie</td><td>6000</td><td>5700</td><td>1,36,800</td><td>2000</td></tr><tr><td>Delta</td><td>4500</td><td>4050</td><td>1,13,400</td><td>1500</td></tr></table><br>The \"on-time rate\" of a hub is its on-time deliveries as a percentage of parcels dispatched. Which hub has the <b>highest on-time rate</b>?",
+  "options": [
+   "Alpha",
+   "Bravo",
+   "Charlie",
+   "Delta",
+   "Alpha and Delta are tied"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "On-time rate = on-time deliveries &divide; dispatched. Alpha: 4600/5000 = 92%. Bravo: 3520/4000 = 88%. Charlie: 5700/6000 = 95%. Delta: 4050/4500 = 90%. The highest is Charlie at 95%. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "very-hard",
+  "promptHTML": "A courier company operates four delivery hubs. The table shows, for one month, the parcels dispatched, the number delivered on time, the total operating cost, and the daily route distance covered by each hub.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Hub</th><th>Parcels Dispatched</th><th>On-time Deliveries</th><th>Operating Cost (&#8377;)</th><th>Route Distance (km)</th></tr><tr><td>Alpha</td><td>5000</td><td>4600</td><td>1,15,000</td><td>2000</td></tr><tr><td>Bravo</td><td>4000</td><td>3520</td><td>1,05,600</td><td>1600</td></tr><tr><td>Charlie</td><td>6000</td><td>5700</td><td>1,36,800</td><td>2000</td></tr><tr><td>Delta</td><td>4500</td><td>4050</td><td>1,13,400</td><td>1500</td></tr></table><br>Each on-time delivery earns the company a fee of &#8377;90. Every parcel dispatched but <b>not</b> delivered on time triggers a &#8377;40 refund penalty. Net contribution of a hub = fees earned &minus; penalties &minus; operating cost. What is the <b>total net contribution</b> of all four hubs combined?",
+  "options": [
+   "&#8377;10,72,300",
+   "&#8377;11,37,500",
+   "&#8377;12,19,000",
+   "&#8377;15,43,100",
+   "&#8377;9,98,400"
+  ],
+  "correct": 0,
+  "optionsHTML": true,
+  "explanation": "For each hub, late parcels = dispatched &minus; on-time. Net = 90&times;(on-time) &minus; 40&times;(late) &minus; cost. Alpha: 90&times;4600 &minus; 40&times;400 &minus; 1,15,000 = 4,14,000 &minus; 16,000 &minus; 1,15,000 = 2,83,000. Bravo: 90&times;3520 &minus; 40&times;480 &minus; 1,05,600 = 3,16,800 &minus; 19,200 &minus; 1,05,600 = 1,92,000. Charlie: 90&times;5700 &minus; 40&times;300 &minus; 1,36,800 = 5,13,000 &minus; 12,000 &minus; 1,36,800 = 3,64,200. Delta: 90&times;4050 &minus; 40&times;450 &minus; 1,13,400 = 3,64,500 &minus; 18,000 &minus; 1,13,400 = 2,33,100. Total = 2,83,000 + 1,92,000 + 3,64,200 + 2,33,100 = &#8377;10,72,300. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "hard",
+  "promptHTML": "A university's admissions data for four departments in one cycle is shown below. \"Offers Made\" are admission offers extended to applicants; \"Students Enrolled\" are those who accepted and joined.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Department</th><th>Applications</th><th>Offers Made</th><th>Students Enrolled</th><th>Annual Tuition (&#8377; &#8217;000)</th></tr><tr><td>Physics</td><td>4000</td><td>1200</td><td>480</td><td>200</td></tr><tr><td>Biology</td><td>5000</td><td>2000</td><td>700</td><td>150</td></tr><tr><td>Economics</td><td>6000</td><td>1500</td><td>720</td><td>250</td></tr><tr><td>History</td><td>3000</td><td>1500</td><td>450</td><td>120</td></tr></table><br>The \"yield\" of a department is the percentage of its offers that converted to enrolment. Which department has the <b>highest yield</b>?",
+  "options": [
+   "Physics",
+   "Biology",
+   "Economics",
+   "History",
+   "Physics and Economics are tied"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Yield = enrolled &divide; offers. Physics: 480/1200 = 40%. Biology: 700/2000 = 35%. Economics: 720/1500 = 48%. History: 450/1500 = 30%. The highest is Economics at 48%. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "very-hard",
+  "promptHTML": "A university's admissions data for four departments in one cycle is shown below. \"Offers Made\" are admission offers extended to applicants; \"Students Enrolled\" are those who accepted and joined.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Department</th><th>Applications</th><th>Offers Made</th><th>Students Enrolled</th><th>Annual Tuition (&#8377; &#8217;000)</th></tr><tr><td>Physics</td><td>4000</td><td>1200</td><td>480</td><td>200</td></tr><tr><td>Biology</td><td>5000</td><td>2000</td><td>700</td><td>150</td></tr><tr><td>Economics</td><td>6000</td><td>1500</td><td>720</td><td>250</td></tr><tr><td>History</td><td>3000</td><td>1500</td><td>450</td><td>120</td></tr></table><br>Define a department's \"applicant-to-enrolment conversion\" as enrolled students as a percentage of applications. Which department has the <b>highest</b> applicant-to-enrolment conversion?",
+  "options": [
+   "Physics",
+   "Biology",
+   "Economics",
+   "History",
+   "Biology and History are tied"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "Conversion = enrolled &divide; applications. Physics: 480/4000 = 12%. Biology: 700/5000 = 14%. Economics: 720/6000 = 12%. History: 450/3000 = 15%. The highest is History at 15%. (Note Economics wins on yield but not here, because it makes far fewer offers relative to its applications.) The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "very-hard",
+  "promptHTML": "A university's admissions data for four departments in one cycle is shown below. \"Offers Made\" are admission offers extended to applicants; \"Students Enrolled\" are those who accepted and joined.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Department</th><th>Applications</th><th>Offers Made</th><th>Students Enrolled</th><th>Annual Tuition (&#8377; &#8217;000)</th></tr><tr><td>Physics</td><td>4000</td><td>1200</td><td>480</td><td>200</td></tr><tr><td>Biology</td><td>5000</td><td>2000</td><td>700</td><td>150</td></tr><tr><td>Economics</td><td>6000</td><td>1500</td><td>720</td><td>250</td></tr><tr><td>History</td><td>3000</td><td>1500</td><td>450</td><td>120</td></tr></table><br>Suppose Biology could raise its yield to equal the <b>highest yield</b> achieved by any department, while keeping its number of offers unchanged. How many <b>additional students</b> would then enrol in Biology?",
+  "options": [
+   "100",
+   "160",
+   "260",
+   "300",
+   "1700"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "First find the highest yield: Economics at 720/1500 = 48% (Physics 40%, Biology 35%, History 30%). Apply 48% to Biology's 2000 offers: 0.48&times;2000 = 960 enrolled. Biology currently enrols 700, so the increase is 960 &minus; 700 = 260. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "very-hard",
+  "promptHTML": "A manufacturer runs four plants, each on two shifts. The table shows units produced and units found defective on each shift, for one production run.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th rowspan=\"2\">Plant</th><th colspan=\"2\">Day Shift</th><th colspan=\"2\">Night Shift</th></tr><tr><th>Produced</th><th>Defective</th><th>Produced</th><th>Defective</th></tr><tr><td>P1</td><td>10000</td><td>450</td><td>6000</td><td>190</td></tr><tr><td>P2</td><td>9000</td><td>270</td><td>7000</td><td>210</td></tr><tr><td>P3</td><td>8000</td><td>480</td><td>8000</td><td>320</td></tr><tr><td>P4</td><td>6000</td><td>240</td><td>10000</td><td>320</td></tr></table><br>Every non-defective (good) unit is sold for &#8377;50. Every defective unit is scrapped at a material loss of &#8377;20. Net revenue of a plant = sale value of good units &minus; scrap loss on defective units. What is the <b>total net revenue</b> across all four plants?",
+  "options": [
+   "&#8377;30,26,400",
+   "&#8377;30,76,000",
+   "&#8377;31,50,400",
+   "&#8377;32,00,000",
+   "&#8377;29,84,800"
+  ],
+  "correct": 0,
+  "optionsHTML": true,
+  "explanation": "For each plant, good = total produced &minus; total defective; net = 50&times;good &minus; 20&times;defective. P1: produced 16000, defective 640, good 15360 &rarr; 50&times;15360 &minus; 20&times;640 = 7,68,000 &minus; 12,800 = 7,55,200. P2: defective 480, good 15520 &rarr; 7,76,000 &minus; 9,600 = 7,66,400. P3: defective 800, good 15200 &rarr; 7,60,000 &minus; 16,000 = 7,44,000. P4: defective 560, good 15440 &rarr; 7,72,000 &minus; 11,200 = 7,60,800. Total = 7,55,200 + 7,66,400 + 7,44,000 + 7,60,800 = &#8377;30,26,400. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Set C &mdash; A SaaS firm's annual revenue and operating cost (figures in &#8377; lakh).</b><br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Year</th><th>Revenue</th><th>Cost</th></tr><tr><td>2021</td><td>64</td><td>250</td></tr><tr><td>2022</td><td>96</td><td>300</td></tr><tr><td>2023</td><td>144</td><td>360</td></tr><tr><td>2024</td><td>216</td><td>432</td></tr></table><br><b>Q1.</b> Revenue and cost have each grown at a constant year-on-year rate over 2021&ndash;2024. If both rates continue unchanged, in which year will the firm <b>first</b> have annual revenue at least equal to annual cost (i.e. first break even)?",
+  "options": [
+   "2026",
+   "2027",
+   "2028",
+   "2029",
+   "Revenue never catches up to cost"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Revenue multiplies by 96/64 = 1.5 each year (CAGR +50%); cost by 300/250 = 1.2 each year (CAGR +20%). So the ratio Revenue/Cost is multiplied by 1.5/1.2 = 1.25 every year. In 2024 the ratio is 216/432 = 0.5. Projecting: 2025 &rarr; 0.5&times;1.25 = 0.625; 2026 &rarr; 0.781; 2027 &rarr; 0.977 (still below 1, revenue 729 vs cost 746.5); 2028 &rarr; 0.977&times;1.25 = 1.221 &ge; 1 (revenue 1093.5 vs cost 895.8). The ratio first reaches 1 in 2028. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "hard",
+  "promptHTML": "<b>Set C &mdash; A SaaS firm's annual revenue and operating cost (figures in &#8377; lakh).</b><br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Year</th><th>Revenue</th><th>Cost</th></tr><tr><td>2021</td><td>64</td><td>250</td></tr><tr><td>2022</td><td>96</td><td>300</td></tr><tr><td>2023</td><td>144</td><td>360</td></tr><tr><td>2024</td><td>216</td><td>432</td></tr></table><br><b>Q2.</b> The firm runs at a loss (cost exceeding revenue) in every year shown. What is the <b>total</b> loss accumulated over the four years 2021 to 2024, in &#8377; lakh?",
+  "options": [
+   "606",
+   "216",
+   "822",
+   "1016",
+   "420"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Yearly loss = cost &minus; revenue. 2021: 250&minus;64 = 186; 2022: 300&minus;96 = 204; 2023: 360&minus;144 = 216; 2024: 432&minus;216 = 216. Sum = 186+204+216+216 = 822. (Equivalently total cost 1342 &minus; total revenue 520 = 822.) The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Set C &mdash; A SaaS firm's annual revenue and operating cost (figures in &#8377; lakh).</b><br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Year</th><th>Revenue</th><th>Cost</th></tr><tr><td>2021</td><td>64</td><td>250</td></tr><tr><td>2022</td><td>96</td><td>300</td></tr><tr><td>2023</td><td>144</td><td>360</td></tr><tr><td>2024</td><td>216</td><td>432</td></tr></table><br>Revenue grows at +50% per year and cost at +20% per year, and both trends continue beyond 2024.<br><b>Q3.</b> The firm's <b>annual loss</b> (cost minus revenue) widens at first. In which year does the annual loss <b>first become smaller</b> than it was in the immediately preceding year?",
+  "options": [
+   "2024",
+   "2025",
+   "2026",
+   "2027",
+   "2028"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Annual loss = cost &minus; revenue. From the table: 2021 = 186, 2022 = 204, 2023 = 216, 2024 = 216 (equal to 2023, not smaller). Projecting forward with revenue &times;1.5 and cost &times;1.2: 2025 revenue = 216&times;1.5 = 324, cost = 432&times;1.2 = 518.4, loss = 194.4, which is below the 216 of 2024. So 2025 is the first year the annual loss shrinks relative to the prior year. (2024 ties 2023 at 216, so it is not 'smaller'; break-even in 2028 is a different milestone.) The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Set D &mdash; Smartphone market.</b> Total units sold were 200 million in 2022 and 300 million in 2024. The percentage share of units held by each brand is shown below.<br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Brand</th><th>2022 share</th><th>2024 share</th></tr><tr><td>A</td><td>30%</td><td>24%</td></tr><tr><td>B</td><td>25%</td><td>28%</td></tr><tr><td>C</td><td>20%</td><td>22%</td></tr><tr><td>D</td><td>15%</td><td>16%</td></tr><tr><td>Others</td><td>10%</td><td>10%</td></tr></table><br><b>Q1.</b> Brand A's market share fell from 30% to 24%. By what percent did Brand A's actual <b>unit sales</b> change from 2022 to 2024?",
+  "options": [
+   "&minus;20%",
+   "&minus;6%",
+   "+20%",
+   "+44%",
+   "+50%"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Convert shares to units. 2022: A = 30% of 200 = 60 million. 2024: A = 24% of 300 = 72 million. Unit change = (72 &minus; 60)/60 = 12/60 = +20%. The share fell, but because the whole market grew 50%, A's volume still rose. (&minus;20% wrongly reads the relative share drop 30&rarr;24; &minus;6% reads the 6-percentage-point drop; +50% is the total-market growth.) The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Set D &mdash; Smartphone market.</b> Total units sold were 200 million in 2022 and 300 million in 2024. The percentage share of units held by each brand is shown below.<br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Brand</th><th>2022 share</th><th>2024 share</th></tr><tr><td>A</td><td>30%</td><td>24%</td></tr><tr><td>B</td><td>25%</td><td>28%</td></tr><tr><td>C</td><td>20%</td><td>22%</td></tr><tr><td>D</td><td>15%</td><td>16%</td></tr><tr><td>Others</td><td>10%</td><td>10%</td></tr></table><br><b>Q2.</b> Which brand had the <b>highest percentage growth in unit sales</b> from 2022 to 2024?",
+  "options": [
+   "Brand A",
+   "Brand B",
+   "Brand C",
+   "Brand D",
+   "Brand A and Brand B grew equally"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Units (2022 &rarr; 2024): A = 60 &rarr; 72 (+20%); B = 50 &rarr; 84 (+68%); C = 40 &rarr; 66 (+65%); D = 30 &rarr; 48 (+60%); Others = 20 &rarr; 30 (+50%). Brand B has the highest unit-sales growth at 68%. (Brand A is the largest by share but its volume grew the least.) The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-mixed",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Set D &mdash; Smartphone market.</b> Total units sold were 200 million in 2022 and 300 million in 2024. The percentage share of units held by each brand is shown below.<br><table border='1' cellpadding='4' cellspacing='0'><tr><th>Brand</th><th>2022 share</th><th>2024 share</th></tr><tr><td>A</td><td>30%</td><td>24%</td></tr><tr><td>B</td><td>25%</td><td>28%</td></tr><tr><td>C</td><td>20%</td><td>22%</td></tr><tr><td>D</td><td>15%</td><td>16%</td></tr><tr><td>Others</td><td>10%</td><td>10%</td></tr></table><br><b>Q3.</b> Consider the gap in unit sales between the largest-selling brand and the second-largest-selling brand. How did this gap change from 2022 to 2024?",
+  "options": [
+   "Narrowed by 2 million",
+   "Unchanged",
+   "Widened by 2 million",
+   "Widened by 12 million",
+   "Narrowed by 10 million"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Units in 2022: A = 60, B = 50, C = 40, D = 30, Others = 20. Largest = A (60), second = B (50); gap = 10 million. Units in 2024: A = 72, B = 84, C = 66, D = 48, Others = 30. Now largest = B (84), second = A (72); gap = 12 million. The leadership changed hands, but the top-two gap went from 10 to 12, i.e. it widened by 2 million. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "hard",
+  "promptHTML": "<b>Crestwood Open (single-elimination, 8 seeds).</b> Eight players seeded 1 to 8 play a standard knockout bracket. Quarter-finals (QF): (Seed&nbsp;1 v Seed&nbsp;8), (Seed&nbsp;4 v Seed&nbsp;5), (Seed&nbsp;2 v Seed&nbsp;7), (Seed&nbsp;3 v Seed&nbsp;6). The winners of (1v8) and (4v5) meet in one semi-final (SF); the winners of (2v7) and (3v6) meet in the other SF; the two SF winners contest the final. Prize money: champion &#36;1000, runner-up &#36;600, each of the two SF losers &#36;300, each of the four QF losers &#36;100. An <b>upset</b> is any match won by the numerically larger (lower) seed.<br><br>This year there were <b>exactly two upsets</b> in the whole tournament, Seed&nbsp;1 reached the final without ever being on the wrong end of an upset, and the runner-up was Seed&nbsp;6.<br><br>How much prize money did Seed&nbsp;6 collect?",
+  "options": [
+   "&#36;1000",
+   "&#36;600",
+   "&#36;400",
+   "&#36;300",
+   "&#36;100"
+  ],
+  "correct": 1,
+  "optionsHTML": true,
+  "explanation": "Seed 6 starts in the (3 v 6) QF. To reach the final, Seed 6 must win its QF (beating Seed 3 &mdash; an upset, since 6 is the lower seed), then win its SF against the (2 v 7) winner (if that opponent is Seed 2, beating 2 is a second upset). That accounts for exactly the two upsets. Seed 1, meanwhile, beats Seed 8 (QF), the (4 v 5) winner (SF), and Seed 6 (final) &mdash; always as the higher seed, so no upset involves Seed 1, and Seed 1 wins the title. This is fully consistent: exactly two upsets, Seed 1 clean champion, Seed 6 runner-up. The runner-up prize is &#36;600. A common error is to read 'runner-up' as champion (&#36;1000) or to assume Seed 6, having lost in the final, only earns a semi-final (&#36;300) or quarter-final (&#36;100) payout. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Crestwood Open (single-elimination, 8 seeds).</b> Eight players seeded 1 to 8 play a standard knockout bracket. Quarter-finals (QF): (Seed&nbsp;1 v Seed&nbsp;8), (Seed&nbsp;4 v Seed&nbsp;5), (Seed&nbsp;2 v Seed&nbsp;7), (Seed&nbsp;3 v Seed&nbsp;6). The winners of (1v8) and (4v5) meet in one semi-final (SF); the winners of (2v7) and (3v6) meet in the other SF; the two SF winners contest the final. Prize money: champion &#36;1000, runner-up &#36;600, each of the two SF losers &#36;300, each of the four QF losers &#36;100.<br><br>Consider the four <b>bottom-half</b> players, Seeds&nbsp;5, 6, 7 and 8. Over all possible sets of match results, what is the <b>greatest combined prize money</b> these four players could collectively win?",
+  "options": [
+   "&#36;1600",
+   "&#36;1900",
+   "&#36;2200",
+   "&#36;2300",
+   "&#36;2600"
+  ],
+  "correct": 2,
+  "optionsHTML": true,
+  "explanation": "Each bottom-half seed enters in a different QF: Seed 8 in (1v8), Seed 5 in (4v5), Seed 7 in (2v7), Seed 6 in (3v6). So all four can win their QFs simultaneously (no two bottom seeds meet in the QF round). Then the (1v8) and (4v5) regions feed one SF: make that SF an 8-v-5 clash, so one bottom seed (say 5) advances and the other (8) takes a &#36;300 SF-loser cheque. Likewise the other SF is 7-v-6: let 6 advance and 7 take &#36;300. The final is then 5 v 6, both bottom seeds: champion &#36;1000, runner-up &#36;600. Total to the bottom half = 1000 + 600 + 300 + 300 = &#36;2200 (the four QF-loser &#36;100 cheques all go to the top seeds 1, 2, 3, 4). The full purse is &#36;2600; subtracting the four unavoidable top-seed QF payouts (4 &times; &#36;100 = &#36;400) leaves &#36;2200, confirming the figure. Taking only champion + runner-up (&#36;1600), or champion + runner-up + one SF cheque (&#36;1900), under-counts; &#36;2600 wrongly hands the bottom half the entire purse including QF cheques that must go to top seeds. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Crestwood Open (single-elimination, 8 seeds).</b> Eight players seeded 1 to 8 play a standard knockout bracket. Quarter-finals (QF): (Seed&nbsp;1 v Seed&nbsp;8), (Seed&nbsp;4 v Seed&nbsp;5), (Seed&nbsp;2 v Seed&nbsp;7), (Seed&nbsp;3 v Seed&nbsp;6). The winners of (1v8) and (4v5) meet in one semi-final (SF); the winners of (2v7) and (3v6) meet in the other SF; the two SF winners contest the final.<br><br>In how many <b>different pairings of two players</b> could the final possibly be contested with <b>both finalists drawn from the bottom half</b> (Seeds&nbsp;5, 6, 7, 8)? (Two finals count as the same pairing if they involve the same two players, regardless of who wins.)",
+  "options": [
+   "2",
+   "3",
+   "4",
+   "6",
+   "8"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "One finalist comes from the top half-bracket {QF(1v8), QF(4v5)} and the other from the bottom half-bracket {QF(2v7), QF(3v6)}. The only bottom-half seeds available are: Seed 8 and Seed 5 on one side; Seed 7 and Seed 6 on the other. For a finalist to be a bottom seed, that seed must win its QF and its SF: from the top half-bracket the bottom-seed finalist is either 8 or 5; from the bottom half-bracket it is either 7 or 6. Pairing one choice from {8, 5} with one from {7, 6} gives 2 &times; 2 = 4 possible finals: {5,6}, {5,7}, {8,6}, {8,7}. Each is achievable. So 4 distinct pairings. Counting ordered (champion, runner-up) outcomes doubles this to 8 &mdash; the classic over-count when the question asks for unordered pairings. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "hard",
+  "promptHTML": "<b>Talent Final &mdash; judges' rankings.</b> Five finalists A, B, C, D, E are each ranked 1st through 5th by three judges. A judge awards 5 points for 1st, 4 for 2nd, 3 for 3rd, 2 for 4th, 1 for 5th; a finalist's total is the sum over the three judges (so 45 points are shared in all). The cards of Judge&nbsp;1 and Judge&nbsp;2 are shown in full; Judge&nbsp;3's card is unknown except for the stated facts.<table border='1' cellpadding='4'><tr><th>Place</th><th>Judge 1</th><th>Judge 2</th><th>Judge 3</th></tr><tr><td>1st (5 pts)</td><td>B</td><td>A</td><td>?</td></tr><tr><td>2nd (4 pts)</td><td>A</td><td>C</td><td>?</td></tr><tr><td>3rd (3 pts)</td><td>D</td><td>B</td><td>?</td></tr><tr><td>4th (2 pts)</td><td>C</td><td>E</td><td>?</td></tr><tr><td>5th (1 pt)</td><td>E</td><td>D</td><td>?</td></tr></table>Facts about Judge&nbsp;3's card: C was placed 1st; D was placed 5th (last); A was placed exactly one position above B; and in the final totals <b>no two finalists tied</b>.<br><br>What was finalist <b>E's</b> total score across the three judges?",
+  "options": [
+   "3",
+   "4",
+   "5",
+   "7",
+   "9"
+  ],
+  "correct": 3,
+  "optionsHTML": false,
+  "explanation": "After Judges 1 and 2, the running totals are A = 4+5 = 9, B = 5+3 = 8, C = 2+4 = 6, D = 3+1 = 4, E = 1+2 = 3. On Judge 3's card, C is 1st (5) and D is 5th (1), leaving places 2nd, 3rd, 4th (4, 3, 2 points) for A, B, E with the rule that A sits exactly one place above B. The two ways are: (i) A=2nd, B=3rd, E=4th &rarr; A4 B3 E2, giving finals A13 B11 C11 D5 E5 &mdash; but this ties B with C and D with E, violating 'no ties'; (ii) E=2nd, A=3rd, B=4th &rarr; E4 A3 B2, giving finals A12 B10 C11 D5 E7, all distinct. Only (ii) survives, so E = 3 + 4 = 7. Stopping at the two-judge subtotal gives 3; using E in 4th on Judge 3 (the rejected card) gives 5. The answer is D."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "very-hard",
+  "promptHTML": "<b>Talent Final &mdash; judges' rankings.</b> Five finalists A, B, C, D, E are each ranked 1st through 5th by three judges. A judge awards 5 points for 1st, 4 for 2nd, 3 for 3rd, 2 for 4th, 1 for 5th; a finalist's total is the sum over the three judges (so 45 points are shared in all). The cards of Judge&nbsp;1 and Judge&nbsp;2 are shown in full; Judge&nbsp;3's card is unknown except for the stated facts.<table border='1' cellpadding='4'><tr><th>Place</th><th>Judge 1</th><th>Judge 2</th><th>Judge 3</th></tr><tr><td>1st (5 pts)</td><td>B</td><td>A</td><td>?</td></tr><tr><td>2nd (4 pts)</td><td>A</td><td>C</td><td>?</td></tr><tr><td>3rd (3 pts)</td><td>D</td><td>B</td><td>?</td></tr><tr><td>4th (2 pts)</td><td>C</td><td>E</td><td>?</td></tr><tr><td>5th (1 pt)</td><td>E</td><td>D</td><td>?</td></tr></table>Facts about Judge&nbsp;3's card: C was placed 1st; D was placed 5th (last); A was placed exactly one position above B; and in the final totals <b>no two finalists tied</b>.<br><br>Which finalist was the overall <b>runner-up</b> (second-highest total)?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D",
+   "E"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "Running totals after two judges: A = 9, B = 8, C = 6, D = 4, E = 3. On Judge 3's card C is 1st (5) and D is 5th (1); the remaining places 2nd/3rd/4th (4/3/2) go to A, B, E with A exactly one place above B. Option A=2nd,B=3rd,E=4th yields A13 B11 C11 D5 E5 (ties, rejected). Option E=2nd,A=3rd,B=4th yields A12 B10 C11 D5 E7, all distinct &mdash; the valid card. Final ranking by total: A 12 (champion), C 11 (runner-up), B 10, E 7, D 5. The runner-up is C. A is the champion (a tempting wrong pick), and B led C after two judges but is overtaken once Judge 3's strong card for C (1st) and weak card for B (4th) are applied. The answer is C."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-games",
+  "difficulty": "hard",
+  "promptHTML": "<b>Talent Final &mdash; judges' rankings.</b> Five finalists A, B, C, D, E are each ranked 1st through 5th by three judges. A judge awards 5 points for 1st, 4 for 2nd, 3 for 3rd, 2 for 4th, 1 for 5th; a finalist's total is the sum over the three judges (so 45 points are shared in all). The cards of Judge&nbsp;1 and Judge&nbsp;2 are shown in full; Judge&nbsp;3's card is unknown except for the stated facts.<table border='1' cellpadding='4'><tr><th>Place</th><th>Judge 1</th><th>Judge 2</th><th>Judge 3</th></tr><tr><td>1st (5 pts)</td><td>B</td><td>A</td><td>?</td></tr><tr><td>2nd (4 pts)</td><td>A</td><td>C</td><td>?</td></tr><tr><td>3rd (3 pts)</td><td>D</td><td>B</td><td>?</td></tr><tr><td>4th (2 pts)</td><td>C</td><td>E</td><td>?</td></tr><tr><td>5th (1 pt)</td><td>E</td><td>D</td><td>?</td></tr></table>Facts about Judge&nbsp;3's card: C was placed 1st; D was placed 5th (last); A was placed exactly one position above B; and in the final totals <b>no two finalists tied</b>.<br><br>By how many points did the overall <b>champion</b> finish ahead of the finalist who placed <b>third</b> overall?",
+  "options": [
+   "1",
+   "2",
+   "3",
+   "5",
+   "7"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "After two judges: A 9, B 8, C 6, D 4, E 3. Judge 3 has C 1st (5), D 5th (1); the middle places 4/3/2 go to A, B, E with A one place above B. The card A=2nd,B=3rd,E=4th gives final totals with ties (A13 B11 C11 D5 E5), so it is rejected. The valid card is E=2nd, A=3rd, B=4th, giving A12, C11, B10, E7, D5 &mdash; all distinct. Sorted: A 12 (1st), C 11 (2nd), B 10 (3rd), E 7 (4th), D 5 (5th). Champion A scored 12; the third-placed finalist B scored 10; the gap is 12 &minus; 10 = 2. Comparing the champion with the runner-up instead gives 1; with the last-placed finalist gives 7. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "hard",
+  "promptHTML": "A retailer's 2024 results by category are shown below. Each row gives 2024 revenue and 2024 units sold, together with the year-on-year (YoY) growth that took the figure from its 2023 level to its 2024 level. (So a 2024 figure equals the 2023 figure multiplied by 1 plus the stated growth rate; the 2023 figures themselves are not printed and must be recovered.)<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Category</th><th>2024 Revenue (&#8377; cr)</th><th>Revenue YoY Growth</th><th>2024 Units (&#8217;000)</th><th>Units YoY Growth</th></tr><tr><td>Apparel</td><td>156</td><td>+20%</td><td>260</td><td>+30%</td></tr><tr><td>Footwear</td><td>120</td><td>+50%</td><td>150</td><td>+25%</td></tr><tr><td>Accessories</td><td>90</td><td>&minus;10%</td><td>180</td><td>+20%</td></tr><tr><td>Electronics</td><td>180</td><td>+20%</td><td>120</td><td>&minus;20%</td></tr></table><br>Which category recorded the <b>largest absolute increase in revenue</b> (in &#8377; cr) from 2023 to 2024?",
+  "options": [
+   "Apparel",
+   "Footwear",
+   "Accessories",
+   "Electronics",
+   "Footwear and Electronics increased by the same amount"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "The 2023 revenue is not given; recover it from 2024 revenue &divide; (1 + growth), then take the increase = 2024 &minus; 2023.<br>&bull; Apparel: 2023 = 156 &divide; 1.20 = 130, increase = 156 &minus; 130 = &#8377;26 cr.<br>&bull; Footwear: 2023 = 120 &divide; 1.50 = 80, increase = 120 &minus; 80 = &#8377;40 cr.<br>&bull; Accessories: 2023 = 90 &divide; 0.90 = 100, change = 90 &minus; 100 = &minus;&#8377;10 cr (a fall).<br>&bull; Electronics: 2023 = 180 &divide; 1.20 = 150, increase = 180 &minus; 150 = &#8377;30 cr.<br>The largest absolute increase is Footwear at &#8377;40 cr. A common trap is to pick Electronics because it has the highest 2024 revenue (180), but its rupee increase (30) is smaller; another is to read the 2024 figure or the growth rate as the increase. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "very-hard",
+  "promptHTML": "A retailer's 2024 results by category are shown below. Each row gives 2024 revenue and 2024 units sold, together with the year-on-year (YoY) growth that took the figure from its 2023 level to its 2024 level. (So a 2024 figure equals the 2023 figure multiplied by 1 plus the stated growth rate; the 2023 figures themselves are not printed and must be recovered.)<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Category</th><th>2024 Revenue (&#8377; cr)</th><th>Revenue YoY Growth</th><th>2024 Units (&#8217;000)</th><th>Units YoY Growth</th></tr><tr><td>Apparel</td><td>156</td><td>+20%</td><td>260</td><td>+30%</td></tr><tr><td>Footwear</td><td>120</td><td>+50%</td><td>150</td><td>+25%</td></tr><tr><td>Accessories</td><td>90</td><td>&minus;10%</td><td>180</td><td>+20%</td></tr><tr><td>Electronics</td><td>180</td><td>+20%</td><td>120</td><td>&minus;20%</td></tr></table><br>Average selling price (ASP) = revenue &divide; units sold. Which category had the <b>lowest ASP in 2023</b>?",
+  "options": [
+   "Apparel",
+   "Footwear",
+   "Accessories",
+   "Electronics",
+   "Footwear and Accessories were tied for the lowest"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "Both the 2023 revenue and the 2023 units must be back-calculated, then divided. Recover each as 2024 figure &divide; (1 + its own growth). Working in rupees per unit (revenue in &#8377; cr = &#8377;10<sup>7</sup>; units in &#8217;000 = &times;1000):<br>&bull; Apparel: rev23 = 156 &divide; 1.20 = 130 cr, units23 = 260 &divide; 1.30 = 200 (&#8217;000); ASP = 130&times;10<sup>7</sup> &divide; 200000 = &#8377;6,500.<br>&bull; Footwear: rev23 = 120 &divide; 1.50 = 80 cr, units23 = 150 &divide; 1.25 = 120; ASP = 80&times;10<sup>7</sup> &divide; 120000 &asymp; &#8377;6,667.<br>&bull; Accessories: rev23 = 90 &divide; 0.90 = 100 cr, units23 = 180 &divide; 1.20 = 150; ASP = 100&times;10<sup>7</sup> &divide; 150000 &asymp; &#8377;6,667.<br>&bull; Electronics: rev23 = 180 &divide; 1.20 = 150 cr, units23 = 120 &divide; 0.80 = 150; ASP = 150&times;10<sup>7</sup> &divide; 150000 = &#8377;10,000.<br>The lowest 2023 ASP is Apparel at &#8377;6,500. The big trap is to use the printed 2024 figures: in 2024 the lowest ASP is Accessories (90 cr &divide; 180000 = &#8377;5,000), so anyone who skips the back-calculation picks the wrong category. The answer is A."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "hard",
+  "promptHTML": "A logistics firm runs four warehouses, each operating a day shift and a night shift. The table shows the orders fulfilled and the labour-hours worked on each shift during one week. \"Productivity\" means orders fulfilled per labour-hour.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th rowspan=\"2\">Warehouse</th><th colspan=\"2\">Day Shift</th><th colspan=\"2\">Night Shift</th></tr><tr><th>Orders</th><th>Labour-hours</th><th>Orders</th><th>Labour-hours</th></tr><tr><td>W1</td><td>720</td><td>180</td><td>240</td><td>120</td></tr><tr><td>W2</td><td>500</td><td>125</td><td>400</td><td>100</td></tr><tr><td>W3</td><td>900</td><td>300</td><td>500</td><td>100</td></tr><tr><td>W4</td><td>560</td><td>140</td><td>280</td><td>140</td></tr></table><br>Considering both shifts together, which warehouse had the <b>highest overall productivity</b> (total orders &divide; total labour-hours across day and night)?",
+  "options": [
+   "W1",
+   "W2",
+   "W3",
+   "W4",
+   "W2 and W3 were tied"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Overall productivity must pool the two shifts &mdash; add the orders, add the hours, then divide; you cannot just average the two shift rates (that would weight a small shift equally with a large one).<br>&bull; W1: (720 + 240) &divide; (180 + 120) = 960 &divide; 300 = 3.2.<br>&bull; W2: (500 + 400) &divide; (125 + 100) = 900 &divide; 225 = 4.0.<br>&bull; W3: (900 + 500) &divide; (300 + 100) = 1400 &divide; 400 = 3.5.<br>&bull; W4: (560 + 280) &divide; (140 + 140) = 840 &divide; 280 = 3.0.<br>The highest is W2 at 4.0 orders per hour. Two traps: averaging each warehouse's two shift rates gives W2 and W3 both 4.0 (a false tie, option E); and looking at the night shift alone wrongly favours W3 (its night rate is 5.0, the best single-shift number) even though W3's heavy, low-rate day shift drags its pooled rate down to 3.5. The answer is B."
+ },
+ {
+  "category": "Numerical",
+  "topic": "di-tables",
+  "difficulty": "very-hard",
+  "promptHTML": "A logistics firm runs four warehouses, each operating a day shift and a night shift. The table shows the orders fulfilled and the labour-hours worked on each shift during one week. \"Productivity\" means orders fulfilled per labour-hour.<br><br><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th rowspan=\"2\">Warehouse</th><th colspan=\"2\">Day Shift</th><th colspan=\"2\">Night Shift</th></tr><tr><th>Orders</th><th>Labour-hours</th><th>Orders</th><th>Labour-hours</th></tr><tr><td>W1</td><td>720</td><td>180</td><td>240</td><td>120</td></tr><tr><td>W2</td><td>500</td><td>125</td><td>400</td><td>100</td></tr><tr><td>W3</td><td>900</td><td>300</td><td>500</td><td>100</td></tr><tr><td>W4</td><td>560</td><td>140</td><td>280</td><td>140</td></tr></table><br>Suppose <b>W1</b> closes its night shift and moves <i>all</i> of its orders onto the day shift, which continues to work at its current day-shift productivity. Compared with W1's current <b>total</b> labour-hours (day + night), how do the day-shift hours W1 would then need change?",
+  "options": [
+   "60 fewer labour-hours",
+   "60 more labour-hours",
+   "No change",
+   "180 more labour-hours",
+   "30 fewer labour-hours"
+  ],
+  "correct": 0,
+  "optionsHTML": false,
+  "explanation": "First get W1's day-shift productivity: 720 &divide; 180 = 4.0 orders per labour-hour. All of W1's orders total 720 + 240 = 960. At 4.0 orders/hour the day shift would need 960 &divide; 4.0 = 240 labour-hours. W1's current total hours are 180 + 240 = 300. So the requirement falls from 300 to 240 &mdash; <b>60 fewer</b> labour-hours, because the moved orders are now handled at the day rate (4.0) instead of the slower night rate (240 &divide; 120 = 2.0).<br>Traps: dividing 960 by the night rate 2.0 gives 480 hours (an apparent increase of 180, option D); dividing by the pooled rate 3.2 gives 300 hours, i.e. 'no change' (option C). Both misuse the wrong productivity. The answer is A."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Eight colleagues sit around a circular table, equally spaced, <b>all facing the centre</b>. Four are from <b>Sales</b> &mdash; A, B, C, D &mdash; and four are from <b>Tech</b> &mdash; E, F, G, H. (Facing the centre, a person's <b>immediate left</b> is the neighbour in the clockwise direction and their <b>immediate right</b> is the neighbour in the anticlockwise direction; '<b>directly opposite</b>' means the seat four places away.) The seating obeys ALL of:<br><br><b>(i)</b> A sits directly opposite B.<br><b>(ii)</b> No two Sales colleagues sit next to each other.<br><b>(iii)</b> E sits next to A.<br><b>(iv)</b> D sits next to E.<br><b>(v)</b> G does not sit next to B.<br><br><b>How many distinct seating arrangements satisfy all five conditions?</b>",
+  "options": [
+   "3",
+   "4",
+   "5",
+   "6",
+   "8"
+  ],
+  "correct": 1,
+  "optionsHTML": false,
+  "explanation": "Fix A's seat to remove rotation. By (i) B is directly opposite A. Condition (ii) forbids any two Sales colleagues from being adjacent; with 4 Sales among 8 equally spaced seats, the only way to keep all four mutually non-adjacent is to seat them on alternate seats &mdash; so Sales and Tech <b>perfectly alternate</b>. Thus the Sales seats are A's seat, the two seats two-away on each side, and the seat opposite A (holding B); the four gaps between them hold E, F, G, H.<br><br>By (iii) E is a neighbour of A, so E takes one of A's two adjacent (Tech) seats &mdash; <b>2 choices</b>. By (iv) D (Sales) is a neighbour of E; E has exactly two Sales neighbours, one of which is A, so D must be the <i>other</i> one &mdash; this fixes D once E is placed, and the remaining Sales seat (opposite D) then takes C. Now apply (v). Three Tech seats remain for F, G, H. One of those three seats is adjacent to B; G is barred from it, but each of the other two Tech seats is available to G, so (v) does <b>not</b> uniquely fix G &mdash; it forbids exactly one assignment. Direct enumeration of the placements of F, G, H subject to 'G not next to B' yields exactly <b>2</b> valid orderings for each choice of E's seat. So the count is (2 ways to place E) &times; (2 valid Tech orderings) = <b>4</b> arrangements. Listing them clockwise from A: A,E,D,F,B,H,C,G &nbsp;/&nbsp; A,E,D,H,B,F,C,G &nbsp;/&nbsp; A,G,C,F,B,H,D,E &nbsp;/&nbsp; A,G,C,H,B,F,D,E. A common error is to ignore (v) (giving 8) or to over-constrain and force D incorrectly (giving 3). The answer is B."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Eight colleagues sit around a circular table, equally spaced, <b>all facing the centre</b>. Four are from <b>Sales</b> &mdash; A, B, C, D &mdash; and four are from <b>Tech</b> &mdash; E, F, G, H. (Facing the centre, a person's <b>immediate left</b> is the neighbour in the clockwise direction and their <b>immediate right</b> is the neighbour in the anticlockwise direction; '<b>directly opposite</b>' means the seat four places away.) The seating obeys ALL of:<br><br><b>(i)</b> A sits directly opposite B.<br><b>(ii)</b> No two Sales colleagues sit next to each other.<br><b>(iii)</b> E sits next to A.<br><b>(iv)</b> D sits next to E.<br><b>(v)</b> G does not sit next to B.<br><br><b>Which one of the following must be true in <i>every</i> valid arrangement?</b>",
+  "options": [
+   "G sits directly opposite E",
+   "F sits immediately to the right of D",
+   "C sits directly opposite D",
+   "F sits directly opposite H",
+   "H sits immediately to the left of B"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "The four valid arrangements (clockwise from A) are A,E,D,F,B,H,C,G / A,E,D,H,B,F,C,G / A,G,C,F,B,H,D,E / A,G,C,H,B,F,D,E. Because Sales and Tech alternate and B is opposite A, the two remaining Sales colleagues C and D occupy the other pair of opposite Sales seats &mdash; so <b>C is directly opposite D</b> in every arrangement (TRUE in all four). Testing the distractors against the list: 'G opposite E' is false in all four; 'F opposite H' is false in all four; 'F immediately to the right of D' holds in only one of the four arrangements; and 'H immediately to the left of B' holds in only two &mdash; both of the last two are 'could be true', not 'must be true'. Only the C&ndash;D opposite relation is forced. The answer is C."
+ },
+ {
+  "category": "Logic",
+  "topic": "lr-arrangements",
+  "difficulty": "very-hard",
+  "promptHTML": "Eight colleagues sit around a circular table, equally spaced, <b>all facing the centre</b>. Four are from <b>Sales</b> &mdash; A, B, C, D &mdash; and four are from <b>Tech</b> &mdash; E, F, G, H. (Facing the centre, a person's <b>immediate left</b> is the neighbour in the clockwise direction and their <b>immediate right</b> is the neighbour in the anticlockwise direction; '<b>directly opposite</b>' means the seat four places away.) The seating obeys ALL of:<br><br><b>(i)</b> A sits directly opposite B.<br><b>(ii)</b> No two Sales colleagues sit next to each other.<br><b>(iii)</b> E sits next to A.<br><b>(iv)</b> D sits next to E.<br><b>(v)</b> G does not sit next to B.<br><br><b>If, in addition, H sits immediately to the left of C, then who sits directly opposite F?</b>",
+  "options": [
+   "D",
+   "E",
+   "G",
+   "H",
+   "A"
+  ],
+  "correct": 2,
+  "optionsHTML": false,
+  "explanation": "From the base set the four arrangements (clockwise from A) are A,E,D,F,B,H,C,G / A,E,D,H,B,F,C,G / A,G,C,F,B,H,D,E / A,G,C,H,B,F,D,E. 'H immediately to the left of C' means H occupies the seat clockwise from C (C's left-hand seat). Checking C's clockwise neighbour in each: in A,E,D,F,B,H,C,G it is G; in A,E,D,H,B,F,C,G it is G; in A,G,C,F,B,H,D,E it is F; only in <b>A,G,C,H,B,F,D,E</b> is it H. So this condition pins down a single arrangement. In it, reading clockwise from A the seats hold A, G, C, H, B, F, D, E; F is four places from G, so the colleague directly opposite F is <b>G</b>. A solver who confuses 'immediate left' with the anticlockwise side selects the mirror arrangement and wrongly lands on E. The answer is C."
+ }
+]
