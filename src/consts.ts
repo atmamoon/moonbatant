@@ -59,19 +59,14 @@ export const FOOTER_PHOTO = '/photos/night-milkyway-pano.webp';
 // ── Writing ─────────────────────────────────────────────────────────────
 export const WRITING: { title: string; outlet: string; href: string }[] = [
   {
-    title: 'Ultimate Aptitude: free, no-login GMAT/CAT-level practice tests',
-    outlet: 'moonbatant',
-    href: '/writing/ultimate-aptitude-free-gmat-cat-practice/',
-  },
-  {
-    title: '1,098 AI-written exam questions, zero wrong answer keys: how Ultimate Aptitude was built',
-    outlet: 'moonbatant',
-    href: '/writing/building-ultimate-aptitude-ai-question-banks/',
-  },
-  {
     title: 'Building a 5x PM Agent',
     outlet: 'Medium',
     href: 'https://medium.com/@sheikh.mamoon.mondal/building-a-5x-pm-agent-b9af78e16628',
+  },
+  {
+    title: 'I built a free GMAT/CAT-level practice app with AI — the hard part was making sure the answers were actually right',
+    outlet: 'Medium',
+    href: 'https://medium.com/@sheikh.mamoon.mondal/i-built-a-free-gmat-cat-level-practice-app-with-ai-the-hard-part-was-making-sure-the-answers-were-5b4480839451',
   },
 ];
 
