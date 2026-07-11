@@ -1,61 +1,105 @@
 ---
+// Home — the Range Flythrough. The expedition content floating over a
+// WebGL rendering of the REAL Nepal Himalaya: SRTM elevation displaced in a
+// vertex shader, real Sentinel-2 imagery, camera flying Annapurna → Everest →
+// Kangchenjunga as you scroll. Falls back to a still if WebGL2 is missing.
 import Base from '../layouts/Base.astro';
-import Stage from '../components/Stage.astro';
 import RopeHUD from '../components/RopeHUD.astro';
 import HomeSections from '../components/HomeSections.astro';
-
-// The traverse: one continuous light-arc, afternoon indigo → gold → cloud →
-// twilight → astronomical night. Each plate is a vista; scroll walks between.
-const PLATES = [
-  {
-    id: 'hero',
-    photo: '/video/hero-amadablam-poster.webp',
-    // slowed to cinemagraph pace — the summit should drift, not fly
-    video: { av1: '/video/hero-amadablam.av1.mp4', h264: '/video/hero-amadablam.h264.mp4', rate: 0.55 },
-  },
-  { id: 'work', photo: '/photos/alpenglow-garhwal-ridge.webp', focal: '50% 72%', dim: 0.3 },
-  { id: 'about', photo: '/photos/storm-annapurna.webp', dim: 0.14 },
-  { id: 'experience', photo: '/photos/winterline-kangchenjunga.webp', dim: 0.18 },
-  {
-    id: 'writing',
-    photo: '/video/night-stars-poster.webp',
-    video: { av1: '/video/night-stars.av1.mp4', h264: '/video/night-stars.h264.mp4' },
-  },
-];
 ---
 
 <Base>
-  <Stage plates={PLATES} />
+  <div class="terrain-stage" id="terrain-stage" aria-hidden="true">
+    <div class="terrain-poster"></div>
+    <div class="terrain-scrim"></div>
+  </div>
+  <div class="peak-labels" id="peak-labels" aria-hidden="true"></div>
   <RopeHUD />
+
   <div class="journey-content">
     <HomeSections />
+    <p class="terrain-credit">
+      Terrain: real SRTM elevation (Mapzen tiles) · Imagery: Sentinel-2 cloudless by EOX IT Services GmbH
+      (contains modified Copernicus Sentinel data 2016) · Peaks placed at surveyed coordinates
+    </p>
   </div>
-  <a class="mode-toggle" href="/flight/" title="Fly the real range — 3D terrain from actual elevation data">
-    <span class="mode-toggle__icon">◮</span> FLIGHT MODE
-  </a>
+
 </Base>
 
-<style>
-  .mode-toggle {
+<script>
+  import { initJourney } from '../scripts/journey';
+  import { initTerrain } from '../scripts/terrain';
+  initJourney();
+  initTerrain();
+</script>
+
+<style is:global>
+  .terrain-stage {
     position: fixed;
-    right: clamp(14px, 2vw, 30px);
-    bottom: 18px;
-    z-index: 45;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.16em;
-    color: var(--slate-300);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
-    padding: 8px 14px;
-    background: rgba(10, 13, 26, 0.4);
-    backdrop-filter: blur(8px);
-    transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: linear-gradient(180deg, #1c1636 0%, #302447 46%, #131a30 100%);
   }
-  .mode-toggle:hover { color: var(--glow-gold); border-color: var(--glow-gold); }
-  .mode-toggle__icon { color: var(--glow-gold); font-size: 0.75rem; }
-  @media (max-width: 900px) { .mode-toggle { display: none; } }
+  .terrain-poster {
+    position: absolute;
+    inset: 0;
+    background: url('/photos/alpenglow-everest.webp') center / cover no-repeat;
+    opacity: 0.65;
+  }
+  .terrain-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.9s ease;
+  }
+  .terrain-canvas.is-live { opacity: 1; }
+  .no-terrain .terrain-canvas { display: none; }
+  .terrain-scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(6, 8, 18, 0.42) 0%, rgba(6, 8, 18, 0.05) 30%, rgba(6, 8, 18, 0.2) 68%, rgba(6, 8, 18, 0.72) 100%),
+      linear-gradient(90deg, rgba(6, 8, 18, 0.3) 0%, rgba(6, 8, 18, 0) 45%);
+  }
+
+  .peak-labels {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .peak-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: var(--snow-200);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+  }
+  .peak-label::before {
+    content: '▴';
+    color: var(--glow-gold);
+    margin-right: 6px;
+  }
+
+  .terrain-credit {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 var(--gutter) 26px;
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.06em;
+    color: var(--slate-400);
+    opacity: 0.75;
+  }
+
 </style>

@@ -467,21 +467,6 @@ export function initJourney() {
   });
   mqReduce.addEventListener?.('change', () => { scrollDirty = true; });
 
-  // motion toggle hook (footer button)
-  (window as any).mbToggleMotion = () => {
-    const wasOff = root.dataset.motion === 'off';
-    root.dataset.motion = wasOff ? 'on' : 'off';
-    localStorage.setItem('mb-motion', root.dataset.motion);
-    document.querySelectorAll('.motion-toggle__state').forEach((el) => (el.textContent = wasOff ? 'ON' : 'OFF'));
-    // the toggle must mean what it says: freeze/resume the video plates too
-    document.querySelectorAll<HTMLVideoElement>('#stage video').forEach((v) => {
-      if (wasOff) v.play().catch(() => {});
-      else v.pause();
-    });
-    scrollDirty = true;
-    return wasOff;
-  };
-  document.querySelectorAll('.motion-toggle__state').forEach((el) => (el.textContent = root.dataset.motion === 'off' ? 'OFF' : 'ON'));
 
   // ── eased anchor scrolling (self-driven; immune to the Chromium smooth-
   //    scroll cancellation that per-frame DOM writes cause) ──

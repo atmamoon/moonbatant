@@ -187,9 +187,6 @@ const bio = ABOUT.split('\n\n');
 
         <div class="footer-bar">
           <span>© 2026 {HERO.name}</span>
-          <button class="motion-toggle" onclick="window.mbToggleMotion && window.mbToggleMotion()">
-            MOTION <span class="motion-toggle__state">ON</span>
-          </button>
           <a href="#top">↑ Back to top</a>
         </div>
       </div>
@@ -369,14 +366,6 @@ const bio = ABOUT.split('\n\n');
     font-family: var(--font-mono); font-size: 0.72rem; color: var(--slate-400);
   }
   .footer-bar a { color: var(--slate-300); }
-  .motion-toggle {
-    background: none; border: 1px solid rgba(255,255,255,0.18); border-radius: 999px;
-    color: var(--slate-300); font-family: var(--font-mono); font-size: 0.62rem;
-    letter-spacing: 0.14em; padding: 6px 14px; cursor: pointer;
-    transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
-  }
-  .motion-toggle:hover { border-color: var(--glow-gold); color: var(--glow-gold); }
-  .motion-toggle__state { color: var(--glow-gold); }
 
   /* ── Responsive ── */
   @media (max-width: 760px) {
@@ -392,6 +381,6 @@ const bio = ABOUT.split('\n\n');
       row-gap: 12px;
       font-size: 0.66rem;
     }
-    .footer-bar > :global(*), .motion-toggle { white-space: nowrap; }
+    .footer-bar > :global(*) { white-space: nowrap; }
   }
 </style>

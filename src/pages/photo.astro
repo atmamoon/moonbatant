@@ -1,0 +1,35 @@
+---
+// /photo — the photographic Living Expedition, kept as an unlinked fallback.
+import Base from '../layouts/Base.astro';
+import Stage from '../components/Stage.astro';
+import RopeHUD from '../components/RopeHUD.astro';
+import HomeSections from '../components/HomeSections.astro';
+
+// The traverse: one continuous light-arc, afternoon indigo → gold → cloud →
+// twilight → astronomical night. Each plate is a vista; scroll walks between.
+const PLATES = [
+  {
+    id: 'hero',
+    photo: '/video/hero-amadablam-poster.webp',
+    // slowed to cinemagraph pace — the summit should drift, not fly
+    video: { av1: '/video/hero-amadablam.av1.mp4', h264: '/video/hero-amadablam.h264.mp4', rate: 0.55 },
+  },
+  { id: 'work', photo: '/photos/alpenglow-garhwal-ridge.webp', focal: '50% 72%', dim: 0.3 },
+  { id: 'about', photo: '/photos/storm-annapurna.webp', dim: 0.14 },
+  { id: 'experience', photo: '/photos/winterline-kangchenjunga.webp', dim: 0.18 },
+  {
+    id: 'writing',
+    photo: '/video/night-stars-poster.webp',
+    video: { av1: '/video/night-stars.av1.mp4', h264: '/video/night-stars.h264.mp4' },
+  },
+];
+---
+
+<Base>
+  <Stage plates={PLATES} />
+  <RopeHUD />
+  <div class="journey-content">
+    <HomeSections />
+  </div>
+</Base>
+
