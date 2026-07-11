@@ -135,6 +135,19 @@ const bio = ABOUT.split('\n\n');
             </ul>
           </GlassCard>
         ))}
+      </div>
+    </section>
+
+    <!-- ── THE BALCONY · 8,400 M — Education ────────────────────────────── -->
+    <section
+      id="education"
+      class="mid-section education"
+      data-journey-section
+      data-camp="EDUCATION"
+      data-elevation="8400"
+    >
+      <SectionLabel>The Balcony — Education</SectionLabel>
+      <div class="edu__list">
         <GlassCard padding="clamp(22px, 3vw, 30px)" class="exp__card">
           <div class="exp__head">
             <div>
@@ -174,8 +187,8 @@ const bio = ABOUT.split('\n\n');
 
         <div class="contact register">
           <div>
-            <p class="register__kicker">YOU MADE IT · 8,849 M</p>
-            <h2 class="contact__title">Sign the summit register.</h2>
+            <p class="register__kicker">YOU MADE IT · 8,849 M — SIGN THE REGISTER</p>
+            <h2 class="contact__title">Let's build something reliable.</h2>
             <p class="contact__line">{SOCIALS.location} · {SOCIALS.phone}</p>
           </div>
           <div class="contact__actions">
@@ -302,7 +315,9 @@ const bio = ABOUT.split('\n\n');
   }
   .about__chips { display: flex; flex-wrap: wrap; gap: 7px; }
 
-  .experience { padding-top: var(--section-y); padding-bottom: var(--section-y); max-width: var(--maxw); }
+  .experience { padding-top: var(--section-y); max-width: var(--maxw); }
+  .education { padding-top: calc(var(--section-y) * 0.55); padding-bottom: var(--section-y); max-width: var(--maxw); }
+  .education > :global(.section-label) { margin-bottom: 20px; }
   .exp__title {
     font-family: var(--font-serif);
     font-size: clamp(1.7rem, 3vw, 2.3rem);

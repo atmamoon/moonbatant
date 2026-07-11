@@ -519,7 +519,7 @@ export function initJourney() {
       }
     }, 1400);
     const targets = document.querySelectorAll(
-      '.work__grid > *, .about__card, .exp__list > *, .writing-row'
+      '.work__grid > *, .about__card, .exp__list > *, .edu__list > *, .writing-row'
     );
     let batch = 0, lastBatchTs = 0;
     const io = new IntersectionObserver((entries) => {
