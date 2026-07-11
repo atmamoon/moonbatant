@@ -7,6 +7,6 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://moonbatant.com',
   trailingSlash: 'ignore',
-  redirects: { '/flight': '/', '/flight/': '/' },
+  redirects: { '/photo': '/', '/photo/': '/' },
   integrations: [sitemap()],
 });
