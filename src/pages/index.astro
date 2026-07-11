@@ -9,6 +9,11 @@ import HomeSections from '../components/HomeSections.astro';
 ---
 
 <Base>
+  <!-- head-start on the heavy GPU textures (body-level preloads are honored) -->
+  <link rel="preload" as="image" href="/terrain/poster.webp" fetchpriority="high" />
+  <link rel="preload" as="image" href="/terrain/height-rg.webp" />
+  <link rel="preload" as="image" href="/terrain/albedo.webp" />
+  <link rel="preload" as="image" href="/terrain/normal.webp" />
   <div class="terrain-stage" id="terrain-stage" aria-hidden="true">
     <div class="terrain-poster"></div>
     <div class="terrain-scrim"></div>
@@ -45,8 +50,9 @@ import HomeSections from '../components/HomeSections.astro';
   .terrain-poster {
     position: absolute;
     inset: 0;
-    background: url('/photos/alpenglow-everest.webp') center / cover no-repeat;
-    opacity: 0.65;
+    /* a still of the terrain itself — the page reads as flight mode from the
+       first paint; the live canvas then takes over invisibly */
+    background: url('/terrain/poster.webp') center / cover no-repeat;
   }
   .terrain-canvas {
     position: absolute;
