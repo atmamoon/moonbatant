@@ -40,10 +40,27 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <Analytics />
   </head>
   <body>
+    <a class="skip-link" href="#work">Skip to content</a>
     <Header />
     <main id="top">
       <slot />
     </main>
     <LiquidCursor />
+    <style>
+      .skip-link {
+        position: fixed;
+        top: -60px;
+        left: 16px;
+        z-index: 100;
+        padding: 10px 18px;
+        border-radius: 8px;
+        background: var(--ink-600);
+        color: var(--snow-100);
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        transition: top 0.2s ease;
+      }
+      .skip-link:focus-visible { top: 12px; }
+    </style>
   </body>
 </html>

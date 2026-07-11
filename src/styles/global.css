@@ -9,6 +9,7 @@
 @import './tokens/spacing.css';
 @import './tokens/elevation.css';
 @import './tokens/scenes.css';
+@import './tokens/journey.css';
 @import './tokens/base.css';
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -30,23 +31,9 @@ body { background: var(--atm-2); }
     rgba(8, 9, 18, 0) 100%);
 }
 
-/* Middle band (Selected Work + About): a shared night-peak backdrop behind the
-   glass cards. The gradient overlay blends its top into the hero (--atm-1) and
-   its bottom into the footer (--atm-2) so there are no seams; photo scrolls. */
-.kit-mid {
-  position: relative;
-  background-image:
-    /* TOP FEATHER — guarantees the seam is pure --atm-2 twilight blue (matching
-       the hero foot + night images) and eases the photo/overlay in. Topmost. */
-    linear-gradient(180deg, var(--atm-2) 0%, rgba(22,28,52,0) clamp(160px, 26vh, 320px)),
-    linear-gradient(95deg, rgba(13,17,34,0.72) 0%, rgba(13,17,34,0.28) 44%, rgba(13,17,34,0) 64%),
-    linear-gradient(180deg, var(--atm-2) 0%, rgba(18,21,42,0.92) 24%, rgba(18,21,42,0.34) 46%, rgba(15,19,38,0.44) 82%, var(--atm-2) 100%),
-    url('/photos/night-machapuchare.webp');
-  background-size: cover, cover, cover, cover;
-  background-position: center, center, center, center 32%;
-  background-attachment: scroll, scroll, scroll, scroll;   /* never fixed */
-  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-}
+/* (The old .kit-mid shared-backdrop band was retired by the Living Expedition
+   stage — the home page now floats transparent sections over one fixed world;
+   see tokens/journey.css + components/Stage.astro.) */
 
 /* Legibility for text that floats directly over the backdrop photo. */
 .kit-on-photo { text-shadow: 0 1px 16px rgba(0, 0, 0, 0.62); }

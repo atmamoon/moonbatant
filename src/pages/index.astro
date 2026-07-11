@@ -1,339 +1,61 @@
 ---
 import Base from '../layouts/Base.astro';
-import { getCollection } from 'astro:content';
-import {
-  HERO,
-  HERO_SCENES,
-  ABOUT,
-  EXPERIENCE,
-  EDUCATION,
-  SKILLS,
-  SOCIALS,
-  WRITING,
-  FOOTER_PHOTO,
-} from '../consts';
-import SectionLabel from '../components/SectionLabel.astro';
-import Button from '../components/Button.astro';
-import IconButton from '../components/IconButton.astro';
-import GlassCard from '../components/GlassCard.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import Chip from '../components/Chip.astro';
-import Badge from '../components/Badge.astro';
-import Scene from '../components/Scene.astro';
-import Icon from '../components/Icon.astro';
+import Stage from '../components/Stage.astro';
+import RopeHUD from '../components/RopeHUD.astro';
+import HomeSections from '../components/HomeSections.astro';
 
-const featured = (await getCollection('work'))
-  .filter((s) => !s.data.draft && s.data.featured)
-  .sort((a, b) => a.data.order - b.data.order);
-const lastIdx = featured.length - 1;
-const bio = ABOUT.split('\n\n');
+// The traverse: one continuous light-arc, afternoon indigo → gold → cloud →
+// twilight → astronomical night. Each plate is a vista; scroll walks between.
+const PLATES = [
+  {
+    id: 'hero',
+    photo: '/video/hero-amadablam-poster.webp',
+    // slowed to cinemagraph pace — the summit should drift, not fly
+    video: { av1: '/video/hero-amadablam.av1.mp4', h264: '/video/hero-amadablam.h264.mp4', rate: 0.55 },
+  },
+  { id: 'work', photo: '/photos/alpenglow-garhwal-ridge.webp', focal: '50% 72%', dim: 0.3 },
+  { id: 'about', photo: '/photos/storm-annapurna.webp', dim: 0.14 },
+  { id: 'experience', photo: '/photos/winterline-kangchenjunga.webp', dim: 0.18 },
+  {
+    id: 'writing',
+    photo: '/video/night-stars-poster.webp',
+    video: { av1: '/video/night-stars.av1.mp4', h264: '/video/night-stars.h264.mp4' },
+  },
+];
 ---
 
 <Base>
-  <!-- ── Hero (rotating scene) ─────────────────────────────────────────── -->
-  <section class="hero scene" data-scene={HERO_SCENES[0].scene} id="hero">
-    {HERO_SCENES.map((s, i) => (
-      <div
-        class="scene__photo hero__photo"
-        data-i={i}
-        style={`background-image:url('${s.photo}');background-position:${s.focal};opacity:${i === 0 ? 1 : 0};`}
-      ></div>
-    ))}
-    <div class="scene__grain"></div>
-    <div class="hero__textscrim"></div>
-    <div class="hero__feather"></div>
-
-    <div class="scene__content hero__content">
-      <div class="hero__inner">
-        <SectionLabel class="hero__kicker">{HERO.kicker}</SectionLabel>
-        <h1 class="hero__name">{HERO.name}</h1>
-        <p class="hero__tagline">{HERO.tagline}</p>
-        <div class="hero__cta">
-          <Button variant="primary" href="#work" iconRight="arrow">See selected work</Button>
-          <Button variant="secondary" href="/resume.pdf" target="_blank" rel="noopener" iconLeft="download">Résumé</Button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Mid band: Work + About + Experience + Education ───────────────── -->
-  <div class="kit-mid">
-    <!-- Selected Work -->
-    <section id="work" class="mid-section work">
-      <div class="work__head">
-        <SectionLabel>Selected work</SectionLabel>
-        <h2 class="kit-on-photo work__title">Products &amp; agents I've shipped.</h2>
-      </div>
-      <div class="work__grid">
-        {featured.map((s, i) => (
-          <ProjectCard
-            href={`/work/${s.slug}`}
-            company={s.data.company}
-            timeline={s.data.timeline}
-            title={s.data.title}
-            summary={s.data.summary}
-            metrics={s.data.metrics}
-            featured={s.data.featured}
-            large={i === 0 || i === lastIdx}
-          />
-        ))}
-      </div>
-    </section>
-
-    <!-- About -->
-    <section id="about" class="mid-section about">
-      <SectionLabel>About</SectionLabel>
-      <GlassCard padding="clamp(24px, 4vw, 44px)" class="about__card">
-        <div class="about__grid">
-          <div class="about__bio">
-            {bio.map((p, i) => <p class:list={['about__para', i === 0 && 'about__para--lead']}>{p}</p>)}
-          </div>
-          <div class="about__skills">
-            {SKILLS.map((s) => (
-              <div class="about__skill-group">
-                <div class="about__skill-label">{s.group}</div>
-                <div class="about__chips">
-                  {s.items.map((it) => <Chip>{it}</Chip>)}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </GlassCard>
-    </section>
-
-    <!-- Experience -->
-    <section id="experience" class="mid-section experience">
-      <SectionLabel>Experience</SectionLabel>
-      <h2 class="kit-on-photo exp__title">Where I've shipped.</h2>
-      <div class="exp__list">
-        {EXPERIENCE.map((job) => (
-          <GlassCard padding="clamp(22px, 3vw, 30px)" class="exp__card">
-            <div class="exp__head">
-              <div>
-                <h3 class="exp__role">{job.role} <span class="exp__co">· {job.company}</span></h3>
-                <p class="exp__loc">{job.location}</p>
-              </div>
-              <span class="exp__period">{job.period}</span>
-            </div>
-            <ul class="exp__bullets">
-              {job.highlights.map((h) => <li>{h}</li>)}
-            </ul>
-          </GlassCard>
-        ))}
-        <GlassCard padding="clamp(22px, 3vw, 30px)" class="exp__card">
-          <div class="exp__head">
-            <div>
-              <h3 class="exp__role">{EDUCATION.school}</h3>
-              <p class="exp__degree">{EDUCATION.degree}</p>
-            </div>
-            <span class="exp__period">{EDUCATION.period}</span>
-          </div>
-        </GlassCard>
-      </div>
-    </section>
+  <Stage plates={PLATES} />
+  <RopeHUD />
+  <div class="journey-content">
+    <HomeSections />
   </div>
-
-  <!-- ── Writing / Contact footer (night scene) ────────────────────────── -->
-  <footer class="footer-wrap" id="writing">
-    <Scene
-      scene="night"
-      photo={FOOTER_PHOTO}
-      stars
-      scrim="full"
-      bleed="top"
-      bleedColor="var(--atm-2)"
-      bleedSize="58%"
-      align="start"
-      class="footer-scene"
-    >
-      <div class="footer__inner">
-        <SectionLabel>Writing</SectionLabel>
-        <div class="writing-list">
-          {WRITING.map((w) => (
-            <a
-              class="writing-row"
-              href={w.href}
-              target={w.href.startsWith('http') ? '_blank' : undefined}
-              rel={w.href.startsWith('http') ? 'noopener' : undefined}
-            >
-              <span class="writing-row__title">{w.title}</span>
-              <span class="writing-row__outlet"><Badge tone="info">{w.outlet}</Badge></span>
-              <span class="writing-row__arrow"><Icon name="arrowUpRight" size={18} /></span>
-            </a>
-          ))}
-        </div>
-
-        <div class="contact">
-          <div>
-            <h2 class="contact__title">Let's build something reliable.</h2>
-            <p class="contact__line">{SOCIALS.location} · {SOCIALS.phone}</p>
-          </div>
-          <div class="contact__actions">
-            <IconButton icon="mail" label="Email" href={`mailto:${SOCIALS.email}`} />
-            <IconButton icon="linkedin" label="LinkedIn" href={SOCIALS.linkedin} target="_blank" rel="noopener" />
-            <IconButton icon="medium" label="Medium" href={SOCIALS.medium} target="_blank" rel="noopener" />
-          </div>
-        </div>
-
-        <div class="footer-bar">
-          <span>© 2026 {HERO.name}</span>
-          <a href="#top">↑ Back to top</a>
-        </div>
-      </div>
-    </Scene>
-  </footer>
+  <a class="mode-toggle" href="/flight/" title="Fly the real range — 3D terrain from actual elevation data">
+    <span class="mode-toggle__icon">◮</span> FLIGHT MODE
+  </a>
 </Base>
 
-<script is:inline define:vars={{ scenes: HERO_SCENES.map((s) => s.scene) }}>
-  // Hero cross-fade — advance every 12.5s, 3s opacity fade. Halt + show only the
-  // first frame under prefers-reduced-motion.
-  (function () {
-    const hero = document.getElementById('hero');
-    if (!hero) return;
-    const photos = Array.from(hero.querySelectorAll('.hero__photo'));
-    if (photos.length < 2) return;
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let i = 0;
-    setInterval(function () {
-      photos[i].style.opacity = '0';
-      i = (i + 1) % photos.length;
-      photos[i].style.opacity = '1';
-      hero.setAttribute('data-scene', scenes[i]);
-    }, 12500);
-  })();
-</script>
-
 <style>
-  /* ── Hero ── */
-  .hero {
-    min-height: min(78vh, 620px);
-    display: flex;
-    align-items: flex-end;
-    background: linear-gradient(180deg, var(--atm-0), var(--atm-2));
-  }
-  .hero__photo { transition: opacity 3s var(--ease-out); }
-  .hero__textscrim {
-    position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(180deg,
-      rgba(8,10,20,0.42) 0%, rgba(8,10,20,0) 24%,
-      rgba(8,10,20,0) 48%, rgba(8,10,20,0.34) 78%, rgba(8,10,20,0) 100%);
-  }
-  .hero__feather {
-    position: absolute; left: 0; right: 0; bottom: 0; height: 74%;
-    pointer-events: none; z-index: 0;
-    /* Resolve to twilight blue (--atm-2), matching the night images + mid band. */
-    background: linear-gradient(to bottom,
-      transparent 0%, rgba(22,28,52,0.55) 60%, var(--atm-2) 84%);
-  }
-  .hero__content { width: 100%; }
-  .hero__inner {
-    width: 100%; max-width: var(--maxw-wide); margin: 0 auto;
-    padding: 0 var(--gutter) clamp(40px, 7vw, 80px);
-  }
-  .hero__kicker { margin-bottom: 18px; }
-  .hero__name {
-    font-family: var(--font-serif);
-    font-size: clamp(2.6rem, 6vw, 4.6rem);
-    line-height: 1.04; letter-spacing: -0.025em;
-    color: var(--snow-100);
-    text-shadow: 0 2px 30px rgba(0,0,0,0.35);
-    max-width: 760px;
-  }
-  .hero__tagline {
-    font-family: var(--font-sans);
-    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
-    color: rgba(255,255,255,0.9);
-    max-width: 620px; margin: 18px 0 28px; line-height: 1.5;
-    text-shadow: 0 1px 14px rgba(0,0,0,0.4);
-  }
-  .hero__cta { display: flex; gap: 12px; flex-wrap: wrap; }
-
-  /* ── Mid sections ── */
-  .mid-section { max-width: var(--maxw-wide); margin: 0 auto; padding: 0 var(--gutter); }
-  .work { padding-top: var(--section-y); }
-  .work__head { margin-bottom: 30px; display: flex; flex-direction: column; gap: 14px; }
-  .work__title {
-    font-family: var(--font-serif);
-    font-size: clamp(1.7rem, 3vw, 2.3rem);
-    color: var(--text); margin: 0;
-  }
-  .work__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
-
-  /* About */
-  .about { padding-top: var(--section-y); max-width: var(--maxw); }
-  .about > :global(.section-label) { margin-bottom: 20px; }
-  .about__grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 48px; }
-  .about__para { font-size: 1.1rem; line-height: 1.65; color: var(--text-soft); margin: 0 0 18px; }
-  .about__para--lead { color: var(--text); }
-  .about__para:last-child { margin-bottom: 0; }
-  .about__skills { display: flex; flex-direction: column; gap: 22px; }
-  .about__skill-label {
+  .mode-toggle {
+    position: fixed;
+    right: clamp(14px, 2vw, 30px);
+    bottom: 18px;
+    z-index: 45;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     font-family: var(--font-mono);
-    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--accent); margin-bottom: 10px;
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    color: var(--slate-300);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    padding: 8px 14px;
+    background: rgba(10, 13, 26, 0.4);
+    backdrop-filter: blur(8px);
+    transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
   }
-  .about__chips { display: flex; flex-wrap: wrap; gap: 7px; }
-
-  /* Experience */
-  .experience { padding-top: var(--section-y); padding-bottom: var(--section-y); max-width: var(--maxw); }
-  .exp__title {
-    font-family: var(--font-serif);
-    font-size: clamp(1.7rem, 3vw, 2.3rem);
-    color: var(--text); margin: 14px 0 28px;
-  }
-  .exp__list { display: flex; flex-direction: column; gap: 18px; }
-  .exp__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
-  .exp__role { font-family: var(--font-serif); font-size: 1.2rem; color: var(--text); }
-  .exp__co { color: var(--accent-2); font-weight: var(--w-medium); }
-  .exp__loc { font-size: 0.86rem; color: var(--text-faint); margin-top: 4px; }
-  .exp__degree { font-size: 0.96rem; color: var(--text-soft); margin-top: 6px; }
-  .exp__period {
-    font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-soft);
-    white-space: nowrap; padding-top: 3px;
-  }
-  .exp__bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .exp__bullets li {
-    position: relative; padding-left: 20px; color: var(--text-soft); font-size: 0.96rem; line-height: 1.55;
-  }
-  .exp__bullets li::before {
-    content: ''; position: absolute; left: 0; top: 9px;
-    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
-  }
-
-  /* ── Footer ── */
-  .footer-wrap { background: var(--atm-3); }
-  .footer-scene { padding-top: calc(var(--section-y) + 70px); padding-bottom: 40px; }
-  .footer__inner { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
-  .footer__inner > :global(.section-label) { margin-bottom: 18px; }
-
-  .writing-row {
-    display: flex; align-items: center; gap: 12px; padding: 18px 0;
-    border-top: 1px solid rgba(255,255,255,0.12); text-decoration: none;
-  }
-  .writing-row__title { font-family: var(--font-serif); font-size: 1.3rem; color: var(--snow-100); }
-  .writing-row__arrow { margin-left: auto; color: var(--glow-gold); display: inline-flex; }
-  .writing-row:hover .writing-row__title { color: var(--glow-gold); }
-
-  .contact {
-    margin-top: clamp(48px, 8vw, 96px); padding-bottom: 56px;
-    display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 28px;
-  }
-  .contact__title { font-family: var(--font-serif); font-size: clamp(1.8rem, 3.5vw, 2.8rem); color: var(--snow-100); margin: 0 0 10px; line-height: 1.1; }
-  .contact__line { color: rgba(255,255,255,0.78); margin: 0; }
-  .contact__actions { display: flex; gap: 10px; }
-
-  .footer-bar {
-    border-top: 1px solid rgba(255,255,255,0.1); padding: 20px 0 8px;
-    display: flex; justify-content: space-between;
-    font-family: var(--font-mono); font-size: 0.72rem; color: var(--slate-400);
-  }
-  .footer-bar a { color: var(--slate-300); }
-
-  /* ── Responsive ── */
-  @media (max-width: 760px) {
-    .work__grid { grid-template-columns: 1fr; }
-    .about__grid { grid-template-columns: 1fr; gap: 30px; }
-    .exp__head { flex-direction: column; gap: 6px; }
-  }
+  .mode-toggle:hover { color: var(--glow-gold); border-color: var(--glow-gold); }
+  .mode-toggle__icon { color: var(--glow-gold); font-size: 0.75rem; }
+  @media (max-width: 900px) { .mode-toggle { display: none; } }
 </style>

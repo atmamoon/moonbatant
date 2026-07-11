@@ -1,0 +1,16 @@
+{
+  "z": 10,
+  "x0": 749,
+  "x1": 764,
+  "y0": 425,
+  "y1": 431,
+  "width": 2048,
+  "height": 896,
+  "hMin": 0,
+  "hMax": 8706,
+  "exaggeration": 1.5,
+  "metersPerPixel": 269.45686755942023,
+  "extentKmX": 551.8476647616926,
+  "extentKmY": 241.43335333324052,
+  "attribution": "Sentinel-2 cloudless by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016) · Elevation: Mapzen terrain tiles (SRTM)"
+}

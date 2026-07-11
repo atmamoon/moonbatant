@@ -6,7 +6,11 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
-  scroll-behavior: smooth;
+  /* NOTE: no `scroll-behavior: smooth` — a scroll-linked page that writes to
+     the DOM every frame (altimeter, HUD) cancels Chromium's native smooth
+     scroll animation on its first tick, freezing ALL programmatic scrolls.
+     journey.ts provides its own cancellation-proof eased scrolling for
+     anchor links instead. */
   scroll-padding-top: 90px;
   -webkit-text-size-adjust: 100%;
 }

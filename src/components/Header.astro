@@ -101,6 +101,17 @@ const nav = [
 
 <script is:inline>
   (function () {
+    // frost the header once content scrolls underneath it — on EVERY page
+    // (rAF-throttled; the setTimeout fallback covers render-suspended contexts)
+    const bar = document.querySelector('.kit-header-bar');
+    if (bar) {
+      let queued = false;
+      const apply = () => { queued = false; bar.classList.toggle('scrolled', window.scrollY > 40); };
+      window.addEventListener('scroll', () => {
+        if (!queued) { queued = true; requestAnimationFrame(apply); setTimeout(apply, 120); }
+      }, { passive: true });
+      apply();
+    }
     const btn = document.getElementById('menu-btn');
     const mobileNav = document.getElementById('mobile-nav');
     if (!btn || !mobileNav) return;

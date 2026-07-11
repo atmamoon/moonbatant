@@ -1,21 +1,20 @@
+
 # build output
-dist/
-.output/
-
 # dependencies
-node_modules/
-
-# generated types
-.astro/
-
+# design handoff bundle (reference only — not site source)
 # env
+# generated types
+# macOS / editor
+*.log
+.DS_Store
+.astro/
 .env
 .env.production
-
-# macOS / editor
-.DS_Store
-*.log
+.output/
 .vscode/
-
-# design handoff bundle (reference only — not site source)
 design_handoff_portfolio/
+dist/
+node_modules/
+scratch_qa/
+scratch_sat/
+scripts/.tile-cache/

@@ -39,8 +39,8 @@ export const HERO = {
   role: 'AI Product Manager',
   tagline:
     'I build AI-native products end to end — running a PLG self-serve product and an enterprise B2B agentic product in parallel, owning 0-to-1 discovery, agent design, and eval-driven reliability.',
-  // Short punchy line above the name
-  kicker: '4+ years building AI-native products',
+  // Short punchy line above the name (non-breaking hyphen: no "AI-/native" wrap)
+  kicker: '4+ years building AI‑native products',
 };
 
 // ── Hero rotation ───────────────────────────────────────────────────────

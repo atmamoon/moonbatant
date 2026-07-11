@@ -1,0 +1,393 @@
+---
+// HomeSections — the five expedition sections (Lukla → Summit), shared by the
+// V1 Living Expedition (/) and the V2 Range Flythrough (/flight). Both stages
+// float this same content; only the world behind it differs.
+import { getCollection } from 'astro:content';
+import {
+  HERO,
+  ABOUT,
+  EXPERIENCE,
+  EDUCATION,
+  SKILLS,
+  SOCIALS,
+  WRITING,
+} from '../consts';
+import SectionLabel from './SectionLabel.astro';
+import Button from './Button.astro';
+import IconButton from './IconButton.astro';
+import GlassCard from './GlassCard.astro';
+import ProjectCard from './ProjectCard.astro';
+import Chip from './Chip.astro';
+import Badge from './Badge.astro';
+import Icon from './Icon.astro';
+
+const featured = (await getCollection('work'))
+  .filter((s) => !s.data.draft && s.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+const lastIdx = featured.length - 1;
+const bio = ABOUT.split('\n\n');
+---
+<!-- ── LUKLA · 2,860 M — the flight in ─────────────────────────────── -->
+    <section
+      class="hero"
+      id="hero"
+      data-journey-section
+      data-camp="OVERVIEW"
+      data-elevation="2860"
+    >
+      <div class="hero__textscrim"></div>
+      <div class="hero__content">
+        <div class="hero__inner">
+          <SectionLabel class="hero__kicker">{HERO.kicker}</SectionLabel>
+          <h1 class="hero__name">{HERO.name}</h1>
+          <p class="hero__tagline">{HERO.tagline}</p>
+          <p class="hero__weather" id="hero-weather">KHUMBU HIMAL · 27.99°N 86.93°E</p>
+          <div class="hero__cta">
+            <Button variant="primary" href="#work" iconRight="arrow">See selected work</Button>
+            <Button variant="secondary" href="/resume.pdf" target="_blank" rel="noopener" iconLeft="download">Résumé</Button>
+          </div>
+        </div>
+      </div>
+      <div class="hero__hint" aria-hidden="true">
+        <span class="hero__hint-line"></span>
+        <span class="hero__hint-text">BEGIN ASCENT</span>
+      </div>
+    </section>
+
+    <!-- ── BASE CAMP · 5,364 M — Selected Work ─────────────────────────── -->
+    <section
+      id="work"
+      class="mid-section work"
+      data-journey-section
+      data-camp="SELECTED WORK"
+      data-elevation="5364"
+    >
+      <div class="work__head">
+        <SectionLabel>Base Camp — Selected work</SectionLabel>
+        <h2 class="kit-on-photo work__title">Products &amp; agents I've shipped.</h2>
+      </div>
+      <div class="work__grid">
+        {featured.map((s, i) => (
+          <ProjectCard
+            href={`/work/${s.slug}`}
+            company={s.data.company}
+            timeline={s.data.timeline}
+            title={s.data.title}
+            summary={s.data.summary}
+            metrics={s.data.metrics}
+            featured={s.data.featured}
+            large={i === 0 || i === lastIdx}
+          />
+        ))}
+      </div>
+    </section>
+
+    <!-- ── CAMP II · 6,400 M — About ────────────────────────────────────── -->
+    <section
+      id="about"
+      class="mid-section about"
+      data-journey-section
+      data-camp="ABOUT"
+      data-elevation="6400"
+    >
+      <SectionLabel>Camp II — About</SectionLabel>
+      <GlassCard padding="clamp(24px, 4vw, 44px)" class="about__card">
+        <div class="about__grid">
+          <div class="about__bio">
+            {bio.map((p, i) => <p class:list={['about__para', i === 0 && 'about__para--lead']}>{p}</p>)}
+          </div>
+          <div class="about__skills">
+            {SKILLS.map((s) => (
+              <div class="about__skill-group">
+                <div class="about__skill-label">{s.group}</div>
+                <div class="about__chips">
+                  {s.items.map((it) => <Chip>{it}</Chip>)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </GlassCard>
+    </section>
+
+    <!-- ── SOUTH COL · 7,906 M — Experience ─────────────────────────────── -->
+    <section
+      id="experience"
+      class="mid-section experience"
+      data-journey-section
+      data-camp="EXPERIENCE"
+      data-elevation="7906"
+    >
+      <SectionLabel>South Col — Experience</SectionLabel>
+      <h2 class="kit-on-photo exp__title">Where I've shipped.</h2>
+      <div class="exp__list">
+        {EXPERIENCE.map((job) => (
+          <GlassCard padding="clamp(22px, 3vw, 30px)" class="exp__card">
+            <div class="exp__head">
+              <div>
+                <h3 class="exp__role">{job.role} <span class="exp__co">· {job.company}</span></h3>
+                <p class="exp__loc">{job.location}</p>
+              </div>
+              <span class="exp__period">{job.period}</span>
+            </div>
+            <ul class="exp__bullets">
+              {job.highlights.map((h) => <li>{h}</li>)}
+            </ul>
+          </GlassCard>
+        ))}
+        <GlassCard padding="clamp(22px, 3vw, 30px)" class="exp__card">
+          <div class="exp__head">
+            <div>
+              <h3 class="exp__role">{EDUCATION.school}</h3>
+              <p class="exp__degree">{EDUCATION.degree}</p>
+            </div>
+            <span class="exp__period">{EDUCATION.period}</span>
+          </div>
+        </GlassCard>
+      </div>
+    </section>
+
+    <!-- ── SUMMIT · 8,849 M — Writing + the register ────────────────────── -->
+    <footer
+      class="footer-wrap"
+      id="writing"
+      data-journey-section
+      data-camp="WRITING &amp; CONTACT"
+      data-elevation="8849"
+    >
+      <div class="footer__inner">
+        <SectionLabel>Summit — Writing</SectionLabel>
+        <div class="writing-list">
+          {WRITING.map((w) => (
+            <a
+              class="writing-row"
+              href={w.href}
+              target={w.href.startsWith('http') ? '_blank' : undefined}
+              rel={w.href.startsWith('http') ? 'noopener' : undefined}
+            >
+              <span class="writing-row__title">{w.title}</span>
+              <span class="writing-row__outlet"><Badge tone="info">{w.outlet}</Badge></span>
+              <span class="writing-row__arrow"><Icon name="arrowUpRight" size={18} /></span>
+            </a>
+          ))}
+        </div>
+
+        <div class="contact register">
+          <div>
+            <p class="register__kicker">YOU MADE IT · 8,849 M</p>
+            <h2 class="contact__title">Sign the summit register.</h2>
+            <p class="contact__line">{SOCIALS.location} · {SOCIALS.phone}</p>
+          </div>
+          <div class="contact__actions">
+            <IconButton icon="mail" label="Email" href={`mailto:${SOCIALS.email}`} />
+            <IconButton icon="linkedin" label="LinkedIn" href={SOCIALS.linkedin} target="_blank" rel="noopener" />
+            <IconButton icon="medium" label="Medium" href={SOCIALS.medium} target="_blank" rel="noopener" />
+          </div>
+        </div>
+
+        <div class="footer-bar">
+          <span>© 2026 {HERO.name}</span>
+          <button class="motion-toggle" onclick="window.mbToggleMotion && window.mbToggleMotion()">
+            MOTION <span class="motion-toggle__state">ON</span>
+          </button>
+          <a href="#top">↑ Back to top</a>
+        </div>
+      </div>
+    </footer>
+
+<style>
+  /* ── Hero — text floats over the living plate ── */
+  .hero {
+    min-height: min(92vh, 860px);
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+  }
+  .hero__textscrim {
+    position: absolute; inset: 0; pointer-events: none;
+    /* fades back out before the section edge — a scrim that ends dark AT the
+       boundary paints a razor line across the plate crossfade below it */
+    background: linear-gradient(180deg,
+      rgba(8,10,20,0.4) 0%, rgba(8,10,20,0) 26%,
+      rgba(8,10,20,0) 46%, rgba(8,10,20,0.5) 74%, rgba(8,10,20,0.42) 88%, rgba(8,10,20,0) 100%);
+  }
+  .hero__content { width: 100%; position: relative; }
+  .hero__inner {
+    width: 100%; max-width: var(--maxw-wide); margin: 0 auto;
+    padding: 0 var(--gutter) clamp(64px, 9vw, 110px);
+  }
+  .hero__kicker { margin-bottom: 18px; }
+  .hero__name {
+    font-family: var(--font-serif);
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1.04; letter-spacing: -0.025em;
+    color: var(--snow-100);
+    text-shadow: 0 2px 30px rgba(0,0,0,0.45);
+    max-width: 760px;
+  }
+  .hero__tagline {
+    font-family: var(--font-sans);
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    color: rgba(255,255,255,0.92);
+    max-width: 620px; margin: 18px 0 14px; line-height: 1.5;
+    text-shadow: 0 1px 14px rgba(0,0,0,0.5);
+  }
+  .hero__weather {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.62);
+    margin: 0 0 26px;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.6);
+    transition: color 0.8s var(--ease);
+  }
+  .hero__weather.is-live { color: var(--glow-gold); }
+  .hero__weather.is-live::before {
+    content: '●';
+    font-size: 0.5rem;
+    margin-right: 8px;
+    color: var(--ok);
+    animation: wx-pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes wx-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  .hero__cta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .hero__hint {
+    position: absolute; right: clamp(18px, 3vw, 44px); bottom: 26px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    pointer-events: none;
+  }
+  .hero__hint-line {
+    width: 1px; height: 46px;
+    background: linear-gradient(180deg, transparent, rgba(255,255,255,0.55));
+    animation: hint-drop 2.8s var(--ease) infinite;
+  }
+  .hero__hint-text {
+    font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.22em;
+    color: rgba(255,255,255,0.5);
+    writing-mode: vertical-rl;
+  }
+  @keyframes hint-drop {
+    0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+    40% { transform: scaleY(1); opacity: 1; }
+    100% { transform: scaleY(1); transform-origin: top; opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__hint-line, .hero__weather.is-live::before { animation: none; }
+  }
+
+  /* ── Mid sections — transparent, floating over the stage ── */
+  .mid-section { max-width: var(--maxw-wide); margin: 0 auto; padding: 0 var(--gutter); }
+  .work { padding-top: var(--section-y); }
+  .work__head { margin-bottom: 30px; display: flex; flex-direction: column; gap: 14px; }
+  .work__title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    color: var(--text); margin: 0;
+  }
+  .work__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+
+  .about { padding-top: var(--section-y); max-width: var(--maxw); }
+  .about > :global(.section-label) { margin-bottom: 20px; }
+  .about__grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 48px; }
+  .about__para { font-size: 1.1rem; line-height: 1.65; color: var(--text-soft); margin: 0 0 18px; }
+  .about__para--lead { color: var(--text); }
+  .about__para:last-child { margin-bottom: 0; }
+  .about__skills { display: flex; flex-direction: column; gap: 22px; }
+  .about__skill-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .about__chips { display: flex; flex-wrap: wrap; gap: 7px; }
+
+  .experience { padding-top: var(--section-y); padding-bottom: var(--section-y); max-width: var(--maxw); }
+  .exp__title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    color: var(--text); margin: 14px 0 28px;
+  }
+  .exp__list { display: flex; flex-direction: column; gap: 18px; }
+  .exp__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
+  .exp__role { font-family: var(--font-serif); font-size: 1.2rem; color: var(--text); }
+  .exp__co { color: var(--accent-2); font-weight: var(--w-medium); }
+  .exp__loc { font-size: 0.86rem; color: var(--text-faint); margin-top: 4px; }
+  .exp__degree { font-size: 0.96rem; color: var(--text-soft); margin-top: 6px; }
+  .exp__period {
+    font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-soft);
+    white-space: nowrap; padding-top: 3px;
+  }
+  .exp__bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .exp__bullets li {
+    position: relative; padding-left: 20px; color: var(--text-soft); font-size: 0.96rem; line-height: 1.55;
+  }
+  .exp__bullets li::before {
+    content: ''; position: absolute; left: 0; top: 9px;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  }
+
+  /* ── Footer — the summit ── */
+  .footer-wrap { position: relative; padding-top: calc(var(--section-y) + 80px); }
+  .footer-wrap::before {
+    /* local vignette for legibility over the star plate; masked so it breathes
+       in over the first quarter instead of starting as a hard edge */
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(130% 90% at 50% 70%, transparent 30%, rgba(3,5,12,0.55) 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 30%);
+  }
+  .footer__inner { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); position: relative; }
+  .footer__inner > :global(.section-label) { margin-bottom: 18px; }
+
+  .writing-row {
+    display: flex; align-items: center; gap: 12px; padding: 18px 0;
+    border-top: 1px solid rgba(255,255,255,0.12); text-decoration: none;
+  }
+  .writing-row__title { font-family: var(--font-serif); font-size: 1.3rem; color: var(--snow-100); }
+  .writing-row__arrow { margin-left: auto; color: var(--glow-gold); display: inline-flex; }
+  .writing-row:hover .writing-row__title { color: var(--glow-gold); }
+
+  .contact {
+    margin-top: clamp(48px, 8vw, 96px); padding-bottom: 56px;
+    display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 28px;
+  }
+  .register__kicker {
+    font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.2em;
+    color: var(--glow-gold); margin: 0 0 12px;
+  }
+  .contact__title { font-family: var(--font-serif); font-size: clamp(1.8rem, 3.5vw, 2.8rem); color: var(--snow-100); margin: 0 0 10px; line-height: 1.1; }
+  .contact__line { color: rgba(255,255,255,0.78); margin: 0; }
+  .contact__actions { display: flex; gap: 10px; }
+
+  .footer-bar {
+    border-top: 1px solid rgba(255,255,255,0.1); padding: 20px 0 26px;
+    display: flex; justify-content: space-between; align-items: center; gap: 14px;
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--slate-400);
+  }
+  .footer-bar a { color: var(--slate-300); }
+  .motion-toggle {
+    background: none; border: 1px solid rgba(255,255,255,0.18); border-radius: 999px;
+    color: var(--slate-300); font-family: var(--font-mono); font-size: 0.62rem;
+    letter-spacing: 0.14em; padding: 6px 14px; cursor: pointer;
+    transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .motion-toggle:hover { border-color: var(--glow-gold); color: var(--glow-gold); }
+  .motion-toggle__state { color: var(--glow-gold); }
+
+  /* ── Responsive ── */
+  @media (max-width: 760px) {
+    .work__grid { grid-template-columns: 1fr; }
+    .about__grid { grid-template-columns: 1fr; gap: 30px; }
+    .exp__head { flex-direction: column; gap: 6px; }
+    .hero__hint { display: none; }
+  }
+  @media (max-width: 480px) {
+    .footer-bar {
+      flex-wrap: wrap;
+      justify-content: center;
+      row-gap: 12px;
+      font-size: 0.66rem;
+    }
+    .footer-bar > :global(*), .motion-toggle { white-space: nowrap; }
+  }
+</style>

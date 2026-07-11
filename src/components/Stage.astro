@@ -1,0 +1,52 @@
+---
+// Stage — the fixed Himalayan world behind the whole page. Scroll traverses it.
+// Layers back→front: sky (living --atm ramp) → vista plates (photo/video,
+// crossfaded per section) → fog drift ×2 → cloud shadows → alpenglow grade →
+// FX canvas (spindrift/stars/choughs/flags) → grain.
+// journey.ts drives plate opacity/parallax, sky colors, HUD, weather, canvas.
+export interface Plate {
+  id: string;
+  photo: string;            // poster / static image (also the reduced-motion frame)
+  focal?: string;
+  dim?: number;             // 0–1 dark veil for bright plates behind reading sections
+  video?: { av1: string; h264: string; rate?: number };  // optional living plate (rate = playback speed)
+}
+interface Props {
+  plates: Plate[];
+}
+const { plates } = Astro.props;
+---
+<div class="stage" id="stage" aria-hidden="true">
+  <div class="stage__sky stage__sky--twilight" id="sky-twilight"></div>
+  <div class="stage__sky stage__sky--night" id="sky-night"></div>
+  {plates.map((p, i) => (
+    <div
+      class="stage__plate"
+      data-plate={i}
+      data-video-av1={p.video?.av1}
+      data-video-h264={p.video?.h264}
+      data-video-rate={p.video?.rate}
+      style={`--focal:${p.focal ?? 'center'};--dim:${p.dim ?? 0}`}
+    >
+      <img
+        src={p.photo}
+        alt=""
+        loading={i === 0 ? 'eager' : 'lazy'}
+        fetchpriority={i === 0 ? 'high' : 'auto'}
+        decoding="async"
+      />
+    </div>
+  ))}
+  <div class="stage__fog"></div>
+  <div class="stage__fog stage__fog--b"></div>
+  <div class="stage__cloudshadow"></div>
+  <div class="stage__grade"></div>
+  <div class="stage__grade--cool" id="grade-cool"></div>
+  <canvas class="stage__fx" id="stage-fx"></canvas>
+  <div class="stage__grain"></div>
+</div>
+
+<script>
+  import { initJourney } from '../scripts/journey';
+  initJourney();
+</script>

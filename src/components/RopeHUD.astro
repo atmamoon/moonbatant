@@ -1,0 +1,102 @@
+---
+// RopeHUD — the fixed climbing rope + live altimeter. Scroll progress rendered
+// as a surveyed route: knots are camps (sections); the readout interpolates
+// real elevations between them. Desktop only; knots double as a TOC.
+// journey.ts owns the live values; this renders the chrome.
+---
+<nav class="rope" id="rope-hud" aria-label="Expedition route">
+  <svg class="rope__line" width="18" height="100%" preserveAspectRatio="none" aria-hidden="true">
+    <line x1="9" y1="0" x2="9" y2="100%" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" />
+    <line id="rope-progress" x1="9" y1="0" x2="9" y2="100%" stroke="rgba(245,185,113,0.65)" stroke-width="1.5" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" />
+  </svg>
+  <div class="rope__knots" id="rope-knots"></div>
+  <div class="rope__alt" id="rope-alt">
+    <span class="rope__alt-arrow" aria-hidden="true">▲</span>
+    <span class="rope__alt-value" id="alt-value">2,860</span>
+    <span class="rope__alt-unit">M</span>
+    <span class="rope__alt-camp" id="alt-camp">LUKLA</span>
+  </div>
+</nav>
+
+<style>
+  .rope {
+    position: fixed;
+    left: clamp(10px, 1.6vw, 26px);
+    top: 96px;
+    bottom: 110px;
+    z-index: 40;
+    width: 18px;
+    display: none;
+  }
+  @media (min-width: 1100px) {
+    .rope { display: block; }
+  }
+  .rope__line { position: absolute; inset: 0; height: 100%; }
+  #rope-progress { transition: stroke-dashoffset 0.25s linear; }
+
+  .rope__knots { position: absolute; inset: 0; }
+  .rope__knots :global(a.rope__knot) {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ink-800);
+    border: 1.5px solid rgba(255, 255, 255, 0.38);
+    transition: background 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+    pointer-events: auto;
+  }
+  .rope__knots :global(a.rope__knot::after) {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    color: var(--slate-300);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.25s var(--ease);
+  }
+  .rope__knots :global(a.rope__knot:hover::after),
+  .rope__knots :global(a.rope__knot.active::after) { opacity: 1; }
+  .rope__knots :global(a.rope__knot.active) {
+    background: var(--glow-gold);
+    border-color: var(--glow-gold);
+    box-shadow: 0 0 12px rgba(245, 185, 113, 0.6);
+  }
+  .rope__knots :global(a.rope__knot.passed) { background: rgba(245, 185, 113, 0.45); border-color: rgba(245,185,113,0.45); }
+
+  .rope__alt {
+    position: absolute;
+    left: -4px;
+    bottom: -74px;
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    font-family: var(--font-mono);
+    color: var(--slate-300);
+    white-space: nowrap;
+  }
+  .rope__alt-arrow { color: var(--glow-gold); font-size: 0.55rem; }
+  .rope__alt-value {
+    font-size: 0.95rem;
+    color: var(--snow-100);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+  }
+  .rope__alt-unit { font-size: 0.6rem; letter-spacing: 0.12em; }
+  .rope__alt-camp {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 14px;
+    margin-top: 2px;
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    color: var(--glow-gold);
+  }
+</style>
