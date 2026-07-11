@@ -199,6 +199,16 @@ export function initJourney() {
       root.style.setProperty('--fog-boost', fogBoost.toFixed(3));
     }
 
+    // the hero scrim only exists to protect hero text — dissolve it as the
+    // reader climbs out, so it never floats over the next vista as a dark band
+    if (camps[0]) {
+      const scrim = document.querySelector<HTMLElement>('.hero__textscrim');
+      if (scrim) {
+        const op = (1 - clamp(s / Math.max(1, camps[0].height * 0.7), 0, 1)).toFixed(2);
+        if (scrim.style.opacity !== op) scrim.style.opacity = op;
+      }
+    }
+
     const still = motionOff();
     const heartbeatMode = now - lastFrameTs > 400; // rAF asleep → converge faster
     settling = false;

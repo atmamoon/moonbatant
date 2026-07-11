@@ -205,11 +205,15 @@ const bio = ABOUT.split('\n\n');
   }
   .hero__textscrim {
     position: absolute; inset: 0; pointer-events: none;
-    /* fades back out before the section edge — a scrim that ends dark AT the
-       boundary paints a razor line across the plate crossfade below it */
+    /* Many gentle stops ≈ an eased curve — abrupt slope changes read as
+       phantom "lines" (mach bands) over bright plates. journey.ts also
+       dissolves this whole layer as you climb out of the hero, so it can
+       never hang over the next vista as a floating dark stripe. */
     background: linear-gradient(180deg,
-      rgba(8,10,20,0.4) 0%, rgba(8,10,20,0) 26%,
-      rgba(8,10,20,0) 46%, rgba(8,10,20,0.5) 74%, rgba(8,10,20,0.42) 88%, rgba(8,10,20,0) 100%);
+      rgba(8,10,20,0.4) 0%, rgba(8,10,20,0.12) 16%, rgba(8,10,20,0) 30%,
+      rgba(8,10,20,0) 44%, rgba(8,10,20,0.07) 55%, rgba(8,10,20,0.2) 65%,
+      rgba(8,10,20,0.34) 75%, rgba(8,10,20,0.38) 83%, rgba(8,10,20,0.24) 92%,
+      rgba(8,10,20,0) 100%);
   }
   .hero__content { width: 100%; position: relative; }
   .hero__inner {
