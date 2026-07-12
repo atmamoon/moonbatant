@@ -31,8 +31,10 @@ const shown = metrics.slice(0, large ? 3 : 2);
   </div>
 </GlassCard>
 <style>
-  .pc { grid-column: span 1; min-height: 230px; display: flex; flex-direction: column; }
-  .pc--lg { grid-column: span 2; min-height: 250px; }
+  /* .glass.pc — two classes so the column layout reliably beats the .glass
+     base display:block regardless of stylesheet emission order */
+  :global(.glass).pc { grid-column: span 1; min-height: 230px; display: flex; flex-direction: column; position: relative; }
+  :global(.glass).pc--lg { grid-column: span 2; min-height: 250px; }
   .pc__top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
   .pc__meta {
     font-family: var(--font-mono);
@@ -57,10 +59,14 @@ const shown = metrics.slice(0, large ? 3 : 2);
     flex: 1;
     max-width: 600px;
   }
-  .pc__foot { display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-top: 22px; }
-  .pc--lg .pc__foot { gap: 34px; }
+  .pc__foot { display: flex; align-items: flex-end; gap: 24px; row-gap: 14px; flex-wrap: wrap; margin-top: 22px; padding-right: 74px; }
+  .pc--lg .pc__foot { gap: 34px; row-gap: 14px; }
   .pc__read {
-    margin-left: auto;
+    /* pinned to the card's bottom-right corner — identical in every card,
+       immune to metric wrapping and content height */
+    position: absolute;
+    right: 26px;
+    bottom: 22px;
     display: inline-flex;
     align-items: center;
     gap: 7px;
@@ -68,6 +74,7 @@ const shown = metrics.slice(0, large ? 3 : 2);
     font-weight: var(--w-semibold);
     color: var(--accent);
   }
+  .pc--lg .pc__read { right: 34px; bottom: 28px; }
   @media (max-width: 760px) {
     .pc, .pc--lg { grid-column: span 1 !important; }
   }

@@ -123,8 +123,23 @@ export function initJourney() {
       v.playbackRate = rate;
       v.style.opacity = '0';
       v.style.transition = 'opacity 1.4s ease';
-      v.src = (av1OK && av1 ? av1 : h264 || av1) as string;
-      v.addEventListener('playing', () => { v.style.opacity = '1'; }, { once: true });
+      // The seamless-loop encode blends tail→head across the first 2s of the
+      // file. Mid-loop that blend IS the invisible seam — but STARTING inside
+      // it shows a ghosted double-exposure. A media fragment starts playback
+      // past it (race-proof, unlike seeking in loadedmetadata); posters are
+      // cut from the same clean frame so the handoff matches.
+      v.src = ((av1OK && av1 ? av1 : h264 || av1) as string) + '#t=2.6';
+      // reveal only from a clean frame: if the fragment start lost the race
+      // with play(), silently seek past the blend while still transparent
+      v.addEventListener('playing', () => {
+        if (v.currentTime < 2.4) {
+          const reveal = () => { v.style.opacity = '1'; };
+          v.addEventListener('seeked', reveal, { once: true });
+          try { v.currentTime = 2.6; } catch { reveal(); }
+        } else {
+          v.style.opacity = '1';
+        }
+      }, { once: true });
       plate.appendChild(v);
       mounted.add(plate);
       // Autoplay denied (rare with muted, but possible): keep the poster and
