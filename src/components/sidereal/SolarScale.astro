@@ -16,8 +16,8 @@
 <style is:global>
   .scale { position: fixed; right: clamp(14px, 2vw, 34px); top: 210px; bottom: 96px; z-index: 40; width: 120px; display: none; pointer-events: none; }
   @media (min-width: 1100px) { .scale { display: block; } }
-  @media (min-width: 1100px) and (max-width: 1399px) { .scale__chapter { display: none; } }
-  @media (min-width: 1400px) and (max-width: 1559px) { .wrap { max-width: 1180px; } }
+  /* chapter labels need ~150px of margin: only where the viewport gives it */
+  @media (min-width: 1100px) and (max-width: 1559px) { .scale__chapter { display: none; } }
   .scale__track { position: absolute; top: 0; bottom: 0; right: 0; width: 1px; background: var(--rule); container-type: size; }
   .scale__ticks { position: absolute; inset: 0; }
   .scale__tick { position: absolute; right: 0; width: 6px; height: 1px; background: var(--rule-strong); transform: translateY(-0.5px); }

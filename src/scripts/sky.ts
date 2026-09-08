@@ -294,6 +294,7 @@ export function initSidereal(opts: Opts) {
       arr[i * 6 + 3] = dv.getUint8(o + 6) / 28 - 2; arr[i * 6 + 4] = dv.getUint8(o + 7) / 100 - 0.5; arr[i * 6 + 5] = ((i * 2654435761) >>> 0) / 4294967295;
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, starBuf); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW);
+    redraw();
   }).catch(() => {});
   let nLineVerts = 0; const lineBuf = gl.createBuffer()!;
   fetch('/sidereal/constellations.bin').then((r) => r.arrayBuffer()).then((ab) => {
@@ -301,15 +302,17 @@ export function initSidereal(opts: Opts) {
     const arr = new Float32Array(nLineVerts * 3);
     for (let i = 0; i < nLineVerts; i++) { arr[i * 3] = dv.getInt16(i * 6, true) / 32767; arr[i * 3 + 1] = dv.getInt16(i * 6 + 2, true) / 32767; arr[i * 3 + 2] = dv.getInt16(i * 6 + 4, true) / 32767; }
     gl.bindBuffer(gl.ARRAY_BUFFER, lineBuf); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW);
+    redraw();
   }).catch(() => {});
   let texMW: WebGLTexture | null = null, texRange: WebGLTexture | null = null, texMoon: WebGLTexture | null = null, texFogA: WebGLTexture | null = null, texFogB: WebGLTexture | null = null;
+  let redraw: () => void = () => {};   // set once the loop exists; assets call it when they land
   let rangeW = 3168, rangeH = 1344; let skyline: number[] = []; let peaks: number[] = [];
-  loadTex(gl, '/sidereal/milkyway.webp', { repeat: true, lum: true }).then((t) => (texMW = t)).catch(() => {});
+  loadTex(gl, '/sidereal/milkyway.webp', { repeat: true, lum: true }).then((t) => { texMW = t; redraw(); }).catch(() => {});
   const small = window.innerWidth < 900 || (navigator as any).deviceMemory < 4;
-  loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { alpha: true, mip: false }).then((t) => { texRange = t; root.classList.add('range-ready'); }).catch(() => {});
-  loadTex(gl, '/sidereal/moon.webp', { alpha: true }).then((t) => (texMoon = t)).catch(() => {});
-  loadTex(gl, '/photos/fog-plate-a.webp', { repeat: true, lum: true, mip: false }).then((t) => (texFogA = t)).catch(() => {});
-  loadTex(gl, '/photos/fog-plate-b.webp', { repeat: true, lum: true, mip: false }).then((t) => (texFogB = t)).catch(() => {});
+  loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { alpha: true, mip: false }).then((t) => { texRange = t; root.classList.add('range-ready'); redraw(); }).catch(() => {});
+  loadTex(gl, '/sidereal/moon.webp', { alpha: true }).then((t) => { texMoon = t; redraw(); }).catch(() => {});
+  loadTex(gl, '/photos/fog-plate-a.webp', { repeat: true, lum: true, mip: false }).then((t) => { texFogA = t; redraw(); }).catch(() => {});
+  loadTex(gl, '/photos/fog-plate-b.webp', { repeat: true, lum: true, mip: false }).then((t) => { texFogB = t; redraw(); }).catch(() => {});
   fetch('/sidereal/range.json').then((r) => r.json()).then((j) => {
     rangeW = j.w; rangeH = j.h; skyline = j.skyline;
     // spindrift emitters: local maxima of the skyline (smallest y), spaced
@@ -658,6 +661,7 @@ export function initSidereal(opts: Opts) {
     rafId = requestAnimationFrame(frame);
   }
   const wake = () => { if (!rafId && !document.hidden) { lastNow = performance.now(); rafId = requestAnimationFrame(frame); } };
+  redraw = () => { scrollDirty = true; wake(); };
   // heartbeat for rAF-suspended contexts (occluded windows, embedded panes) — never while hidden
   setInterval(() => {
     if (document.hidden || motionOff()) return;
