@@ -14,8 +14,9 @@
 </nav>
 
 <style is:global>
-  .scale { position: fixed; right: clamp(14px, 2vw, 34px); top: 210px; bottom: 96px; z-index: 40; width: 120px; display: none; pointer-events: none; }
-  @media (min-width: 1100px) { .scale { display: block; } }
+  .scale { position: fixed; right: 40px; top: 210px; bottom: 96px; z-index: 40; width: 120px; display: none; pointer-events: none; }
+  @media (min-width: 1100px) { .scale { display: block; } .wrap { max-width: min(var(--maxw), 100vw - 300px); } }
+  @media (min-width: 1560px) { .wrap { max-width: min(var(--maxw), 100vw - 420px); } }
   /* chapter labels need ~150px of margin: only where the viewport gives it */
   @media (min-width: 1100px) and (max-width: 1559px) { .scale__chapter { display: none; } }
   .scale__track { position: absolute; top: 0; bottom: 0; right: 0; width: 1px; background: var(--rule); container-type: size; }
@@ -23,18 +24,18 @@
   .scale__tick { position: absolute; right: 0; width: 6px; height: 1px; background: var(--rule-strong); transform: translateY(-0.5px); }
   .scale__tick--major { width: 12px; }
   .scale__tick--major::after {
-    content: attr(data-v); position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
-    font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.1em; color: var(--ink-4); white-space: nowrap;
+    content: attr(data-v); position: absolute; left: 100%; margin-left: 8px; top: 50%; transform: translateY(-50%);
+    font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.1em; color: var(--ink-3); white-space: nowrap; text-shadow: var(--instrument-shadow);
   }
   .scale__chapter {
     position: absolute; right: 18px; transform: translateY(calc(-100% - 5px)); pointer-events: auto;
-    font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--ink-2); white-space: nowrap; text-shadow: var(--ink-shadow);
-    padding-right: 30px; transition: color var(--dur) var(--ease);
+    font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-2); white-space: nowrap; text-shadow: var(--instrument-shadow);
+    padding-right: 22px; transition: color var(--dur) var(--ease);
   }
   .scale__chapter::after { content: ''; position: absolute; right: 0; top: 50%; width: 22px; height: 1px; background: var(--rule-strong); }
   .scale__chapter:hover { color: var(--venus); }
   .scale__marker { position: absolute; left: 0; top: 0; width: 1px; height: 0; transition: transform 0.25s linear; }
   .scale__marker-line { position: absolute; right: -14px; top: 0; width: 28px; height: 1px; background: var(--alpenglow); box-shadow: 0 0 10px rgba(255, 178, 122, 0.6); transform: translateY(-0.5px); }
-  .scale__cap { position: absolute; right: -6px; bottom: -22px; transform-origin: right bottom; font-family: var(--font-mono); font-size: 0.52rem; letter-spacing: 0.2em; color: var(--ink-4); white-space: nowrap; }
+  .scale__cap { position: absolute; right: -6px; bottom: -24px; transform: none; font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.18em; color: var(--ink-3); white-space: nowrap; text-shadow: var(--instrument-shadow); }
 </style>

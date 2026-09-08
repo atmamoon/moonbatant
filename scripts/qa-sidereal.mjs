@@ -23,9 +23,14 @@ async function run(viewport, tag) {
   await new Promise((r) => setTimeout(r, 3500));
   const noToolbar = () => page.evaluate(() => document.querySelector('astro-dev-toolbar')?.remove());
   await noToolbar();
+  const idleA = await page.evaluate(() => window.__sidereal?.idle ?? null);
+  await new Promise((r) => setTimeout(r, 1200));
+  const idleB = await page.evaluate(() => window.__sidereal?.idle ?? null);
+  const engineAlive = idleA !== null && idleB !== null && idleB - idleA > 0.5;
+  if (!engineAlive) errors.push(`[${tag}] ENGINE NOT ADVANCING: idle ${idleA} → ${idleB}`);
   const layout = await page.evaluate(() => Array.from(document.querySelectorAll('[data-chapter]')).map((el) => ({ id: el.id, top: Math.round(el.getBoundingClientRect().top + scrollY), h: Math.round(el.getBoundingClientRect().height) })).concat([{ id: 'doc', top: 0, h: document.body.scrollHeight }, { id: 'mf-rows', top: 0, h: Array.from(document.querySelectorAll('.mf__row')).map((r) => Math.round(r.getBoundingClientRect().height)).join('/') }]));
   const stops = ['hero', 'work', 'about', 'experience', 'education', 'writing', 'contact'];
-  const report0 = [{ layout }];
+  const report0 = [{ layout, engineAlive }];
   const report = report0;
   for (const id of stops) {
     if (ONLY && !ONLY.split(',').includes(id)) continue;

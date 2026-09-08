@@ -37,7 +37,8 @@ the clock; a vertical *solar scale* on the right edge shows the sun sinking.
 | 06 | Writing | −18° | Night | Milky Way at full strength; constellation figures as 8% hairlines | Rows, narrowed to 960px |
 | 07 | Contact | −22° | Moonrise | The moon breaks the highest summit's ridge and climbs; the sky wheels at 1× while you read | One sentence, centred, the whole sky |
 
-Chapter slates: each header carries its own burn-in (`17:37 NPT · Sun −1° · Sunset`).
+Chapter slates: each header carries its own burn-in (`17:37 NPT · Sun −1° · Sunset`),
+derived from the same `phaseOf()` the HUD uses, so the instruments never disagree.
 The fixed time-card lives in the title-safe band under the wordmark (header, top-left);
 the solar scale sits on the right edge, with chapter labels only when there is room
 (≥ 1400px). Outgoing chapters fade to zero under the header band (opacity only).
@@ -69,12 +70,15 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    its base on the way up — the Ridgemoon mark, realised in the world. On reading
    pages it hangs at 13° in the right margin and drifts at the real rate.
 5. **The range** — one real-looking plate of a Himalayan range at golden hour,
-   sky keyed out (`public/sidereal/range.webp`, RGBA). Relit *in the shader* by
+   sky keyed out (`public/sidereal/range.webp`, RGBA, padded to a power-of-two
+   canvas so it mipmaps; `range.json` carries the sub-rect and the skyline). Relit *in the shader* by
    the same sun altitude: warm highlight lift at golden hour, rose alpenglow at
    sunset, desaturated silver-blue at night, with the shadow side always cool.
-6. **Atmosphere** — two cloud/fog strips drifting at prime-number periods
-   (transform only), spindrift blowing off the skyline profile, an occasional
-   satellite crossing, a rare meteor after dark.
+6. **Atmosphere** — two cloud strips drifting at prime periods (a strip crosses in
+   about a minute), a cloud's shadow sweeping the range while there is sun to cast
+   it, spindrift puffs blowing off the summits of the skyline profile, an occasional
+   satellite crossing, a rare meteor after dark. Measured: 1.5–3.8% of pixels
+   change over any three seconds — slow, but alive.
 
 Performance contract: DPR ≤ 1.5, ~8 draw calls per frame (the moon is a small
 quad, masks upload as LUMINANCE_ALPHA, uniform locations are cached), zero DOM
@@ -119,7 +123,10 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
 - 12-column grid, max 1280px, gutter `clamp(20px, 5vw, 48px)`.
 - Text is **left-weighted** (columns 1–7). The right side is kept open — that is
   where the peaks stand and where the moon rises.
-- Reading measure 34em (≈ 72 characters of Newsreader; `ch` overstates a serif). Section spacing `clamp(140px, 22vh, 260px)` — each
+- Reading measure 34em (≈ 72 characters of Newsreader; `ch` overstates a serif).
+- The solar scale reserves its rail: content narrows to `100vw − 300px` from 1100px and
+  `100vw − 420px` from 1560px (where the chapter labels appear).
+- Contact carries the one primary action of the page: the address itself as a solid slate. Section spacing `clamp(140px, 22vh, 260px)` — each
   chapter must feel like time passing.
 - Manifest rows (case studies): `index · title · meta` left, `metrics` right,
   full-row link, hairline above; hover reveals a sweep and a right arrow.

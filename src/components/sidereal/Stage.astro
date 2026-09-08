@@ -9,7 +9,6 @@ const { mode = 'clock' } = Astro.props;
   <div class="stage__poster"></div>
   <canvas id="sky" class="stage__sky"></canvas>
   <div class="stage__grad"></div>
-  <div class="stage__grain"></div>
 </div>
 
 <script>
@@ -46,12 +45,9 @@ const { mode = 'clock' } = Astro.props;
   html[data-phase='night'] .stage__grad { opacity: 0.4; }
   /* a second grad, left-weighted: strongest where the text column lives, only while the sky is bright */
   .stage__grad::after { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease;
-    background: linear-gradient(100deg, rgba(6, 8, 20, 0.58) 0%, rgba(6, 8, 20, 0.36) 42%, rgba(6, 8, 20, 0) 68%); }
+    background: linear-gradient(100deg, rgba(6, 8, 20, 0.72) 0%, rgba(6, 8, 20, 0.5) 46%, rgba(6, 8, 20, 0.12) 82%, rgba(6, 8, 20, 0.12) 100%); }
   html[data-phase='golden'] .stage__grad, html[data-phase='golden'] .stage__grad::after { opacity: 1; }
   html[data-phase='golden'] .stage__grad { background: none; }
   html[data-phase='sunset'] .stage__grad::after, html[data-phase='civil'] .stage__grad::after { opacity: 0.85; }
-  .stage__grain {
-    position: absolute; inset: 0; opacity: 0.045; mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
+
 </style>

@@ -141,13 +141,13 @@ void main(){
 const FS_RANGE = `
 precision highp float;
 varying vec2 vUv;
-uniform sampler2D uTex; uniform vec4 uMap;
+uniform sampler2D uTex; uniform vec4 uMap; uniform vec2 uSub;
 uniform float uExposure, uSat, uHiMix, uLift, uContrast, uMoonLift;
 uniform vec3 uTint, uHiTint;
 void main(){
   vec2 uv = vUv * uMap.xy + uMap.zw;
   if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) { gl_FragColor = vec4(0.0); return; }
-  vec4 c = texture2D(uTex, vec2(uv.x, 1.0 - uv.y));
+  vec4 c = texture2D(uTex, vec2(uv.x * uSub.x, (1.0 - uv.y) * uSub.y));   // plate = top-left uSub of a POT texture; row 0 is its top
   float L = dot(c.rgb, vec3(0.299,0.587,0.114));
   vec3 g = mix(vec3(L), c.rgb, uSat);
   float hi = smoothstep(0.48, 0.95, L);
@@ -187,6 +187,15 @@ void main(){
   gl_FragColor = vec4(uTint*a, a);
 }`;
 
+const FS_SHADOW = `
+precision mediump float;
+varying vec2 vUv;
+uniform vec2 uC; uniform vec2 uR; uniform float uA;
+void main(){
+  vec2 d = (vUv - uC) / uR; float f = exp(-dot(d,d)*1.6);
+  gl_FragColor = vec4(0.0, 0.0, 0.0, f * uA);
+}`;
+
 const VS_LINES = `
 attribute vec3 aDir;
 uniform mat3 uEqToHor, uHorToCam; uniform vec2 uTan; varying float vA;
@@ -206,7 +215,7 @@ uniform float uDpr; varying float vA;
 void main(){ gl_Position = vec4(aPos, 0.0, 1.0); gl_PointSize = aSize*uDpr; vA = aAlpha; }`;
 const FS_PTS = `
 precision mediump float; varying float vA; uniform vec3 uCol;
-void main(){ vec2 p = gl_PointCoord*2.0-1.0; float a = exp(-dot(p,p)*3.0)*vA; if (a < 0.004) discard; gl_FragColor = vec4(uCol*a, a); }`;
+void main(){ vec2 p = gl_PointCoord*2.0-1.0; float a = exp(-dot(p,p)*2.2)*vA; if (a < 0.003) discard; gl_FragColor = vec4(uCol*a, a); }`;
 
 // ── gl helpers ────────────────────────────────────────────────────────────
 function compile(gl: WebGLRenderingContext, vs: string, fs: string) {
@@ -268,6 +277,7 @@ export function initSidereal(opts: Opts) {
   const pFog = compile(gl, VS_QUAD, FS_FOG);
   const pPts = compile(gl, VS_PTS, FS_PTS);
   const pLines = compile(gl, VS_LINES, FS_LINES);
+  const pShadow = compile(gl, VS_QUAD, FS_SHADOW);
   // locations are immutable after link — look each up once
   const uCache = new Map<WebGLProgram, Record<string, WebGLUniformLocation | null>>();
   const aCache = new Map<WebGLProgram, Record<string, number>>();
@@ -307,14 +317,15 @@ export function initSidereal(opts: Opts) {
   let texMW: WebGLTexture | null = null, texRange: WebGLTexture | null = null, texMoon: WebGLTexture | null = null, texFogA: WebGLTexture | null = null, texFogB: WebGLTexture | null = null;
   let redraw: () => void = () => {};   // set once the loop exists; assets call it when they land
   let rangeW = 3168, rangeH = 1344; let skyline: number[] = []; let peaks: number[] = [];
+  let sub: [number, number] = [1, 1];   // plate / texture size (POT padding)
   loadTex(gl, '/sidereal/milkyway.webp', { repeat: true, lum: true }).then((t) => { texMW = t; redraw(); }).catch(() => {});
   const small = window.innerWidth < 900 || (navigator as any).deviceMemory < 4;
-  loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { alpha: true, mip: false }).then((t) => { texRange = t; root.classList.add('range-ready'); redraw(); }).catch(() => {});
+  loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { alpha: true }).then((t) => { texRange = t; root.classList.add('range-ready'); redraw(); }).catch(() => {});
   loadTex(gl, '/sidereal/moon.webp', { alpha: true }).then((t) => { texMoon = t; redraw(); }).catch(() => {});
   loadTex(gl, '/photos/fog-plate-a.webp', { repeat: true, lum: true, mip: false }).then((t) => { texFogA = t; redraw(); }).catch(() => {});
   loadTex(gl, '/photos/fog-plate-b.webp', { repeat: true, lum: true, mip: false }).then((t) => { texFogB = t; redraw(); }).catch(() => {});
   fetch('/sidereal/range.json').then((r) => r.json()).then((j) => {
-    rangeW = j.w; rangeH = j.h; skyline = j.skyline;
+    rangeW = j.w; rangeH = j.h; skyline = j.skyline; if (j.sub) sub = j.sub;
     // spindrift emitters: local maxima of the skyline (smallest y), spaced
     const cand: number[] = [];
     for (let i = 2; i < skyline.length - 2; i++) if (skyline[i] < skyline[i - 1] && skyline[i] <= skyline[i + 1] && skyline[i] < skyline[i - 2] && skyline[i] <= skyline[i + 2]) cand.push(i);
@@ -323,7 +334,7 @@ export function initSidereal(opts: Opts) {
   }).catch(() => {});
 
   // ── state ──
-  const dbg = { fog: 1, drift: 1 };   // live tuning hooks (window.__sidereal.dbg)
+  const dbg = { fog: 1, drift: 1, shadow: 1 };   // live tuning hooks (window.__sidereal.dbg)
   let W = 1, H = 1, dpr = 1, aspect = 1, tanX = 1, tanY = 1;
   let sunAlt = 6, sunTarget = 6;          // degrees
   let moonUp = 0;                         // 0..1 rise progress
@@ -378,10 +389,10 @@ export function initSidereal(opts: Opts) {
       lastHudAlt = r;
       const s = `${r > 0 ? '+' : r < 0 ? '−' : ''}${Math.abs(r).toFixed(1)}°`;
       if (hudSun) hudSun.textContent = s;
-      if (hudClock) hudClock.textContent = clockOf(alt);
+      if (hudClock) hudClock.textContent = clockOf(r);
       if (marker) marker.style.transform = `translate3d(0, ${((SCALE_TOP - clamp(alt, SCALE_BOT, SCALE_TOP)) / (SCALE_TOP - SCALE_BOT)) * 100}cqh, 0)`;
     }
-    const ph = phaseOf(alt);
+    const ph = phaseOf(r);      // from the rounded value: the chapter slates and the HUD must agree
     if (ph !== lastPhase) { lastPhase = ph; root.dataset.phase = ph; if (hudPhase) hudPhase.textContent = PHASE_LABEL[ph]; }
   }
 
@@ -436,7 +447,7 @@ export function initSidereal(opts: Opts) {
   }
 
   // ── particles: spindrift, satellite, meteor ──
-  const NP = 150;
+  const NP = 260;
   const parts = Array.from({ length: NP }, () => ({ x: 0, y: 0, vx: 0, vy: 0, life: 0, max: 1, size: 1, a: 0 }));
   const ptData = new Float32Array(NP * 4);
   const ptBuf = gl.createBuffer()!;
@@ -460,7 +471,7 @@ export function initSidereal(opts: Opts) {
   function emit(dt: number, strength: number, wind: number) {
     if (!peaks.length || strength <= 0.01) return;
     const m = rangeMap();
-    let n = Math.round(strength * dt * 55);
+    let n = Math.round(strength * dt * 45);
     for (const p of parts) {
       if (n <= 0) break;
       if (p.life > 0) continue;
@@ -468,8 +479,9 @@ export function initSidereal(opts: Opts) {
       const u = col / skyline.length, v = 1 - skyline[col] / rangeH;
       p.x = (u - m.ox) / m.sx * 2 - 1; p.y = (v - m.oy) / m.sy * 2 - 1;
       p.x += (Math.random() - 0.4) * 0.02; p.y += Math.random() * 0.006;
-      p.vx = (0.03 + Math.random() * 0.05) * wind; p.vy = 0.012 + Math.random() * 0.02;
-      p.max = 1.6 + Math.random() * 2.2; p.life = p.max; p.size = 1.2 + Math.random() * 1.6; p.a = (0.12 + Math.random() * 0.2) * strength;
+      // plumes: soft puffs, downwind and slightly up, then settling — blowing snow, not sparks
+      p.vx = (0.03 + Math.random() * 0.06) * wind; p.vy = 0.005 + Math.random() * 0.012;
+      p.max = 1.8 + Math.random() * 2.4; p.life = p.max; p.size = 3 + Math.random() * 5; p.a = (0.035 + Math.random() * 0.06) * strength;
       n--;
     }
   }
@@ -478,7 +490,7 @@ export function initSidereal(opts: Opts) {
     for (const p of parts) {
       if (p.life <= 0) continue;
       p.life -= dt; const u = 1 - p.life / p.max;
-      p.vy -= 0.02 * dt; p.vx += (Math.sin(idleSec * 2.1 + p.x * 9) * 0.01) * dt;
+      p.vy -= 0.008 * dt; p.vx += (Math.sin(idleSec * 2.1 + p.x * 9) * 0.012) * dt; p.size += 1.6 * dt;   // puffs spread a little as they drift
       p.x += (p.vx + wind * 0.008) * dt; p.y += p.vy * dt;
       const fade = Math.sin(u * Math.PI);
       ptData[k++] = p.x; ptData[k++] = p.y; ptData[k++] = p.size; ptData[k++] = p.a * fade;
@@ -494,7 +506,7 @@ export function initSidereal(opts: Opts) {
     const [r0, r1, rt] = keyAt(RANGE, alt);
     const night = smooth(-12, -18, alt);
     // narrow screens: the moon clears the contact block by rising higher
-    const moonAlt = (isClock ? lerp(-6.8, 11, smooth(0, 1, moonUp)) : 13) + idleSec * 0.004 + (aspect < 0.8 ? 6 * smooth(0, 1, moonUp) : 0);
+    const moonAlt = (isClock ? lerp(-6.8, 11, smooth(0, 1, moonUp)) : 1.5) + idleSec * 0.004 + (aspect < 0.8 ? 6 * smooth(0, 1, moonUp) : 0);
     const moonVis = (moonAlt > -6.6 ? 1 : 0) * smooth(-14, -17, alt);
     const moonLight = moonVis * clamp(moonAlt / 10, 0, 1);
     // sidereal time: each degree of sun altitude ≈ 4.6 min ≈ 1.15° of sky; idle at 1×
@@ -563,7 +575,7 @@ export function initSidereal(opts: Opts) {
       const u = col / skyline.length, v = 1 - skyline[col] / rangeH;
       const px = (u - m.ox) / m.sx, py = (v - m.oy) / m.sy - (isClock ? scrollT * 0.03 : 0);   // 0..1 viewport, parallax included
       const rx = moonR, ry = moonR * aspect;
-      const cx = isClock ? (aspect < 0.8 ? 0.72 : clamp(px + rx * 0.15, 0.2, 0.8)) : 0.92, cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
+      const cx = isClock ? (aspect < 0.8 ? 0.72 : clamp(px + rx * 0.15, 0.2, 0.8)) : (aspect < 0.8 ? 0.72 : 0.9), cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(pSprite); bindUnit(pSprite);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texMoon); gl.uniform1i(U(pSprite, 'uTex'), 0);
@@ -585,6 +597,7 @@ export function initSidereal(opts: Opts) {
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texRange); gl.uniform1i(U(pRange, 'uTex'), 0);
       // parallax: the range settles very slightly as the evening passes
       gl.uniform4f(U(pRange, 'uMap'), m.sx, m.sy, m.ox, m.oy + scrollT * 0.03 * (isClock ? 1 : 0));
+      gl.uniform2f(U(pRange, 'uSub'), sub[0], sub[1]);
       const t3 = (n: string, a: V3, b: V3) => { const v = mix3(a, b, rt); gl.uniform3f(U(pRange, n), v[0], v[1], v[2]); };
       gl.uniform1f(U(pRange, 'uExposure'), lerp(r0.exposure, r1.exposure, rt));
       gl.uniform1f(U(pRange, 'uSat'), lerp(r0.sat, r1.sat, rt));
@@ -596,8 +609,21 @@ export function initSidereal(opts: Opts) {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
 
+    const bandBase = 1 / rangeMap().sy;             // plate height in viewport units
+    // a cloud's shadow crossing the range — only while there is sun to cast it
+    const shadowA = 0.34 * smooth(-2.5, 3, alt) * (motionOff() ? 0 : 1) * dbg.shadow;
+    if (shadowA > 0.005) {
+      gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);      // dst *= (1 − a): a shadow, not a fog
+      gl.useProgram(pShadow); bindQuad(pShadow);
+      const cxs = -0.3 + (((idleSec + 70) / 150) % 1) * 1.6;  // crosses left→right in ~2.5 minutes; in frame from the start
+      gl.uniform2f(U(pShadow, 'uC'), cxs, bandBase * 0.42);
+      gl.uniform2f(U(pShadow, 'uR'), 0.26, 0.16 * (W / H) * 0.6);
+      gl.uniform1f(U(pShadow, 'uA'), shadowA);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+
     // cloud strips — drift at prime periods; more present in twilight
-    const fogK = (0.16 + 0.26 * smooth(6, -4, alt) * (1 - smooth(-9, -16, alt)) + 0.08 * night) * (motionOff() ? 0.7 : 1) * dbg.fog;
+    const fogK = (0.26 + 0.30 * smooth(6, -4, alt) * (1 - smooth(-9, -16, alt)) + 0.10 * night) * (motionOff() ? 0.7 : 1) * dbg.fog;
     const hz = mix3(s0.horizon, s1.horizon, st);
     const fogTint: V3 = [lerp(hz[0], 1, 0.35), lerp(hz[1], 1, 0.35), lerp(hz[2], 1, 0.35)];
     const drawFog = (tex: WebGLTexture | null, off: number, a: number, y0: number, y1: number, rep: number) => {
@@ -609,9 +635,8 @@ export function initSidereal(opts: Opts) {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    const bandBase = 1 / rangeMap().sy;             // plate height in viewport units
-    drawFog(texFogA, idleSec / 223, fogK, bandBase * 0.40, bandBase * 0.86, 1.6);
-    drawFog(texFogB, -idleSec / 347, fogK * 0.8, bandBase * 0.52, bandBase * 0.98, 1.1);
+    drawFog(texFogA, idleSec / 64, fogK, bandBase * 0.40, bandBase * 0.86, 1.6);
+    drawFog(texFogB, -idleSec / 101, fogK * 0.8, bandBase * 0.52, bandBase * 0.98, 1.1);
 
     // spindrift + satellite + meteor
     if (!motionOff()) {
@@ -621,7 +646,7 @@ export function initSidereal(opts: Opts) {
       // satellite: a slow point crossing the dark sky
       nextSat -= dt;
       if (!sat.on && nextSat < 0 && alt < -9) { sat = { on: true, x: -1.05, y: 0.2 + Math.random() * 0.6, vx: 0.05 + Math.random() * 0.03, vy: (Math.random() - 0.5) * 0.02, t: 0 }; nextSat = 70 + Math.random() * 90; }
-      if (sat.on) { sat.x += sat.vx * dt; sat.y += sat.vy * dt; if (sat.x > 1.05) sat.on = false; else { ptData[n * 4] = sat.x; ptData[n * 4 + 1] = sat.y; ptData[n * 4 + 2] = 2.2; ptData[n * 4 + 3] = 0.75 * night; n++; } }
+      if (sat.on) { sat.x += sat.vx * dt; sat.y += sat.vy * dt; if (sat.x > 1.05) sat.on = false; else if (n < NP) { ptData[n * 4] = sat.x; ptData[n * 4 + 1] = sat.y; ptData[n * 4 + 2] = 2.2; ptData[n * 4 + 3] = 0.75 * night; n++; } }
       nextMeteor -= dt;
       if (!meteor.on && nextMeteor < 0 && alt < -14) { meteor = { on: true, x: -0.6 + Math.random() * 1.2, y: 0.3 + Math.random() * 0.6, dx: 0.9 + Math.random() * 0.6, dy: -(0.5 + Math.random() * 0.4), t: 0 }; nextMeteor = 60 + Math.random() * 120; }
       if (meteor.on) {
@@ -648,14 +673,14 @@ export function initSidereal(opts: Opts) {
   }
 
   // ── loop ──
-  let rafId = 0, lastNow = performance.now(), lastFrameTs = 0, scrollDirty = true;
+  let rafId = 0, lastNow = performance.now(), lastFrameTs = 0, scrollDirty = true, drawFailed = false;
   function frame(now: number) {
     lastFrameTs = now;
-    const dt = Math.min(0.05, (now - lastNow) / 1000); lastNow = now;
+    const dt = clamp((now - lastNow) / 1000, 0, 0.05); lastNow = now;
     if (!motionOff()) idleSec += dt;
     if (scrollDirty) { readScroll(); scrollDirty = false; }
     sunAlt = motionOff() ? sunTarget : lerp(sunAlt, sunTarget, 1 - Math.pow(0.001, dt)); // ~settles in 1s
-    draw(now, dt);
+    try { draw(now, dt); } catch (e) { if (!drawFailed) { drawFailed = true; console.error('[sidereal] draw failed', e); } }
     // reduced motion: the world is a still — draw it once per change, then sleep
     if (motionOff() && Math.abs(sunAlt - sunTarget) < 0.01) { rafId = 0; return; }
     rafId = requestAnimationFrame(frame);
@@ -701,7 +726,10 @@ export function initSidereal(opts: Opts) {
     const el = id ? document.getElementById(id) : document.body;
     if (!el) return;
     e.preventDefault(); history.pushState(null, '', `#${id}`);
-    scrollToY(id === 'top' || id === '' ? 0 : el.getBoundingClientRect().top + window.scrollY - 72);
+    const headOffset = parseFloat(getComputedStyle(root).getPropertyValue('--head-offset')) || 110;
+    scrollToY(id === 'top' || id === '' ? 0 : el.getBoundingClientRect().top + window.scrollY - headOffset);
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+    el.focus({ preventScroll: true });
   });
   window.addEventListener('wheel', () => cancelAnimationFrame(animScroll), { passive: true });
   window.addEventListener('touchstart', () => cancelAnimationFrame(animScroll), { passive: true });
@@ -736,5 +764,5 @@ export function initSidereal(opts: Opts) {
   window.addEventListener('load', () => { resize(); scrollDirty = true; });
   rafId = requestAnimationFrame(frame);
   // live tuning: window.__sidereal.sun = -12; window.__sidereal.dbg.fog = 3
-  (window as any).__sidereal = { get sun() { return sunAlt; }, set sun(v: number) { sunTarget = v; sunAlt = v; wake(); }, resize, dbg };
+  (window as any).__sidereal = { get sun() { return sunAlt; }, set sun(v: number) { sunTarget = v; sunAlt = v; wake(); }, get idle() { return idleSec; }, get raf() { return rafId; }, get lastFrame() { return lastFrameTs; }, resize, dbg };
 }

@@ -7,7 +7,7 @@
 
 html {
   /* no `scroll-behavior: smooth` — the engine eases anchor scrolls itself */
-  scroll-padding-top: 96px;
+  scroll-padding-top: var(--head-offset, 118px);
   -webkit-text-size-adjust: 100%;
   background: var(--zenith);
 }
@@ -170,7 +170,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   display: flex;
   align-items: baseline;
   gap: 14px;
-  scroll-margin-top: 110px;
+  scroll-margin-top: var(--head-offset, 118px);
 }
 .prose h2::before { content: counter(chapter, decimal-leading-zero); counter-increment: chapter; font-size: 1.5em; font-weight: 300; color: var(--ink-4); }
 .prose { counter-reset: chapter; }
