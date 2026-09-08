@@ -167,7 +167,7 @@ void main(){
   vec2 p = vUv;                              // 0..1 inside the sprite rect
   if (uHalo > 0.5) {
     vec2 q = p*2.0-1.0; float d = length(q);
-    float a = exp(-d*d*3.2) * uAlpha;
+    float a = pow(max(1.0 - d, 0.0), 2.2) * uAlpha;
     gl_FragColor = vec4(uTint*a, a);
   } else {
     vec4 c = texture2D(uTex, vec2(p.x, 1.0-p.y));
@@ -506,7 +506,7 @@ export function initSidereal(opts: Opts) {
     const [r0, r1, rt] = keyAt(RANGE, alt);
     const night = smooth(-12, -18, alt);
     // narrow screens: the moon clears the contact block by rising higher
-    const moonAlt = (isClock ? lerp(-6.8, 11, smooth(0, 1, moonUp)) : 1.5) + idleSec * 0.004 + (aspect < 0.8 ? 6 * smooth(0, 1, moonUp) : 0);
+    const moonAlt = (isClock ? lerp(-6.8, 11, smooth(0, 1, moonUp)) : (W / dpr >= 1560 || aspect < 0.8 ? 13 : 1.5)) + idleSec * 0.004 + (aspect < 0.8 ? 6 * smooth(0, 1, moonUp) : 0);
     const moonVis = (moonAlt > -6.6 ? 1 : 0) * smooth(-14, -17, alt);
     const moonLight = moonVis * clamp(moonAlt / 10, 0, 1);
     // sidereal time: each degree of sun altitude ≈ 4.6 min ≈ 1.15° of sky; idle at 1×
@@ -524,14 +524,14 @@ export function initSidereal(opts: Opts) {
     gl.uniform1f(U(pSky, 'uGlowK'), lerp(s0.glowK, s1.glowK, st));
     gl.uniform1f(U(pSky, 'uBeltK'), lerp(s0.beltK, s1.beltK, st));
     gl.uniform1f(U(pSky, 'uSunAz'), SUN_AZ);
-    gl.uniform1f(U(pSky, 'uMW'), lerp(s0.mw, s1.mw, st) * (1 - moonLight * 0.55) * (texMW ? 1 : 0));
+    gl.uniform1f(U(pSky, 'uMW'), lerp(s0.mw, s1.mw, st) * (1 - moonLight * 0.92) * (texMW ? 1 : 0));
     gl.uniform1f(U(pSky, 'uSeed'), (mwSeed = (mwSeed + 0.37) % 97));
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texMW); gl.uniform1i(U(pSky, 'uMWTex'), 0);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     gl.enable(gl.BLEND);
     // stars — additive
-    const limMag = lerp(s0.limMag, s1.limMag, st) - moonLight * 0.9;
+    const limMag = lerp(s0.limMag, s1.limMag, st) - moonLight * 2.4;   // a full moon takes ~2.4 magnitudes off the naked eye
     if (nStars && limMag > -3) {
       gl.blendFunc(gl.ONE, gl.ONE);
       gl.useProgram(pStars);
@@ -553,7 +553,7 @@ export function initSidereal(opts: Opts) {
     }
 
     // constellation figures — hairlines, only once the sky is fully dark
-    const figA = 0.085 * smooth(-16, -20, alt) * (1 - moonLight * 0.5);
+    const figA = 0.085 * smooth(-16, -20, alt) * (1 - moonLight * 0.88);
     if (nLineVerts && figA > 0.003) {
       gl.blendFunc(gl.ONE, gl.ONE);
       gl.useProgram(pLines);
@@ -580,13 +580,13 @@ export function initSidereal(opts: Opts) {
       gl.useProgram(pSprite); bindUnit(pSprite);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texMoon); gl.uniform1i(U(pSprite, 'uTex'), 0);
       // halo
-      gl.uniform4f(U(pSprite, 'uRect'), cx - rx * 4.5, cy - ry * 4.5, rx * 9, ry * 9);
-      gl.uniform1f(U(pSprite, 'uHalo'), 1); gl.uniform3f(U(pSprite, 'uTint'), 0.55, 0.62, 0.85); gl.uniform1f(U(pSprite, 'uAlpha'), 0.16 * moonVis * night);
+      gl.uniform4f(U(pSprite, 'uRect'), cx - rx * 13, cy - ry * 13, rx * 26, ry * 26);
+      gl.uniform1f(U(pSprite, 'uHalo'), 1); gl.uniform3f(U(pSprite, 'uTint'), 0.55, 0.62, 0.85); gl.uniform1f(U(pSprite, 'uAlpha'), 0.30 * moonVis * night * clamp(moonAlt / 6, 0.2, 1));
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       // disc — warm near the horizon, silver higher up
-      const warm = 1 - clamp(moonAlt / 8, 0, 1);
+      const warm = 1 - clamp(moonAlt / 6, 0, 1);
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx, cy - ry, rx * 2, ry * 2);
-      gl.uniform1f(U(pSprite, 'uHalo'), 0); gl.uniform3f(U(pSprite, 'uTint'), 1.0, lerp(0.98, 0.80, warm), lerp(0.96, 0.62, warm)); gl.uniform1f(U(pSprite, 'uAlpha'), moonVis);
+      gl.uniform1f(U(pSprite, 'uHalo'), 0); gl.uniform3f(U(pSprite, 'uTint'), 1.0, lerp(0.98, 0.86, warm), lerp(0.96, 0.72, warm)); gl.uniform1f(U(pSprite, 'uAlpha'), moonVis);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 

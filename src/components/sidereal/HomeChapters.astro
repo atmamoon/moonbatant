@@ -8,7 +8,7 @@
 import { getCollection } from 'astro:content';
 import { HERO, ABOUT, EXPERIENCE, EDUCATION, SKILLS, SOCIALS, WRITING } from '../../consts';
 import Manifest from './Manifest.astro';
-import { clockOf, sunLabel, phaseOf, PHASE_LABEL } from '../../scripts/twilight';
+import { sunLabel, phaseOf, PHASE_LABEL } from '../../scripts/twilight';
 
 const featured = (await getCollection('work'))
   .filter((s) => !s.data.draft && s.data.featured)
@@ -32,6 +32,17 @@ const phaseName = (alt: number) => { const l = PHASE_LABEL[phaseOf(alt)]; return
       <a class="slate slate--solid" href="#work">See selected work <span aria-hidden="true">↓</span></a>
       <a class="rule-link" href="/resume.pdf" target="_blank" rel="noopener">Résumé <span aria-hidden="true">↗</span></a>
     </div>
+    <ol class="hero__instruments rv" aria-label="Headline results">
+      {featured.map((s, i) => s.data.metrics[0] && (
+        <li>
+          <a href={`/work/${s.slug}`}>
+            <span class="t-label hero__inst-idx">{pad(i + 1)}</span>
+            <span class="t-numeral hero__inst-val">{s.data.metrics[0].value}</span>
+            <span class="hero__inst-cap">{s.data.metrics[0].label}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
   </div>
   <div class="hero__hint" aria-hidden="true">
     <span class="hero__hint-line"></span>
@@ -44,7 +55,7 @@ const phaseName = (alt: number) => { const l = PHASE_LABEL[phaseOf(alt)]; return
   <div class="wrap">
     <header class="ch__head rv">
       <p class="t-label"><span class="ch__idx">02</span> Selected work</p>
-      <span class="ch__time t-label" aria-hidden="true"><span>{clockOf(CH.work)} NPT</span><span class="ch__time-sep"> · </span><span>Sun {sunLabel(CH.work)}</span><span class="ch__time-phase"><span class="ch__time-sep"> · </span>{phaseName(CH.work)}</span></span>
+      <span class="ch__time t-label" aria-hidden="true"><span>Sun {sunLabel(CH.work)}</span><span class="ch__time-phase"><span class="ch__time-sep"> · </span>{phaseName(CH.work)}</span></span>
       <h2 class="ch__title">Products &amp; agents I've shipped.</h2>
     </header>
     <Manifest studies={featured} />
@@ -56,7 +67,7 @@ const phaseName = (alt: number) => { const l = PHASE_LABEL[phaseOf(alt)]; return
   <div class="wrap">
     <header class="ch__head rv">
       <h2 class="t-label"><span class="ch__idx">03</span> About</h2>
-      <span class="ch__time t-label" aria-hidden="true"><span>{clockOf(CH.about)} NPT</span><span class="ch__time-sep"> · </span><span>Sun {sunLabel(CH.about)}</span><span class="ch__time-phase"><span class="ch__time-sep"> · </span>{phaseName(CH.about)}</span></span>
+      <span class="ch__time t-label" aria-hidden="true"><span>Sun {sunLabel(CH.about)}</span><span class="ch__time-phase"><span class="ch__time-sep"> · </span>{phaseName(CH.about)}</span></span>
     </header>
     <div class="about">
       <div class="about__bio rv">
@@ -81,7 +92,7 @@ const phaseName = (alt: number) => { const l = PHASE_LABEL[phaseOf(alt)]; return
   <div class="wrap">
     <header class="ch__head rv">
       <p class="t-label"><span class="ch__idx">04</span> Experience</p>
-      <span class="ch__time t-label" aria-hidden="true"><span>{clockOf(CH.experience)} NPT</span><span class="ch__time-sep"> · </span><span>Sun {sunLabel(CH.experience)}</span><span class="ch__time-phase"><span class="ch__time-sep"> · </span>{phaseName(CH.experience)}</span></span>
+      <span class="ch__time t-label" aria-hidden="true"><span>Sun {sunLabel(CH.experience)}</span><span class="ch__time-phase"><span class="ch__time-sep"> · </span>{phaseName(CH.experience)}</span></span>
       <h2 class="ch__title">Where I've shipped.</h2>
     </header>
     <div class="ledger">
@@ -113,7 +124,7 @@ const phaseName = (alt: number) => { const l = PHASE_LABEL[phaseOf(alt)]; return
   <div class="wrap">
     <header class="ch__head rv">
       <h2 class="t-label"><span class="ch__idx">05</span> Education</h2>
-      <span class="ch__time t-label" aria-hidden="true"><span>{clockOf(CH.education)} NPT</span><span class="ch__time-sep"> · </span><span>Sun {sunLabel(CH.education)}</span><span class="ch__time-phase"><span class="ch__time-sep"> · </span>{phaseName(CH.education)}</span></span>
+      <span class="ch__time t-label" aria-hidden="true"><span>Sun {sunLabel(CH.education)}</span><span class="ch__time-phase"><span class="ch__time-sep"> · </span>{phaseName(CH.education)}</span></span>
       <h2 class="ch__title">{EDUCATION.school}</h2>
     </header>
     <div class="edu rv">
@@ -128,7 +139,7 @@ const phaseName = (alt: number) => { const l = PHASE_LABEL[phaseOf(alt)]; return
   <div class="wrap">
     <header class="ch__head rv">
       <p class="t-label"><span class="ch__idx">06</span> Writing</p>
-      <span class="ch__time t-label" aria-hidden="true"><span>{clockOf(CH.writing)} NPT</span><span class="ch__time-sep"> · </span><span>Sun {sunLabel(CH.writing)}</span><span class="ch__time-phase"><span class="ch__time-sep"> · </span>{phaseName(CH.writing)}</span></span>
+      <span class="ch__time t-label" aria-hidden="true"><span>Sun {sunLabel(CH.writing)}</span><span class="ch__time-phase"><span class="ch__time-sep"> · </span>{phaseName(CH.writing)}</span></span>
       <h2 class="ch__title">Essays &amp; write-ups</h2>
     </header>
     <ul class="wl">
@@ -149,7 +160,7 @@ const phaseName = (alt: number) => { const l = PHASE_LABEL[phaseOf(alt)]; return
 <!-- 07 · MOONRISE — one sentence, the whole sky -->
 <section class="ch ch--final" id="contact" data-chapter data-sun={CH.contact} data-chapter-label="Moonrise">
   <div class="wrap final">
-    <p class="t-label t-label--glow final__label rv">07 · Contact <span class="final__time" aria-hidden="true">· {clockOf(CH.contact)} NPT · Sun {sunLabel(CH.contact)} · {phaseName(CH.contact)} · Moonrise</span></p>
+    <p class="t-label t-label--glow final__label rv">07 · Contact <span class="final__time" aria-hidden="true">· Sun {sunLabel(CH.contact)} · {phaseName(CH.contact)} · Moonrise</span></p>
     <h2 class="final__title rv">Let's build something reliable.</h2>
     <p class="final__line rv">{SOCIALS.location} · <a href={`tel:${SOCIALS.phone.replace(/\s+/g, '')}`}>{SOCIALS.phone}</a></p>
     <div class="final__actions rv">
@@ -172,6 +183,7 @@ const phaseName = (alt: number) => { const l = PHASE_LABEL[phaseOf(alt)]; return
   /* ── chapters ── */
   .ch { position: relative; padding-top: var(--chapter-gap); }
   .ch--short { padding-top: calc(var(--chapter-gap) * 0.55); }
+  #writing { padding-top: calc(var(--chapter-gap) * 0.75); }
   .ch__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 22px 24px; margin-bottom: clamp(28px, 3.4vw, 44px); padding-bottom: 18px; border-bottom: 1px solid var(--rule); }
   .ch__head > .t-label:first-child { grid-column: 1; }
   .ch__time { grid-column: 2; justify-self: end; display: block; white-space: nowrap; color: var(--ink-4); font-variant-numeric: tabular-nums; text-align: right; }
@@ -182,7 +194,17 @@ const phaseName = (alt: number) => { const l = PHASE_LABEL[phaseOf(alt)]; return
 
   /* ── 01 hero: the inscription, two lines, left-weighted; the right two-thirds stay open ── */
   .ch--hero { min-height: 100svh; display: flex; align-items: flex-start; padding-top: 0; }
-  .hero { padding-top: clamp(140px, 21vh, 240px); padding-bottom: 20vh; }
+  .hero { padding-top: clamp(140px, 21vh, 240px); padding-bottom: 20vh; position: relative; }
+  /* the reserved right third carries the proof: one lead result per case, as instruments */
+  .hero__instruments { list-style: none; position: absolute; right: var(--gutter); top: clamp(180px, 27vh, 300px); width: clamp(220px, 19vw, 300px); display: none; }
+  @media (min-width: 1200px) { .hero__instruments { display: grid; } }
+  .hero__instruments li { border-top: 1px solid var(--rule); }
+  .hero__instruments li:last-child { border-bottom: 1px solid var(--rule); }
+  .hero__instruments a { display: grid; grid-template-columns: 28px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 12px; row-gap: 4px; padding: 14px 0; text-shadow: var(--instrument-shadow); transition: color var(--dur) var(--ease); }
+  .hero__instruments a:hover .hero__inst-val { color: var(--venus); }
+  .hero__inst-idx { grid-row: 1 / span 2; color: var(--ink-3); padding-top: 0.5em; }
+  .hero__inst-val { font-size: clamp(1.6rem, 2.2vw, 2.1rem); color: var(--ink); transition: color var(--dur) var(--ease); }
+  .hero__inst-cap { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); line-height: 1.4; }
   .hero__kicker { margin-bottom: clamp(22px, 3vw, 34px); color: var(--alpenglow); }
   .hero__kicker::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--alpenglow); vertical-align: middle; margin-right: 12px; }
   .hero__name { margin: 0 0 22px -0.04em; text-shadow: var(--ink-shadow); max-width: 11ch; }
@@ -196,11 +218,11 @@ const phaseName = (alt: number) => { const l = PHASE_LABEL[phaseOf(alt)]; return
 
   /* ── 03 about: one centred measure; credits beneath ── */
   .ch--centre .ch__head { max-width: 720px; margin-inline: auto; }
-  .about { display: grid; justify-items: center; row-gap: clamp(48px, 7vw, 88px); }
-  .about__bio { max-width: 720px; }   /* px, not ch: `ch` resolves against the wrong size in a serif */
+  .about { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; row-gap: clamp(48px, 7vw, 88px); }
+  .about > * { width: 100%; max-width: 720px; min-width: 0; }   /* px, not ch: `ch` resolves against the wrong size in a serif */
   .about__para { font-family: var(--font-serif); font-size: 1.16rem; line-height: 1.6; color: var(--ink-2); margin: 0 0 1.1em; text-shadow: var(--ink-shadow); }
   .about__para--lead { font-size: clamp(1.32rem, 1.9vw, 1.66rem); line-height: 1.38; color: var(--ink); }
-  .credits { display: grid; width: 100%; max-width: 720px; }
+  .credits { display: grid; }
   .credits__row { display: grid; grid-template-columns: 148px minmax(0, 1fr); column-gap: 24px; padding: 16px 0; border-top: 1px solid var(--rule); align-items: baseline; }
   .credits__row:last-child { border-bottom: 1px solid var(--rule); }
   .credits__group { text-align: right; color: var(--alpenglow); justify-content: flex-end; }
@@ -250,7 +272,8 @@ const phaseName = (alt: number) => { const l = PHASE_LABEL[phaseOf(alt)]; return
   .final__title { font-size: clamp(2.2rem, 4.6vw, 3.8rem); line-height: 1.05; color: var(--ink); text-shadow: var(--ink-shadow); max-width: 14ch; }
   .final__line { font-family: var(--font-display); font-size: var(--text-ui); color: var(--ink-2); }
   .final__actions { display: grid; justify-items: center; gap: 22px; margin-top: 14px; }
-  .final__mail { min-height: 48px; font-size: var(--text-ui); letter-spacing: 0.02em; text-transform: none; font-stretch: 100%; font-weight: 500; }
+  .final__mail { min-height: 48px; font-size: var(--text-ui); letter-spacing: 0.02em; text-transform: none; font-stretch: 100%; font-weight: 500; background: rgba(243, 237, 228, 0.08); border-color: var(--rule-strong); color: var(--ink); }
+  .final__mail:hover { background: var(--ink); color: #0b0f1c; border-color: var(--ink); }
   .final__more { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; }
   .final__more .rule-link { color: var(--ink-2); }
   .colophon { padding-top: 22px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }

@@ -25,12 +25,12 @@
   .scale__tick--major { width: 12px; }
   .scale__tick--major::after {
     content: attr(data-v); position: absolute; left: 100%; margin-left: 8px; top: 50%; transform: translateY(-50%);
-    font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.1em; color: var(--ink-3); white-space: nowrap; text-shadow: var(--instrument-shadow);
+    font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.1em; color: var(--ink); white-space: nowrap; text-shadow: 0 0 3px rgba(5, 7, 15, 1), 0 0 16px rgba(5, 7, 15, 0.88);
   }
   .scale__chapter {
     position: absolute; right: 18px; transform: translateY(calc(-100% - 5px)); pointer-events: auto;
     font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--ink-2); white-space: nowrap; text-shadow: var(--instrument-shadow);
+    color: var(--ink); white-space: nowrap; text-shadow: 0 0 3px rgba(5, 7, 15, 1), 0 0 16px rgba(5, 7, 15, 0.88);
     padding-right: 22px; transition: color var(--dur) var(--ease);
   }
   .scale__chapter::after { content: ''; position: absolute; right: 0; top: 50%; width: 22px; height: 1px; background: var(--rule-strong); }

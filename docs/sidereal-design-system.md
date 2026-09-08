@@ -29,7 +29,7 @@ the clock; a vertical *solar scale* on the right edge shows the sun sinking.
 
 | Chapter | Content | Sun altitude | Phase | What the world does | The frame |
 |---|---|---|---|---|---|
-| 01 | Hero (name, positioning) | +4° | Golden hour | Low amber light rakes the snow; gold horizon, deep-blue zenith | Two-line inscription, left-weighted; the right two-thirds stay open |
+| 01 | Hero (name, positioning) | +4° | Golden hour | Low amber light rakes the snow; gold horizon, deep-blue zenith | Two-line inscription, left-weighted; the right third carries the proof — one lead result per case, as instruments |
 | 02 | Selected work | −1° | Sunset · alpenglow | Only the summits glow rose; the first stars | The manifest: hairline rows, instrument readouts |
 | 03 | About | −5° | Civil twilight | Belt of Venus + earth shadow; stars to mag 2 | The light goes flat: one centred measure, credits beneath |
 | 04 | Experience | −10° | Nautical twilight | Horizon fades; stars to mag 4; snow goes silver-blue | The ledger |
@@ -37,8 +37,9 @@ the clock; a vertical *solar scale* on the right edge shows the sun sinking.
 | 06 | Writing | −18° | Night | Milky Way at full strength; constellation figures as 8% hairlines | Rows, narrowed to 960px |
 | 07 | Contact | −22° | Moonrise | The moon breaks the highest summit's ridge and climbs; the sky wheels at 1× while you read | One sentence, centred, the whole sky |
 
-Chapter slates: each header carries its own burn-in (`17:37 NPT · Sun −1° · Sunset`),
-derived from the same `phaseOf()` the HUD uses, so the instruments never disagree.
+Chapter slates: each header carries its own burn-in (`Sun −1° · Sunset`), derived from
+the same `phaseOf()` the HUD uses, so the instruments never disagree; the time-card is
+the only clock on the page.
 The fixed time-card lives in the title-safe band under the wordmark (header, top-left);
 the solar scale sits on the right edge, with chapter labels only when there is room
 (≥ 1400px). Outgoing chapters fade to zero under the header band (opacity only).
@@ -67,8 +68,11 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    way it really does. Scintillation is stronger near the horizon.
 4. **Moon** — photographic disc, opaque, drawn behind the range: it starts below
    the highest in-frame summit and climbs through chapter 07, so the ridge bites
-   its base on the way up — the Ridgemoon mark, realised in the world. On reading
-   pages it hangs at 13° in the right margin and drifts at the real rate.
+   its base on the way up — the Ridgemoon mark, realised in the world. A full moon
+   owns its sky: limiting magnitude drops ~2.4, the Milky Way and the figures go, a
+   wide aureole lifts the sky around it. On reading pages it hangs at 13° in the right
+   margin where there is room (≥ 1560px) and sits on the right-hand ridge elsewhere;
+   it drifts at the real rate either way.
 5. **The range** — one real-looking plate of a Himalayan range at golden hour,
    sky keyed out (`public/sidereal/range.webp`, RGBA, padded to a power-of-two
    canvas so it mipmaps; `range.json` carries the sub-rect and the skyline). Relit *in the shader* by
@@ -113,10 +117,10 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
   two-column grid — instrument readouts, not badges. Only values that are numbers
   get the numeral; phrases ("Minutes") stay at text size.
 - **Legibility without boxes** comes from placement (text lives in the dark
-  upper sky; the range lives low), from two cinematographer's grads on the stage
-  (a lower ND grad, and a left-weighted grad that appears only while the sky is
-  bright), from a tight ink shadow keyed to the phase, and from an opaque
-  title-safe band behind the header.
+  upper sky; the range lives low), from three cinematographer's grads on the stage
+  (a lower ND grad, a left-weighted grad and a right-rail grad that appear only
+  while the sky is bright), from a tight ink shadow keyed to the phase, and from an
+  opaque title-safe band behind the header.
 
 ## 5. Layout
 

@@ -32,7 +32,7 @@ const nav = [
 <style>
   .hd { position: fixed; top: 0; left: 0; right: 0; z-index: 50; pointer-events: none; }
   /* a quiet top scrim so scrolled text never collides with the nav (static paint, fixed) */
-  .hd::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 150px; background: linear-gradient(180deg, rgba(5, 7, 15, 0.94) 0%, rgba(5, 7, 15, 0.86) 40%, rgba(5, 7, 15, 0.4) 72%, rgba(5, 7, 15, 0) 100%); pointer-events: none; }
+  .hd::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 150px; background: linear-gradient(180deg, rgba(5, 7, 15, 1) 0%, rgba(5, 7, 15, 1) 52%, rgba(5, 7, 15, 0.55) 74%, rgba(5, 7, 15, 0) 100%); pointer-events: none; }
   .hd__inner {
     position: relative; z-index: 1;   /* above the title-safe scrim (an absolutely positioned ::before) */
     pointer-events: auto;
