@@ -491,8 +491,8 @@ export function initSidereal(opts: Opts) {
     const [r0, r1, rt] = keyAt(RANGE, alt);
     const night = smooth(-12, -18, alt);
     // narrow screens: the moon clears the contact block by rising higher
-    const moonAlt = (isClock ? lerp(-4.6, 11, smooth(0, 1, moonUp)) : 13) + idleSec * 0.004 + (aspect < 0.8 ? 14 * smooth(0, 1, moonUp) : 0);
-    const moonVis = (moonAlt > -4.4 ? 1 : 0) * smooth(-14, -17, alt);
+    const moonAlt = (isClock ? lerp(-6.8, 11, smooth(0, 1, moonUp)) : 13) + idleSec * 0.004 + (aspect < 0.8 ? 6 * smooth(0, 1, moonUp) : 0);
+    const moonVis = (moonAlt > -6.6 ? 1 : 0) * smooth(-14, -17, alt);
     const moonLight = moonVis * clamp(moonAlt / 10, 0, 1);
     // sidereal time: each degree of sun altitude ≈ 4.6 min ≈ 1.15° of sky; idle at 1×
     const lst = LST0 + ((6 - alt) * 1.15 + idleSec / 240) * DEG;
@@ -558,9 +558,9 @@ export function initSidereal(opts: Opts) {
       const mid = peaks.filter((c) => c / skyline.length > 0.15 && c / skyline.length < 0.85);
       const col = (mid.length ? mid : peaks).slice().sort((a, b) => skyline[a] - skyline[b])[0]; // the highest summit in frame
       const u = col / skyline.length, v = 1 - skyline[col] / rangeH;
-      const px = (u - m.ox) / m.sx, py = (v - m.oy) / m.sy;          // 0..1 viewport
+      const px = (u - m.ox) / m.sx, py = (v - m.oy) / m.sy - (isClock ? scrollT * 0.03 : 0);   // 0..1 viewport, parallax included
       const rx = moonR, ry = moonR * aspect;
-      const cx = isClock ? clamp(px + rx * 0.15, 0.2, aspect < 0.8 ? 0.72 : 0.8) : 0.92, cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
+      const cx = isClock ? (aspect < 0.8 ? 0.72 : clamp(px + rx * 0.15, 0.2, 0.8)) : 0.92, cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(pSprite); bindUnit(pSprite);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texMoon); gl.uniform1i(U(pSprite, 'uTex'), 0);
