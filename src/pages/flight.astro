@@ -9,6 +9,7 @@ import HomeSections from '../components/HomeSections.astro';
 ---
 
 <Base title="Flight — the real range">
+  <meta name="robots" content="noindex" slot="head" />
   <!-- head-start on the heavy GPU textures (body-level preloads are honored) -->
   <link rel="preload" as="image" href="/terrain/poster.webp" fetchpriority="high" />
   <link rel="preload" as="image" href="/terrain/height-rg.webp" />

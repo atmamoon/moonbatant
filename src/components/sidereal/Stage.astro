@@ -37,7 +37,7 @@ const { mode = 'clock' } = Astro.props;
   .range-ready .stage__poster { opacity: 0; visibility: hidden; }
   /* a third grad under the right rail so the instruments read over the lit sky; gone by night */
   .stage__rail { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease;
-    background: linear-gradient(270deg, rgba(5, 7, 15, 0.62) 0px, rgba(5, 7, 15, 0.42) 150px, rgba(5, 7, 15, 0) 320px); }
+    background: linear-gradient(270deg, rgba(5, 7, 15, 0.66) 0px, rgba(5, 7, 15, 0.55) 250px, rgba(5, 7, 15, 0) 420px); }
   html[data-phase='golden'] .stage__rail, html[data-phase='sunset'] .stage__rail, html[data-phase='civil'] .stage__rail { opacity: 1; }
   html[data-phase='nautical'] .stage__rail { opacity: 0.5; }
   @media (max-width: 1099px) { .stage__rail { display: none; } }

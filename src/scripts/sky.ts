@@ -203,7 +203,7 @@ void main(){
   vec3 h = uEqToHor * aDir; vec3 c = uHorToCam * h;
   float alt = asin(clamp(h.z,-1.0,1.0));
   vA = smoothstep(0.0, 0.18, alt);
-  gl_Position = vec4(c.x/uTan.x, c.y/uTan.y, 0.0, max(c.z, 0.0001));
+  gl_Position = vec4(c.x/uTan.x, c.y/uTan.y, 0.0, c.z);   // w = depth: vertices behind the camera clip away
 }`;
 const FS_LINES = `
 precision mediump float; varying float vA; uniform float uAlpha;
@@ -269,15 +269,24 @@ export function initSidereal(opts: Opts) {
   if (!gl) { root.classList.add('no-webgl'); return; }
   root.classList.add('webgl');
 
-  // programs
-  const pSky = compile(gl, VS_QUAD, FS_SKY);
-  const pStars = compile(gl, VS_STARS, FS_STARS);
-  const pRange = compile(gl, VS_QUAD, FS_RANGE);
-  const pSprite = compile(gl, VS_SPRITE, FS_SPRITE);
-  const pFog = compile(gl, VS_QUAD, FS_FOG);
-  const pPts = compile(gl, VS_PTS, FS_PTS);
-  const pLines = compile(gl, VS_LINES, FS_LINES);
-  const pShadow = compile(gl, VS_QUAD, FS_SHADOW);
+  // programs — a compile failure on an old GPU must fall back to the poster, not a black canvas
+  let pSky: WebGLProgram, pStars: WebGLProgram, pRange: WebGLProgram, pSprite: WebGLProgram, pFog: WebGLProgram, pPts: WebGLProgram, pLines: WebGLProgram, pShadow: WebGLProgram;
+  try {
+    pSky = compile(gl, VS_QUAD, FS_SKY);
+    pStars = compile(gl, VS_STARS, FS_STARS);
+    pRange = compile(gl, VS_QUAD, FS_RANGE);
+    pSprite = compile(gl, VS_SPRITE, FS_SPRITE);
+    pFog = compile(gl, VS_QUAD, FS_FOG);
+    pPts = compile(gl, VS_PTS, FS_PTS);
+    pLines = compile(gl, VS_LINES, FS_LINES);
+    pShadow = compile(gl, VS_QUAD, FS_SHADOW);
+  } catch (e) {
+    root.classList.remove('webgl'); root.classList.add('no-webgl');
+    console.warn('[sidereal] shaders failed, showing the poster', e);
+    return;
+  }
+  let contextLost = false;
+  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); contextLost = true; root.classList.remove('webgl', 'range-ready'); root.classList.add('no-webgl'); });
   // locations are immutable after link — look each up once
   const uCache = new Map<WebGLProgram, Record<string, WebGLUniformLocation | null>>();
   const aCache = new Map<WebGLProgram, Record<string, number>>();
@@ -318,8 +327,9 @@ export function initSidereal(opts: Opts) {
   let redraw: () => void = () => {};   // set once the loop exists; assets call it when they land
   let rangeW = 3168, rangeH = 1344; let skyline: number[] = []; let peaks: number[] = [];
   let sub: [number, number] = [1, 1];   // plate / texture size (POT padding)
+  let summitCol = -1;                    // the highest in-frame summit, found once
   loadTex(gl, '/sidereal/milkyway.webp', { repeat: true, lum: true }).then((t) => { texMW = t; redraw(); }).catch(() => {});
-  const small = window.innerWidth < 900 || (navigator as any).deviceMemory < 4;
+  const small = window.innerWidth < 900 || window.matchMedia('(pointer: coarse)').matches || ((navigator as any).deviceMemory ?? 8) < 4;
   loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { alpha: true }).then((t) => { texRange = t; root.classList.add('range-ready'); redraw(); }).catch(() => {});
   loadTex(gl, '/sidereal/moon.webp', { alpha: true }).then((t) => { texMoon = t; redraw(); }).catch(() => {});
   loadTex(gl, '/photos/fog-plate-a.webp', { repeat: true, lum: true, mip: false }).then((t) => { texFogA = t; redraw(); }).catch(() => {});
@@ -331,6 +341,8 @@ export function initSidereal(opts: Opts) {
     for (let i = 2; i < skyline.length - 2; i++) if (skyline[i] < skyline[i - 1] && skyline[i] <= skyline[i + 1] && skyline[i] < skyline[i - 2] && skyline[i] <= skyline[i + 2]) cand.push(i);
     cand.sort((a, b) => skyline[a] - skyline[b]);
     peaks = []; for (const c of cand) { if (peaks.every((p) => Math.abs(p - c) > skyline.length * 0.035)) peaks.push(c); if (peaks.length >= 9) break; }
+    const mid = peaks.filter((c) => c / skyline.length > 0.15 && c / skyline.length < 0.85);
+    summitCol = (mid.length ? mid : peaks).slice().sort((a, b) => skyline[a] - skyline[b])[0] ?? -1;
   }).catch(() => {});
 
   // ── state ──
@@ -349,7 +361,7 @@ export function initSidereal(opts: Opts) {
     dpr = clamp(window.devicePixelRatio || 1, 1, 1.5);
     W = Math.round(canvas.clientWidth * dpr); H = Math.round(canvas.clientHeight * dpr);
     if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
-    aspect = W / H; tanX = Math.tan(HFOV / 2); tanY = tanX / aspect;
+    aspect = W / H; tanX = Math.tan(HFOV / 2); tanY = tanX / aspect; mapCache = null;
     gl.viewport(0, 0, W, H);
     docH = Math.max(1, document.body.scrollHeight - vh);
     chapters = Array.from(document.querySelectorAll<HTMLElement>('[data-chapter]')).map((el) => {
@@ -451,9 +463,12 @@ export function initSidereal(opts: Opts) {
   const parts = Array.from({ length: NP }, () => ({ x: 0, y: 0, vx: 0, vy: 0, life: 0, max: 1, size: 1, a: 0 }));
   const ptData = new Float32Array(NP * 4);
   const ptBuf = gl.createBuffer()!;
+  gl.bindBuffer(gl.ARRAY_BUFFER, ptBuf); gl.bufferData(gl.ARRAY_BUFFER, ptData.byteLength, gl.DYNAMIC_DRAW);
   let sat = { on: false, x: 0, y: 0, vx: 0, vy: 0, t: 0 }, nextSat = 25;
   let meteor = { on: false, x: 0, y: 0, dx: 0, dy: 0, t: 0 }, nextMeteor = 40;
+  let mapCache: { sx: number; sy: number; ox: number; oy: number } | null = null;
   function rangeMap() {
+    if (mapCache) return mapCache;
     // cover: on very wide viewports the plate fits by width; otherwise it fits
     // by height and the horizontal window centres on the main massif (u≈0.42).
     // uv = vUv * (sx, sy) + (ox, oy); anchored to the viewport bottom.
@@ -461,12 +476,12 @@ export function initSidereal(opts: Opts) {
     const fitAr = ar * 0.92;
     if (aspect >= fitAr) {
       const plateH = (W / fitAr) / H;                 // plate height in viewport units
-      return { sx: 1, sy: 1 / plateH, ox: 0, oy: 0 };
+      return (mapCache = { sx: 1, sy: 1 / plateH, ox: 0, oy: 0 });
     }
     const plateW = (H * ar) / W;                      // plate width in viewport units (> 1)
     const sx = 1 / plateW;
     const ox = clamp(0.42 - 0.42 * sx, 0, 1 - sx);
-    return { sx, sy: 1, ox, oy: 0 };
+    return (mapCache = { sx, sy: 1, ox, oy: 0 });
   }
   function emit(dt: number, strength: number, wind: number) {
     if (!peaks.length || strength <= 0.01) return;
@@ -570,17 +585,16 @@ export function initSidereal(opts: Opts) {
     const m = rangeMap();
     let moonR = clamp(W * 0.045, 44 * dpr, 92 * dpr) / W; // half-width in ndc-x units (fraction of width)
     if (texMoon && moonVis > 0.001 && peaks.length) {
-      const mid = peaks.filter((c) => c / skyline.length > 0.15 && c / skyline.length < 0.85);
-      const col = (mid.length ? mid : peaks).slice().sort((a, b) => skyline[a] - skyline[b])[0]; // the highest summit in frame
+      const col = summitCol >= 0 ? summitCol : peaks[0];
       const u = col / skyline.length, v = 1 - skyline[col] / rangeH;
       const px = (u - m.ox) / m.sx, py = (v - m.oy) / m.sy - (isClock ? scrollT * 0.03 : 0);   // 0..1 viewport, parallax included
       const rx = moonR, ry = moonR * aspect;
-      const cx = isClock ? (aspect < 0.8 ? 0.72 : clamp(px + rx * 0.15, 0.2, 0.8)) : (aspect < 0.8 ? 0.72 : 0.9), cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
+      const cx = isClock ? (aspect < 0.8 ? 0.72 : clamp(px + rx * 0.15, 0.2, 0.8)) : (aspect < 0.8 ? 0.72 : 0.93), cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(pSprite); bindUnit(pSprite);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texMoon); gl.uniform1i(U(pSprite, 'uTex'), 0);
       // halo
-      gl.uniform4f(U(pSprite, 'uRect'), cx - rx * 13, cy - ry * 13, rx * 26, ry * 26);
+      gl.uniform4f(U(pSprite, 'uRect'), cx - rx * 8, cy - ry * 8, rx * 16, ry * 16);
       gl.uniform1f(U(pSprite, 'uHalo'), 1); gl.uniform3f(U(pSprite, 'uTint'), 0.55, 0.62, 0.85); gl.uniform1f(U(pSprite, 'uAlpha'), 0.30 * moonVis * night * clamp(moonAlt / 6, 0.2, 1));
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       // disc — warm near the horizon, silver higher up
@@ -657,7 +671,7 @@ export function initSidereal(opts: Opts) {
       if (n > 0) {
         gl.blendFunc(gl.ONE, gl.ONE);
         gl.useProgram(pPts);
-        gl.bindBuffer(gl.ARRAY_BUFFER, ptBuf); gl.bufferData(gl.ARRAY_BUFFER, ptData.subarray(0, n * 4), gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, ptBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, ptData.subarray(0, n * 4));
         const aP = A(pPts, 'aPos'), aS = A(pPts, 'aSize'), aA = A(pPts, 'aAlpha');
         gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP, 2, gl.FLOAT, false, 16, 0);
         gl.enableVertexAttribArray(aS); gl.vertexAttribPointer(aS, 1, gl.FLOAT, false, 16, 8);
@@ -674,7 +688,12 @@ export function initSidereal(opts: Opts) {
 
   // ── loop ──
   let rafId = 0, lastNow = performance.now(), lastFrameTs = 0, scrollDirty = true, drawFailed = false;
+  let lastScrollAt = performance.now(), lastDrawn = 0;
   function frame(now: number) {
+    if (contextLost) { rafId = 0; return; }
+    // resting: the sky wheels at 15°/hour — 30 fps is indistinguishable and halves the GPU cost
+    if (now - lastScrollAt > 2000 && now - lastDrawn < 30 && !scrollDirty) { rafId = requestAnimationFrame(frame); return; }
+    lastDrawn = now;
     lastFrameTs = now;
     const dt = clamp((now - lastNow) / 1000, 0, 0.05); lastNow = now;
     if (!motionOff()) idleSec += dt;
@@ -688,14 +707,14 @@ export function initSidereal(opts: Opts) {
   const wake = () => { if (!rafId && !document.hidden) { lastNow = performance.now(); rafId = requestAnimationFrame(frame); } };
   redraw = () => { scrollDirty = true; wake(); };
   // heartbeat for rAF-suspended contexts (occluded windows, embedded panes) — never while hidden
-  setInterval(() => {
-    if (document.hidden || motionOff()) return;
+  const heartbeat = setInterval(() => {
+    if (document.hidden || motionOff() || contextLost) return;
     const now = performance.now();
     if (now - lastFrameTs < 400) return;
     readScroll(); sunAlt = sunTarget; draw(now, 0.016);
   }, 250);
 
-  window.addEventListener('scroll', () => { scrollDirty = true; wake(); }, { passive: true });
+  window.addEventListener('scroll', () => { scrollDirty = true; lastScrollAt = performance.now(); wake(); }, { passive: true });
   let resizeQueued = 0, lastW = window.innerWidth, lastH = window.innerHeight;
   window.addEventListener('resize', () => {
     // iOS toolbars fire height-only resizes mid-scroll; only a width change re-lays the world there
@@ -706,6 +725,7 @@ export function initSidereal(opts: Opts) {
     resizeQueued = requestAnimationFrame(() => { resizeQueued = 0; resize(); scrollDirty = true; wake(); });
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(rafId); rafId = 0; } else wake(); });
+  window.addEventListener('pagehide', () => { clearInterval(heartbeat); cancelAnimationFrame(rafId); rafId = 0; });
   mqReduce.addEventListener?.('change', () => { scrollDirty = true; wake(); });
 
   // ── eased anchor scrolling (self-driven; cancellation-proof) ──

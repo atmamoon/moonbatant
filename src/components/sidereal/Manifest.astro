@@ -51,7 +51,7 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
   .mf__row:hover::before { width: 100%; }
   .mf__idx { color: var(--ink-3); padding-top: 0.3em; }
   .mf__main { display: grid; gap: 12px; }
-  .mf__meta { color: var(--ink-3); }
+  .mf__meta { color: var(--ink-2); text-shadow: var(--instrument-shadow); }
   .mf__sep { color: var(--ink-4); margin: 0 6px; }
   .mf__title { font-family: var(--font-serif); font-size: clamp(1.45rem, 2.3vw, 2rem); line-height: 1.12; color: var(--ink); letter-spacing: -0.012em; text-shadow: var(--ink-shadow); transition: color var(--dur) var(--ease); text-wrap: balance; }
   .mf__row:hover .mf__title { color: var(--venus); }
@@ -63,7 +63,7 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
   .mf__val--word { font-family: var(--font-display); font-stretch: 100%; font-weight: 400; font-size: var(--text-ui); color: var(--ink-2); letter-spacing: 0; white-space: normal; }
   .mf__val--lead { color: var(--alpenglow); min-width: 2.4em; }
   :global(html[data-phase='sunset']) .mf__val--lead, :global(html[data-phase='golden']) .mf__val--lead { color: var(--venus); }
-  .mf__cap { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); line-height: 1.4; text-shadow: var(--instrument-shadow); }
+  .mf__cap { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); line-height: 1.4; text-shadow: var(--instrument-shadow); }
   .mf__go { justify-self: end; padding-top: 0.35em; font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--ink); white-space: nowrap; text-shadow: var(--instrument-shadow); transition: color var(--dur) var(--ease), transform var(--dur) var(--ease); }
   .mf__row:hover .mf__go { color: var(--alpenglow); transform: translateX(4px); }
   @media (max-width: 900px) {

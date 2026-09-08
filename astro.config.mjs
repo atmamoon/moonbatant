@@ -8,5 +8,5 @@ export default defineConfig({
   site: 'https://moonbatant.com',
   trailingSlash: 'ignore',
   redirects: { '/photo': '/', '/photo/': '/' },
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (page) => !page.includes('/flight') })],
 });

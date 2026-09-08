@@ -13,9 +13,10 @@
 .case__val { font-size: clamp(1.9rem, 3.2vw, 2.8rem); text-shadow: var(--ink-shadow); }
 .case__val--word { font-family: var(--font-display); font-stretch: 100%; font-weight: 400; font-size: var(--text-ui); letter-spacing: 0; color: var(--ink-2); line-height: 1.5; text-shadow: none; }
 .case__val--lead { color: var(--alpenglow); }
-.case__cap { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); max-width: 32ch; line-height: 1.45; text-wrap: balance; }
+.case__cap { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); max-width: 32ch; line-height: 1.45; text-wrap: balance; }
 .case__tags { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--ink-3); margin-bottom: clamp(36px, 5vw, 56px); display: flex; flex-wrap: wrap; gap: 6px 0; }
-.case__tags .sep { color: var(--ink-4); margin: 0 10px; }
+.case__tags .sep { display: none; }
+.case__tags > span:not(.sep):not(:last-of-type)::after { content: '·'; margin: 0 10px; color: var(--ink-4); }
 .case__grid { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); column-gap: clamp(40px, 6vw, 96px); align-items: start; }
 .case__grid > .prose { max-width: min(var(--measure), 100%); }
 .case__aside { position: sticky; top: calc(var(--head-offset, 118px) + 12px); display: grid; gap: 26px; padding-top: 6px; }

@@ -34,7 +34,7 @@
   --track-wide: 0.2em;
   --track-label: 0.14em;
 
-  --text-inscription: clamp(2.4rem, 6.6vw, 6.2rem);   /* the name, two lines */
+  --text-inscription: clamp(2.4rem, 6.6vw, 5.6rem);   /* the name, two lines; capped so the hero instruments always clear it */
   --text-title: clamp(2.2rem, 4.6vw, 3.9rem);        /* page titles */
   --text-h2: clamp(1.7rem, 2.9vw, 2.5rem);
   --text-h3: clamp(1.35rem, 2vw, 1.75rem);
@@ -51,7 +51,7 @@
   /* ── Space ── */
   --maxw: 1280px;
   --measure: 34em;        /* ≈ 72 characters of Newsreader — `ch` lies in a serif */
-  --gutter: clamp(20px, 5vw, 48px);
+  --gutter: clamp(24px, 5vw, 48px);
   --chapter-gap: clamp(140px, 22vh, 260px);
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
 

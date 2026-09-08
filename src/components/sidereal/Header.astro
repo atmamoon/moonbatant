@@ -32,7 +32,7 @@ const nav = [
 <style>
   .hd { position: fixed; top: 0; left: 0; right: 0; z-index: 50; pointer-events: none; }
   /* a quiet top scrim so scrolled text never collides with the nav (static paint, fixed) */
-  .hd::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 150px; background: linear-gradient(180deg, rgba(5, 7, 15, 1) 0%, rgba(5, 7, 15, 1) 52%, rgba(5, 7, 15, 0.55) 74%, rgba(5, 7, 15, 0) 100%); pointer-events: none; }
+  .hd::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 176px; background: linear-gradient(180deg, rgba(5, 7, 15, 1) 0%, rgba(5, 7, 15, 1) 72%, rgba(5, 7, 15, 0.5) 86%, rgba(5, 7, 15, 0) 100%); pointer-events: none; }
   .hd__inner {
     position: relative; z-index: 1;   /* above the title-safe scrim (an absolutely positioned ::before) */
     pointer-events: auto;
@@ -91,6 +91,7 @@ const nav = [
     var root = document.documentElement;
     var toggles = document.querySelectorAll('#motion-toggle, [data-motion-toggle]');
     var sys = window.matchMedia('(prefers-reduced-motion: reduce)');
+    try { if (localStorage.getItem('mb-motion') === 'off') root.dataset.motion = 'off'; } catch (e) {}
     function paint() { var on = root.dataset.motion !== 'off' && !sys.matches; toggles.forEach(function (t) { t.setAttribute('aria-pressed', String(on)); t.disabled = sys.matches; t.title = sys.matches ? 'Motion is off by your system setting' : 'Toggle ambient motion'; var s = t.querySelector('.hd__motion-state'); if (s) s.textContent = on ? 'on' : 'off'; }); }
     toggles.forEach(function (t) { t.addEventListener('click', function () { var off = root.dataset.motion !== 'off'; root.dataset.motion = off ? 'off' : 'on'; try { localStorage.setItem('mb-motion', off ? 'off' : 'on'); } catch (e) {} paint(); window.dispatchEvent(new Event('scroll')); }); });
     paint(); setTimeout(paint, 50);
