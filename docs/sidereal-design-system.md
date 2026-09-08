@@ -27,14 +27,20 @@ at the range. Each section is a chapter of twilight, pinned to a real solar
 altitude and the phase name astronomers use. A fixed *time-card* (mono) reads
 the clock; a vertical *solar scale* on the right edge shows the sun sinking.
 
-| Chapter | Content | Sun altitude | Phase | What the world does |
-|---|---|---|---|---|
-| 01 | Hero (name, positioning) | +4° | Golden hour | Low amber light rakes the snow; gold horizon, deep-blue zenith |
-| 02 | Selected work | −1° | Sunset · alpenglow | Only the summits glow rose; Venus and Jupiter appear |
-| 03 | About | −5° | Civil twilight | Belt of Venus + earth shadow on the horizon; stars to mag 2 |
-| 04 | Experience | −10° | Nautical twilight | Horizon fades; stars to mag 4; snow goes silver-blue |
-| 05 | Education | −15° | Astronomical twilight | Milky Way emerges; stars to mag 6 |
-| 06 | Writing & contact | −20° | Night | Full sky; the moon rises behind the summit (the brand mark, in-world) |
+| Chapter | Content | Sun altitude | Phase | What the world does | The frame |
+|---|---|---|---|---|---|
+| 01 | Hero (name, positioning) | +4° | Golden hour | Low amber light rakes the snow; gold horizon, deep-blue zenith | Two-line inscription, left-weighted; the right two-thirds stay open |
+| 02 | Selected work | −1° | Sunset · alpenglow | Only the summits glow rose; the first stars | The manifest: hairline rows, instrument readouts |
+| 03 | About | −5° | Civil twilight | Belt of Venus + earth shadow; stars to mag 2 | The light goes flat: one centred measure, credits beneath |
+| 04 | Experience | −10° | Nautical twilight | Horizon fades; stars to mag 4; snow goes silver-blue | The ledger |
+| 05 | Education | −14° | Astronomical twilight | Stars to mag 6 | A short entry |
+| 06 | Writing | −18° | Night | Milky Way at full strength; constellation figures as 8% hairlines | Rows, narrowed to 960px |
+| 07 | Contact | −22° | Moonrise | The moon breaks the highest summit's ridge and climbs; the sky wheels at 1× while you read | One sentence, centred, the whole sky |
+
+Chapter slates: each header carries its own burn-in (`17:37 NPT · Sun −1° · Sunset`).
+The fixed time-card lives in the title-safe band under the wordmark (header, top-left);
+the solar scale sits on the right edge, with chapter labels only when there is room
+(≥ 1400px). Outgoing chapters fade to zero under the header band (opacity only).
 
 Rules:
 - The sun altitude is derived from scroll progress (eased), never the reverse.
@@ -58,8 +64,10 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    chapter's sidereal time. Size and brightness from magnitude; colour from B−V.
    Limiting magnitude rises with darkness, so the sky fills in bright-first, the
    way it really does. Scintillation is stronger near the horizon.
-4. **Moon** — photographic disc, rising over the last chapter so the summit
-   bites its base: the Ridgemoon mark, realised in the world.
+4. **Moon** — photographic disc, opaque, drawn behind the range: it starts below
+   the highest in-frame summit and climbs through chapter 07, so the ridge bites
+   its base on the way up — the Ridgemoon mark, realised in the world. On reading
+   pages it hangs at 13° in the right margin and drifts at the real rate.
 5. **The range** — one real-looking plate of a Himalayan range at golden hour,
    sky keyed out (`public/sidereal/range.webp`, RGBA). Relit *in the shader* by
    the same sun altitude: warm highlight lift at golden hour, rose alpenglow at
@@ -68,8 +76,10 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    (transform only), spindrift blowing off the skyline profile, an occasional
    satellite crossing, a rare meteor after dark.
 
-Performance contract: DPR ≤ 1.5, ≤ 6 draw calls per frame, zero DOM paint
-animation. Motion dies under `prefers-reduced-motion` and `[data-motion=off]`
+Performance contract: DPR ≤ 1.5, ~8 draw calls per frame (the moon is a small
+quad, masks upload as LUMINANCE_ALPHA, uniform locations are cached), zero DOM
+paint animation; the loop sleeps under reduced motion once the sun has settled and
+never draws in a hidden tab. Motion dies under `prefers-reduced-motion` and `[data-motion=off]`
 (a still night frame is drawn once). No WebGL → a static poster + CSS gradient.
 
 ## 3. Typography — wide, quiet, exact
@@ -90,22 +100,26 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
 - **No cards.** Content units are separated by 1px hairlines
   (`rgba(255,255,255,.16)`), by index numerals (`01`), and by whitespace.
 - **No radius** on any rectangle. Buttons are text with a hairline rule, or a
-  1px outlined rectangle with tracked caps (a slate label). Hover extends the
-  rule / brightens it to alpenglow. No fills, no shadows, no blur.
+  1px outlined rectangle with tracked caps (a slate label); the one primary action
+  per page is a solid ink slate. Hover extends the rule / brightens it to alpenglow.
+  No shadows, no blur.
 - **No pills.** Skills are set as film credits: group name right-aligned in mono
   caps, items in a running line separated by thin middots.
-- **Metrics** are large Archivo-expanded numerals with tiny mono captions —
-  instrument readouts, not badges.
+- **Metrics** are Archivo-expanded numerals with mono captions in one shared
+  two-column grid — instrument readouts, not badges. Only values that are numbers
+  get the numeral; phrases ("Minutes") stay at text size.
 - **Legibility without boxes** comes from placement (text lives in the dark
-  upper sky; the range lives low), from the sky's own darkness, and from a
-  1px tight text-shadow at golden hour only.
+  upper sky; the range lives low), from two cinematographer's grads on the stage
+  (a lower ND grad, and a left-weighted grad that appears only while the sky is
+  bright), from a tight ink shadow keyed to the phase, and from an opaque
+  title-safe band behind the header.
 
 ## 5. Layout
 
 - 12-column grid, max 1280px, gutter `clamp(20px, 5vw, 48px)`.
 - Text is **left-weighted** (columns 1–7). The right side is kept open — that is
   where the peaks stand and where the moon rises.
-- Reading measure 66ch. Section spacing `clamp(140px, 22vh, 260px)` — each
+- Reading measure 34em (≈ 72 characters of Newsreader; `ch` overstates a serif). Section spacing `clamp(140px, 22vh, 260px)` — each
   chapter must feel like time passing.
 - Manifest rows (case studies): `index · title · meta` left, `metrics` right,
   full-row link, hairline above; hover reveals a sweep and a right arrow.
@@ -129,6 +143,7 @@ src/styles/sidereal/base.css        element defaults, prose, hairlines
 src/scripts/sky.ts                  the WebGL stage + solar clock + HUD
 src/scripts/sky-data.ts             star catalogue loader
 src/components/sidereal/*           Stage, Header, TimeCard, SolarScale, Manifest, Credits, Ledger, Slate
-public/sidereal/                    range.webp (RGBA), stars.bin, milkyway.webp, moon.webp, poster.webp
+public/sidereal/                    range.webp (RGBA), range-2k.webp, range.json (skyline), stars.bin,
+                                    constellations.bin, milkyway.webp, moon.webp, poster.webp, poster-night.webp
 scripts/bake-sky.mjs                builds stars.bin + milkyway.webp from d3-celestial data
 ```

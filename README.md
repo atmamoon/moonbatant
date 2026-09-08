@@ -12,6 +12,25 @@ npm run build    # outputs static site to dist/
 npm run preview  # preview the production build
 ```
 
+## Design system — SIDEREAL (branch `design/sidereal`)
+
+One evening below the range: the sun's altitude is the single scalar that drives
+the sky, the stars, the moonrise and the light on the range. Spec:
+[`docs/sidereal-design-system.md`](docs/sidereal-design-system.md).
+
+| Piece | Where |
+|------|-------|
+| Engine (WebGL sky, stars, moon, range relighting, clouds, spindrift) | `src/scripts/sky.ts` |
+| Twilight clock helpers (phases, local time) | `src/scripts/twilight.ts` |
+| Tokens / base / reading-page styles | `src/styles/sidereal/` |
+| Layout + components (Stage, Header, TimeCard, SolarScale, HomeChapters, Manifest) | `src/layouts/Sidereal.astro`, `src/components/sidereal/` |
+| Baked sky data (real star catalogue, Milky Way), range plate, moon, poster | `public/sidereal/` — rebuilt by `scripts/bake-sky.mjs` and `scripts/publish-range.mjs` |
+| QA captures (real Chrome, every chapter, desktop + mobile) | `node scripts/qa-sidereal.mjs` (dev server on :4321) |
+| Social thumbnails | `node scripts/capture-og-sidereal.mjs` |
+
+Star positions come from the d3-celestial data (Hipparcos-derived, BSD-3);
+the Milky Way is baked from its isophote contours.
+
 ## Editing content
 
 Almost everything is data-driven — no need to touch components:

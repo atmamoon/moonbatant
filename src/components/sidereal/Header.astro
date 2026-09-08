@@ -16,6 +16,7 @@ const nav = [
     <nav class="hd__nav" aria-label="Primary">
       {nav.map((n) => <a href={n.href}>{n.label}</a>)}
       <a href="/resume.pdf" target="_blank" rel="noopener" class="hd__cv">Résumé <span aria-hidden="true">↗</span></a>
+      <button type="button" class="hd__motion" id="motion-toggle" aria-pressed="true" title="Toggle ambient motion">Motion <span class="hd__motion-state">on</span></button>
     </nav>
     <button id="menu-btn" class="hd__menu" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
       <span></span><span></span>
@@ -24,14 +25,16 @@ const nav = [
   <nav id="mobile-nav" class="hd__mobile" aria-label="Mobile">
     {nav.map((n) => <a href={n.href}>{n.label}</a>)}
     <a href="/resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+    <button type="button" class="hd__motion hd__motion--mobile" data-motion-toggle aria-pressed="true">Motion <span class="hd__motion-state">on</span></button>
   </nav>
 </header>
 
 <style>
   .hd { position: fixed; top: 0; left: 0; right: 0; z-index: 50; pointer-events: none; }
   /* a quiet top scrim so scrolled text never collides with the nav (static paint, fixed) */
-  .hd::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 150px; background: linear-gradient(180deg, rgba(5, 7, 15, 0.82) 0%, rgba(5, 7, 15, 0.42) 50%, rgba(5, 7, 15, 0) 100%); pointer-events: none; }
+  .hd::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 190px; background: linear-gradient(180deg, #05070f 0%, rgba(5, 7, 15, 0.98) 34%, rgba(5, 7, 15, 0.72) 62%, rgba(5, 7, 15, 0) 100%); pointer-events: none; }
   .hd__inner {
+    position: relative; z-index: 1;   /* above the title-safe scrim (an absolutely positioned ::before) */
     pointer-events: auto;
     max-width: var(--maxw); margin: 0 auto;
     padding: 22px var(--gutter) 0;
@@ -51,11 +54,16 @@ const nav = [
   }
   .hd__nav a:hover { color: var(--venus); border-color: var(--rule-glow); }
   .hd__cv { color: var(--ink) !important; }
+  .hd__motion { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--ink-3); padding: 4px 0; border-bottom: 1px solid transparent; text-shadow: var(--ink-shadow); }
+  .hd__motion:hover { color: var(--venus); }
+  .hd__motion-state { color: var(--alpenglow); }
+  .hd__motion--mobile { text-align: left; padding: 12px 16px; }
   .hd__menu { display: none; margin-left: auto; width: 40px; height: 40px; flex-direction: column; align-items: center; justify-content: center; gap: 6px; pointer-events: auto; }
   .hd__menu span { display: block; width: 22px; height: 1px; background: var(--ink); transition: transform var(--dur) var(--ease); }
   .hd__menu[aria-expanded='true'] span:first-child { transform: translateY(3.5px) rotate(45deg); }
   .hd__menu[aria-expanded='true'] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
   .hd__mobile {
+    position: relative; z-index: 1;
     display: none; pointer-events: auto; flex-direction: column;
     margin: 12px var(--gutter) 0; padding: 8px 0 12px;
     border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
@@ -64,6 +72,7 @@ const nav = [
   .hd__mobile.open { display: flex; }
   .hd__mobile a { padding: 12px 16px; font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
   @media (max-width: 760px) {
+    .hd::before { height: 150px; }
     .hd__nav { display: none; }
     .hd__menu { display: inline-flex; }
     .hd__inner { padding-top: 16px; }
@@ -76,5 +85,13 @@ const nav = [
     if (!btn || !nav) return;
     btn.addEventListener('click', function () { var open = nav.classList.toggle('open'); btn.setAttribute('aria-expanded', String(open)); });
     nav.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { nav.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }); });
+  })();
+  (function () {
+    // ambient-motion toggle: persists in localStorage; sky.ts reads html[data-motion]
+    var root = document.documentElement;
+    var toggles = document.querySelectorAll('#motion-toggle, [data-motion-toggle]');
+    function paint() { var on = root.dataset.motion !== 'off'; toggles.forEach(function (t) { t.setAttribute('aria-pressed', String(on)); var s = t.querySelector('.hd__motion-state'); if (s) s.textContent = on ? 'on' : 'off'; }); }
+    toggles.forEach(function (t) { t.addEventListener('click', function () { var off = root.dataset.motion !== 'off'; root.dataset.motion = off ? 'off' : 'on'; try { localStorage.setItem('mb-motion', off ? 'off' : 'on'); } catch (e) {} paint(); window.dispatchEvent(new Event('scroll')); }); });
+    paint(); setTimeout(paint, 50);
   })();
 </script>

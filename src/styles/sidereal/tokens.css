@@ -7,9 +7,9 @@
   /* ── Ink: type that stands in the sky. Warm at golden hour, cool at night.
         Switched per chapter by the engine (html[data-phase]); never animated. ── */
   --ink: #f3ede4;
-  --ink-2: rgba(243, 237, 228, 0.74);
-  --ink-3: rgba(243, 237, 228, 0.52);
-  --ink-4: rgba(243, 237, 228, 0.34);
+  --ink-2: rgba(243, 237, 228, 0.78);
+  --ink-3: rgba(243, 237, 228, 0.62);
+  --ink-4: rgba(243, 237, 228, 0.46);
 
   /* ── The evening's own colours (sampled from the sky model) ── */
   --alpenglow: #ffb27a;   /* rose-gold on the summits at sunset */
@@ -21,8 +21,8 @@
   --horizon-night: #0d1630;
 
   /* ── Rules: the only structure ── */
-  --rule: rgba(255, 255, 255, 0.16);
-  --rule-strong: rgba(255, 255, 255, 0.34);
+  --rule: rgba(255, 255, 255, 0.22);
+  --rule-strong: rgba(255, 255, 255, 0.42);
   --rule-glow: rgba(255, 178, 122, 0.85);
 
   /* ── Type ── */
@@ -34,7 +34,7 @@
   --track-wide: 0.2em;
   --track-label: 0.14em;
 
-  --text-inscription: clamp(2rem, 6.2vw, 5.6rem);   /* the name */
+  --text-inscription: clamp(2.4rem, 6.6vw, 6.2rem);   /* the name, two lines */
   --text-title: clamp(2.2rem, 4.6vw, 3.9rem);        /* page titles */
   --text-h2: clamp(1.7rem, 2.9vw, 2.5rem);
   --text-h3: clamp(1.35rem, 2vw, 1.75rem);
@@ -46,11 +46,11 @@
 
   --leading-display: 1.02;
   --leading-tight: 1.12;
-  --leading-prose: 1.62;
+  --leading-prose: 1.7;
 
   /* ── Space ── */
   --maxw: 1280px;
-  --measure: 66ch;
+  --measure: 34em;        /* ≈ 72 characters of Newsreader — `ch` lies in a serif */
   --gutter: clamp(20px, 5vw, 48px);
   --chapter-gap: clamp(140px, 22vh, 260px);
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
@@ -66,9 +66,9 @@
 }
 
 /* Phase-switched ink — cools as the evening goes on. Discrete steps only. */
-html[data-phase='golden']    { --ink: #f6eee2; --ink-2: rgba(246, 238, 226, 0.76); --ink-3: rgba(246, 238, 226, 0.54); --ink-4: rgba(246, 238, 226, 0.36); }
-html[data-phase='sunset']    { --ink: #f5eee6; --ink-2: rgba(245, 238, 230, 0.76); --ink-3: rgba(245, 238, 230, 0.54); --ink-4: rgba(245, 238, 230, 0.36); }
-html[data-phase='civil']     { --ink: #f2eeea; --ink-2: rgba(242, 238, 234, 0.76); --ink-3: rgba(242, 238, 234, 0.54); --ink-4: rgba(242, 238, 234, 0.36); }
-html[data-phase='nautical']  { --ink: #eef0f6; --ink-2: rgba(238, 240, 246, 0.76); --ink-3: rgba(238, 240, 246, 0.54); --ink-4: rgba(238, 240, 246, 0.36); }
+html[data-phase='golden']    { --ink-shadow: 0 1px 2px rgba(6, 8, 18, 0.7), 0 0 28px rgba(6, 8, 18, 0.55); --ink: #f6eee2; --ink-2: rgba(246, 238, 226, 0.78); --ink-3: rgba(246, 238, 226, 0.62); --ink-4: rgba(246, 238, 226, 0.46); }
+html[data-phase='sunset']    { --ink-shadow: 0 1px 2px rgba(6, 8, 18, 0.66), 0 0 26px rgba(6, 8, 18, 0.5); --ink: #f5eee6; --ink-2: rgba(245, 238, 230, 0.78); --ink-3: rgba(245, 238, 230, 0.62); --ink-4: rgba(245, 238, 230, 0.46); }
+html[data-phase='civil']     { --ink-shadow: 0 1px 2px rgba(6, 8, 18, 0.6), 0 0 22px rgba(6, 8, 18, 0.42); --ink: #f2eeea; --ink-2: rgba(242, 238, 234, 0.78); --ink-3: rgba(242, 238, 234, 0.62); --ink-4: rgba(242, 238, 234, 0.46); }
+html[data-phase='nautical']  { --ink: #eef0f6; --ink-2: rgba(238, 240, 246, 0.78); --ink-3: rgba(238, 240, 246, 0.62); --ink-4: rgba(238, 240, 246, 0.46); }
 html[data-phase='astro'],
-html[data-phase='night']     { --ink: #eaf0fb; --ink-2: rgba(234, 240, 251, 0.76); --ink-3: rgba(234, 240, 251, 0.54); --ink-4: rgba(234, 240, 251, 0.36); }
+html[data-phase='night']     { --ink: #eaf0fb; --ink-2: rgba(234, 240, 251, 0.78); --ink-3: rgba(234, 240, 251, 0.62); --ink-4: rgba(234, 240, 251, 0.46); }

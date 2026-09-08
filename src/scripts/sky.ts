@@ -77,7 +77,7 @@ void main(){
   float az = atan(h.y, h.x);
   float t = clamp(alt/(PI*0.5), -0.15, 1.0);
   vec3 col = mix(uHorizon, uMid, smoothstep(0.0, 0.16, t));
-  col = mix(col, uZenith, smoothstep(0.10, 0.85, t));
+  col = mix(col, uZenith, smoothstep(0.08, 0.62, t));
   // below the horizon: the ground is hidden behind the range; keep it dark
   col = mix(col, uZenith*0.6, smoothstep(0.0, -0.12, t));
   // twilight wedge toward the sun
@@ -86,10 +86,10 @@ void main(){
   col += uGlow * uGlowK * lobe;
   // earth shadow + Belt of Venus, opposite the sun, civil twilight only
   float anti = pow(cos(az - uSunAz + PI)*0.5+0.5, 2.0);
-  float shadowBand = smoothstep(-0.01, 0.015, alt) * (1.0 - smoothstep(0.03, 0.085, alt));
-  float beltBand = smoothstep(0.045, 0.10, alt) * (1.0 - smoothstep(0.12, 0.23, alt));
-  col = mix(col, uShadow, uBeltK * anti * shadowBand * 0.75);
-  col = mix(col, uBelt, uBeltK * anti * beltBand * 0.55);
+  float shadowBand = smoothstep(-0.02, 0.01, alt) * (1.0 - smoothstep(0.02, 0.13, alt));
+  float beltBand = smoothstep(0.03, 0.10, alt) * (1.0 - smoothstep(0.12, 0.26, alt));
+  col = mix(col, uShadow, uBeltK * anti * shadowBand * 0.5);
+  col = mix(col, uBelt, uBeltK * anti * beltBand * 0.5);
   // night airglow near the horizon
   col += uAirglow * exp(-max(alt,0.0)*7.0) * 0.55;
   // Milky Way, with extinction toward the horizon
@@ -97,7 +97,7 @@ void main(){
   float ra = atan(e.y, e.x); float dec = asin(clamp(e.z,-1.0,1.0));
   vec2 muv = vec2((ra+PI)/(2.0*PI), (PI*0.5-dec)/PI);
   float mw = texture2D(uMWTex, muv).r;
-  col += vec3(0.62,0.70,0.94) * mw * uMW * 0.95 * smoothstep(-0.02, 0.28, alt);
+  col += vec3(0.62,0.70,0.94) * mw * uMW * 1.15 * smoothstep(-0.02, 0.28, alt);
   // dither (kills banding on 8-bit displays)
   col += (hash(gl_FragCoord.xy + uSeed) - 0.5) * (1.6/255.0);
   gl_FragColor = vec4(col, 1.0);
@@ -120,10 +120,11 @@ void main(){
   vI = clamp(I*vis*twk, 0.0, 1.8);
   float b = clamp((3.6 - aMag)/5.2, 0.0, 1.0);
   vBig = b;
-  gl_PointSize = mix(2.2, 7.2, b) * uDpr;
-  vCol = aBv < 0.0 ? mix(vec3(0.72,0.84,1.0), vec3(1.0), clamp((aBv+0.45)/0.45,0.0,1.0))
-       : aBv < 0.65 ? mix(vec3(1.0), vec3(1.0,0.95,0.84), aBv/0.65)
-       : mix(vec3(1.0,0.95,0.84), vec3(1.0,0.74,0.50), clamp((aBv-0.65)/1.2,0.0,1.0));
+  gl_PointSize = mix(2.0, 9.0, b*b) * uDpr;
+  vec3 col = aBv < 0.0 ? mix(vec3(0.62,0.76,1.0), vec3(1.0), clamp((aBv+0.45)/0.45,0.0,1.0))
+       : aBv < 0.65 ? mix(vec3(1.0), vec3(1.0,0.94,0.82), aBv/0.65)
+       : mix(vec3(1.0,0.94,0.82), vec3(1.0,0.66,0.40), clamp((aBv-0.65)/1.2,0.0,1.0));
+  vCol = mix(vec3(dot(col, vec3(0.333))), col, 1.0 + 0.6*b); // bright stars keep their colour
 }`;
 const FS_STARS = `
 precision mediump float;
@@ -131,7 +132,7 @@ varying float vI; varying vec3 vCol; varying float vBig;
 void main(){
   vec2 p = gl_PointCoord*2.0-1.0; float d = dot(p,p);
   float core = exp(-d*5.5);
-  float halo = exp(-sqrt(d)*3.2) * 0.35 * vBig;
+  float halo = exp(-sqrt(d)*2.6) * 0.55 * vBig * vBig;
   float a = vI * (core + halo);
   if (a < 0.003) discard;
   gl_FragColor = vec4(vCol * a, a);
@@ -156,13 +157,14 @@ void main(){
   gl_FragColor = vec4(g * c.a, c.a);
 }`;
 
+const VS_SPRITE = `attribute vec2 aPos; uniform vec4 uRect; varying vec2 vUv;
+void main(){ vUv = aPos; vec2 v = uRect.xy + aPos*uRect.zw; gl_Position = vec4(v*2.0-1.0, 0.0, 1.0); }`;
 const FS_SPRITE = `
 precision mediump float;
 varying vec2 vUv;
-uniform sampler2D uTex; uniform vec4 uRect; uniform float uAlpha; uniform vec3 uTint; uniform float uHalo;
+uniform sampler2D uTex; uniform float uAlpha; uniform vec3 uTint; uniform float uHalo;
 void main(){
-  vec2 p = (vUv - uRect.xy) / uRect.zw;      // 0..1 inside the sprite rect
-  if (p.x < 0.0 || p.x > 1.0 || p.y < 0.0 || p.y > 1.0) discard;
+  vec2 p = vUv;                              // 0..1 inside the sprite rect
   if (uHalo > 0.5) {
     vec2 q = p*2.0-1.0; float d = length(q);
     float a = exp(-d*d*3.2) * uAlpha;
@@ -179,10 +181,24 @@ varying vec2 vUv;
 uniform sampler2D uTex; uniform float uOffset, uAlpha, uY0, uY1, uRepeat; uniform vec3 uTint;
 void main(){
   float band = smoothstep(uY0, uY0 + 0.1, vUv.y) * (1.0 - smoothstep(uY1 - 0.12, uY1, vUv.y));
-  float l = texture2D(uTex, vec2(fract(vUv.x*uRepeat + uOffset), 1.0 - (vUv.y - uY0)/(uY1-uY0))).r;
-  float a = l * band * uAlpha;
+  vec4 fc = texture2D(uTex, vec2(vUv.x*uRepeat + uOffset, 1.0 - (vUv.y - uY0)/(uY1-uY0)));
+  float l = fc.a * max(fc.r, 0.6);   // LUMINANCE_ALPHA plate: density in alpha
+  float a = clamp(l * band * uAlpha * 2.6, 0.0, 0.85);
   gl_FragColor = vec4(uTint*a, a);
 }`;
+
+const VS_LINES = `
+attribute vec3 aDir;
+uniform mat3 uEqToHor, uHorToCam; uniform vec2 uTan; varying float vA;
+void main(){
+  vec3 h = uEqToHor * aDir; vec3 c = uHorToCam * h;
+  float alt = asin(clamp(h.z,-1.0,1.0));
+  vA = smoothstep(0.0, 0.18, alt);
+  gl_Position = vec4(c.x/uTan.x, c.y/uTan.y, 0.0, max(c.z, 0.0001));
+}`;
+const FS_LINES = `
+precision mediump float; varying float vA; uniform float uAlpha;
+void main(){ float a = uAlpha * vA; gl_FragColor = vec4(vec3(0.62,0.72,0.95)*a, a); }`;
 
 const VS_PTS = `
 attribute vec2 aPos; attribute float aSize; attribute float aAlpha;
@@ -200,14 +216,16 @@ function compile(gl: WebGLRenderingContext, vs: string, fs: string) {
   if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p) || 'link');
   return p;
 }
-function loadTex(gl: WebGLRenderingContext, url: string, opts: { repeat?: boolean; alpha?: boolean; mip?: boolean } = {}): Promise<WebGLTexture> {
+function loadTex(gl: WebGLRenderingContext, url: string, opts: { repeat?: boolean; alpha?: boolean; mip?: boolean; lum?: boolean } = {}): Promise<WebGLTexture> {
   return new Promise((res, rej) => {
     const img = new Image();
-    img.onload = () => {
+    img.onload = async () => {
+      try { await img.decode?.(); } catch { /* upload anyway */ }
       const t = gl.createTexture()!;
       gl.bindTexture(gl.TEXTURE_2D, t);
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      const fmt = opts.lum ? gl.LUMINANCE_ALPHA : gl.RGBA;     // masks: 2 channels instead of 4
+      gl.texImage2D(gl.TEXTURE_2D, 0, fmt, fmt, gl.UNSIGNED_BYTE, img);
       const wrap = opts.repeat ? gl.REPEAT : gl.CLAMP_TO_EDGE;
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap);
@@ -246,15 +264,24 @@ export function initSidereal(opts: Opts) {
   const pSky = compile(gl, VS_QUAD, FS_SKY);
   const pStars = compile(gl, VS_STARS, FS_STARS);
   const pRange = compile(gl, VS_QUAD, FS_RANGE);
-  const pSprite = compile(gl, VS_QUAD, FS_SPRITE);
+  const pSprite = compile(gl, VS_SPRITE, FS_SPRITE);
   const pFog = compile(gl, VS_QUAD, FS_FOG);
   const pPts = compile(gl, VS_PTS, FS_PTS);
-  const U = (p: WebGLProgram, n: string) => gl.getUniformLocation(p, n);
+  const pLines = compile(gl, VS_LINES, FS_LINES);
+  // locations are immutable after link — look each up once
+  const uCache = new Map<WebGLProgram, Record<string, WebGLUniformLocation | null>>();
+  const aCache = new Map<WebGLProgram, Record<string, number>>();
+  const U = (p: WebGLProgram, n: string) => { let m = uCache.get(p); if (!m) { m = {}; uCache.set(p, m); } if (!(n in m)) m[n] = gl.getUniformLocation(p, n); return m[n]; };
+  const A = (p: WebGLProgram, n: string) => { let m = aCache.get(p); if (!m) { m = {}; aCache.set(p, m); } if (!(n in m)) m[n] = gl.getAttribLocation(p, n); return m[n]; };
 
   const quad = gl.createBuffer()!;
   gl.bindBuffer(gl.ARRAY_BUFFER, quad);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  const bindQuad = (p: WebGLProgram) => { const a = gl.getAttribLocation(p, 'aPos'); gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0); };
+  const bindQuad = (p: WebGLProgram) => { const a = A(p, 'aPos'); gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0); };
+  const unit = gl.createBuffer()!;                          // 0..1 quad for sprites
+  gl.bindBuffer(gl.ARRAY_BUFFER, unit);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]), gl.STATIC_DRAW);
+  const bindUnit = (p: WebGLProgram) => { const a = A(p, 'aPos'); gl.bindBuffer(gl.ARRAY_BUFFER, unit); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0); };
 
   // ── assets ──
   let nStars = 0; const starBuf = gl.createBuffer()!;
@@ -268,14 +295,21 @@ export function initSidereal(opts: Opts) {
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, starBuf); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW);
   }).catch(() => {});
+  let nLineVerts = 0; const lineBuf = gl.createBuffer()!;
+  fetch('/sidereal/constellations.bin').then((r) => r.arrayBuffer()).then((ab) => {
+    const dv = new DataView(ab); nLineVerts = ab.byteLength / 6;
+    const arr = new Float32Array(nLineVerts * 3);
+    for (let i = 0; i < nLineVerts; i++) { arr[i * 3] = dv.getInt16(i * 6, true) / 32767; arr[i * 3 + 1] = dv.getInt16(i * 6 + 2, true) / 32767; arr[i * 3 + 2] = dv.getInt16(i * 6 + 4, true) / 32767; }
+    gl.bindBuffer(gl.ARRAY_BUFFER, lineBuf); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW);
+  }).catch(() => {});
   let texMW: WebGLTexture | null = null, texRange: WebGLTexture | null = null, texMoon: WebGLTexture | null = null, texFogA: WebGLTexture | null = null, texFogB: WebGLTexture | null = null;
   let rangeW = 3168, rangeH = 1344; let skyline: number[] = []; let peaks: number[] = [];
-  loadTex(gl, '/sidereal/milkyway.webp', { repeat: true }).then((t) => (texMW = t)).catch(() => {});
+  loadTex(gl, '/sidereal/milkyway.webp', { repeat: true, lum: true }).then((t) => (texMW = t)).catch(() => {});
   const small = window.innerWidth < 900 || (navigator as any).deviceMemory < 4;
   loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { alpha: true, mip: false }).then((t) => { texRange = t; root.classList.add('range-ready'); }).catch(() => {});
   loadTex(gl, '/sidereal/moon.webp', { alpha: true }).then((t) => (texMoon = t)).catch(() => {});
-  loadTex(gl, '/photos/fog-plate-a.webp', { repeat: true }).then((t) => (texFogA = t)).catch(() => {});
-  loadTex(gl, '/photos/fog-plate-b.webp', { repeat: true }).then((t) => (texFogB = t)).catch(() => {});
+  loadTex(gl, '/photos/fog-plate-a.webp', { repeat: true, lum: true, mip: false }).then((t) => (texFogA = t)).catch(() => {});
+  loadTex(gl, '/photos/fog-plate-b.webp', { repeat: true, lum: true, mip: false }).then((t) => (texFogB = t)).catch(() => {});
   fetch('/sidereal/range.json').then((r) => r.json()).then((j) => {
     rangeW = j.w; rangeH = j.h; skyline = j.skyline;
     // spindrift emitters: local maxima of the skyline (smallest y), spaced
@@ -286,6 +320,7 @@ export function initSidereal(opts: Opts) {
   }).catch(() => {});
 
   // ── state ──
+  const dbg = { fog: 1, drift: 1 };   // live tuning hooks (window.__sidereal.dbg)
   let W = 1, H = 1, dpr = 1, aspect = 1, tanX = 1, tanY = 1;
   let sunAlt = 6, sunTarget = 6;          // degrees
   let moonUp = 0;                         // 0..1 rise progress
@@ -297,7 +332,7 @@ export function initSidereal(opts: Opts) {
 
   function resize() {
     vh = window.innerHeight;
-    dpr = clamp(window.devicePixelRatio || 1, 1, window.innerWidth < 800 ? 1.5 : 1.5);
+    dpr = clamp(window.devicePixelRatio || 1, 1, 1.5);
     W = Math.round(canvas.clientWidth * dpr); H = Math.round(canvas.clientHeight * dpr);
     if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
     aspect = W / H; tanX = Math.tan(HFOV / 2); tanY = tanX / aspect;
@@ -313,9 +348,9 @@ export function initSidereal(opts: Opts) {
 
   // ── HUD ──
   const hudClock = document.getElementById('tc-clock'), hudSun = document.getElementById('tc-sun'), hudPhase = document.getElementById('tc-phase');
-  const marker = document.getElementById('scale-marker'), markerVal = document.getElementById('scale-val');
+  const marker = document.getElementById('scale-marker');
   const scaleTicks = document.getElementById('scale-ticks');
-  const SCALE_TOP = 6, SCALE_BOT = -22;
+  const SCALE_TOP = 6, SCALE_BOT = -26;
   function layoutScale() {
     if (!scaleTicks || scaleTicks.childElementCount) return;
     const frag = document.createDocumentFragment();
@@ -348,8 +383,17 @@ export function initSidereal(opts: Opts) {
   }
 
   // ── scroll → sun ──
+  function fadeChapters(s: number) {
+    for (const c of chapters) {
+      const bottom = c.top + c.height - s;              // viewport y of the chapter's end
+      const o = clamp((bottom - 96) / (vh * 0.12), 0, 1);
+      const v = o < 0.995 ? o.toFixed(2) : '';
+      if ((c.el.style.opacity || '') !== v) c.el.style.opacity = v;
+    }
+  }
   function readScroll() {
     const s = window.scrollY; scrollT = clamp(s / docH, 0, 1);
+    fadeChapters(s);
     if (!isClock || !chapters.length) { sunTarget = -20; moonUp = 1; return; }
     // Each chapter HOLDS its altitude while the viewport centre is inside its
     // band (its box minus its own top padding); the sun sinks only in the gaps
@@ -368,7 +412,8 @@ export function initSidereal(opts: Opts) {
     if (s < 4) target = bands[0].sun + 0.6;
     sunTarget = target;
     const last = chapters[chapters.length - 1];
-    moonUp = clamp((vc - (last.top - vh * 0.1)) / Math.max(1, docH + vh * 0.5 - (last.top - vh * 0.1)), 0, 1);
+    const rise0 = last.top - vh * 0.15;
+    moonUp = clamp((vc - rise0) / Math.max(1, docH + vh * 0.5 - rise0), 0, 1);
   }
 
   // ── matrices ──
@@ -395,21 +440,19 @@ export function initSidereal(opts: Opts) {
   let sat = { on: false, x: 0, y: 0, vx: 0, vy: 0, t: 0 }, nextSat = 25;
   let meteor = { on: false, x: 0, y: 0, dx: 0, dy: 0, t: 0 }, nextMeteor = 40;
   function rangeMap() {
-    // cover: width-fit on wide viewports, height-fit (focal 0.42) on tall ones; anchored to the bottom
+    // cover: on very wide viewports the plate fits by width; otherwise it fits
+    // by height and the horizontal window centres on the main massif (u≈0.42).
+    // uv = vUv * (sx, sy) + (ox, oy); anchored to the viewport bottom.
     const ar = rangeW / rangeH;
-    let sx: number, sy: number, ox: number, oy: number;
-    if (aspect >= ar * 0.92) { // width-fit
-      const scale = 1 / (ar * 0.92 / Math.max(aspect, ar * 0.92));
-      sx = 1 / scale; oy = 0; ox = (1 - sx) * 0.5;
-      const plateH = (W / (ar * 0.92)) / H; // in viewport units
-      sy = 1 / plateH; oy = 0;
-      void scale;
-    } else {
-      const plateW = (H * ar) / W;
-      sx = 1 / plateW; sy = 1; ox = 0.42 - 0.42 * sx; oy = 0;
-      ox = clamp(ox, 1 - sx, 0);
+    const fitAr = ar * 0.92;
+    if (aspect >= fitAr) {
+      const plateH = (W / fitAr) / H;                 // plate height in viewport units
+      return { sx: 1, sy: 1 / plateH, ox: 0, oy: 0 };
     }
-    return { sx, sy, ox, oy };
+    const plateW = (H * ar) / W;                      // plate width in viewport units (> 1)
+    const sx = 1 / plateW;
+    const ox = clamp(0.42 - 0.42 * sx, 0, 1 - sx);
+    return { sx, sy: 1, ox, oy: 0 };
   }
   function emit(dt: number, strength: number, wind: number) {
     if (!peaks.length || strength <= 0.01) return;
@@ -447,8 +490,9 @@ export function initSidereal(opts: Opts) {
     const [s0, s1, st] = keyAt(SKY, alt);
     const [r0, r1, rt] = keyAt(RANGE, alt);
     const night = smooth(-12, -18, alt);
-    const moonAlt = isClock ? lerp(-3, 10, smooth(0, 1, moonUp)) + idleSec * 0.004 : 18;
-    const moonVis = clamp((moonAlt + 3) / 4, 0, 1) * smooth(-14, -17, alt);
+    // narrow screens: the moon clears the contact block by rising higher
+    const moonAlt = (isClock ? lerp(-4.6, 11, smooth(0, 1, moonUp)) : 13) + idleSec * 0.004 + (aspect < 0.8 ? 14 * smooth(0, 1, moonUp) : 0);
+    const moonVis = (moonAlt > -4.4 ? 1 : 0) * smooth(-14, -17, alt);
     const moonLight = moonVis * clamp(moonAlt / 10, 0, 1);
     // sidereal time: each degree of sun altitude ≈ 4.6 min ≈ 1.15° of sky; idle at 1×
     const lst = LST0 + ((6 - alt) * 1.15 + idleSec / 240) * DEG;
@@ -477,7 +521,7 @@ export function initSidereal(opts: Opts) {
       gl.blendFunc(gl.ONE, gl.ONE);
       gl.useProgram(pStars);
       gl.bindBuffer(gl.ARRAY_BUFFER, starBuf);
-      const aDir = gl.getAttribLocation(pStars, 'aDir'), aMag = gl.getAttribLocation(pStars, 'aMag'), aBv = gl.getAttribLocation(pStars, 'aBv'), aSeed = gl.getAttribLocation(pStars, 'aSeed');
+      const aDir = A(pStars, 'aDir'), aMag = A(pStars, 'aMag'), aBv = A(pStars, 'aBv'), aSeed = A(pStars, 'aSeed');
       gl.enableVertexAttribArray(aDir); gl.vertexAttribPointer(aDir, 3, gl.FLOAT, false, 24, 0);
       gl.enableVertexAttribArray(aMag); gl.vertexAttribPointer(aMag, 1, gl.FLOAT, false, 24, 12);
       gl.enableVertexAttribArray(aBv); gl.vertexAttribPointer(aBv, 1, gl.FLOAT, false, 24, 16);
@@ -493,28 +537,42 @@ export function initSidereal(opts: Opts) {
       gl.disableVertexAttribArray(aMag); gl.disableVertexAttribArray(aBv); gl.disableVertexAttribArray(aSeed);
     }
 
-    // moon + halo (screen-space: rises behind the right-hand summit)
+    // constellation figures — hairlines, only once the sky is fully dark
+    const figA = 0.085 * smooth(-16, -20, alt) * (1 - moonLight * 0.5);
+    if (nLineVerts && figA > 0.003) {
+      gl.blendFunc(gl.ONE, gl.ONE);
+      gl.useProgram(pLines);
+      gl.bindBuffer(gl.ARRAY_BUFFER, lineBuf);
+      const aL = A(pLines, 'aDir'); gl.enableVertexAttribArray(aL); gl.vertexAttribPointer(aL, 3, gl.FLOAT, false, 12, 0);
+      gl.uniformMatrix3fv(U(pLines, 'uEqToHor'), false, M.eq2hor);
+      gl.uniformMatrix3fv(U(pLines, 'uHorToCam'), false, M.hor2cam);
+      gl.uniform2f(U(pLines, 'uTan'), tanX, tanY);
+      gl.uniform1f(U(pLines, 'uAlpha'), figA);
+      gl.drawArrays(gl.LINES, 0, nLineVerts);
+    }
+
+    // moon + halo (screen-space: rises behind the highest summit)
     const m = rangeMap();
     let moonR = clamp(W * 0.045, 44 * dpr, 92 * dpr) / W; // half-width in ndc-x units (fraction of width)
     if (texMoon && moonVis > 0.001 && peaks.length) {
-      const inBand = peaks.filter((c) => c / skyline.length > 0.5 && c / skyline.length < 0.78);
-      const col = (inBand.length ? inBand : peaks).slice(0, 4).sort((a, b) => skyline[a] - skyline[b])[0];
+      const mid = peaks.filter((c) => c / skyline.length > 0.15 && c / skyline.length < 0.85);
+      const col = (mid.length ? mid : peaks).slice().sort((a, b) => skyline[a] - skyline[b])[0]; // the highest summit in frame
       const u = col / skyline.length, v = 1 - skyline[col] / rangeH;
       const px = (u - m.ox) / m.sx, py = (v - m.oy) / m.sy;          // 0..1 viewport
       const rx = moonR, ry = moonR * aspect;
-      const cx = isClock ? clamp(px + rx * 0.2, 0.2, 0.8) : 0.9, cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
+      const cx = isClock ? clamp(px + rx * 0.15, 0.2, aspect < 0.8 ? 0.72 : 0.8) : 0.92, cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-      gl.useProgram(pSprite); bindQuad(pSprite);
+      gl.useProgram(pSprite); bindUnit(pSprite);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texMoon); gl.uniform1i(U(pSprite, 'uTex'), 0);
       // halo
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx * 4.5, cy - ry * 4.5, rx * 9, ry * 9);
       gl.uniform1f(U(pSprite, 'uHalo'), 1); gl.uniform3f(U(pSprite, 'uTint'), 0.55, 0.62, 0.85); gl.uniform1f(U(pSprite, 'uAlpha'), 0.16 * moonVis * night);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
       // disc — warm near the horizon, silver higher up
       const warm = 1 - clamp(moonAlt / 8, 0, 1);
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx, cy - ry, rx * 2, ry * 2);
       gl.uniform1f(U(pSprite, 'uHalo'), 0); gl.uniform3f(U(pSprite, 'uTint'), 1.0, lerp(0.98, 0.80, warm), lerp(0.96, 0.62, warm)); gl.uniform1f(U(pSprite, 'uAlpha'), moonVis);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
     // the range — relit
@@ -536,7 +594,7 @@ export function initSidereal(opts: Opts) {
     }
 
     // cloud strips — drift at prime periods; more present in twilight
-    const fogK = (0.10 + 0.22 * smooth(6, -4, alt) * (1 - smooth(-9, -16, alt)) + 0.06 * night) * (motionOff() ? 0.7 : 1);
+    const fogK = (0.16 + 0.26 * smooth(6, -4, alt) * (1 - smooth(-9, -16, alt)) + 0.08 * night) * (motionOff() ? 0.7 : 1) * dbg.fog;
     const hz = mix3(s0.horizon, s1.horizon, st);
     const fogTint: V3 = [lerp(hz[0], 1, 0.35), lerp(hz[1], 1, 0.35), lerp(hz[2], 1, 0.35)];
     const drawFog = (tex: WebGLTexture | null, off: number, a: number, y0: number, y1: number, rep: number) => {
@@ -548,14 +606,14 @@ export function initSidereal(opts: Opts) {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    const bandBase = aspect >= (rangeW / rangeH) * 0.92 ? (W / (rangeW / rangeH * 0.92)) / H : 1;
+    const bandBase = 1 / rangeMap().sy;             // plate height in viewport units
     drawFog(texFogA, idleSec / 223, fogK, bandBase * 0.40, bandBase * 0.86, 1.6);
     drawFog(texFogB, -idleSec / 347, fogK * 0.8, bandBase * 0.52, bandBase * 0.98, 1.1);
 
     // spindrift + satellite + meteor
     if (!motionOff()) {
       const wind = 0.7 + 0.3 * Math.sin(idleSec * 0.11);
-      const drift = 0.35 + 0.65 * smooth(-8, 3, alt); // backlit at golden hour
+      const drift = (0.35 + 0.65 * smooth(-8, 3, alt)) * dbg.drift; // backlit at golden hour
       emit(dt, drift, wind); let n = stepParts(dt, wind);
       // satellite: a slow point crossing the dark sky
       nextSat -= dt;
@@ -572,7 +630,7 @@ export function initSidereal(opts: Opts) {
         gl.blendFunc(gl.ONE, gl.ONE);
         gl.useProgram(pPts);
         gl.bindBuffer(gl.ARRAY_BUFFER, ptBuf); gl.bufferData(gl.ARRAY_BUFFER, ptData.subarray(0, n * 4), gl.DYNAMIC_DRAW);
-        const aP = gl.getAttribLocation(pPts, 'aPos'), aS = gl.getAttribLocation(pPts, 'aSize'), aA = gl.getAttribLocation(pPts, 'aAlpha');
+        const aP = A(pPts, 'aPos'), aS = A(pPts, 'aSize'), aA = A(pPts, 'aAlpha');
         gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP, 2, gl.FLOAT, false, 16, 0);
         gl.enableVertexAttribArray(aS); gl.vertexAttribPointer(aS, 1, gl.FLOAT, false, 16, 8);
         gl.enableVertexAttribArray(aA); gl.vertexAttribPointer(aA, 1, gl.FLOAT, false, 16, 12);
@@ -595,18 +653,31 @@ export function initSidereal(opts: Opts) {
     if (scrollDirty) { readScroll(); scrollDirty = false; }
     sunAlt = motionOff() ? sunTarget : lerp(sunAlt, sunTarget, 1 - Math.pow(0.001, dt)); // ~settles in 1s
     draw(now, dt);
+    // reduced motion: the world is a still — draw it once per change, then sleep
+    if (motionOff() && Math.abs(sunAlt - sunTarget) < 0.01) { rafId = 0; return; }
     rafId = requestAnimationFrame(frame);
   }
-  // heartbeat for rAF-suspended contexts (occluded windows, embedded panes)
+  const wake = () => { if (!rafId && !document.hidden) { lastNow = performance.now(); rafId = requestAnimationFrame(frame); } };
+  // heartbeat for rAF-suspended contexts (occluded windows, embedded panes) — never while hidden
   setInterval(() => {
+    if (document.hidden || motionOff()) return;
     const now = performance.now();
     if (now - lastFrameTs < 400) return;
     readScroll(); sunAlt = sunTarget; draw(now, 0.016);
   }, 250);
 
-  window.addEventListener('scroll', () => { scrollDirty = true; }, { passive: true });
-  window.addEventListener('resize', () => { resize(); scrollDirty = true; });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) cancelAnimationFrame(rafId); else { lastNow = performance.now(); rafId = requestAnimationFrame(frame); } });
+  window.addEventListener('scroll', () => { scrollDirty = true; wake(); }, { passive: true });
+  let resizeQueued = 0, lastW = window.innerWidth, lastH = window.innerHeight;
+  window.addEventListener('resize', () => {
+    // iOS toolbars fire height-only resizes mid-scroll; only a width change re-lays the world there
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
+    if (coarse && window.innerWidth === lastW && Math.abs(window.innerHeight - lastH) < 160) return;
+    lastW = window.innerWidth; lastH = window.innerHeight;
+    if (resizeQueued) return;
+    resizeQueued = requestAnimationFrame(() => { resizeQueued = 0; resize(); scrollDirty = true; wake(); });
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(rafId); rafId = 0; } else wake(); });
+  mqReduce.addEventListener?.('change', () => { scrollDirty = true; wake(); });
 
   // ── eased anchor scrolling (self-driven; cancellation-proof) ──
   let animScroll = 0;
@@ -660,5 +731,6 @@ export function initSidereal(opts: Opts) {
   setTimeout(() => { resize(); scrollDirty = true; }, 1200);
   window.addEventListener('load', () => { resize(); scrollDirty = true; });
   rafId = requestAnimationFrame(frame);
-  (window as any).__sidereal = { get sun() { return sunAlt; }, set sun(v: number) { sunTarget = v; sunAlt = v; }, resize };
+  // live tuning: window.__sidereal.sun = -12; window.__sidereal.dbg.fog = 3
+  (window as any).__sidereal = { get sun() { return sunAlt; }, set sun(v: number) { sunTarget = v; sunAlt = v; wake(); }, resize, dbg };
 }

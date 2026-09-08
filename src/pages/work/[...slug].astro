@@ -12,9 +12,11 @@ export async function getStaticPaths() {
 }
 
 const { study, next, index, total } = Astro.props;
-const { Content } = await study.render();
+const { Content, headings } = await study.render();
+const toc = headings.filter((h) => h.depth === 2);
 const d = study.data;
 const pad = (n: number) => String(n).padStart(2, '0');
+const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
 ---
 
 <Sidereal title={d.title} description={d.summary} mode="night">
@@ -36,7 +38,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <div class="case__metrics rv" aria-label="Headline metrics">
           {d.metrics.map((m, i) => (
             <div class="case__metric">
-              <span class:list={['t-numeral', 'case__val', i === 0 && 'case__val--lead', i === 0 && 'numeral-live']}>{m.value}</span>
+              <span class:list={[isNumeric(m.value) ? 't-numeral' : 'case__val--word', 'case__val', i === 0 && 'case__val--lead', i === 0 && isNumeric(m.value) && 'numeral-live']}>{m.value}</span>
               <span class="case__cap">{m.label}</span>
             </div>
           ))}
@@ -47,21 +49,21 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <div class="prose rv">
           <Content />
         </div>
-        <aside class="case__aside rv">
+        <aside class="case__aside rv" aria-label="On this page">
+          {toc.length > 0 && (
+            <nav>
+              <span class="t-label">Contents</span>
+              <ol class="toc">
+                {toc.map((h, i) => (<li><a href={`#${h.slug}`}><span class="toc__n">{pad(i + 1)}</span><span>{h.text}</span></a></li>))}
+              </ol>
+            </nav>
+          )}
           {d.tags.length > 0 && (
             <div>
               <span class="t-label">Tags</span>
               <p class="case__tags">{d.tags.map((t, i) => (<><span>{t}</span>{i < d.tags.length - 1 && <span class="sep" aria-hidden="true">·</span>}</>))}</p>
             </div>
           )}
-          <div>
-            <span class="t-label">Role</span>
-            <p>{d.role} · {d.company}</p>
-          </div>
-          <div>
-            <span class="t-label">Timeline</span>
-            <p>{d.timeline}</p>
-          </div>
         </aside>
       </div>
 

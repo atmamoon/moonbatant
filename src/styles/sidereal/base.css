@@ -41,7 +41,7 @@ img, svg, video, canvas { display: block; max-width: 100%; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 
 ::selection { background: var(--alpenglow); color: #23140a; }
-:focus-visible { outline: 1px solid var(--alpenglow); outline-offset: 4px; }
+:focus-visible { outline: 2px solid var(--venus); outline-offset: 3px; box-shadow: 0 0 0 5px rgba(6, 8, 20, 0.8); }
 
 /* ── Type roles ── */
 .t-inscription {
@@ -159,19 +159,20 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .prose a:hover { color: var(--venus); text-decoration-color: var(--rule-glow); }
 .prose h2 {
   font-family: var(--font-mono);
-  font-size: var(--text-label);
+  font-size: 0.86rem;
   font-weight: 500;
-  letter-spacing: var(--track-label);
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--alpenglow);
-  margin: 3.2em 0 1.2em;
+  margin: 3.4em 0 1.4em;
   padding-top: 1.4em;
   border-top: 1px solid var(--rule);
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 14px;
+  scroll-margin-top: 110px;
 }
-.prose h2::before { content: counter(chapter, decimal-leading-zero); counter-increment: chapter; color: var(--ink-3); }
+.prose h2::before { content: counter(chapter, decimal-leading-zero); counter-increment: chapter; font-size: 1.5em; font-weight: 300; color: var(--ink-4); }
 .prose { counter-reset: chapter; }
 .prose h3 { font-size: var(--text-h3); margin: 2em 0 0.6em; color: var(--ink); }
 .prose ul, .prose ol { margin: 0 0 1.3em; padding-left: 0; list-style: none; counter-reset: li; }
@@ -191,6 +192,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   text-wrap: balance;
 }
 .prose blockquote p { margin: 0; }
+/* an opening note ("full write-up on Medium…") is a pointer, not a pull quote */
+.prose > blockquote:first-child { text-align: left; font-size: 0.95em; font-style: italic; color: var(--ink-3); padding: 0.9em 0; border-top: 0; }
 .prose code { font-family: var(--font-mono); font-size: 0.86em; color: var(--glacier); }
 .prose hr { border: 0; height: 1px; background: var(--rule); margin: 2.4em 0; }
 
@@ -208,3 +211,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 }
+
+/* ── OG capture mode (?og=1): title and range only ── */
+html.og .hero__dek, html.og .hero__cta, html.og .hero__hint, html.og .tc, html.og .scale, html.og .hd__nav, html.og .hd__menu { display: none !important; }
+html.og .hero { padding-top: clamp(120px, 26vh, 260px); }

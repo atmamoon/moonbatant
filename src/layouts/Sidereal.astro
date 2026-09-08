@@ -44,14 +44,18 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <Analytics />
   </head>
   <body>
-    <a class="skip-link" href="#work">Skip to content</a>
+    <a class="skip-link" href="#top">Skip to content</a>
     <Stage mode={mode} />
     <Header />
-    <main id="top" class="above">
+    <main id="top" class="above" tabindex="-1">
       <slot />
     </main>
-    <TimeCard />
+    {mode === 'clock' && <TimeCard />}
     {mode === 'clock' && <SolarScale />}
+    <script is:inline>
+      // ?og=1 → a clean frame for social thumbnails (title + range only)
+      if (location.search.indexOf('og') !== -1) document.documentElement.classList.add('og');
+    </script>
     <style>
       .skip-link { position: fixed; top: -60px; left: 16px; z-index: 100; padding: 10px 16px; background: var(--ink); color: #0b0f1c; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; transition: top 0.2s ease; }
       .skip-link:focus-visible { top: 12px; }

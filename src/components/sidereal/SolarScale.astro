@@ -14,8 +14,10 @@
 </nav>
 
 <style is:global>
-  .scale { position: fixed; right: clamp(14px, 2vw, 34px); top: 112px; bottom: 96px; z-index: 40; width: 120px; display: none; pointer-events: none; }
+  .scale { position: fixed; right: clamp(14px, 2vw, 34px); top: 210px; bottom: 96px; z-index: 40; width: 120px; display: none; pointer-events: none; }
   @media (min-width: 1100px) { .scale { display: block; } }
+  @media (min-width: 1100px) and (max-width: 1399px) { .scale__chapter { display: none; } }
+  @media (min-width: 1400px) and (max-width: 1559px) { .wrap { max-width: 1180px; } }
   .scale__track { position: absolute; top: 0; bottom: 0; right: 0; width: 1px; background: var(--rule); container-type: size; }
   .scale__ticks { position: absolute; inset: 0; }
   .scale__tick { position: absolute; right: 0; width: 6px; height: 1px; background: var(--rule-strong); transform: translateY(-0.5px); }
@@ -27,17 +29,12 @@
   .scale__chapter {
     position: absolute; right: 18px; transform: translateY(calc(-100% - 5px)); pointer-events: auto;
     font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--ink-3); white-space: nowrap; text-shadow: var(--ink-shadow);
+    color: var(--ink-2); white-space: nowrap; text-shadow: var(--ink-shadow);
     padding-right: 30px; transition: color var(--dur) var(--ease);
   }
   .scale__chapter::after { content: ''; position: absolute; right: 0; top: 50%; width: 22px; height: 1px; background: var(--rule-strong); }
   .scale__chapter:hover { color: var(--venus); }
   .scale__marker { position: absolute; left: 0; top: 0; width: 1px; height: 0; transition: transform 0.25s linear; }
   .scale__marker-line { position: absolute; right: -14px; top: 0; width: 28px; height: 1px; background: var(--alpenglow); box-shadow: 0 0 10px rgba(255, 178, 122, 0.6); transform: translateY(-0.5px); }
-  .scale__marker-val {
-    position: absolute; right: 20px; top: 0; transform: translateY(-50%);
-    font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.08em; color: var(--alpenglow); font-variant-numeric: tabular-nums; white-space: nowrap;
-    text-shadow: var(--ink-shadow); background: transparent; padding-right: 10px;
-  }
   .scale__cap { position: absolute; right: -6px; bottom: -22px; transform-origin: right bottom; font-family: var(--font-mono); font-size: 0.52rem; letter-spacing: 0.2em; color: var(--ink-4); white-space: nowrap; }
 </style>

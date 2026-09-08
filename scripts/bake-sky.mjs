@@ -2,6 +2,7 @@
 // (https://github.com/ofrohn/d3-celestial, BSD-3):
 //   public/sidereal/stars.bin      5,044 stars (mag ≤ 6): unit vector (int16 ×3), mag (u8), B−V (u8)
 //   public/sidereal/milkyway.webp  equirectangular isophote bake of the Milky Way
+//   public/sidereal/constellations.bin  constellation figure segments (int16 unit vectors ×2)
 // Usage: node scripts/bake-sky.mjs <dir-with-stars.6.json+mw.json>
 import fs from 'fs';
 import path from 'path';
@@ -68,3 +69,13 @@ for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
 await sharp(gray, { raw: { width: W, height: H, channels: 1 } }).webp({ quality: 82 }).toFile(path.join(out, 'milkyway.webp'));
 await sharp(gray, { raw: { width: W, height: H, channels: 1 } }).resize(1024).png().toFile(path.join(src, 'milkyway-preview.png'));
 console.log('milkyway baked');
+
+// ── constellation figures ──
+const cl = JSON.parse(fs.readFileSync(path.join(src, 'constellations.lines.json'))).features;
+const segs = [];
+for (const f of cl) for (const line of f.geometry.coordinates) for (let i = 0; i < line.length - 1; i++) segs.push([line[i], line[i + 1]]);
+const cbuf = Buffer.alloc(segs.length * 12); let co = 0;
+const put = ([lon, dec]) => { const ra = (lon * Math.PI) / 180, d = (dec * Math.PI) / 180; cbuf.writeInt16LE(Math.round(Math.cos(d) * Math.cos(ra) * 32767), co); cbuf.writeInt16LE(Math.round(Math.cos(d) * Math.sin(ra) * 32767), co + 2); cbuf.writeInt16LE(Math.round(Math.sin(d) * 32767), co + 4); co += 6; };
+for (const [a, b] of segs) { put(a); put(b); }
+fs.writeFileSync(path.join(out, 'constellations.bin'), cbuf);
+console.log('constellations', segs.length, 'segments');

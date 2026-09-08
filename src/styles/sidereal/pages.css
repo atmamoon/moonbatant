@@ -3,21 +3,27 @@
 .page__head { display: grid; gap: 22px; max-width: 820px; margin-bottom: clamp(48px, 7vw, 88px); }
 .page__back { align-self: start; margin-bottom: 10px; color: var(--ink-2); }
 .page__title { font-size: var(--text-title); line-height: 1.04; color: var(--ink); text-shadow: var(--ink-shadow); }
-.page__head .t-label { display: inline-flex; align-items: center; gap: 12px; }
-.page__head .t-label::before { content: ''; width: 28px; height: 1px; background: var(--rule-strong); }
+.page__head .t-label::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--rule-strong); vertical-align: middle; margin-right: 12px; }
 
 /* case study */
 .case__meta { display: flex; flex-wrap: wrap; gap: 8px 14px; color: var(--ink-3); }
 .case__meta .sep { color: var(--ink-4); }
-.case__metrics { display: flex; flex-wrap: wrap; gap: clamp(28px, 4vw, 64px); padding: 30px 0 34px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin-bottom: clamp(36px, 5vw, 60px); }
-.case__metric { display: grid; gap: 10px; }
+.case__metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: clamp(24px, 3vw, 48px); row-gap: 28px; align-items: start; padding: 30px 0 34px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin-bottom: clamp(36px, 5vw, 60px); }
+.case__metric { display: grid; gap: 10px; align-content: start; }
 .case__val { font-size: clamp(1.9rem, 3.2vw, 2.8rem); text-shadow: var(--ink-shadow); }
+.case__val--word { font-family: var(--font-serif); font-stretch: 100%; font-weight: 400; font-size: clamp(1.3rem, 1.9vw, 1.7rem); letter-spacing: 0; color: var(--ink); line-height: 1.15; }
 .case__val--lead { color: var(--alpenglow); }
-.case__cap { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); max-width: 18ch; line-height: 1.45; }
+.case__cap { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); max-width: 24ch; line-height: 1.45; text-wrap: balance; }
 .case__tags { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--ink-3); margin-bottom: clamp(36px, 5vw, 56px); display: flex; flex-wrap: wrap; gap: 6px 0; }
 .case__tags .sep { color: var(--ink-4); margin: 0 10px; }
 .case__grid { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); column-gap: clamp(40px, 6vw, 96px); align-items: start; }
-.case__aside { position: sticky; top: 120px; display: grid; gap: 22px; padding-top: 6px; }
+.case__grid > .prose { max-width: min(var(--measure), 100%); }
+.case__aside { position: sticky; top: 130px; display: grid; gap: 26px; padding-top: 6px; }
+.toc { list-style: none; display: grid; gap: 2px; }
+.toc a { display: grid; grid-template-columns: 30px minmax(0, 1fr); column-gap: 10px; padding: 7px 0; font-family: var(--font-display); font-size: var(--text-small); color: var(--ink-2); border-top: 1px solid var(--rule); }
+.toc li:last-child a { border-bottom: 1px solid var(--rule); }
+.toc a:hover { color: var(--venus); }
+.toc__n { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; color: var(--ink-4); padding-top: 0.2em; }
 .case__aside .t-label { display: block; margin-bottom: 8px; }
 .case__aside p { font-family: var(--font-display); font-size: var(--text-small); line-height: 1.6; color: var(--ink-2); }
 .case__foot { margin-top: clamp(56px, 8vw, 96px); padding-top: 28px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
@@ -40,3 +46,11 @@
   .case__grid { grid-template-columns: 1fr; }
   .case__aside { position: static; order: -1; }
 }
+
+/* ── Exhibits: the work itself, inserted between hairlines. No border, no
+      radius, no shadow — a plate, not a card. Mono caption beneath. ── */
+.prose figure, .plate { margin: 2.4em 0; padding: 1.2em 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.prose figure img, .plate img, .prose > img { display: block; width: 100%; height: auto; }
+.prose figcaption, .plate__cap { margin-top: 12px; font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--ink-3); }
+.plate--bleed { margin-inline: calc(50% - 50vw); padding-inline: var(--gutter); }
+@media (max-width: 700px) { .case__metrics { grid-template-columns: 1fr 1fr; } }
