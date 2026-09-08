@@ -26,6 +26,7 @@ for (const [name, path, anchor] of shots) {
     await p.evaluate((id) => { const el = document.getElementById(id); if (el) window.scrollTo(0, el.getBoundingClientRect().top + scrollY - 200); }, anchor);
     await new Promise((r) => setTimeout(r, 3000));
   }
+  await p.evaluate(() => document.querySelector('astro-dev-toolbar')?.remove());   // dev-build chrome, not the design
   await p.screenshot({ path: `${OUT}/${name}-raw.png` });
   await sharp(`${OUT}/${name}-raw.png`).resize(1200, 630).jpeg({ quality: 86, mozjpeg: true }).toFile(`${OUT}/${name}.jpg`);
   await p.close();

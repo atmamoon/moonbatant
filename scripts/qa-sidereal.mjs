@@ -21,6 +21,8 @@ async function run(viewport, tag) {
   page.on('pageerror', (e) => errors.push(`[${tag}] PAGEERROR: ${e.message.slice(0, 200)}`));
   await page.goto(BASE + '/', { waitUntil: 'networkidle2', timeout: 60000 });
   await new Promise((r) => setTimeout(r, 3500));
+  const noToolbar = () => page.evaluate(() => document.querySelector('astro-dev-toolbar')?.remove());
+  await noToolbar();
   const layout = await page.evaluate(() => Array.from(document.querySelectorAll('[data-chapter]')).map((el) => ({ id: el.id, top: Math.round(el.getBoundingClientRect().top + scrollY), h: Math.round(el.getBoundingClientRect().height) })).concat([{ id: 'doc', top: 0, h: document.body.scrollHeight }, { id: 'mf-rows', top: 0, h: Array.from(document.querySelectorAll('.mf__row')).map((r) => Math.round(r.getBoundingClientRect().height)).join('/') }]));
   const stops = ['hero', 'work', 'about', 'experience', 'education', 'writing', 'contact'];
   const report0 = [{ layout }];
@@ -30,6 +32,7 @@ async function run(viewport, tag) {
     await page.evaluate((id) => { const el = document.getElementById(id); if (!el) return; const y = id === 'hero' ? 0 : el.getBoundingClientRect().top + scrollY - 72; window.scrollTo(0, y); }, id);
     await new Promise((r) => setTimeout(r, 2600));
     const st = await page.evaluate(() => ({ y: Math.round(scrollY), sun: +(window.__sidereal?.sun ?? NaN).toFixed(1), phase: document.documentElement.dataset.phase, clock: document.getElementById('tc-clock')?.textContent, webgl: document.documentElement.classList.contains('webgl'), ready: document.documentElement.classList.contains('range-ready') }));
+    await noToolbar();
     await page.screenshot({ path: `${OUT}/${tag}-${id}.png` });
     report.push({ id, ...st });
   }
@@ -54,6 +57,7 @@ if (!ONLY) {
   for (const [name, path] of [['case', '/work/pm-agent-claude-code'], ['work', '/work'], ['writing', '/writing']]) {
     await page.goto(BASE + path, { waitUntil: 'networkidle2', timeout: 60000 });
     await new Promise((r) => setTimeout(r, 3000));
+    await page.evaluate(() => document.querySelector('astro-dev-toolbar')?.remove());
     await page.screenshot({ path: `${OUT}/page-${name}.png` });
     if (name === 'case') { await page.evaluate(() => window.scrollTo(0, 900)); await new Promise((r) => setTimeout(r, 1500)); await page.screenshot({ path: `${OUT}/page-case-mid.png` }); }
   }
