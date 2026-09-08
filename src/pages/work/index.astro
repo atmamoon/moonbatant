@@ -1,75 +1,27 @@
 ---
-import Base from '../../layouts/Base.astro';
+import Sidereal from '../../layouts/Sidereal.astro';
+import Manifest from '../../components/sidereal/Manifest.astro';
 import { getCollection } from 'astro:content';
-import SectionLabel from '../../components/SectionLabel.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
+import '../../styles/sidereal/pages.css';
 
 const studies = (await getCollection('work'))
   .filter((s) => !s.data.draft)
   .sort((a, b) => a.data.order - b.data.order);
-const lastIdx = studies.length - 1;
 ---
 
-<Base title="Work" description="Deep dives on the AI-native products I've built — problem, approach, evals, and impact.">
-  <div class="kit-case worklist">
-    <section class="worklist__inner">
-      <a href="/" class="worklist__back">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Home
-      </a>
-      <SectionLabel>Selected work</SectionLabel>
-      <h1 class="worklist__title">Products &amp; agents I've shipped.</h1>
-      <p class="worklist__lead">
-        How I think about building AI-native products — the problem, the agent and
-        eval design, the tradeoffs I made, and what moved.
-      </p>
-
-      <div class="worklist__grid">
-        {studies.map((s, i) => (
-          <ProjectCard
-            href={`/work/${s.slug}`}
-            company={s.data.company}
-            timeline={s.data.timeline}
-            title={s.data.title}
-            summary={s.data.summary}
-            metrics={s.data.metrics}
-            featured={s.data.featured}
-            large={i === 0 || i === lastIdx}
-          />
-        ))}
-      </div>
-    </section>
-  </div>
-</Base>
-
-<style>
-  .worklist__inner {
-    max-width: var(--maxw-wide); margin: 0 auto;
-    padding: calc(var(--section-y) + 40px) var(--gutter) var(--section-y);
-  }
-  /* Translucent glass pill — matches the "All work" button inside case studies. */
-  .worklist__back {
-    display: flex; width: fit-content; align-items: center; gap: 8px;
-    padding: 8px 14px; margin-bottom: 22px;
-    border-radius: var(--radius-sm);
-    background: rgba(0,0,0,0.32); color: #fff;
-    border: 1px solid rgba(255,255,255,0.2);
-    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-    font-family: var(--font-sans); font-weight: var(--w-semibold); font-size: 0.86rem;
-  }
-  .worklist__back:hover { color: #fff; background: rgba(0,0,0,0.45); }
-  .worklist__inner > :global(.section-label) { margin-bottom: 14px; }
-  .worklist__title {
-    font-family: var(--font-serif);
-    font-size: clamp(2rem, 5vw, 3rem);
-    color: var(--snow-100); margin: 0 0 16px;
-    text-shadow: 0 1px 16px rgba(0,0,0,0.5);
-  }
-  .worklist__lead {
-    color: var(--text-soft); max-width: 640px; margin: 0 0 44px;
-  }
-  .worklist__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
-  @media (max-width: 760px) {
-    .worklist__grid { grid-template-columns: 1fr; }
-  }
-</style>
+<Sidereal title="Work" description="Deep dives on the AI-native products I've built — problem, approach, evals, and impact." mode="night">
+  <section class="page">
+    <div class="wrap">
+      <header class="page__head rv">
+        <a class="rule-link page__back" href="/">← Home</a>
+        <p class="t-label">Selected work</p>
+        <h1 class="page__title">Products &amp; agents I've shipped.</h1>
+        <p class="t-dek">
+          How I think about building AI-native products — the problem, the agent and
+          eval design, the tradeoffs I made, and what moved.
+        </p>
+      </header>
+      <Manifest studies={studies} />
+    </div>
+  </section>
+</Sidereal>

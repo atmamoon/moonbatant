@@ -1,0 +1,81 @@
+---
+// Manifest — the case-study register. No cards: hairlines, indices, and
+// instrument-style numerals. Each row is one link.
+import type { CollectionEntry } from 'astro:content';
+interface Props { studies: CollectionEntry<'work'>[]; }
+const { studies } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<ol class="mf">
+  {studies.map((s, i) => (
+    <li class="rv">
+      <a class="mf__row" href={`/work/${s.slug}`}>
+        <span class="mf__idx t-label">{pad(i + 1)}</span>
+        <span class="mf__main">
+          <span class="mf__meta t-label">{s.data.company} <span class="mf__sep" aria-hidden="true">·</span> {s.data.timeline}</span>
+          <span class="mf__title">{s.data.title}</span>
+          <span class="mf__summary">{s.data.summary}</span>
+        </span>
+        <span class="mf__metrics" aria-label="Headline metrics">
+          {s.data.metrics.slice(0, 3).map((m, k) => (
+            <span class="mf__metric">
+              <span class:list={['t-numeral', 'mf__val', k === 0 && 'mf__val--lead', k === 0 && 'numeral-live']}>{m.value}</span>
+              <span class="mf__cap">{m.label}</span>
+            </span>
+          ))}
+        </span>
+        <span class="mf__go" aria-hidden="true"><span class="mf__go-text">Read</span> →</span>
+      </a>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .mf { list-style: none; display: grid; }
+  .mf__row {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 7fr) minmax(0, 4fr) 72px;
+    column-gap: clamp(18px, 2.4vw, 36px);
+    align-items: start;
+    padding: clamp(28px, 3.4vw, 40px) 0;
+    border-top: 1px solid var(--rule);
+    position: relative;
+    transition: border-color var(--dur) var(--ease);
+  }
+  .mf li:last-child .mf__row { border-bottom: 1px solid var(--rule); }
+  /* the sweep: a warm rule that grows from the left on hover */
+  .mf__row::before { content: ''; position: absolute; left: 0; top: -1px; height: 1px; width: 0; background: var(--alpenglow); transition: width 0.55s var(--ease-out); }
+  .mf__row:hover::before { width: 100%; }
+  .mf__idx { color: var(--ink-4); padding-top: 0.3em; }
+  .mf__main { display: grid; gap: 12px; }
+  .mf__meta { color: var(--ink-3); }
+  .mf__sep { color: var(--ink-4); margin: 0 6px; }
+  .mf__title { font-family: var(--font-serif); font-size: clamp(1.45rem, 2.3vw, 2rem); line-height: 1.12; color: var(--ink); letter-spacing: -0.012em; text-shadow: var(--ink-shadow); transition: color var(--dur) var(--ease); text-wrap: balance; }
+  .mf__row:hover .mf__title { color: var(--venus); }
+  .mf__summary { font-family: var(--font-display); font-size: var(--text-ui); line-height: 1.6; color: var(--ink); max-width: 58ch; text-shadow: var(--ink-shadow); }
+  /* instrument readouts: numeral, then its caption, one per line */
+  .mf__metrics { display: grid; row-gap: 12px; padding-top: 6px; align-content: start; }
+  .mf__metric { display: grid; grid-template-columns: minmax(96px, auto) minmax(0, 1fr); column-gap: 14px; align-items: baseline; min-width: 0; }
+  .mf__val { font-size: clamp(1.15rem, 1.7vw, 1.55rem); white-space: nowrap; text-shadow: var(--ink-shadow); }
+  .mf__val--lead { color: var(--alpenglow); }
+  .mf__cap { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); line-height: 1.4; }
+  .mf__go { justify-self: end; padding-top: 0.35em; font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--ink-3); white-space: nowrap; transition: color var(--dur) var(--ease), transform var(--dur) var(--ease); }
+  .mf__row:hover .mf__go { color: var(--alpenglow); transform: translateX(4px); }
+  @media (max-width: 900px) {
+    /* explicit placement: an item with only a definite row is placed before
+       auto items and would steal the first column */
+    .mf__row { grid-template-columns: 36px minmax(0, 1fr) 60px; row-gap: 22px; }
+    .mf__idx { grid-column: 1; grid-row: 1; }
+    .mf__main { grid-column: 2; grid-row: 1; }
+    .mf__metrics { grid-column: 2; grid-row: 2; }
+    .mf__go { grid-column: 3; grid-row: 1; }
+  }
+  @media (max-width: 560px) {
+    .mf__row { grid-template-columns: minmax(0, 1fr) 52px; }
+    .mf__idx { display: none; }
+    .mf__main { grid-column: 1; grid-row: 1; }
+    .mf__metrics { grid-column: 1 / -1; grid-row: 2; }
+    .mf__go { grid-column: 2; grid-row: 1; }
+    .mf__go-text { display: none; }
+  }
+</style>

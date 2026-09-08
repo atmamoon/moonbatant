@@ -1,0 +1,50 @@
+---
+// TimeCard — the burn-in. Bottom-left, mono: local clock, solar altitude,
+// twilight phase, the camp's coordinates, and live Everest weather (open-meteo).
+interface Props { fixed?: boolean }
+const { fixed = true } = Astro.props;
+---
+<aside class:list={['tc', fixed && 'tc--fixed']} aria-label="Sky clock">
+  <div class="tc__row"><span class="tc__k">LOCAL</span><span class="tc__v" id="tc-clock">17:13</span><span class="tc__u">NPT</span></div>
+  <div class="tc__row"><span class="tc__k">SUN</span><span class="tc__v" id="tc-sun">+4.0°</span><span class="tc__u" id="tc-phase">GOLDEN HOUR</span></div>
+  <div class="tc__row tc__row--dim" id="tc-wx" hidden><span class="tc__k">EVEREST</span><span class="tc__v" id="tc-wx-v"></span><span class="tc__u" id="tc-wx-u"></span></div>
+</aside>
+
+<style>
+  .tc {
+    font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3); display: grid; gap: 5px; text-shadow: var(--ink-shadow);
+  }
+  .tc--fixed { position: fixed; left: var(--gutter); bottom: 26px; z-index: 40; pointer-events: none; }
+  /* corner vignette so scrolling text never fights the burn-in (static paint) */
+  .tc--fixed::before { content: ''; position: absolute; left: -60px; bottom: -40px; width: 460px; height: 240px; z-index: -1;
+    background: radial-gradient(ellipse at 18% 88%, rgba(5, 7, 15, 0.9) 0%, rgba(5, 7, 15, 0.55) 42%, rgba(5, 7, 15, 0) 72%); }
+  .tc__row { display: grid; grid-template-columns: 62px auto auto; column-gap: 12px; align-items: baseline; }
+  .tc__k { color: var(--ink-4); }
+  .tc__v { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .tc__u { color: var(--alpenglow); }
+  .tc__row--dim .tc__v { color: var(--ink-2); }
+  .tc__row--dim .tc__u { color: var(--ink-3); }
+  @media (max-width: 900px) { .tc--fixed { display: none; } }
+</style>
+
+<script is:inline>
+  (async function () {
+    try {
+      var cached = JSON.parse(localStorage.getItem('mb-wx') || 'null');
+      var d = cached && Date.now() - cached.ts < 30 * 60e3 ? cached.d : null;
+      if (!d) {
+        var r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=27.9881&longitude=86.925&elevation=8849&current=temperature_2m,wind_speed_10m,weather_code');
+        if (!r.ok) return;
+        d = (await r.json()).current;
+        localStorage.setItem('mb-wx', JSON.stringify({ ts: Date.now(), d: d }));
+      }
+      var row = document.getElementById('tc-wx'), v = document.getElementById('tc-wx-v'), u = document.getElementById('tc-wx-u');
+      if (!row || !d) return;
+      var t = Math.round(d.temperature_2m), w = Math.round(d.wind_speed_10m), c = d.weather_code || 0;
+      v.textContent = (t < 0 ? '−' : '') + Math.abs(t) + '°C · ' + w + ' km/h';
+      u.textContent = c === 0 ? 'CLEAR' : c < 4 ? 'PARTLY CLEAR' : c < 50 ? 'CLOUD' : c < 80 ? 'SNOW' : 'STORM';
+      row.hidden = false;
+    } catch (e) {}
+  })();
+</script>

@@ -1,0 +1,60 @@
+---
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/newsreader/standard-italic.css';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/sidereal/tokens.css';
+import '../styles/sidereal/base.css';
+import Header from '../components/sidereal/Header.astro';
+import Stage from '../components/sidereal/Stage.astro';
+import TimeCard from '../components/sidereal/TimeCard.astro';
+import SolarScale from '../components/sidereal/SolarScale.astro';
+import Analytics from '../components/Analytics.astro';
+import { SITE } from '../consts';
+
+interface Props { title?: string; description?: string; mode?: 'clock' | 'night'; }
+const { title, description, mode = 'clock' } = Astro.props;
+const pageTitle = title ? `${title} — Mamoon Mondal` : SITE.title;
+const pageDesc = description ?? SITE.description;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+---
+<!doctype html>
+<html lang="en" data-theme="dark" data-phase={mode === 'night' ? 'night' : 'golden'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#05070f" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDesc} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDesc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og-image.jpg', SITE.url).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Mamoon Mondal — AI Product Manager. One evening below the Himalaya: the sky as a clock, real stars, the range relit from golden hour to night." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={new URL('/og-image.jpg', SITE.url).href} />
+    <link rel="preload" as="fetch" href="/sidereal/stars.bin" crossorigin="anonymous" />
+    <Analytics />
+  </head>
+  <body>
+    <a class="skip-link" href="#work">Skip to content</a>
+    <Stage mode={mode} />
+    <Header />
+    <main id="top" class="above">
+      <slot />
+    </main>
+    <TimeCard />
+    {mode === 'clock' && <SolarScale />}
+    <style>
+      .skip-link { position: fixed; top: -60px; left: 16px; z-index: 100; padding: 10px 16px; background: var(--ink); color: #0b0f1c; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; transition: top 0.2s ease; }
+      .skip-link:focus-visible { top: 12px; }
+    </style>
+  </body>
+</html>

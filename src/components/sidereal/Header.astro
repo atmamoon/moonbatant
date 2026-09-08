@@ -1,0 +1,80 @@
+---
+import Mark from '../Mark.astro';
+const nav = [
+  { href: '/work', label: 'Work' },
+  { href: '/#about', label: 'About' },
+  { href: '/#writing', label: 'Writing' },
+  { href: '/#contact', label: 'Contact' },
+];
+---
+<header class="hd">
+  <div class="hd__inner">
+    <a href="/" class="hd__brand" aria-label="moonbatant — home">
+      <Mark size={22} />
+      <span class="hd__word">moonbatant</span>
+    </a>
+    <nav class="hd__nav" aria-label="Primary">
+      {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+      <a href="/resume.pdf" target="_blank" rel="noopener" class="hd__cv">Résumé <span aria-hidden="true">↗</span></a>
+    </nav>
+    <button id="menu-btn" class="hd__menu" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
+      <span></span><span></span>
+    </button>
+  </div>
+  <nav id="mobile-nav" class="hd__mobile" aria-label="Mobile">
+    {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+    <a href="/resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+  </nav>
+</header>
+
+<style>
+  .hd { position: fixed; top: 0; left: 0; right: 0; z-index: 50; pointer-events: none; }
+  /* a quiet top scrim so scrolled text never collides with the nav (static paint, fixed) */
+  .hd::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 150px; background: linear-gradient(180deg, rgba(5, 7, 15, 0.82) 0%, rgba(5, 7, 15, 0.42) 50%, rgba(5, 7, 15, 0) 100%); pointer-events: none; }
+  .hd__inner {
+    pointer-events: auto;
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 22px var(--gutter) 0;
+    display: flex; align-items: center; gap: 24px;
+  }
+  .hd__brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-shadow: var(--ink-shadow); }
+  .hd__brand :global(.mb-mark) { color: var(--alpenglow); }
+  .hd__word {
+    font-family: var(--font-display); font-stretch: 118%; font-weight: 500;
+    font-size: 0.72rem; letter-spacing: 0.24em; text-transform: uppercase;
+  }
+  .hd__nav { margin-left: auto; display: flex; align-items: center; gap: 26px; }
+  .hd__nav a {
+    font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: var(--track-label); text-transform: uppercase;
+    color: var(--ink-2); text-shadow: var(--ink-shadow); padding-bottom: 4px; border-bottom: 1px solid transparent;
+    transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .hd__nav a:hover { color: var(--venus); border-color: var(--rule-glow); }
+  .hd__cv { color: var(--ink) !important; }
+  .hd__menu { display: none; margin-left: auto; width: 40px; height: 40px; flex-direction: column; align-items: center; justify-content: center; gap: 6px; pointer-events: auto; }
+  .hd__menu span { display: block; width: 22px; height: 1px; background: var(--ink); transition: transform var(--dur) var(--ease); }
+  .hd__menu[aria-expanded='true'] span:first-child { transform: translateY(3.5px) rotate(45deg); }
+  .hd__menu[aria-expanded='true'] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+  .hd__mobile {
+    display: none; pointer-events: auto; flex-direction: column;
+    margin: 12px var(--gutter) 0; padding: 8px 0 12px;
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    background: rgba(5, 7, 15, 0.72); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  }
+  .hd__mobile.open { display: flex; }
+  .hd__mobile a { padding: 12px 16px; font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
+  @media (max-width: 760px) {
+    .hd__nav { display: none; }
+    .hd__menu { display: inline-flex; }
+    .hd__inner { padding-top: 16px; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var btn = document.getElementById('menu-btn'), nav = document.getElementById('mobile-nav');
+    if (!btn || !nav) return;
+    btn.addEventListener('click', function () { var open = nav.classList.toggle('open'); btn.setAttribute('aria-expanded', String(open)); });
+    nav.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { nav.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }); });
+  })();
+</script>

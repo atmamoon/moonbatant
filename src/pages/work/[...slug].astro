@@ -1,131 +1,80 @@
 ---
-import Base from '../../layouts/Base.astro';
+import Sidereal from '../../layouts/Sidereal.astro';
 import { getCollection } from 'astro:content';
-import Scene from '../../components/Scene.astro';
-import SectionLabel from '../../components/SectionLabel.astro';
-import GlassCard from '../../components/GlassCard.astro';
-import MetricStat from '../../components/MetricStat.astro';
-import Chip from '../../components/Chip.astro';
-import Button from '../../components/Button.astro';
+import '../../styles/sidereal/pages.css';
 
 export async function getStaticPaths() {
-  const studies = (await getCollection('work')).filter((s) => !s.data.draft);
-  return studies.map((study) => ({
+  const studies = (await getCollection('work')).filter((s) => !s.data.draft).sort((a, b) => a.data.order - b.data.order);
+  return studies.map((study, i) => ({
     params: { slug: study.slug },
-    props: { study },
+    props: { study, next: studies[(i + 1) % studies.length], index: i + 1, total: studies.length },
   }));
 }
 
-const { study } = Astro.props;
+const { study, next, index, total } = Astro.props;
 const { Content } = await study.render();
 const d = study.data;
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<Base title={d.title} description={d.summary}>
-  <div class="case">
-    <!-- Hero band for this project's scene -->
-    <Scene
-      scene={d.scene}
-      photo={d.photo}
-      focal={d.focal}
-      scrim="gradient"
-      bleed="bottom"
-      bleedColor="var(--atm-2)"
-      bleedSize="48%"
-      minHeight="min(60vh, 460px)"
-      class="case__hero"
-    >
-      <div class="case__hero-inner">
-        <a href="/work" class="case__back">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-          All work
-        </a>
-        <SectionLabel>{d.company}</SectionLabel>
-        <h1 class="case__title">{d.title}</h1>
-        <p class="case__meta">{d.company} · {d.role} · {d.timeline}</p>
-      </div>
-    </Scene>
+<Sidereal title={d.title} description={d.summary} mode="night">
+  <article class="page case">
+    <div class="wrap">
+      <header class="page__head rv">
+        <a class="rule-link page__back" href="/work">← All work</a>
+        <p class="t-label">Case {pad(index)} / {pad(total)} <span class="sep" aria-hidden="true">·</span> {d.company}</p>
+        <h1 class="page__title">{d.title}</h1>
+        <p class="t-dek">{d.summary}</p>
+        <p class="case__meta t-label">
+          <span>{d.company}</span><span class="sep" aria-hidden="true">·</span>
+          <span>{d.role}</span><span class="sep" aria-hidden="true">·</span>
+          <span>{d.timeline}</span>
+        </p>
+      </header>
 
-    <!-- Body — backdrop starts at --atm-1 (matching the hero foot) and
-         descends to --atm-2 over a subtle night-peak substrate. -->
-    <div class="case-backdrop">
-    <div class="case__body">
-      <GlassCard padding="clamp(26px, 5vw, 52px)">
-        {d.metrics.length > 0 && (
-          <div class="case__metrics">
-            {d.metrics.map((m, i) => <MetricStat value={m.value} label={m.label} accent={i === 0} />)}
-          </div>
-        )}
-        {d.tags.length > 0 && (
-          <div class="case__tags">
-            {d.tags.map((t) => <Chip>{t}</Chip>)}
-          </div>
-        )}
-        <div class="prose case__prose">
+      {d.metrics.length > 0 && (
+        <div class="case__metrics rv" aria-label="Headline metrics">
+          {d.metrics.map((m, i) => (
+            <div class="case__metric">
+              <span class:list={['t-numeral', 'case__val', i === 0 && 'case__val--lead', i === 0 && 'numeral-live']}>{m.value}</span>
+              <span class="case__cap">{m.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div class="case__grid">
+        <div class="prose rv">
           <Content />
         </div>
-        <div class="case__foot">
-          <Button variant="ghost" href="/work" iconLeft="back">Back to all work</Button>
-          <Button variant="primary" href="/#writing" iconRight="arrow">Let's talk</Button>
+        <aside class="case__aside rv">
+          {d.tags.length > 0 && (
+            <div>
+              <span class="t-label">Tags</span>
+              <p class="case__tags">{d.tags.map((t, i) => (<><span>{t}</span>{i < d.tags.length - 1 && <span class="sep" aria-hidden="true">·</span>}</>))}</p>
+            </div>
+          )}
+          <div>
+            <span class="t-label">Role</span>
+            <p>{d.role} · {d.company}</p>
+          </div>
+          <div>
+            <span class="t-label">Timeline</span>
+            <p>{d.timeline}</p>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="case__foot rv">
+        <div class="hero__cta" style="display:flex;gap:28px;align-items:center;flex-wrap:wrap">
+          <a class="rule-link" href="/work">← Back to all work</a>
+          <a class="slate" href="/#contact">Let's talk <span aria-hidden="true">→</span></a>
         </div>
-      </GlassCard>
+        <div class="case__next">
+          <span class="t-label">Next case</span>
+          <a href={`/work/${next.slug}`}>{next.data.title} →</a>
+        </div>
+      </footer>
     </div>
-    </div>
-  </div>
-</Base>
-
-<style>
-  .case__hero-inner {
-    width: 100%; max-width: var(--maxw); margin: 0 auto;
-    padding: 0 var(--gutter) clamp(36px, 6vw, 64px);
-  }
-  .case__back {
-    display: flex; width: fit-content; align-items: center; gap: 8px;
-    padding: 8px 14px; margin-bottom: 22px;
-    border-radius: var(--radius-sm);
-    background: rgba(0,0,0,0.32); color: #fff;
-    border: 1px solid rgba(255,255,255,0.2);
-    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-    font-family: var(--font-sans); font-weight: var(--w-semibold); font-size: 0.86rem;
-  }
-  .case__back:hover { color: #fff; background: rgba(0,0,0,0.45); }
-  .case__hero-inner > :global(.section-label) { margin-bottom: 14px; }
-  .case__title {
-    font-family: var(--font-serif);
-    font-size: clamp(2rem, 4.5vw, 3.4rem);
-    line-height: 1.08; color: var(--snow-100); margin: 0; max-width: 800px;
-    text-shadow: 0 2px 24px rgba(0,0,0,0.4);
-  }
-  .case__meta {
-    color: rgba(255,255,255,0.85); font-size: 0.95rem; margin-top: 14px;
-    font-family: var(--font-mono);
-  }
-
-  /* Body backdrop — top is --atm-1 (matches the hero's bottom feather), easing
-     into a faint night-peak substrate and down to --atm-2. No seam at the join. */
-  .case-backdrop {
-    position: relative;
-    background-image:
-      linear-gradient(180deg, var(--atm-2) 0%, rgba(18,21,42,0.6) clamp(120px, 18vh, 240px), rgba(15,19,38,0.5) 70%, var(--atm-2) 100%),
-      url('/photos/night-machapuchare.webp');
-    background-size: cover, cover;
-    background-position: center, center 38%;
-    background-attachment: scroll, scroll;
-    background-repeat: no-repeat, no-repeat;
-  }
-  .case__body {
-    max-width: var(--maxw); margin: 0 auto;
-    padding: clamp(32px, 5vw, 52px) var(--gutter) var(--section-y);
-  }
-  .case__metrics {
-    display: flex; gap: 40px; flex-wrap: wrap;
-    padding-bottom: 32px; margin-bottom: 32px;
-    border-bottom: 1px solid var(--border);
-  }
-  .case__tags { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 32px; }
-  .case__prose { max-width: var(--maxw-prose); }
-  .case__foot {
-    margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--border);
-    display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
-  }
-</style>
+  </article>
+</Sidereal>
