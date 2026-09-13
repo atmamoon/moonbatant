@@ -6,7 +6,7 @@
 .page__head .t-label:not(.case__meta)::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--rule-strong); vertical-align: middle; margin-right: 12px; }
 
 /* case study */
-.case__meta { display: flex; flex-wrap: wrap; gap: 8px 14px; color: var(--ink-3); }
+.case__meta { display: flex; flex-wrap: wrap; gap: 8px 14px; color: var(--ink-2); }
 .case__meta .sep { color: var(--ink-4); }
 .case__metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: clamp(24px, 3vw, 48px); row-gap: 28px; align-items: baseline; padding: 30px 0 34px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin-bottom: clamp(36px, 5vw, 60px); }
 .case__metric { display: grid; gap: 10px; align-content: start; }

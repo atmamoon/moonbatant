@@ -34,7 +34,7 @@ decide the light and are never printed (see *The scene is never annotated*).
 | 03 | About | −5° | Civil twilight | Belt of Venus + earth shadow; stars to mag 2 | The light goes flat: one centred measure, credits beneath |
 | 04 | Experience | −10° | Nautical twilight | Horizon fades; stars to mag 4; snow goes silver-blue | The ledger |
 | 05 | Education | −14° | Astronomical twilight | Stars to mag 6 | A short entry |
-| 06 | Writing | −18° | Night | Milky Way at full strength; constellation figures as 8% hairlines | Rows, narrowed to 960px |
+| 06 | Writing | −18° | Night | Milky Way at full strength | Rows, narrowed to 960px |
 | 07 | Contact | −22° | Moonrise | The moon breaks the highest summit's ridge and climbs; the sky wheels at 1× while you read | One sentence, centred, the whole sky |
 
 Outgoing chapters fade to zero under the header band (opacity only).
@@ -71,15 +71,17 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    (`scripts/bake-sky.mjs`), mapped on the celestial sphere, faded in below −12°.
 3. **Stars** — 5,044 real stars (d3-celestial `stars.6`, Hipparcos-derived,
    mag ≤ 6) as GL points. Real RA/Dec → alt/az for the site's latitude and the
-   chapter's sidereal time. Size and brightness from magnitude; colour from B−V.
+   chapter's sidereal time, with east on the right of the north-north-east view, where
+   the stars rise. Size and brightness from magnitude; colour from B−V.
    Limiting magnitude rises with darkness, so the sky fills in bright-first, the
    way it really does. They scintillate quickly and irregularly, never a slow pulse,
    most through the thick air near the horizon, where the brightest flash faint colour.
 4. **Moon** — photographic disc, opaque, drawn behind the range: it starts below
    the highest in-frame summit and climbs through chapter 07, so the ridge bites
    its base on the way up — the Ridgemoon mark, realised in the world. A full moon
-   owns its sky: limiting magnitude drops ~2.4, the Milky Way and the figures go, a
-   wide aureole lifts the sky around it. On reading pages a smaller disc (80px) hangs
+   owns its sky: limiting magnitude drops ~2.4, the Milky Way goes, a wide aureole lifts
+   the sky around it, and the disc itself, lifted and hugged by a tight glow, is the
+   brightest thing in the frame. On reading pages a smaller disc (80px) hangs
    centred in the right margin, measured from the text column's real edge, with at
    least 48px of air on each side. Where the margin can't hold that (below roughly
    1440px wide, and on phones) reading pages show no moon. It drifts slowly upward.
@@ -89,8 +91,9 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    the same sun altitude: warm highlight lift at golden hour, rose alpenglow at
    sunset, desaturated silver-blue at night, with the shadow side always cool.
 6. **Atmosphere** — two cloud layers drifting downwind at different depths (about 8
-   and 6 px/s at 1600px wide), their tiles never narrower than the screen is tall; a
-   cloud's shadow travelling with the nearer layer while there is sun to cast it;
+   and 6 px/s at 1600px wide), their tiles never narrower than the screen is tall;
+   cloud shadows shaped by the nearer layer, travelling with it and falling on the
+   range only, while there is sun to cast them;
    spindrift puffs blowing off the summits; an occasional satellite; a rare meteor
    after dark. Measured across test runs: 2.1–2.6% of pixels change over six seconds,
    at golden hour and at night, slow but alive.
@@ -98,8 +101,8 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
 Performance contract: DPR ≤ 1.5, ~8 draw calls per frame (the moon is a small
 quad, masks upload as LUMINANCE_ALPHA, uniform locations are cached), zero DOM
 paint animation; the loop sleeps under reduced motion once the sun has settled and
-never draws in a hidden tab. Motion dies under `prefers-reduced-motion` and `[data-motion=off]`
-(a still night frame is drawn once). Without WebGL, or when the context is lost
+never draws in a hidden tab. Motion is always on, with no site toggle; only the reader's
+own `prefers-reduced-motion` setting stills it (a still night frame is drawn once). Without WebGL, or when the context is lost
 mid-visit, every page shows a night still in night ink, with every chapter visible.
 
 ## 3. Typography — wide, quiet, exact
@@ -161,7 +164,7 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
 | Where | What may move | Never |
 |---|---|---|
 | Sky | star wheel (real rate), scintillation, Milky Way fade, moonrise, clouds, spindrift, satellite, meteor | per-frame DOM style writes, filters on layers |
-| Content | one-shot reveal (opacity + 12px rise), hairline sweeps on hover, numeral count-up once | anything continuous under text |
+| Content | one-shot reveal (opacity + 12px rise) as soon as a block is on screen, hairline sweeps on hover, numeral count-up once | anything continuous under text |
 
 ## 7. Files
 
@@ -175,9 +178,9 @@ src/scripts/twilight.ts             solar altitude → phase (drives ink and gra
 src/layouts/Sidereal.astro          page shell: stage, header, main
 src/components/sidereal/*           Stage, Header, HomeChapters, Manifest
 public/sidereal/                    range.webp (RGBA), range-2k.webp, range.json (skyline), stars.bin,
-                                    constellations.bin, milkyway.webp, moon.webp, poster.webp,
+                                    milkyway.webp, moon.webp, poster.webp,
                                     poster-night.webp, NOTICE.txt (star data license)
-scripts/bake-sky.mjs                stars.bin, constellations.bin, milkyway.webp from d3-celestial
+scripts/bake-sky.mjs                stars.bin, milkyway.webp from d3-celestial
 scripts/publish-range.mjs           keyed range plate → range.webp, range-2k.webp, range.json, poster.webp
 scripts/qa-sidereal.mjs             screenshots of every chapter, desktop and phone
 tests/sidereal.test.mjs             acceptance suite (`npm test`)

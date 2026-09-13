@@ -6,7 +6,7 @@
 // the shader) → cloud strips → spindrift, satellites, meteors.
 // Iron rules: effects READ scroll, never write it; nothing per-frame touches
 // DOM style except the chapter fade (opacity, written on change); everything
-// dies under prefers-reduced-motion / [data-motion=off]. The scene is never
+// stops only under prefers-reduced-motion. The scene is never
 // annotated: altitude, phase, clock and place drive the light but are never
 // printed, so nothing on screen competes with the content.
 
@@ -155,6 +155,7 @@ varying vec2 vUv;
 uniform sampler2D uTex; uniform vec4 uMap; uniform vec2 uSub;
 uniform float uExposure, uSat, uHiMix, uLift, uContrast, uMoonLift;
 uniform vec3 uTint, uHiTint;
+uniform sampler2D uCloud; uniform float uShA, uShOff, uShRep;
 void main(){
   vec2 uv = vUv * uMap.xy + uMap.zw;
   if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) { gl_FragColor = vec4(0.0); return; }
@@ -165,6 +166,9 @@ void main(){
   g = mix(g, g*uHiTint, uHiMix*hi);
   g = (g - 0.5)*uContrast + 0.5 + uLift;
   g *= uTint * (uExposure + uMoonLift*hi*0.35);
+  // cloud shadow: the nearer layer's density darkens the range, sunlit snow most
+  float cl = texture2D(uCloud, vec2(vUv.x*uShRep + uShOff, 1.0 - vUv.y)).a;
+  g *= 1.0 - uShA * smoothstep(0.02, 0.16, cl) * mix(0.35, 1.0, hi);
   gl_FragColor = vec4(g * c.a, c.a);
 }`;
 
@@ -182,7 +186,8 @@ void main(){
     gl_FragColor = vec4(uTint*a, a);
   } else {
     vec4 c = texture2D(uTex, vec2(p.x, 1.0-p.y));
-    gl_FragColor = vec4(c.rgb*uTint*c.a*uAlpha, c.a*uAlpha);
+    vec3 m = pow(c.rgb, vec3(0.8)) * 1.18;   // lifted: a full moon is the brightest thing in the night frame
+    gl_FragColor = vec4(m*uTint*c.a*uAlpha, c.a*uAlpha);
   }
 }`;
 
@@ -197,28 +202,6 @@ void main(){
   float a = clamp(l * band * uAlpha * 2.6, 0.0, 0.85);
   gl_FragColor = vec4(uTint*a, a);
 }`;
-
-const FS_SHADOW = `
-precision mediump float;
-varying vec2 vUv;
-uniform vec2 uC; uniform vec2 uR; uniform float uA;
-void main(){
-  vec2 d = (vUv - uC) / uR; float f = exp(-dot(d,d)*1.6);
-  gl_FragColor = vec4(0.0, 0.0, 0.0, f * uA);
-}`;
-
-const VS_LINES = `
-attribute vec3 aDir;
-uniform mat3 uEqToHor, uHorToCam; uniform vec2 uTan; varying float vA;
-void main(){
-  vec3 h = uEqToHor * aDir; vec3 c = uHorToCam * h;
-  float alt = asin(clamp(h.z,-1.0,1.0));
-  vA = smoothstep(0.0, 0.18, alt);
-  gl_Position = vec4(c.x/uTan.x, c.y/uTan.y, 0.0, c.z);   // w = depth: vertices behind the camera clip away
-}`;
-const FS_LINES = `
-precision mediump float; varying float vA; uniform float uAlpha;
-void main(){ float a = uAlpha * vA; gl_FragColor = vec4(vec3(0.62,0.72,0.95)*a, a); }`;
 
 const VS_PTS = `
 attribute vec2 aPos; attribute float aSize; attribute float aAlpha;
@@ -271,10 +254,10 @@ export function initSidereal(opts: Opts) {
   const canvas = document.getElementById('sky') as HTMLCanvasElement | null;
   if (!canvas) return;
   const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let stored: string | null = null;
-  try { stored = localStorage.getItem('mb-motion'); } catch { /* storage blocked: motion stays on */ }
-  root.dataset.motion = stored === 'off' ? 'off' : 'on';
-  const motionOff = () => mqReduce.matches || root.dataset.motion === 'off';
+  // Motion is always on; only the reader's own reduced-motion setting stills the world.
+  // A header toggle once stored 'mb-motion' = 'off'; clear it so a stale choice can't linger.
+  try { localStorage.removeItem('mb-motion'); } catch { /* storage blocked */ }
+  const motionOff = () => mqReduce.matches;
 
   const gl = (canvas.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance', preserveDrawingBuffer: false }) ||
     canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null;
@@ -283,7 +266,7 @@ export function initSidereal(opts: Opts) {
   root.classList.add('webgl');
 
   // programs — a compile failure on an old GPU must fall back to the poster, not a black canvas
-  let pSky: WebGLProgram, pStars: WebGLProgram, pRange: WebGLProgram, pSprite: WebGLProgram, pFog: WebGLProgram, pPts: WebGLProgram, pLines: WebGLProgram, pShadow: WebGLProgram;
+  let pSky: WebGLProgram, pStars: WebGLProgram, pRange: WebGLProgram, pSprite: WebGLProgram, pFog: WebGLProgram, pPts: WebGLProgram;
   try {
     pSky = compile(gl, VS_QUAD, FS_SKY);
     pStars = compile(gl, VS_STARS, FS_STARS);
@@ -291,8 +274,6 @@ export function initSidereal(opts: Opts) {
     pSprite = compile(gl, VS_SPRITE, FS_SPRITE);
     pFog = compile(gl, VS_QUAD, FS_FOG);
     pPts = compile(gl, VS_PTS, FS_PTS);
-    pLines = compile(gl, VS_LINES, FS_LINES);
-    pShadow = compile(gl, VS_QUAD, FS_SHADOW);
   } catch (e) {
     root.classList.remove('webgl'); root.classList.add('no-webgl'); root.dataset.phase = 'night';
     console.warn('[sidereal] shaders failed, showing the poster', e);
@@ -333,14 +314,6 @@ export function initSidereal(opts: Opts) {
       arr[i * 6 + 3] = dv.getUint8(o + 6) / 28 - 2; arr[i * 6 + 4] = dv.getUint8(o + 7) / 100 - 0.5; arr[i * 6 + 5] = ((i * 2654435761) >>> 0) / 4294967295;
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, starBuf); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW);
-    redraw();
-  }).catch(() => {});
-  let nLineVerts = 0; const lineBuf = gl.createBuffer()!;
-  fetch('/sidereal/constellations.bin').then((r) => r.arrayBuffer()).then((ab) => {
-    const dv = new DataView(ab); nLineVerts = ab.byteLength / 6;
-    const arr = new Float32Array(nLineVerts * 3);
-    for (let i = 0; i < nLineVerts; i++) { arr[i * 3] = dv.getInt16(i * 6, true) / 32767; arr[i * 3 + 1] = dv.getInt16(i * 6 + 2, true) / 32767; arr[i * 3 + 2] = dv.getInt16(i * 6 + 4, true) / 32767; }
-    gl.bindBuffer(gl.ARRAY_BUFFER, lineBuf); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW);
     redraw();
   }).catch(() => {});
   let texMW: WebGLTexture | null = null, texRange: WebGLTexture | null = null, texMoon: WebGLTexture | null = null, texFogA: WebGLTexture | null = null, texFogB: WebGLTexture | null = null;
@@ -456,8 +429,10 @@ export function initSidereal(opts: Opts) {
     const cL = Math.cos(lst), sL = Math.sin(lst), cP = Math.cos(LAT), sP = Math.sin(LAT);
     // eq (x→RA0, z→pole) → hour-angle frame: xh = x cos L + y sin L ; yh = −x sin L + y cos L ; zh = z
     const eq2ha = [cL, -sL, 0, sL, cL, 0, 0, 0, 1];
-    // ha → horizon (north, east, up): north = −xh sP + zh cP ; east = −yh ; up = xh cP + zh sP
-    const ha2hor = [-sP, 0, cP, 0, -1, 0, cP, 0, sP];
+    // ha → horizon (north, east, up): north = −xh sP + zh cP ; east = +yh ; up = xh cP + zh sP.
+    // yh already points east (hour angle grows westward) and north-east-up is left-handed, so this
+    // map is a reflection (det −1); a rotation here draws the sky mirror-image, east for west.
+    const ha2hor = [-sP, 0, cP, 0, 1, 0, cP, 0, sP];
     const eq2hor = mat3Mul(ha2hor, eq2ha);
     // horizon → camera (right, up, forward)
     const cA = Math.cos(CAM_AZ), sA = Math.sin(CAM_AZ), cT = Math.cos(CAM_PITCH), sT = Math.sin(CAM_PITCH);
@@ -578,20 +553,6 @@ export function initSidereal(opts: Opts) {
       gl.disableVertexAttribArray(aMag); gl.disableVertexAttribArray(aBv); gl.disableVertexAttribArray(aSeed);
     }
 
-    // constellation figures — hairlines, only once the sky is fully dark
-    const figA = 0.085 * smooth(-16, -20, alt) * (1 - moonLight * 0.88);
-    if (nLineVerts && figA > 0.003) {
-      gl.blendFunc(gl.ONE, gl.ONE);
-      gl.useProgram(pLines);
-      gl.bindBuffer(gl.ARRAY_BUFFER, lineBuf);
-      const aL = A(pLines, 'aDir'); gl.enableVertexAttribArray(aL); gl.vertexAttribPointer(aL, 3, gl.FLOAT, false, 12, 0);
-      gl.uniformMatrix3fv(U(pLines, 'uEqToHor'), false, M.eq2hor);
-      gl.uniformMatrix3fv(U(pLines, 'uHorToCam'), false, M.hor2cam);
-      gl.uniform2f(U(pLines, 'uTan'), tanX, tanY);
-      gl.uniform1f(U(pLines, 'uAlpha'), figA);
-      gl.drawArrays(gl.LINES, 0, nLineVerts);
-    }
-
     // moon + halo (screen-space: rises behind the highest summit)
     const m = rangeMap();
     let moonR = (isClock ? clamp(W * 0.045, 44 * dpr, 92 * dpr) : Math.max(readingR, 0) * dpr) / W; // half-width as a fraction of width
@@ -610,13 +571,18 @@ export function initSidereal(opts: Opts) {
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx * 8, cy - ry * 8, rx * 16, ry * 16);
       gl.uniform1f(U(pSprite, 'uHalo'), 1); gl.uniform3f(U(pSprite, 'uTint'), 0.55, 0.62, 0.85); gl.uniform1f(U(pSprite, 'uAlpha'), 0.30 * moonVis * night * clamp(moonAlt / 6, 0.2, 1));
       gl.drawArrays(gl.TRIANGLES, 0, 6);
+      // a tight glow hugging the disc
+      gl.uniform4f(U(pSprite, 'uRect'), cx - rx * 2.4, cy - ry * 2.4, rx * 4.8, ry * 4.8);
+      gl.uniform1f(U(pSprite, 'uHalo'), 1); gl.uniform3f(U(pSprite, 'uTint'), 0.85, 0.88, 0.95); gl.uniform1f(U(pSprite, 'uAlpha'), 0.22 * moonVis * night);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
       // disc — warm near the horizon, silver higher up
       const warm = 1 - clamp(moonAlt / 6, 0, 1);
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx, cy - ry, rx * 2, ry * 2);
-      gl.uniform1f(U(pSprite, 'uHalo'), 0); gl.uniform3f(U(pSprite, 'uTint'), 1.0, lerp(0.98, 0.86, warm), lerp(0.96, 0.72, warm)); gl.uniform1f(U(pSprite, 'uAlpha'), moonVis);
+      gl.uniform1f(U(pSprite, 'uHalo'), 0); gl.uniform3f(U(pSprite, 'uTint'), lerp(0.96, 1.0, warm), lerp(0.99, 0.86, warm), lerp(1.04, 0.72, warm)); gl.uniform1f(U(pSprite, 'uAlpha'), moonVis);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
+    const fogRep = Math.min(1, aspect / 1.6);   // a cloud tile is never narrower than the viewport is tall
     // the range — relit
     if (texRange) {
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -633,23 +599,17 @@ export function initSidereal(opts: Opts) {
       gl.uniform1f(U(pRange, 'uContrast'), lerp(r0.contrast, r1.contrast, rt));
       gl.uniform1f(U(pRange, 'uMoonLift'), moonLight * 0.5);
       t3('uTint', r0.tint, r1.tint); t3('uHiTint', r0.hiTint, r1.hiTint);
+      // cloud shadows, while there is sun to cast them: cloud layer A's own shape and drift
+      const shA = texFogA ? 0.44 * smooth(-2.5, 3, alt) * (motionOff() ? 0 : 1) * dbg.shadow : 0;
+      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, texFogA || texRange); gl.uniform1i(U(pRange, 'uCloud'), 1);
+      gl.uniform1f(U(pRange, 'uShA'), shA);
+      gl.uniform1f(U(pRange, 'uShOff'), -idleSec * dbg.speed / 128);
+      gl.uniform1f(U(pRange, 'uShRep'), 1.6 * fogRep);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.activeTexture(gl.TEXTURE0);
     }
 
     const bandBase = 1 / rangeMap().sy;             // plate height in viewport units
-    // a cloud's shadow crossing the range — only while there is sun to cast it
-    // deep enough to read on sunlit snow at a slow drift: most of golden hour's visible motion is this shadow
-    const shadowA = 0.44 * smooth(-2.5, 3, alt) * (motionOff() ? 0 : 1) * dbg.shadow;
-    if (shadowA > 0.005) {
-      gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);      // dst *= (1 − a): a shadow, not a fog
-      gl.useProgram(pShadow); bindQuad(pShadow);
-      const cxs = -0.3 + (((idleSec * dbg.speed + 155) / 330) % 1) * 1.6;  // travels with cloud layer A, left to right; starts over the middle of the range, so the first seconds already move
-      gl.uniform2f(U(pShadow, 'uC'), cxs, bandBase * 0.42);
-      gl.uniform2f(U(pShadow, 'uR'), 0.26, 0.16 * (W / H) * 0.6);
-      gl.uniform1f(U(pShadow, 'uA'), shadowA);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-    }
-
     // cloud strips — drift at prime periods; more present in twilight
     const fogK = (0.26 + 0.30 * smooth(6, -4, alt) * (1 - smooth(-9, -16, alt)) + 0.10 * night) * dbg.fog;
     const hz = mix3(s0.horizon, s1.horizon, st);
@@ -663,7 +623,6 @@ export function initSidereal(opts: Opts) {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    const fogRep = Math.min(1, aspect / 1.6);   // a tile is never narrower than the viewport is tall
     drawFog(texFogA, -idleSec * dbg.speed / 128, fogK, bandBase * 0.40, bandBase * 0.86, 1.6 * fogRep);   // both layers drift downwind, slowly
     drawFog(texFogB, -idleSec * dbg.speed / 260, fogK * 0.8, bandBase * 0.52, bandBase * 0.98, 1.1 * fogRep);
 
@@ -784,7 +743,7 @@ export function initSidereal(opts: Opts) {
     const io = new IntersectionObserver((entries) => {
       const now = performance.now(); if (now - lastBatch > 400) batch = 0; lastBatch = now;
       entries.forEach((en) => { if (!en.isIntersecting) return; const el = en.target as HTMLElement; el.style.setProperty('--rv-delay', `${Math.min(batch++ * 80, 320)}ms`); el.classList.add('is-in'); io.unobserve(el); });
-    }, { threshold: 0.12 });
+    }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });   // any block, however tall, shows as soon as it is on screen
     document.querySelectorAll('.rv').forEach((el) => io.observe(el));
     const mio = new IntersectionObserver((entries) => {
       entries.forEach((en) => {
@@ -811,6 +770,9 @@ export function initSidereal(opts: Opts) {
       get fov() { return { h: (2 * Math.atan(tanX) * 180) / Math.PI, v: (2 * Math.atan(tanY) * 180) / Math.PI }; },
       get moonVis() { return moonState.vis; }, get moonAlt() { return moonState.alt; }, get moonRect() { return moonState.rect; },
       resize, dbg,
+      // orientation: equatorial degrees → horizon [north, east, up]; horizon → camera [right, up, forward]
+      eqToHor(raDeg: number, decDeg: number, lstDeg: number) { const d = decDeg * DEG, a = raDeg * DEG, e = matrices(lstDeg * DEG).eq2hor, v = [Math.cos(d) * Math.cos(a), Math.cos(d) * Math.sin(a), Math.sin(d)]; return [0, 1, 2].map((r) => e[r] * v[0] + e[3 + r] * v[1] + e[6 + r] * v[2]); },
+      horToCam(n: number, e: number, u: number) { const m = matrices(0).hor2cam; return [0, 1, 2].map((r) => m[r] * n + m[3 + r] * e + m[6 + r] * u); },
     };
   }
 }

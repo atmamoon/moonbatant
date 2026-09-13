@@ -1,7 +1,7 @@
 Star data notice (moonbatant.com)
 
-stars.bin, constellations.bin and milkyway.webp in this folder are derived from
-the star catalogue, constellation figures and Milky Way outlines published with
+stars.bin and milkyway.webp in this folder are derived from the star catalogue
+and Milky Way outlines published with
 d3-celestial (https://github.com/ofrohn/d3-celestial), and are redistributed
 under its BSD 3-Clause License:
 

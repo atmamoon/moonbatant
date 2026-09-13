@@ -129,7 +129,7 @@ after(async () => {
   if (server) { try { process.kill(-server.pid, 'SIGTERM'); } catch { /* already gone */ } }
 });
 
-async function open(route, vp = DESKTOP, { reduce = false, motion = 'on', qa = true, b = browser, blockStorage = false } = {}) {
+async function open(route, vp = DESKTOP, { reduce = false, qa = true, b = browser, blockStorage = false, storage = null } = {}) {
   const page = await b.newPage();
   await page.setCacheEnabled(false);   // every page is a first visit: 200s, not 304s from an earlier test
   page.errors = [];
@@ -163,7 +163,7 @@ async function open(route, vp = DESKTOP, { reduce = false, motion = 'on', qa = t
     // what Chrome does when the reader blocks site data: touching localStorage throws
     Object.defineProperty(window, 'localStorage', { configurable: true, get() { throw new DOMException('Access is denied for this document.', 'SecurityError'); } });
   });
-  if (motion) await page.evaluateOnNewDocument((m) => { try { localStorage.setItem('mb-motion', m); } catch { /* private mode */ } }, motion);
+  if (storage) await page.evaluateOnNewDocument((kv) => { try { for (const [k, v] of Object.entries(kv)) localStorage.setItem(k, v); } catch { /* private mode */ } }, storage);
   const url = `${BASE}${route}${qa ? `${route.includes('?') ? '&' : '?'}qa=1` : ''}`;
   const res = await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
   page.status = res?.status();
@@ -495,6 +495,57 @@ describe('3 · the world behaves', () => {
     assert.deepEqual(problems, []);
   });
 
+  test('the sky is the right way round: east on the right, the pole in the north, stars rising in the east', { timeout: 60000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      const r = await page.evaluate(() => {
+        const s = window.__sidereal;
+        const east = s.eqToHor(90, 0, 0);                                   // six hours east of the meridian, on the equator
+        const pole = s.eqToHor(0, 90, 123);                                 // the celestial pole
+        const star = [s.eqToHor(60, 20, 0), s.eqToHor(60, 20, 10)];         // an eastern star, ten degrees of sidereal time apart
+        const at = (az) => [Math.cos(az * Math.PI / 180), Math.sin(az * Math.PI / 180), 0];
+        return {
+          dueEast: Math.abs(east[0]) < 1e-3 && Math.abs(east[1] - 1) < 1e-3 && Math.abs(east[2]) < 1e-3,
+          poleNorthAtLatitude: pole[0] > 0 && Math.abs(pole[1]) < 1e-3 && Math.abs(Math.asin(pole[2]) * 180 / Math.PI - 27.99) < 0.05,
+          easternStarRises: star[0][1] > 0 && star[1][2] > star[0][2],
+          eastOfViewIsRight: s.horToCam(...at(40))[0] > 0 && s.horToCam(...at(0))[0] < 0,   // the camera looks north-north-east
+        };
+      });
+      assert.deepEqual(r, { dueEast: true, poleNorthAtLatitude: true, easternStarRises: true, eastOfViewIsRight: true });
+    } finally { await page.close(); }
+  });
+
+  test('the risen moon is the brightest thing in the last chapter', { timeout: 90000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await wait(3000);
+      const { moon, mail } = await page.evaluate(() => {
+        const b = document.querySelector('.final__mail').getBoundingClientRect();
+        return { moon: window.__sidereal.moonRect, mail: { left: b.left, top: b.top, right: b.right, bottom: b.bottom } };
+      });
+      assert.ok(moon, 'no moon at the end of the page');
+      const { data, info } = await sharp(await page.screenshot({ type: 'png' })).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+      const sample = (box, disc) => {
+        const out = [], cx = (box.left + box.right) / 2, cy = (box.top + box.bottom) / 2, rx = (box.right - box.left) / 2, ry = (box.bottom - box.top) / 2;
+        for (let y = Math.max(0, Math.floor(box.top)); y < Math.min(info.height, Math.ceil(box.bottom)); y++) {
+          for (let x = Math.max(0, Math.floor(box.left)); x < Math.min(info.width, Math.ceil(box.right)); x++) {
+            if (disc && ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 > 0.64) continue;
+            const i = (y * info.width + x) * 3;
+            out.push(lum(data[i], data[i + 1], data[i + 2]));
+          }
+        }
+        return out.sort((p, q) => p - q);
+      };
+      const disc = sample(moon, true);
+      const button = sample({ left: mail.left + 4, top: mail.top + 4, right: mail.right - 4, bottom: mail.bottom - 4 }, false);
+      const brightest = disc[Math.floor(disc.length * 0.9)], face = button[button.length >> 1];
+      assert.ok(brightest > face, `the moon's brightest tenth measures ${brightest?.toFixed(2)}, the address button ${face?.toFixed(2)}`);
+    } finally { await page.close(); }
+  });
+
   test('reading pages hang the moon only in a margin that holds it clear of the text', { timeout: 180000 }, async () => {
     const problems = [];
     const sizes = [LAPTOP, { name: 'laptop 1366', width: 1366, height: 768 }, { name: 'laptop 1440', width: 1440, height: 900 }, DESKTOP, { name: 'desktop 1920', width: 1920, height: 1080 }, PHONE];
@@ -551,54 +602,68 @@ describe('3 · the world behaves', () => {
         animOk: document.documentElement.classList.contains('anim-ok'),
         hiddenBlocks: [...document.querySelectorAll('.rv')].filter((el) => getComputedStyle(el).opacity !== '1').length,
         raf: window.__sidereal.raf,
-        toggleDisabled: document.getElementById('motion-toggle')?.disabled,
       }));
-      assert.deepEqual(s, { animOk: false, hiddenBlocks: 0, raf: 0, toggleDisabled: true });
+      assert.deepEqual(s, { animOk: false, hiddenBlocks: 0, raf: 0 });
       const changed = await frameDiff(page, 2500);
       assert.ok(changed < 0.05, `${changed.toFixed(3)}% of pixels changed under reduced motion`);
     } finally { await page.close(); }
   });
 
-  test('the motion toggle stops the world and remembers the choice', { timeout: 90000 }, async () => {
-    const page = await open('/', DESKTOP, { motion: null });
-    const read = () => page.evaluate(() => ({
-      attr: document.documentElement.dataset.motion,
-      stored: localStorage.getItem('mb-motion'),
-      pressed: document.getElementById('motion-toggle').getAttribute('aria-pressed'),
-      label: document.querySelector('#motion-toggle .hd__motion-state').textContent,
-    }));
+  test('text on screen never waits to fade in, however tall its block', { timeout: 240000 }, async () => {
+    const problems = [];
+    for (const [route, vp] of [[CASE, DESKTOP], [CASE, PHONE], ['/', LAPTOP]]) {
+      const page = await open(route, vp);
+      try {
+        await ready(page);
+        for (const y of (await stopsOf(page, 0.9)).slice(0, 6)) {
+          await page.evaluate((y) => window.scrollTo(0, y), y);
+          await wait(1700);
+          const hidden = await page.evaluate(() => [...document.querySelectorAll('.rv')].filter((el) => {
+            const b = el.getBoundingClientRect();
+            return b.top < innerHeight - 60 && b.bottom > 160 && getComputedStyle(el).opacity !== '1';
+          }).map((el) => `${String(el.className).split(' ')[0]} at ${Math.round(el.getBoundingClientRect().top)}px`));
+          if (hidden.length) problems.push(`${route} @ ${vp.name}, scrollY ${y}: ${hidden.slice(0, 3).join(', ')} still invisible`);
+        }
+      } finally { await page.close(); }
+    }
+    assert.deepEqual(problems, []);
+  });
+
+  test('motion is always on: no toggle in either menu, and an old "off" choice does not stick', { timeout: 90000 }, async () => {
+    // a returning visitor who switched motion off back when the header had a toggle
+    const page = await open('/', DESKTOP, { storage: { 'mb-motion': 'off' } });
     try {
       await ready(page);
-      await page.evaluate(() => localStorage.setItem('mb-motion', 'on'));
-      await page.reload({ waitUntil: 'networkidle2' });
-      await ready(page);
-      const announced = (await page.accessibility.snapshot({ root: await page.$('#motion-toggle'), interestingOnly: false }))?.name?.trim();
-      assert.equal(announced?.toLowerCase(), 'motion', `announced as "${announced}": aria-pressed carries the state, so the name should not repeat it`);   // CSS capitals reach the accessible name
-      await page.click('#motion-toggle');
+      const a = await state(page);
       await wait(1500);
-      assert.deepEqual(await read(), { attr: 'off', stored: 'off', pressed: 'false', label: 'off' });
-      assert.equal((await state(page)).raf, 0, 'render loop still running with motion off');
-      await page.reload({ waitUntil: 'networkidle2' });
-      await wait(1200);
-      assert.deepEqual(await read(), { attr: 'off', stored: 'off', pressed: 'false', label: 'off' });
-      await page.click('#motion-toggle');
-      await wait(600);
-      assert.deepEqual(await read(), { attr: 'on', stored: 'on', pressed: 'true', label: 'on' });
-    } finally {
-      await page.evaluate(() => localStorage.setItem('mb-motion', 'on')).catch(() => {});
-      await page.close();
-    }
+      const b = await state(page);
+      const s = await page.evaluate(() => ({
+        controls: document.querySelectorAll('#motion-toggle, [data-motion-toggle], .hd__motion').length,
+        stored: localStorage.getItem('mb-motion'),
+        animOk: document.documentElement.classList.contains('anim-ok'),
+      }));
+      assert.deepEqual(s, { controls: 0, stored: null, animOk: true });
+      assert.ok(b.idle - a.idle > 0.8 && b.raf !== 0, `the sky should keep moving: clock ${a.idle} → ${b.idle}, raf ${b.raf}`);
+    } finally { await page.close(); }
+    const phone = await open('/', PHONE);
+    try {
+      await phone.click('#menu-btn');
+      await wait(250);
+      const items = await phone.evaluate(() => [...document.querySelectorAll('#mobile-nav a, #mobile-nav button')].map((el) => el.textContent.trim()));
+      assert.ok(!items.some((t) => /motion/i.test(t)), `the phone menu still offers a motion control: ${items.join(' | ')}`);
+    } finally { await phone.close(); }
   });
 
   test('blocked site storage never breaks the page', { timeout: 90000 }, async () => {
-    const page = await open('/', DESKTOP, { blockStorage: true, motion: null });
+    const page = await open('/', DESKTOP, { blockStorage: true });
     try {
       assert.equal(await page.evaluate(() => { try { void window.localStorage; return 'readable'; } catch { return 'blocked'; } }), 'blocked', 'the storage block was not simulated');
       await ready(page);
-      await page.click('#motion-toggle');
-      await wait(800);
-      const s = await page.evaluate(() => ({ webgl: document.documentElement.classList.contains('webgl'), motion: document.documentElement.dataset.motion }));
-      assert.deepEqual(s, { webgl: true, motion: 'off' });
+      const a = await state(page);
+      await wait(1500);
+      const b = await state(page);
+      assert.ok(await page.evaluate(() => document.documentElement.classList.contains('webgl')), 'WebGL stage not active');
+      assert.ok(b.idle - a.idle > 0.2, `engine clock went ${a.idle} → ${b.idle}`);
       assert.deepEqual(page.errors, []);
     } finally { await page.close(); }
   });
@@ -724,7 +789,7 @@ describe('4 · layout holds at every size', () => {
   test('the header band hides whatever scrolls beneath the nav', { timeout: 300000 }, async () => {
     const problems = [];
     for (const [route, vp] of [['/', DESKTOP], ['/', PHONE], [CASE, DESKTOP], ['/work', LAPTOP]]) {
-      const page = await open(route, vp, { motion: 'off' });
+      const page = await open(route, vp, { reduce: true });
       await ready(page);
       for (const y of await stopsOf(page)) {
         await scrollSettle(page, y);
@@ -742,30 +807,34 @@ describe('4 · layout holds at every size', () => {
     assert.deepEqual(problems, []);
   });
 
-  test('the hero results never touch the name', { timeout: 120000 }, async () => {
-    for (const vp of [{ name: '1440', width: 1440, height: 900 }, DESKTOP, { name: '1920', width: 1920, height: 1080 }, { name: '2560', width: 2560, height: 1440 }]) {
+  test('the hero results show from 1100px wide and never touch the hero text beside them', { timeout: 240000 }, async () => {
+    for (const vp of [{ name: '1100', width: 1100, height: 800 }, { name: '1280', width: 1280, height: 800 }, { name: '1366', width: 1366, height: 768 }, { name: '1440', width: 1440, height: 900 }, DESKTOP, { name: '1920', width: 1920, height: 1080 }, { name: '2560', width: 2560, height: 1440 }]) {
       const page = await open('/', vp);
       const r = await page.evaluate(() => {
         const inst = document.querySelector('.hero__instruments');
         if (!inst || getComputedStyle(inst).display === 'none') return null;
-        const range = document.createRange();
-        range.selectNodeContents(document.querySelector('.hero__name'));
-        const rects = [...range.getClientRects()];
         const i = inst.getBoundingClientRect();
-        return { gap: Math.round(i.left - Math.max(...rects.map((q) => q.right))), overlapsVertically: i.top < Math.max(...rects.map((q) => q.bottom)) };
+        let right = -Infinity;
+        for (const el of document.querySelectorAll('.hero__kicker, .hero__name, .hero__role, .hero__dek, .hero__cta')) {
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          for (const q of range.getClientRects()) if (q.width && q.bottom > i.top && q.top < i.bottom) right = Math.max(right, q.right);
+        }
+        return { gap: right === -Infinity ? 9999 : Math.round(i.left - right) };
       });
       await page.close();
-      if (r) assert.ok(r.gap >= 24 || !r.overlapsVertically, `at ${vp.name}px the results sit ${r.gap}px from the name`);
+      assert.ok(r, `the hero results are hidden at ${vp.name}px wide`);
+      assert.ok(r.gap >= 24, `at ${vp.name}px the results sit ${r.gap}px from the hero text beside them`);
     }
   });
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
 describe('5 · text reads against the scene', () => {
-  const PASSES = [['/', DESKTOP], ['/', { name: 'laptop 1440', width: 1440, height: 900, dpr: 1 }], ['/', LAPTOP], ['/', PHONE], ['/work', DESKTOP], [CASE, DESKTOP], [CASE, LAPTOP], [CASE, PHONE], ['/writing', DESKTOP]];
+  const PASSES = [['/', DESKTOP], ['/', { name: 'laptop 1440', width: 1440, height: 900, dpr: 1 }], ['/', LAPTOP], ['/', { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }], ['/', PHONE], ['/work', DESKTOP], [CASE, DESKTOP], [CASE, LAPTOP], [CASE, PHONE], ['/writing', DESKTOP]];
   for (const [route, vp] of PASSES) {
     test(`contrast · ${route} · ${vp.name}: 4.5:1 for text, 3:1 for large or decorative`, { timeout: 300000 }, async () => {
-      const page = await open(route, vp, { motion: 'off' });
+      const page = await open(route, vp, { reduce: true });
       const fails = [];
       try {
         await ready(page);
@@ -790,7 +859,7 @@ describe('5 · text reads against the scene', () => {
       const plain = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--hide-scrollbars', '--disable-3d-apis'] });
       const fails = [];
       try {
-        const page = await open(route, vp, { b: plain, motion: 'off' });
+        const page = await open(route, vp, { b: plain, reduce: true });
         await wait(1200);
         for (const y of await stopsOf(page)) {
           await scrollSettle(page, y);
