@@ -56,9 +56,9 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
   .mf__title { font-family: var(--font-serif); font-size: clamp(1.45rem, 2.3vw, 2rem); line-height: 1.12; color: var(--ink); letter-spacing: -0.012em; text-shadow: var(--ink-shadow); transition: color var(--dur) var(--ease); text-wrap: balance; }
   .mf__row:hover .mf__title { color: var(--venus); }
   .mf__summary { font-family: var(--font-display); font-size: var(--text-ui); line-height: 1.6; color: var(--ink); max-width: 58ch; text-shadow: var(--ink-shadow); }
-  /* instrument readouts: one shared two-column grid so every caption starts on the same line */
-  .mf__metrics { display: grid; grid-template-columns: minmax(72px, max-content) minmax(0, 1fr); column-gap: 16px; row-gap: 12px; padding-top: 6px; align-content: start; align-items: baseline; }
-  .mf__metric { display: contents; }
+  /* readouts: each value sits over its caption, so captions share one left edge in every row */
+  .mf__metrics { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 14px; padding-top: 6px; align-content: start; }
+  .mf__metric { display: grid; row-gap: 5px; }
   .mf__val { font-size: clamp(1.15rem, 1.7vw, 1.55rem); white-space: nowrap; text-shadow: var(--ink-shadow); }
   .mf__val--word { font-family: var(--font-display); font-stretch: 100%; font-weight: 400; font-size: var(--text-ui); color: var(--ink); letter-spacing: 0; white-space: normal; }
   .mf__val--lead { color: var(--alpenglow); min-width: 2.4em; }

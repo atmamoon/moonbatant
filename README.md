@@ -27,7 +27,7 @@ the sky, the stars, the moonrise and the light on the range. Spec:
 | Baked sky data (real star catalogue, Milky Way), range plate, moon, poster | `public/sidereal/` — rebuilt by `scripts/bake-sky.mjs` and `scripts/publish-range.mjs` |
 | QA captures (real Chrome, every chapter, desktop + mobile) | `node scripts/qa-sidereal.mjs` (dev server on :4321) |
 | Social thumbnails | `node scripts/capture-og-sidereal.mjs` |
-| Acceptance tests: content, errors, WebGL, motion, layout, contrast, accessibility, SEO, no scene data | `npm test` (builds, serves `dist/`, drives Chrome) |
+| Acceptance tests: content, errors and warnings, WebGL and its failure paths, motion, layout, contrast, accessibility, SEO, no scene data | `npm test` (builds, serves `dist/`, drives Chrome) |
 
 Star positions come from the d3-celestial data (Hipparcos-derived, BSD-3);
 the Milky Way is baked from its isophote contours. The license notice ships

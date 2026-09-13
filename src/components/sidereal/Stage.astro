@@ -35,14 +35,17 @@ const { mode = 'clock' } = Astro.props;
   .stage[data-mode='night'] .stage__poster { background: linear-gradient(180deg, #05070f 0%, #0b1226 60%, #131a33 100%); }
   .stage[data-mode='night'] .stage__poster::after { background-image: url('/sidereal/poster-night.webp'); }
   .range-ready .stage__poster { opacity: 0; visibility: hidden; }
-  /* a third grad down the right edge, under the hero results and the manifest readouts, while the sky is bright */
+  /* a third grad from the right edge, under the hero results and the manifest readouts, while the sky is
+     bright; long and soft so it meets the left grad without leaving a light pillar between them */
   .stage__rail { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease;
-    background: linear-gradient(270deg, rgba(5, 7, 15, 0.66) 0px, rgba(5, 7, 15, 0.55) 250px, rgba(5, 7, 15, 0) 420px); }
+    background: linear-gradient(270deg, rgba(5, 7, 15, 0.66) 0px, rgba(5, 7, 15, 0.5) 260px, rgba(5, 7, 15, 0.2) 520px, rgba(5, 7, 15, 0) 820px); }
   html[data-phase='golden'] .stage__rail, html[data-phase='sunset'] .stage__rail, html[data-phase='civil'] .stage__rail { opacity: 1; }
   html[data-phase='nautical'] .stage__rail { opacity: 0.5; }
   @media (max-width: 1099px) { .stage__rail { display: none; } }
   .no-webgl .stage__sky { display: none; }
-  .no-webgl .stage__poster { opacity: 1; }
+  /* no WebGL, or a lost context: a night still on every page (the page switches to night ink) */
+  .no-webgl .stage__poster { opacity: 1; visibility: visible; transition: opacity 0.6s ease; background: linear-gradient(180deg, #05070f 0%, #0b1226 60%, #131a33 100%); }
+  .no-webgl .stage__poster::after { background-image: url('/sidereal/poster-night.webp'); }
   /* ND grad: a cinematographer's graduated filter over the lower frame. Static
      paint; only its opacity changes, per phase (compositor-only). */
   .stage__grad { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease;
@@ -56,5 +59,14 @@ const { mode = 'clock' } = Astro.props;
   html[data-phase='golden'] .stage__grad, html[data-phase='golden'] .stage__grad::after { opacity: 1; }
   html[data-phase='golden'] .stage__grad { background: none; }
   html[data-phase='sunset'] .stage__grad::after, html[data-phase='civil'] .stage__grad::after { opacity: 0.85; }
+  /* Phones: the text column is the full width, and the portrait crop puts the horizon glow behind
+     the hero's lines where the left grad has faded out. A soft radial grad dims that glow; the left
+     grad stays as it is, so this only ever adds shade. */
+  @media (max-width: 760px) {
+    .stage__grad::after {
+      background: radial-gradient(90% 45% at 100% 58%, rgba(6, 8, 20, 0.55) 0%, rgba(6, 8, 20, 0.3) 55%, rgba(6, 8, 20, 0) 100%),
+        linear-gradient(100deg, rgba(6, 8, 20, 0.72) 0%, rgba(6, 8, 20, 0.5) 46%, rgba(6, 8, 20, 0.12) 82%, rgba(6, 8, 20, 0.12) 100%);
+    }
+  }
 
 </style>

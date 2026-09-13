@@ -16,7 +16,7 @@ const nav = [
     <nav class="hd__nav" aria-label="Primary">
       {nav.map((n) => <a href={n.href}>{n.label}</a>)}
       <a href="/resume.pdf" target="_blank" rel="noopener" class="hd__cv">Résumé <span aria-hidden="true">↗</span></a>
-      <button type="button" class="hd__motion" id="motion-toggle" aria-pressed="true" title="Toggle ambient motion">Motion <span class="hd__motion-state">on</span></button>
+      <button type="button" class="hd__motion" id="motion-toggle" aria-pressed="true" title="Toggle ambient motion">Motion <span class="hd__motion-state" aria-hidden="true">on</span></button>
     </nav>
     <button id="menu-btn" class="hd__menu" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
       <span></span><span></span>
@@ -25,7 +25,7 @@ const nav = [
   <nav id="mobile-nav" class="hd__mobile" aria-label="Mobile">
     {nav.map((n) => <a href={n.href}>{n.label}</a>)}
     <a href="/resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
-    <button type="button" class="hd__motion hd__motion--mobile" data-motion-toggle aria-pressed="true">Motion <span class="hd__motion-state">on</span></button>
+    <button type="button" class="hd__motion hd__motion--mobile" data-motion-toggle aria-pressed="true">Motion <span class="hd__motion-state" aria-hidden="true">on</span></button>
   </nav>
 </header>
 
@@ -85,6 +85,9 @@ const nav = [
     if (!btn || !nav) return;
     btn.addEventListener('click', function () { var open = nav.classList.toggle('open'); btn.setAttribute('aria-expanded', String(open)); });
     nav.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { nav.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && nav.classList.contains('open')) { nav.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); btn.focus(); }
+    });
   })();
   (function () {
     // ambient-motion toggle: persists in localStorage; sky.ts reads html[data-motion]

@@ -67,6 +67,17 @@ if (!ONLY) {
     if (name === 'case') { await page.evaluate(() => window.scrollTo(0, 900)); await new Promise((r) => setTimeout(r, 1500)); await page.screenshot({ path: `${OUT}/page-case-mid.png` }); }
   }
   await page.close();
+  // a case study on a phone, top and mid-page
+  const phone = await browser.newPage();
+  await phone.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  phone.on('pageerror', (e) => errors.push('PAGEERROR(case phone): ' + e.message.slice(0, 200)));
+  await phone.goto(BASE + '/work/pm-agent-claude-code', { waitUntil: 'networkidle2', timeout: 60000 });
+  await new Promise((r) => setTimeout(r, 3000));
+  await phone.evaluate(() => document.querySelector('astro-dev-toolbar')?.remove());
+  await phone.screenshot({ path: `${OUT}/mob-case.png` });
+  await phone.evaluate(() => window.scrollTo(0, 1400)); await new Promise((r) => setTimeout(r, 1500));
+  await phone.screenshot({ path: `${OUT}/mob-case-mid.png` });
+  await phone.close();
 }
 console.log(JSON.stringify({ desktop, mobile, errors: [...new Set(errors)].slice(0, 20) }, null, 1));
 await browser.close();

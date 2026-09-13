@@ -117,8 +117,15 @@ void main(){
   float vis = 1.0 - smoothstep(uLimMag - 1.3, uLimMag, aMag);
   float I = pow(10.0, -0.4*(aMag - 2.3)*0.55);
   I *= mix(0.3, 1.0, smoothstep(0.0, 0.25, alt));           // extinction
+  // scintillation, not a pulse: three incommensurate tones (about 1.5 to 7 Hz) under a slow
+  // gust of seeing, strongest through the thick air near the horizon
   float lowAmp = 0.22 + 0.6*(1.0 - smoothstep(0.02, 0.45, alt));
-  float twk = 1.0 + uTwk * lowAmp * sin(uTime*(1.7 + 4.3*fract(aSeed*7.31)) + aSeed*6.2831);
+  float ph = aSeed*6.2831;
+  float sc = 0.5*sin(uTime*(9.0 + 7.0*fract(aSeed*7.31)) + ph)
+           + 0.3*sin(uTime*(19.0 + 9.0*fract(aSeed*3.17)) + ph*2.7)
+           + 0.2*sin(uTime*(33.0 + 11.0*fract(aSeed*5.71)) + ph*4.1);
+  float gust = 0.45 + 0.55*smoothstep(-0.4, 0.9, sin(uTime*(0.21 + 0.3*fract(aSeed*11.3)) + ph*9.0));
+  float twk = 1.0 + uTwk * lowAmp * gust * sc;
   vI = clamp(I*vis*twk, 0.0, 1.8);
   float b = clamp((3.6 - aMag)/5.2, 0.0, 1.0);
   vBig = b;
@@ -127,6 +134,8 @@ void main(){
        : aBv < 0.65 ? mix(vec3(1.0), vec3(1.0,0.94,0.82), aBv/0.65)
        : mix(vec3(1.0,0.94,0.82), vec3(1.0,0.66,0.40), clamp((aBv-0.65)/1.2,0.0,1.0));
   vCol = mix(vec3(dot(col, vec3(0.333))), col, 1.0 + 0.6*b); // bright stars keep their colour
+  float lowC = uTwk * 0.25 * (1.0 - smoothstep(0.04, 0.3, alt));  // low stars flash faint colour
+  vCol *= 1.0 + lowC * vec3(sin(uTime*23.0 + ph*3.0), sin(uTime*29.0 + ph*5.0), sin(uTime*31.0 + ph*7.0));
 }`;
 const FS_STARS = `
 precision mediump float;
@@ -262,13 +271,15 @@ export function initSidereal(opts: Opts) {
   const canvas = document.getElementById('sky') as HTMLCanvasElement | null;
   if (!canvas) return;
   const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const stored = localStorage.getItem('mb-motion');
+  let stored: string | null = null;
+  try { stored = localStorage.getItem('mb-motion'); } catch { /* storage blocked: motion stays on */ }
   root.dataset.motion = stored === 'off' ? 'off' : 'on';
   const motionOff = () => mqReduce.matches || root.dataset.motion === 'off';
 
   const gl = (canvas.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance', preserveDrawingBuffer: false }) ||
     canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null;
-  if (!gl) { root.classList.add('no-webgl'); return; }
+  // no engine: the poster is a night still, so the page reads in night ink
+  if (!gl) { root.classList.add('no-webgl'); root.dataset.phase = 'night'; return; }
   root.classList.add('webgl');
 
   // programs — a compile failure on an old GPU must fall back to the poster, not a black canvas
@@ -283,12 +294,19 @@ export function initSidereal(opts: Opts) {
     pLines = compile(gl, VS_LINES, FS_LINES);
     pShadow = compile(gl, VS_QUAD, FS_SHADOW);
   } catch (e) {
-    root.classList.remove('webgl'); root.classList.add('no-webgl');
+    root.classList.remove('webgl'); root.classList.add('no-webgl'); root.dataset.phase = 'night';
     console.warn('[sidereal] shaders failed, showing the poster', e);
     return;
   }
   let contextLost = false;
-  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); contextLost = true; root.classList.remove('webgl', 'range-ready'); root.classList.add('no-webgl'); });
+  // a lost context stops the loop for good: night still, night ink, and every chapter
+  // shown again (the fades under the header would otherwise freeze where they were)
+  canvas.addEventListener('webglcontextlost', (e) => {
+    e.preventDefault(); contextLost = true;
+    root.classList.remove('webgl', 'range-ready'); root.classList.add('no-webgl');
+    root.dataset.phase = 'night';
+    document.querySelectorAll<HTMLElement>('[data-chapter]').forEach((el) => { el.style.opacity = ''; });
+  });
   // locations are immutable after link — look each up once
   const uCache = new Map<WebGLProgram, Record<string, WebGLUniformLocation | null>>();
   const aCache = new Map<WebGLProgram, Record<string, number>>();
@@ -348,13 +366,14 @@ export function initSidereal(opts: Opts) {
   }).catch(() => {});
 
   // ── state ──
-  const dbg = { fog: 1, drift: 1, shadow: 1 };   // live tuning hooks (window.__sidereal.dbg)
+  const dbg = { fog: 1, drift: 1, shadow: 1, speed: 1 };   // live tuning hooks (window.__sidereal.dbg)
   let W = 1, H = 1, dpr = 1, aspect = 1, tanX = 1, tanY = 1;
   let sunAlt = 6, sunTarget = 6;          // degrees
   let moonUp = 0;                         // 0..1 rise progress
   // last drawn moon (CSS px rect), for the test hook
   const moonState: { vis: number; alt: number; rect: { left: number; right: number; top: number; bottom: number } | null } = { vis: 0, alt: -90, rect: null };
   let readingCx = -1;                     // reading pages: moon centre in the right margin (fraction of width), -1 when it doesn't fit
+  let readingR = 0;                       // reading pages: moon radius in CSS px
   let idleSec = 0;                        // real seconds since load (sky wheels)
   let scrollT = 0;                        // 0..1 page progress
   const isClock = opts.mode === 'clock';
@@ -366,7 +385,12 @@ export function initSidereal(opts: Opts) {
     dpr = clamp(window.devicePixelRatio || 1, 1, 1.5);
     W = Math.round(canvas.clientWidth * dpr); H = Math.round(canvas.clientHeight * dpr);
     if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
-    aspect = W / H; tanX = Math.tan(HFOV / 2); tanY = tanX / aspect; mapCache = null;
+    aspect = W / H;
+    // narrower than 16:10 (phones, tablets): keep the 16:10 vertical field and crop the
+    // sides, the way the range plate is cropped. A wider vertical field squeezes the
+    // sky's fall-off below the horizon into a dark band behind the ridges.
+    { const tanH = Math.tan(HFOV / 2); if (aspect >= 1.6) { tanX = tanH; tanY = tanH / aspect; } else { tanY = tanH / 1.6; tanX = tanY * aspect; } }
+    mapCache = null;
     gl.viewport(0, 0, W, H);
     docH = Math.max(1, document.body.scrollHeight - vh);
     chapters = Array.from(document.querySelectorAll<HTMLElement>('[data-chapter]')).map((el) => {
@@ -379,10 +403,10 @@ export function initSidereal(opts: Opts) {
       // that margin holds the whole disc clear of the text column
       const wrap = document.querySelector<HTMLElement>('main .wrap');
       const vw = window.innerWidth;
-      const rCss = clamp(W * 0.045, 44 * dpr, 92 * dpr) / dpr;   // the radius draw() uses
       const contentRight = wrap ? wrap.getBoundingClientRect().right - (parseFloat(getComputedStyle(wrap).paddingRight) || 0) : vw;
-      const cxCss = contentRight + 32 + rCss;
-      readingCx = cxCss + rCss + 12 <= vw ? cxCss / vw : -1;
+      const margin = vw - contentRight;
+      readingR = Math.min(40, (margin - 96) / 2);             // at least 48px of air on each side
+      readingCx = readingR >= 28 ? (contentRight + margin / 2) / vw : -1;
     }
   }
 
@@ -547,7 +571,7 @@ export function initSidereal(opts: Opts) {
       gl.uniformMatrix3fv(U(pStars, 'uHorToCam'), false, M.hor2cam);
       gl.uniform2f(U(pStars, 'uTan'), tanX, tanY);
       gl.uniform1f(U(pStars, 'uLimMag'), limMag);
-      gl.uniform1f(U(pStars, 'uTime'), now / 1000);
+      gl.uniform1f(U(pStars, 'uTime'), (now / 1000) % 1024);   // wrapped: the shimmer's sines keep their precision on a tab open for days
       gl.uniform1f(U(pStars, 'uDpr'), dpr);
       gl.uniform1f(U(pStars, 'uTwk'), motionOff() ? 0 : 0.55);
       gl.drawArrays(gl.POINTS, 0, nStars);
@@ -570,14 +594,14 @@ export function initSidereal(opts: Opts) {
 
     // moon + halo (screen-space: rises behind the highest summit)
     const m = rangeMap();
-    let moonR = clamp(W * 0.045, 44 * dpr, 92 * dpr) / W; // half-width in ndc-x units (fraction of width)
+    let moonR = (isClock ? clamp(W * 0.045, 44 * dpr, 92 * dpr) : Math.max(readingR, 0) * dpr) / W; // half-width as a fraction of width
     moonState.rect = null;
     if (texMoon && moonVis > 0.001 && peaks.length) {
       const col = summitCol >= 0 ? summitCol : peaks[0];
       const u = col / skyline.length, v = 1 - skyline[col] / rangeH;
       const px = (u - m.ox) / m.sx, py = (v - m.oy) / m.sy - (isClock ? scrollT * 0.03 : 0);   // 0..1 viewport, parallax included
       const rx = moonR, ry = moonR * aspect;
-      const cx = isClock ? (aspect < 0.8 ? 0.72 : clamp(px + rx * 0.15, 0.2, 0.8)) : readingCx, cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
+      const cx = isClock ? (aspect < 0.8 ? 0.72 : clamp(px + rx * 0.15, 0.2, 0.8)) : readingCx, cy = isClock ? py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2 : 0.78 + Math.min(0.03, idleSec * 5e-5);
       { const vwCss = W / dpr, vhCss = H / dpr; moonState.rect = { left: (cx - rx) * vwCss, right: (cx + rx) * vwCss, top: (1 - cy - ry) * vhCss, bottom: (1 - cy + ry) * vhCss }; }
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(pSprite); bindUnit(pSprite);
@@ -614,11 +638,12 @@ export function initSidereal(opts: Opts) {
 
     const bandBase = 1 / rangeMap().sy;             // plate height in viewport units
     // a cloud's shadow crossing the range — only while there is sun to cast it
-    const shadowA = 0.34 * smooth(-2.5, 3, alt) * (motionOff() ? 0 : 1) * dbg.shadow;
+    // deep enough to read on sunlit snow at a slow drift: most of golden hour's visible motion is this shadow
+    const shadowA = 0.44 * smooth(-2.5, 3, alt) * (motionOff() ? 0 : 1) * dbg.shadow;
     if (shadowA > 0.005) {
       gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);      // dst *= (1 − a): a shadow, not a fog
       gl.useProgram(pShadow); bindQuad(pShadow);
-      const cxs = -0.3 + (((idleSec + 70) / 150) % 1) * 1.6;  // crosses left→right in ~2.5 minutes; in frame from the start
+      const cxs = -0.3 + (((idleSec * dbg.speed + 155) / 330) % 1) * 1.6;  // travels with cloud layer A, left to right; starts over the middle of the range, so the first seconds already move
       gl.uniform2f(U(pShadow, 'uC'), cxs, bandBase * 0.42);
       gl.uniform2f(U(pShadow, 'uR'), 0.26, 0.16 * (W / H) * 0.6);
       gl.uniform1f(U(pShadow, 'uA'), shadowA);
@@ -626,7 +651,7 @@ export function initSidereal(opts: Opts) {
     }
 
     // cloud strips — drift at prime periods; more present in twilight
-    const fogK = (0.26 + 0.30 * smooth(6, -4, alt) * (1 - smooth(-9, -16, alt)) + 0.10 * night) * (motionOff() ? 0.7 : 1) * dbg.fog;
+    const fogK = (0.26 + 0.30 * smooth(6, -4, alt) * (1 - smooth(-9, -16, alt)) + 0.10 * night) * dbg.fog;
     const hz = mix3(s0.horizon, s1.horizon, st);
     const fogTint: V3 = [lerp(hz[0], 1, 0.35), lerp(hz[1], 1, 0.35), lerp(hz[2], 1, 0.35)];
     const drawFog = (tex: WebGLTexture | null, off: number, a: number, y0: number, y1: number, rep: number) => {
@@ -638,8 +663,9 @@ export function initSidereal(opts: Opts) {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    drawFog(texFogA, idleSec / 64, fogK, bandBase * 0.40, bandBase * 0.86, 1.6);
-    drawFog(texFogB, -idleSec / 101, fogK * 0.8, bandBase * 0.52, bandBase * 0.98, 1.1);
+    const fogRep = Math.min(1, aspect / 1.6);   // a tile is never narrower than the viewport is tall
+    drawFog(texFogA, -idleSec * dbg.speed / 128, fogK, bandBase * 0.40, bandBase * 0.86, 1.6 * fogRep);   // both layers drift downwind, slowly
+    drawFog(texFogB, -idleSec * dbg.speed / 260, fogK * 0.8, bandBase * 0.52, bandBase * 0.98, 1.1 * fogRep);
 
     // spindrift + satellite + meteor
     if (!motionOff()) {
@@ -781,7 +807,8 @@ export function initSidereal(opts: Opts) {
   if (import.meta.env.DEV || new URLSearchParams(location.search).has('qa')) {
     (window as any).__sidereal = {
       get sun() { return sunAlt; }, set sun(v: number) { sunTarget = v; sunAlt = v; wake(); },
-      get idle() { return idleSec; }, get raf() { return rafId; }, get lastFrame() { return lastFrameTs; },
+      get idle() { return idleSec; }, set idle(v: number) { idleSec = v; wake(); }, get raf() { return rafId; }, get lastFrame() { return lastFrameTs; },
+      get fov() { return { h: (2 * Math.atan(tanX) * 180) / Math.PI, v: (2 * Math.atan(tanY) * 180) / Math.PI }; },
       get moonVis() { return moonState.vis; }, get moonAlt() { return moonState.alt; }, get moonRect() { return moonState.rect; },
       resize, dbg,
     };

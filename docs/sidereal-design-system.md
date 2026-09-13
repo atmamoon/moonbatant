@@ -64,38 +64,43 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
 1. **Sky** — analytic twilight gradient over view elevation + azimuth-to-sun,
    blended between five measured keyframes (golden / sunset / civil / nautical /
    night). Includes the earth-shadow band and the Belt of Venus during civil
-   twilight, and night airglow near the horizon.
+   twilight, and night airglow near the horizon. Phones and tablets keep the 16:10
+   vertical field and crop the sides, like the range plate, so the fall-off below the
+   horizon stays as gentle as it is on desktop.
 2. **Milky Way** — a texture baked from the d3-celestial isophote contours
    (`scripts/bake-sky.mjs`), mapped on the celestial sphere, faded in below −12°.
 3. **Stars** — 5,044 real stars (d3-celestial `stars.6`, Hipparcos-derived,
    mag ≤ 6) as GL points. Real RA/Dec → alt/az for the site's latitude and the
    chapter's sidereal time. Size and brightness from magnitude; colour from B−V.
    Limiting magnitude rises with darkness, so the sky fills in bright-first, the
-   way it really does. Scintillation is stronger near the horizon.
+   way it really does. They scintillate quickly and irregularly, never a slow pulse,
+   most through the thick air near the horizon, where the brightest flash faint colour.
 4. **Moon** — photographic disc, opaque, drawn behind the range: it starts below
    the highest in-frame summit and climbs through chapter 07, so the ridge bites
    its base on the way up — the Ridgemoon mark, realised in the world. A full moon
    owns its sky: limiting magnitude drops ~2.4, the Milky Way and the figures go, a
-   wide aureole lifts the sky around it. On reading pages it hangs at 13° in the right
-   margin, measured from the text column's real edge, and only when that margin holds
-   the whole disc clear of the text (from roughly 1440px wide); narrower reading pages
-   show no moon, because it would sit behind a line of text. It drifts at the real rate.
+   wide aureole lifts the sky around it. On reading pages a smaller disc (80px) hangs
+   centred in the right margin, measured from the text column's real edge, with at
+   least 48px of air on each side. Where the margin can't hold that (below roughly
+   1440px wide, and on phones) reading pages show no moon. It drifts slowly upward.
 5. **The range** — one real-looking plate of a Himalayan range at golden hour,
    sky keyed out (`public/sidereal/range.webp`, RGBA, padded to a power-of-two
    canvas so it mipmaps; `range.json` carries the sub-rect and the skyline). Relit *in the shader* by
    the same sun altitude: warm highlight lift at golden hour, rose alpenglow at
    sunset, desaturated silver-blue at night, with the shadow side always cool.
-6. **Atmosphere** — two cloud strips drifting at prime periods (a strip crosses in
-   about a minute), a cloud's shadow sweeping the range while there is sun to cast
-   it, spindrift puffs blowing off the summits of the skyline profile, an occasional
-   satellite crossing, a rare meteor after dark. Measured: 1.5–3.8% of pixels
-   change over any three seconds — slow, but alive.
+6. **Atmosphere** — two cloud layers drifting downwind at different depths (about 8
+   and 6 px/s at 1600px wide), their tiles never narrower than the screen is tall; a
+   cloud's shadow travelling with the nearer layer while there is sun to cast it;
+   spindrift puffs blowing off the summits; an occasional satellite; a rare meteor
+   after dark. Measured across test runs: 2.1–2.6% of pixels change over six seconds,
+   at golden hour and at night, slow but alive.
 
 Performance contract: DPR ≤ 1.5, ~8 draw calls per frame (the moon is a small
 quad, masks upload as LUMINANCE_ALPHA, uniform locations are cached), zero DOM
 paint animation; the loop sleeps under reduced motion once the sun has settled and
 never draws in a hidden tab. Motion dies under `prefers-reduced-motion` and `[data-motion=off]`
-(a still night frame is drawn once). No WebGL → a static poster + CSS gradient.
+(a still night frame is drawn once). Without WebGL, or when the context is lost
+mid-visit, every page shows a night still in night ink, with every chapter visible.
 
 ## 3. Typography — wide, quiet, exact
 
@@ -119,15 +124,23 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
   per page is a solid ink slate. Hover extends the rule / brightens it to alpenglow.
   No shadows, no blur.
 - **No pills.** Skills are set as film credits: group name right-aligned in mono
-  caps, items in a running line separated by thin middots.
-- **Metrics** are Archivo-expanded numerals with mono captions in one shared
-  two-column grid — instrument readouts, not badges. Only values that are numbers
-  get the numeral; phrases ("Minutes") stay at text size.
+  caps, items in a running line with a thin middot before each; the dot that would
+  start a line is clipped away, so none ever dangles. On phones the group sits above.
+- **Metrics** are Archivo-expanded numerals, each over its mono caption, so captions
+  share one left edge in every row: instrument readouts, not badges. Only values that
+  are numbers get the numeral; phrases ("Minutes") stay at text size.
 - **Legibility without boxes** comes from placement (text lives in the dark
   upper sky; the range lives low), from three cinematographer's grads on the stage
   (a lower ND grad, a left-weighted grad and a right-edge grad that appear only
   while the sky is bright), from a tight ink shadow keyed to the phase, and from an
-  opaque title-safe band behind the header.
+  opaque title-safe band behind the header. Clouds keep full strength with motion off,
+  so a still frame is the worst case for contrast, and the tests judge bright chapters
+  at three points in the clouds' drift.
+- **Phones** step secondary ink up to full ink and widen the readout halo on the home
+  page, where the lit range sits behind more of the text, and a soft radial grad dims
+  the horizon glow that the portrait crop puts behind the hero's lines. Contrast is
+  judged in windows about two and a half characters wide, so a bright patch behind a
+  few words fails.
 
 ## 5. Layout
 
@@ -135,7 +148,8 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
 - Text is **left-weighted** (columns 1–7). The right side is kept open — that is
   where the peaks stand and where the moon rises.
 - Reading measure 34em (≈ 72 characters of Newsreader; `ch` overstates a serif).
-- Contact carries the one primary action of the page: the address itself, as an outlined slate.
+- Contact carries the one primary action of the page: the address itself, as a solid
+  slate a shade dimmer than the moon.
 - Section spacing `clamp(140px, 22vh, 260px)`: each chapter must feel like time passing.
 - Manifest rows (case studies): `index · title · meta` left, `metrics` right,
   full-row link, hairline above; hover reveals a sweep and a right arrow.

@@ -79,7 +79,7 @@ const SCENE_DATA = [
   ['time zone', /\bNPT\b/],
   ['weather', /km\s?\/\s?h|\bwind\b|partly clear|\bovercast\b|\bsnow\b|\bstorm\b/i],
   ['place names', /\b(everest|khumbu|himalaya|himalayan|himal|nepal|kangchenjunga|kanchenjunga|annapurna|ama dablam|lukla|base camp|south col)\b/i],
-  ['sky and sun data', /\b(golden hour|alpenglow|twilight|moonrise|moonset|sunset|sunrise|solar altitude|altitude|elevation|sidereal|hipparcos|celestial)\b/i],
+  ['sky and sun data', /\b(golden hour|alpenglow|twilight|evening|dusk|nightfall|night sky|starlight|moonlight|moonrise|moonset|sunset|sunrise|solar altitude|altitude|elevation|sidereal|hipparcos|celestial)\b/i],
   ['elevations', /\b\d{1,2},\d{3}\s?m\b/i],
 ];
 
@@ -129,10 +129,11 @@ after(async () => {
   if (server) { try { process.kill(-server.pid, 'SIGTERM'); } catch { /* already gone */ } }
 });
 
-async function open(route, vp = DESKTOP, { reduce = false, motion = 'on', qa = true, b = browser } = {}) {
+async function open(route, vp = DESKTOP, { reduce = false, motion = 'on', qa = true, b = browser, blockStorage = false } = {}) {
   const page = await b.newPage();
   await page.setCacheEnabled(false);   // every page is a first visit: 200s, not 304s from an earlier test
   page.errors = [];
+  page.warnings = [];
   page.external = [];
   await page.setRequestInterception(true);
   page.on('request', (r) => {
@@ -142,7 +143,11 @@ async function open(route, vp = DESKTOP, { reduce = false, motion = 'on', qa = t
   });
   page.on('pageerror', (e) => page.errors.push(`pageerror: ${e.message}`));
   page.on('console', (m) => {
-    if (m.type() === 'error' && !BLOCKED.test(m.location()?.url || '')) page.errors.push(`console.error: ${m.text()}`);
+    if (BLOCKED.test(m.location()?.url || '') || /posthog/i.test(m.text())) return;
+    if (m.type() === 'error') page.errors.push(`console.error: ${m.text()}`);
+    // SwiftShader (the software GPU these tests run on) reports its own ReadPixels stalls as
+    // "GL Driver Message (OpenGL, Performance, ...)"; the same page on a hardware GPU logs none
+    else if (/^warn/.test(m.type()) && !/GL Driver Message \(OpenGL, Performance,/.test(m.text())) page.warnings.push(`console.warn: ${m.text()}`);   // the browser's own too, e.g. a preload it could not reuse
   });
   page.on('response', (r) => {
     const u = r.url();
@@ -154,6 +159,10 @@ async function open(route, vp = DESKTOP, { reduce = false, motion = 'on', qa = t
   });
   await page.setViewport({ width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr || 1, isMobile: !!vp.mobile, hasTouch: !!vp.mobile });
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: reduce ? 'reduce' : 'no-preference' }]);
+  if (blockStorage) await page.evaluateOnNewDocument(() => {
+    // what Chrome does when the reader blocks site data: touching localStorage throws
+    Object.defineProperty(window, 'localStorage', { configurable: true, get() { throw new DOMException('Access is denied for this document.', 'SecurityError'); } });
+  });
   if (motion) await page.evaluateOnNewDocument((m) => { try { localStorage.setItem('mb-motion', m); } catch { /* private mode */ } }, motion);
   const url = `${BASE}${route}${qa ? `${route.includes('?') ? '&' : '?'}qa=1` : ''}`;
   const res = await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
@@ -225,7 +234,7 @@ const GLYPHS_OFF = 'body, body *, body *::before, body *::after { color: transpa
 async function contrastFailures(page, where) {
   const dpr = page.viewport().deviceScaleFactor || 1;
   const runs = await page.evaluate(() => {
-    const vw = innerWidth, vh = innerHeight;
+    const vw = document.documentElement.clientWidth, vh = innerHeight;
     const hd = document.querySelector('.hd');
     const band = hd ? parseFloat(getComputedStyle(hd, '::before').height) || 0 : 0;
     const shown = (el) => {
@@ -272,27 +281,45 @@ async function contrastFailures(page, where) {
     if (!m) continue;
     const [cr, cg, cb, ca = 1] = m[1].split(/[\s,/]+/).filter(Boolean).map(Number);
     if (!ca) continue;
-    const x0 = Math.max(0, Math.floor(r.x * dpr)), x1 = Math.min(W, Math.ceil((r.x + r.w) * dpr));
+    const X0 = Math.max(0, Math.floor(r.x * dpr)), X1 = Math.min(W, Math.ceil((r.x + r.w) * dpr));
     const y0 = Math.max(0, Math.floor((r.y + r.h * 0.2) * dpr)), y1 = Math.min(H, Math.ceil((r.y + r.h * 0.8) * dpr));
-    const stride = Math.max(1, Math.round(Math.sqrt(((x1 - x0) * (y1 - y0)) / 6000)));
-    const lums = [], at = [];
-    for (let y = y0; y < y1; y += stride) for (let x = x0; x < x1; x += stride) {
-      const i = (y * W + x) * 3;
-      lums.push(lum(data[i], data[i + 1], data[i + 2]));
-      at.push(i);
-    }
-    if (!lums.length) continue;
-    const order = lums.map((_, k) => k).sort((a, b) => lums[a] - lums[b]);
     const over = (i) => [0, 1, 2].map((c) => Math.round(ca * [cr, cg, cb][c] + (1 - ca) * data[i + c]));
-    const median = order[order.length >> 1];
-    const lightText = lum(...over(at[median])) > lums[median];
-    const k = order[Math.round((lightText ? 0.9 : 0.1) * (order.length - 1))];
-    const ratio = ratioOf(lum(...over(at[k])), lums[k]);
+    // judged window by window along the line, each about 2.5 characters high wide and half
+    // overlapping, so a bright patch behind a few words fails even on an otherwise dark line
+    const win = Math.max(8, Math.round(r.size * 2.5 * dpr)), step = Math.max(4, win >> 1);
+    let ratio = Infinity, atX = r.x;
+    for (let x0 = X0; x0 < X1; x0 += step) {
+      const x1 = Math.min(X1, x0 + win);
+      if (x0 > X0 && x1 - x0 < win >> 1) break;   // this tail lies inside the previous window
+      const stride = Math.max(1, Math.round(Math.sqrt(((x1 - x0) * (y1 - y0)) / 1500)));
+      const lums = [], at = [];
+      for (let y = y0; y < y1; y += stride) for (let x = x0; x < x1; x += stride) {
+        const i = (y * W + x) * 3;
+        lums.push(lum(data[i], data[i + 1], data[i + 2]));
+        at.push(i);
+      }
+      if (!lums.length) continue;
+      const order = lums.map((_, k) => k).sort((a, b) => lums[a] - lums[b]);
+      const median = order[order.length >> 1];
+      const lightText = lum(...over(at[median])) > lums[median];
+      const k = order[Math.round((lightText ? 0.9 : 0.1) * (order.length - 1))];
+      const q = ratioOf(lum(...over(at[k])), lums[k]);
+      if (q < ratio) { ratio = q; atX = x0 / dpr; }
+    }
+    if (ratio === Infinity) continue;
     const large = r.size >= 24 || (r.size >= 18.66 && r.weight >= 700);
     const need = r.decorative || large ? 3 : 4.5;
-    if (ratio < need) fails.push({ where, text: r.text, ratio, need, size: r.size, x: Math.round(r.x), y: Math.round(r.y) });
+    if (ratio < need) fails.push({ where, text: r.text, ratio, need, size: r.size, x: Math.round(atX), y: Math.round(r.y) });
   }
   return fails;
+}
+
+// one line per failing text, at its worst
+function assertReadable(fails) {
+  const worst = new Map();
+  for (const f of fails) if (!worst.has(f.text) || f.ratio < worst.get(f.text).ratio) worst.set(f.text, f);
+  const list = [...worst.values()].sort((a, b) => a.ratio - b.ratio);
+  assert.equal(list.length, 0, `\n${list.map((f) => `    ${f.ratio.toFixed(2)} < ${f.need}  "${f.text}"  ${f.size}px at (${f.x}, ${f.y})  ${f.where}`).join('\n')}\n`);
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -354,10 +381,24 @@ describe('2 · every page loads cleanly', () => {
           await walk(page);
           await wait(800);
           assert.deepEqual(page.errors, []);
+          assert.deepEqual(page.warnings, []);
         } finally { await page.close(); }
       });
     }
   }
+
+  test('a plain visit (no ?qa) runs the same engine and exposes no test hook', { timeout: 90000 }, async () => {
+    const page = await open('/', DESKTOP, { qa: false });
+    try {
+      assert.equal(page.status, 200);
+      await ready(page);
+      await walk(page);
+      await wait(800);
+      const s = await page.evaluate(() => ({ webgl: document.documentElement.classList.contains('webgl'), hook: typeof window.__sidereal }));
+      assert.deepEqual(s, { webgl: true, hook: 'undefined' });
+      assert.deepEqual([...page.errors, ...page.warnings], []);
+    } finally { await page.close(); }
+  });
 
   test('every internal link and in-page anchor resolves', () => {
     const bad = [];
@@ -423,6 +464,37 @@ describe('3 · the world behaves', () => {
     } finally { await page.close(); }
   });
 
+  test('the risen moon never sits behind a line of text', { timeout: 300000 }, async () => {
+    const problems = [];
+    const sizes = [DESKTOP, { name: 'desktop 1920', width: 1920, height: 1080 }, { name: 'laptop 1440', width: 1440, height: 900 }, { name: 'laptop 1366', width: 1366, height: 768 }, LAPTOP, { name: 'laptop 1280x720', width: 1280, height: 720 }, { name: 'tablet 768', width: 768, height: 1024, dpr: 2, mobile: true }, PHONE];
+    for (const vp of sizes) {
+      const page = await open('/', vp);
+      try {
+        await ready(page);
+        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+        await wait(3000);
+        const r = await page.evaluate(() => {
+          const s = window.__sidereal, m = s.moonRect;
+          if (!(s.moonVis > 0.05) || !m) return null;
+          const pad = 16, hits = [];
+          const walker = document.createTreeWalker(document.querySelector('main'), NodeFilter.SHOW_TEXT);
+          while (walker.nextNode()) {
+            const n = walker.currentNode;
+            if (!/[A-Za-z0-9]/.test(n.textContent)) continue;
+            const range = document.createRange();
+            range.selectNodeContents(n);
+            for (const q of range.getClientRects()) {
+              if (q.width && q.right > m.left - pad && q.left < m.right + pad && q.bottom > m.top - pad && q.top < m.bottom + pad) { hits.push(n.textContent.trim().slice(0, 40)); break; }
+            }
+          }
+          return { hits, moon: [m.left, m.top, m.right, m.bottom].map(Math.round) };
+        });
+        if (r && r.hits.length) problems.push(`${vp.name}: moon at ${r.moon.join(', ')} is behind "${r.hits.join('", "')}"`);
+      } finally { await page.close(); }
+    }
+    assert.deepEqual(problems, []);
+  });
+
   test('reading pages hang the moon only in a margin that holds it clear of the text', { timeout: 180000 }, async () => {
     const problems = [];
     const sizes = [LAPTOP, { name: 'laptop 1366', width: 1366, height: 768 }, { name: 'laptop 1440', width: 1440, height: 900 }, DESKTOP, { name: 'desktop 1920', width: 1920, height: 1080 }, PHONE];
@@ -444,17 +516,29 @@ describe('3 · the world behaves', () => {
     assert.deepEqual(problems, []);
   });
 
-  test('the sky moves, slowly, at golden hour and at night', { timeout: 90000 }, async () => {
+  test('phones and tablets crop the sky like the range instead of widening it', { timeout: 120000 }, async () => {
+    const fields = {};
+    for (const vp of [DESKTOP, { name: 'tablet 768', width: 768, height: 1024, dpr: 2, mobile: true }, PHONE, { name: 'phone 360', width: 360, height: 740, dpr: 2, mobile: true }]) {
+      const page = await open('/', vp);
+      try { await ready(page); fields[vp.name] = await page.evaluate(() => window.__sidereal.fov); } finally { await page.close(); }
+    }
+    const desk = fields[DESKTOP.name];
+    const widened = Object.entries(fields).filter(([, f]) => f.v > desk.v + 0.5).map(([name, f]) => `${name}: vertical field ${f.v.toFixed(1)}°, desktop ${desk.v.toFixed(1)}°`);
+    assert.deepEqual(widened, []);
+  });
+
+  test('the sky moves, slowly, at golden hour and at night', { timeout: 120000 }, async (t) => {
     const page = await open('/', DESKTOP);
     try {
       await ready(page);
       await wait(1500);
-      const golden = await frameDiff(page, 3000);
+      const golden = await frameDiff(page, 6000);
       await page.evaluate(() => { window.__sidereal.sun = -22; });
       await wait(2500);
-      const night = await frameDiff(page, 3000);
-      assert.ok(golden >= 1 && golden <= 25, `golden hour: ${golden.toFixed(2)}% of pixels changed in 3 s`);
-      assert.ok(night >= 1 && night <= 25, `night: ${night.toFixed(2)}% of pixels changed in 3 s`);
+      const night = await frameDiff(page, 6000);
+      t.diagnostic(`pixels changed in 6 s: golden hour ${golden.toFixed(2)}%, night ${night.toFixed(2)}%`);
+      assert.ok(golden >= 1 && golden <= 25, `golden hour: ${golden.toFixed(2)}% of pixels changed in 6 s`);
+      assert.ok(night >= 1 && night <= 25, `night: ${night.toFixed(2)}% of pixels changed in 6 s`);
     } finally { await page.close(); }
   });
 
@@ -488,6 +572,8 @@ describe('3 · the world behaves', () => {
       await page.evaluate(() => localStorage.setItem('mb-motion', 'on'));
       await page.reload({ waitUntil: 'networkidle2' });
       await ready(page);
+      const announced = (await page.accessibility.snapshot({ root: await page.$('#motion-toggle'), interestingOnly: false }))?.name?.trim();
+      assert.equal(announced?.toLowerCase(), 'motion', `announced as "${announced}": aria-pressed carries the state, so the name should not repeat it`);   // CSS capitals reach the accessible name
       await page.click('#motion-toggle');
       await wait(1500);
       assert.deepEqual(await read(), { attr: 'off', stored: 'off', pressed: 'false', label: 'off' });
@@ -504,7 +590,20 @@ describe('3 · the world behaves', () => {
     }
   });
 
-  test('without WebGL the poster stands in and every page still reads', { timeout: 120000 }, async () => {
+  test('blocked site storage never breaks the page', { timeout: 90000 }, async () => {
+    const page = await open('/', DESKTOP, { blockStorage: true, motion: null });
+    try {
+      assert.equal(await page.evaluate(() => { try { void window.localStorage; return 'readable'; } catch { return 'blocked'; } }), 'blocked', 'the storage block was not simulated');
+      await ready(page);
+      await page.click('#motion-toggle');
+      await wait(800);
+      const s = await page.evaluate(() => ({ webgl: document.documentElement.classList.contains('webgl'), motion: document.documentElement.dataset.motion }));
+      assert.deepEqual(s, { webgl: true, motion: 'off' });
+      assert.deepEqual(page.errors, []);
+    } finally { await page.close(); }
+  });
+
+  test('without WebGL a night still stands in and every page reads in night ink', { timeout: 120000 }, async () => {
     const plain = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--hide-scrollbars', '--disable-3d-apis'] });
     try {
       for (const route of ['/', CASE]) {
@@ -515,22 +614,27 @@ describe('3 · the world behaves', () => {
           return {
             noWebgl: document.documentElement.classList.contains('no-webgl'),
             posterOpacity: getComputedStyle(poster).opacity,
-            posterImage: /poster/.test(getComputedStyle(poster, '::after').backgroundImage),
+            posterImage: /poster-night/.test(getComputedStyle(poster, '::after').backgroundImage),
+            phase: document.documentElement.dataset.phase,
             hiddenBlocks: [...document.querySelectorAll('.rv')].filter((el) => getComputedStyle(el).opacity !== '1').length,
           };
         });
         const errors = page.errors;
         await page.close();
-        assert.deepEqual(s, { noWebgl: true, posterOpacity: '1', posterImage: true, hiddenBlocks: 0 }, route);
+        assert.deepEqual(s, { noWebgl: true, posterOpacity: '1', posterImage: true, phase: 'night', hiddenBlocks: 0 }, route);
         assert.deepEqual(errors, [], route);
       }
     } finally { await plain.close(); }
   });
 
-  test('losing the GL context mid-visit falls back to the poster', { timeout: 90000 }, async () => {
+  test('losing the GL context deep in the page leaves a night still and every chapter readable', { timeout: 300000 }, async () => {
     const page = await open('/', DESKTOP);
     try {
       await ready(page);
+      // deep in the page, where the chapters above have faded out under the header
+      await page.evaluate(() => window.scrollTo(0, document.getElementById('writing').getBoundingClientRect().top + scrollY - 72));
+      await wait(1800);
+      assert.ok(await page.evaluate(() => [...document.querySelectorAll('[data-chapter]')].some((el) => el.style.opacity !== '')), 'no chapter had faded under the header before the loss');
       const lost = await page.evaluate(() => {
         const gl = document.getElementById('sky').getContext('webgl');
         const ext = gl && gl.getExtension('WEBGL_lose_context');
@@ -540,11 +644,23 @@ describe('3 · the world behaves', () => {
       });
       assert.ok(lost, 'could not simulate a context loss');
       await wait(1800);
-      const s = await page.evaluate(() => ({
-        noWebgl: document.documentElement.classList.contains('no-webgl'),
-        posterOpacity: getComputedStyle(document.querySelector('.stage__poster')).opacity,
-      }));
-      assert.deepEqual(s, { noWebgl: true, posterOpacity: '1' });
+      const s = await page.evaluate(() => {
+        const poster = document.querySelector('.stage__poster');
+        return {
+          noWebgl: document.documentElement.classList.contains('no-webgl'),
+          posterOpacity: getComputedStyle(poster).opacity,
+          posterNight: /poster-night/.test(getComputedStyle(poster, '::after').backgroundImage),
+          phase: document.documentElement.dataset.phase,
+          fadedChapters: [...document.querySelectorAll('[data-chapter]')].filter((el) => getComputedStyle(el).opacity !== '1').map((el) => el.id),
+        };
+      });
+      assert.deepEqual(s, { noWebgl: true, posterOpacity: '1', posterNight: true, phase: 'night', fadedChapters: [] });
+      const fails = [];
+      for (const y of await stopsOf(page)) {
+        await scrollSettle(page, y, 1000);
+        fails.push(...await contrastFailures(page, `scrollY ${y}, after the loss`));
+      }
+      assertReadable(fails);
       assert.deepEqual(page.errors, []);
     } finally { await page.close(); }
   });
@@ -564,22 +680,36 @@ describe('4 · layout holds at every size', () => {
     { name: 'desktop 1920', width: 1920, height: 1080, dpr: 1 },
   ];
 
-  test('no line of text leaves the viewport sideways', { timeout: 300000 }, async () => {
+  test('no line of text or hairline leaves the viewport or its content column', { timeout: 300000 }, async () => {
     const problems = [];
     for (const vp of SIZES) {
       for (const route of ['/', CASE]) {
         const page = await open(route, vp);
         const bad = await page.evaluate(() => {
-          const vw = innerWidth, out = [];
+          const vw = document.documentElement.clientWidth, out = [];   // not innerWidth: a phone zooms out to fit overflow, which inflates it
+          const column = (wrap) => { const b = wrap.getBoundingClientRect(); const cs = getComputedStyle(wrap); return { left: b.left + parseFloat(cs.paddingLeft), right: b.right - parseFloat(cs.paddingRight) }; };
           if (document.documentElement.scrollWidth > vw + 1) out.push(`page is ${document.documentElement.scrollWidth}px wide`);
+          for (const el of document.querySelectorAll('main *')) {
+            const cs = getComputedStyle(el);
+            if (cs.display === 'none') continue;
+            const ruled = ['Top', 'Bottom', 'Left', 'Right'].some((side) => parseFloat(cs[`border${side}Width`]) > 0 && cs[`border${side}Style`] !== 'none' && !/rgba\([^)]*,\s*0\)$/.test(cs[`border${side}Color`]));
+            const wrap = el.parentElement?.closest('main .wrap');
+            if (!ruled || !wrap) continue;
+            const r = el.getBoundingClientRect(), c = column(wrap);
+            if (r.width && (r.left < c.left - 1 || r.right > c.right + 1)) { out.push(`${String(el.className).split(' ')[0] || el.tagName} rule ${Math.round(r.left)}–${Math.round(r.right)} outside column ${Math.round(c.left)}–${Math.round(c.right)}`); break; }
+          }
           const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
           while (walker.nextNode()) {
             const n = walker.currentNode;
             if (!n.textContent.trim() || n.parentElement.closest('.skip-link, .sr-only, .stage, script, style')) continue;
             const range = document.createRange();
             range.selectNodeContents(n);
+            const wrap = n.parentElement.closest('main .wrap');
+            const c = wrap ? column(wrap) : { left: 0, right: vw };
+            // display type may hang a hair into the margin for optical alignment (the hero name sits at -0.04em)
+            const hang = Math.max(1, (parseFloat(getComputedStyle(n.parentElement).fontSize) || 16) * 0.05);
             for (const q of range.getClientRects()) {
-              if (q.width && (q.left < -1 || q.right > vw + 1)) { out.push(`"${n.textContent.trim().slice(0, 40)}" spans ${Math.round(q.left)}–${Math.round(q.right)}`); break; }
+              if (q.width && (q.left < c.left - hang || q.right > c.right + 1)) { out.push(`"${n.textContent.trim().slice(0, 40)}" spans ${Math.round(q.left)}–${Math.round(q.right)}, column ${Math.round(c.left)}–${Math.round(c.right)}`); break; }
             }
           }
           return out;
@@ -642,13 +772,33 @@ describe('5 · text reads against the scene', () => {
         for (const y of await stopsOf(page)) {
           await scrollSettle(page, y);
           const phase = await page.evaluate(() => document.documentElement.dataset.phase);
-          fails.push(...await contrastFailures(page, `scrollY ${y} (${phase})`));
+          // while the sky is bright the drifting clouds matter: judge three points in their drift
+          const drift = ['golden', 'sunset', 'civil'].includes(phase) ? [0, 45, 90] : [0];
+          for (const idle of drift) {
+            if (idle) { await page.evaluate((v) => { window.__sidereal.idle = v; }, idle); await wait(300); }
+            fails.push(...await contrastFailures(page, `scrollY ${y} (${phase}, clouds at ${idle}s)`));
+          }
+          if (drift.length > 1) { await page.evaluate(() => { window.__sidereal.idle = 0; }); await wait(300); }
         }
       } finally { await page.close(); }
-      const worst = new Map();
-      for (const f of fails) if (!worst.has(f.text) || f.ratio < worst.get(f.text).ratio) worst.set(f.text, f);
-      const list = [...worst.values()].sort((a, b) => a.ratio - b.ratio);
-      assert.equal(list.length, 0, `\n${list.map((f) => `    ${f.ratio.toFixed(2)} < ${f.need}  "${f.text}"  ${f.size}px at (${f.x}, ${f.y})  ${f.where}`).join('\n')}\n`);
+      assertReadable(fails);
+    });
+  }
+
+  for (const [route, vp] of [['/', DESKTOP], ['/', PHONE], [CASE, DESKTOP]]) {
+    test(`contrast · no WebGL · ${route} · ${vp.name}: every line reads against the night still`, { timeout: 300000 }, async () => {
+      const plain = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--hide-scrollbars', '--disable-3d-apis'] });
+      const fails = [];
+      try {
+        const page = await open(route, vp, { b: plain, motion: 'off' });
+        await wait(1200);
+        for (const y of await stopsOf(page)) {
+          await scrollSettle(page, y);
+          fails.push(...await contrastFailures(page, `scrollY ${y}`));
+        }
+        await page.close();
+      } finally { await plain.close(); }
+      assertReadable(fails);
     });
   }
 });
@@ -706,13 +856,50 @@ describe('6 · accessible structure and navigation', () => {
     } finally { await caseStudy.close(); }
   });
 
-  test('keyboard focus is always visible', { timeout: 60000 }, async () => {
-    const page = await open('/', DESKTOP);
+  test('keyboard focus is visible at every stop along the Tab order', { timeout: 240000 }, async () => {
+    const bad = [];
+    for (const [route, vp] of [['/', DESKTOP], [CASE, DESKTOP], ['/', PHONE]]) {
+      const page = await open(route, vp);
+      try {
+        await ready(page);
+        const seen = new Set();
+        for (let i = 0; i < 90; i++) {
+          await page.keyboard.press('Tab');
+          const f = await page.evaluate(() => {
+            const el = document.activeElement;
+            if (!el || el === document.body) return null;
+            const cs = getComputedStyle(el);
+            return {
+              index: [...document.querySelectorAll('*')].indexOf(el),
+              label: `${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ''} ${el.getAttribute('href') || el.textContent.trim().slice(0, 32)}`,
+              ring: (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2) || cs.boxShadow !== 'none',
+            };
+          });
+          if (!f || seen.has(f.index)) break;   // back round to the start
+          seen.add(f.index);
+          if (!f.ring) bad.push(`${route} @ ${vp.name}: ${f.label}`);
+        }
+        if (seen.size < 5) bad.push(`${route} @ ${vp.name}: only ${seen.size} Tab stops reached`);
+      } finally { await page.close(); }
+    }
+    assert.deepEqual(bad, []);
+  });
+
+  test('the phone menu opens, closes with Escape and hands focus back to its button', { timeout: 60000 }, async () => {
+    const page = await open('/', PHONE);
+    const probe = () => page.evaluate(() => ({
+      expanded: document.getElementById('menu-btn').getAttribute('aria-expanded'),
+      shown: getComputedStyle(document.getElementById('mobile-nav')).display !== 'none',
+      focus: document.activeElement?.id || document.activeElement?.tagName.toLowerCase(),
+    }));
     try {
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      const f = await page.evaluate(() => { const cs = getComputedStyle(document.activeElement); return { style: cs.outlineStyle, width: parseFloat(cs.outlineWidth) }; });
-      assert.ok(f.style !== 'none' && f.width >= 2, `focus outline ${f.style} ${f.width}px`);
+      await page.click('#menu-btn');
+      await wait(250);
+      assert.deepEqual(await probe(), { expanded: 'true', shown: true, focus: 'menu-btn' });
+      await page.focus('#mobile-nav a');
+      await page.keyboard.press('Escape');
+      await wait(250);
+      assert.deepEqual(await probe(), { expanded: 'false', shown: false, focus: 'menu-btn' });
     } finally { await page.close(); }
   });
 });

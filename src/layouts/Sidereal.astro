@@ -38,7 +38,8 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <meta property="og:image:alt" content="Mamoon Mondal, AI Product Manager, set over a mountain range in evening light." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={new URL('/og-image.jpg', SITE.url).href} />
-    <link rel="preload" as="fetch" href="/sidereal/stars.bin" />
+    {/* crossorigin matches fetch()'s CORS mode, so the browser reuses the preload instead of downloading the stars twice */}
+    <link rel="preload" as="fetch" href="/sidereal/stars.bin" crossorigin="anonymous" />
     <link rel="preload" as="image" href="/sidereal/range.webp" media="(min-width: 900px) and (pointer: fine)" />
     <link rel="preload" as="image" href="/sidereal/range-2k.webp" media="(max-width: 899px), (pointer: coarse)" />
     <Analytics />

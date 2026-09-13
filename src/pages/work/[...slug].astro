@@ -24,7 +24,7 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
     <div class="wrap">
       <header class="page__head rv">
         <a class="rule-link page__back" href="/work">← All work</a>
-        <p class="t-label">Case {pad(index)} / {pad(total)} <span class="sep" aria-hidden="true">·</span> {d.company}</p>
+        <p class="t-label">Case {pad(index)} / {pad(total)}</p>
         <h1 class="page__title">{d.title}</h1>
         <p class="t-dek">{d.summary}</p>
         <p class="case__meta t-label">

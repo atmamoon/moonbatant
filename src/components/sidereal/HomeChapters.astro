@@ -42,7 +42,6 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   </div>
   <div class="hero__hint" aria-hidden="true">
     <span class="hero__hint-line"></span>
-    <span class="hero__hint-text">The evening begins</span>
   </div>
 </section>
 
@@ -164,10 +163,12 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
       </div>
     </div>
   </div>
-  <footer class="colophon wrap">
-    <span class="t-label">© 2026 {HERO.name}</span>
-    <a class="t-label colophon__top" href="#top">Back to the beginning ↑</a>
-  </footer>
+  <div class="wrap">
+    <footer class="colophon">
+      <span class="t-label">© 2026 {HERO.name}</span>
+      <a class="t-label colophon__top" href="#top">Back to the beginning ↑</a>
+    </footer>
+  </div>
 </section>
 
 <style>
@@ -203,7 +204,6 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .hero__cta { display: flex; align-items: baseline; gap: 32px; flex-wrap: wrap; }
   .hero__hint { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; pointer-events: none; }
   .hero__hint-line { width: 1px; height: 44px; background: linear-gradient(180deg, transparent, var(--ink-2)); animation: hint 3.2s var(--ease) infinite; transform-origin: top; }
-  .hero__hint-text { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-3); }
   @keyframes hint { 0% { transform: scaleY(0); opacity: 0; } 35% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
 
   /* ── 03 about: one centred measure; credits beneath ── */
@@ -212,13 +212,13 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .about > * { width: 100%; max-width: 720px; min-width: 0; }   /* px, not ch: `ch` resolves against the wrong size in a serif */
   .about__para { font-family: var(--font-serif); font-size: 1.16rem; line-height: 1.6; color: var(--ink-2); margin: 0 0 1.1em; text-shadow: var(--ink-shadow); }
   .about__para--lead { font-size: clamp(1.32rem, 1.9vw, 1.66rem); line-height: 1.38; color: var(--ink); }
-  .credits { display: grid; }
+  .credits { display: grid; grid-template-columns: minmax(0, 1fr); }
   .credits__row { display: grid; grid-template-columns: 148px minmax(0, 1fr); column-gap: 24px; padding: 16px 0; border-top: 1px solid var(--rule); align-items: baseline; }
   .credits__row:last-child { border-bottom: 1px solid var(--rule); }
   .credits__group { text-align: right; color: var(--alpenglow); justify-content: flex-end; }
-  .credits__items { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; row-gap: 4px; font-family: var(--font-display); font-size: var(--text-ui); line-height: 1.5; color: var(--ink); text-shadow: var(--ink-shadow); }
-  .credits__item { white-space: nowrap; }
-  .credits__item:not(:last-child)::after { content: '·'; color: var(--ink-4); margin-left: 8px; }
+  .credits__items { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0; row-gap: 4px; margin-left: -1.2em; clip-path: inset(-40px -40px -40px 1.2em); font-family: var(--font-display); font-size: var(--text-ui); line-height: 1.5; color: var(--ink); text-shadow: var(--ink-shadow); }
+  .credits__item { white-space: nowrap; position: relative; padding-left: 1.2em; }
+  .credits__item::before { content: '·'; position: absolute; left: 0.45em; color: var(--ink-4); }
 
   /* ── 04 ledger ── */
   .ledger { display: grid; }
@@ -264,7 +264,7 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .final__line a { border-bottom: 1px solid var(--rule-strong); padding-bottom: 2px; }
   .final__line a:hover { color: var(--venus); border-color: var(--rule-glow); }
   .final__actions { display: grid; justify-items: center; gap: 22px; margin-top: 14px; }
-  .final__mail { min-height: 48px; font-size: var(--text-ui); letter-spacing: 0.02em; text-transform: none; font-stretch: 100%; font-weight: 500; background: rgba(243, 237, 228, 0.14); border-color: var(--ink); color: var(--ink); }
+  .final__mail { min-height: 48px; font-size: var(--text-ui); letter-spacing: 0.02em; text-transform: none; font-stretch: 100%; font-weight: 500; background: #d9d1c4; border-color: #d9d1c4; color: #0b0f1c; }
   .final__mail:hover { background: var(--ink); color: #0b0f1c; border-color: var(--ink); }
   .final__more { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; }
   .final__more .rule-link { color: var(--ink-2); }
@@ -274,7 +274,7 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .colophon__top:hover { color: var(--venus) !important; }
 
   @media (max-width: 900px) {
-    .credits__row { grid-template-columns: 116px 1fr; }
+    .credits__row { grid-template-columns: 116px minmax(0, 1fr); }
     .credits__group { text-align: left; justify-content: flex-start; }
   }
   @media (max-width: 640px) {
@@ -291,6 +291,8 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
     .wl__outlet { grid-row: 2; grid-column: 2; }
     .wl__arrow { grid-row: 1 / span 2; grid-column: 3; }
     .hero__hint { display: none; }
+    .credits__row { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
+    .credits__item { white-space: normal; }   /* a long skill wraps inside the column on narrow phones */
   }
   @media (prefers-reduced-motion: reduce) { .hero__hint-line { animation: none; } }
 </style>
