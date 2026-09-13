@@ -1332,6 +1332,28 @@ describe('7 · build, search and social', () => {
     }
   });
 
+  test('the range plate has no keying holes in its rock', async () => {
+    // rectangles (4096-wide texture px) where the keyed cutout once showed sky through solid rock
+    const HOLES = { 'slit A': [3174, 1162, 3186, 1240], 'slit B': [3234, 1154, 3256, 1215], 'window C': [2841, 1182, 2876, 1229], 'window D': [1769, 1152, 1804, 1205] };
+    const found = [];
+    for (const file of ['range.webp', 'range-2k.webp']) {
+      const { data, info } = await sharp(path.join(DIST, 'sidereal', file)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+      const W = info.width, s = W / 4096, A = (x, y) => data[(y * W + x) * 4 + 3];
+      const firstSolid = (x, yFrom, yTo) => { for (let y = yFrom; y <= yTo; y++) if (A(x, y) >= 250) return y; return yTo; };
+      for (const [name, r] of Object.entries(HOLES)) {
+        const [x0, y0, x1, y1] = r.map((v) => Math.round(v * s)), xa = x0 - 3, xb = x1 + 3, top = y0 - Math.round(80 * s);
+        const rL = firstSolid(xa - 2, top, y1), rR = firstSolid(xb + 2, top, y1);   // the ridge, read from solid rock either side
+        let seeThrough = 0;
+        for (let x = xa; x <= xb; x++) {
+          const ridge = Math.round(rL + (rR - rL) * (x - xa) / (xb - xa));
+          for (let y = ridge + 3; y <= y1; y++) if (A(x, y) < 200) seeThrough++;
+        }
+        if (seeThrough) found.push(`${file} ${name}: ${seeThrough} see-through pixels below the ridge`);
+      }
+    }
+    assert.deepEqual(found, []);
+  });
+
   test('the home page stays light', (t) => {
     const html = read('index.html');
     const scripts = [...new Set([...html.matchAll(/(?:src|href)="(\/_astro\/[^"]+\.js)"/g)].map((m) => m[1]))];
