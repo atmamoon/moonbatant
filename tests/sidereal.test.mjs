@@ -1,0 +1,804 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Acceptance tests for the Sidereal design (branch design/sidereal).
+//
+// Builds the site, serves dist/ with `astro preview`, and drives real Chrome
+// (SwiftShader WebGL) through every page at phone, tablet, laptop and desktop
+// sizes.
+//
+//   npm test                                  build → preview → every test
+//   SKIP_BUILD=1 npm test                     reuse the existing dist/
+//   BASE=http://localhost:4321 npm test       against a server that is already up
+//
+// Analytics (PostHog) is blocked, so test runs never reach the real project.
+//
+//   1 content is untouched          5 text reads against the scene (contrast)
+//   2 every page loads cleanly      6 accessible structure and navigation
+//   3 the world behaves             7 build, search and social
+//   4 layout holds at every size    8 the scene is never annotated
+// ─────────────────────────────────────────────────────────────────────────────
+import { describe, test, before, after } from 'node:test';
+import assert from 'node:assert/strict';
+import { spawn, execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+import puppeteer from 'puppeteer-core';
+import sharp from 'sharp';
+
+const ROOT = path.resolve(import.meta.dirname, '..');
+const DIST = path.join(ROOT, 'dist');
+const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const PORT = Number(process.env.PORT || 4329);
+const BASE = (process.env.BASE || `http://localhost:${PORT}`).replace(/\/$/, '');
+const GL_ARGS = ['--hide-scrollbars', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
+const BLOCKED = /posthog\.com|open-meteo\.com/;
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+const PHONE = { name: 'phone 390', width: 390, height: 844, dpr: 2, mobile: true };
+const LAPTOP = { name: 'laptop 1280', width: 1280, height: 800, dpr: 1 };
+const DESKTOP = { name: 'desktop 1600', width: 1600, height: 1000, dpr: 1 };
+
+// ── the content model, read straight from the sources ────────────────────────
+const C = await import(pathToFileURL(path.join(ROOT, 'src/consts.ts')).href);
+
+function parseStudy(file) {
+  const src = fs.readFileSync(file, 'utf8');
+  const m = src.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+  if (!m) throw new Error(`no frontmatter in ${file}`);
+  const [, fm, body] = m;
+  const field = (k) => {
+    const x = fm.match(new RegExp(`^${k}:\\s*"((?:[^"\\\\]|\\\\.)*)"\\s*$`, 'm'));
+    return x ? x[1].replace(/\\"/g, '"') : undefined;
+  };
+  return {
+    slug: path.basename(file, '.md'),
+    title: field('title'), summary: field('summary'), company: field('company'),
+    role: field('role'), timeline: field('timeline'),
+    metrics: [...fm.matchAll(/\{\s*value:\s*"([^"]*)"\s*,\s*label:\s*"([^"]*)"\s*\}/g)].map((x) => ({ value: x[1], label: x[2] })),
+    tags: JSON.parse((fm.match(/^tags:\s*(\[.*\])\s*$/m) || [null, '[]'])[1]),
+    order: Number((fm.match(/^order:\s*(\d+)/m) || [null, 99])[1]),
+    featured: /^featured:\s*true\b/m.test(fm),
+    draft: /^draft:\s*true\b/m.test(fm),
+    body,
+  };
+}
+const WORK_DIR = path.join(ROOT, 'src/content/work');
+const STUDIES = fs.readdirSync(WORK_DIR).filter((f) => f.endsWith('.md'))
+  .map((f) => parseStudy(path.join(WORK_DIR, f))).filter((s) => !s.draft).sort((a, b) => a.order - b.order);
+const CASE = `/work/${STUDIES[0].slug}`;
+const ROUTES = ['/', '/work', ...STUDIES.map((s) => `/work/${s.slug}`), '/writing'];
+
+// the evening's phase each home chapter must hold while it is being read
+const CHAPTER_LIGHT = { hero: 'golden', work: 'sunset', about: 'civil', experience: 'nautical', education: 'astro', writing: 'night', contact: 'night' };
+
+// what a reader must never find printed over the scene
+const SCENE_DATA = [
+  ['degree sign', /°/],
+  ['coordinates', /\b\d{1,3}(?:\.\d+)?\s*[NS]\b[\s,·]+\d{1,3}(?:\.\d+)?\s*[EW]\b/],
+  ['clock time', /\b\d{1,2}:\d{2}\b/],
+  ['time zone', /\bNPT\b/],
+  ['weather', /km\s?\/\s?h|\bwind\b|partly clear|\bovercast\b|\bsnow\b|\bstorm\b/i],
+  ['place names', /\b(everest|khumbu|himalaya|himalayan|himal|nepal|kangchenjunga|kanchenjunga|annapurna|ama dablam|lukla|base camp|south col)\b/i],
+  ['sky and sun data', /\b(golden hour|alpenglow|twilight|moonrise|moonset|sunset|sunrise|solar altitude|altitude|elevation|sidereal|hipparcos|celestial)\b/i],
+  ['elevations', /\b\d{1,2},\d{3}\s?m\b/i],
+];
+
+// ── text helpers ─────────────────────────────────────────────────────────────
+const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+const decode = (s) => s.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (m, e) =>
+  e[0] === '#' ? String.fromCodePoint(/^#x/i.test(e) ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10)) : (ENTITIES[e.toLowerCase()] ?? m));
+const words = (s) => ` ${String(s).normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()} `;
+const read = (rel) => fs.readFileSync(path.join(DIST, rel), 'utf8');
+const distFile = (route) => (route === '/' ? 'index.html' : `${route.replace(/^\//, '')}/index.html`);
+const pageWords = (rel) => words(decode(read(rel).replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ')));
+const missingFrom = (hay, needles) => needles.filter((n) => n && words(n).trim() && !hay.includes(words(n)));
+const paragraphs = (md) => md.split(/\r?\n\s*\r?\n/).map((block) => block
+  .replace(/^\s{0,3}#{1,6}\s+/gm, '')
+  .replace(/^\s*>\s?/gm, '')
+  .replace(/^\s*(?:[-*+]|\d+\.)\s+/gm, '')
+  .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+  .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+  .replace(/[*_`]/g, '')
+  .replace(/\s+/g, ' ').trim()).filter((p) => /[a-z0-9]/i.test(p));
+const git = (...args) => execFileSync('git', args, { cwd: ROOT }).toString().trim();
+
+// ── server + browser lifecycle ───────────────────────────────────────────────
+let server = null;
+let browser = null;
+
+async function serverUp(url) {
+  try { return (await fetch(url)).ok; } catch { return false; }
+}
+
+before(async () => {
+  if (!process.env.BASE) {
+    if (await serverUp(BASE)) throw new Error(`port ${PORT} is already serving something (a stale preview?) — stop it or set PORT`);
+    if (!process.env.SKIP_BUILD) execFileSync('npx', ['astro', 'build'], { cwd: ROOT, stdio: 'pipe', maxBuffer: 64 * 1024 * 1024 });
+    server = spawn('npx', ['astro', 'preview', '--port', String(PORT), '--host', 'localhost'], { cwd: ROOT, stdio: 'ignore', detached: true });
+    const t0 = Date.now();
+    while (!(await serverUp(BASE))) {
+      if (Date.now() - t0 > 60000) throw new Error(`astro preview did not come up at ${BASE}`);
+      await wait(400);
+    }
+  }
+  browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: GL_ARGS });
+});
+
+after(async () => {
+  await browser?.close().catch(() => {});
+  if (server) { try { process.kill(-server.pid, 'SIGTERM'); } catch { /* already gone */ } }
+});
+
+async function open(route, vp = DESKTOP, { reduce = false, motion = 'on', qa = true, b = browser } = {}) {
+  const page = await b.newPage();
+  await page.setCacheEnabled(false);   // every page is a first visit: 200s, not 304s from an earlier test
+  page.errors = [];
+  page.external = [];
+  await page.setRequestInterception(true);
+  page.on('request', (r) => {
+    const u = r.url();
+    if (!u.startsWith(BASE) && !/^(data|blob):/.test(u)) page.external.push(u);
+    return BLOCKED.test(u) ? r.abort() : r.continue();
+  });
+  page.on('pageerror', (e) => page.errors.push(`pageerror: ${e.message}`));
+  page.on('console', (m) => {
+    if (m.type() === 'error' && !BLOCKED.test(m.location()?.url || '')) page.errors.push(`console.error: ${m.text()}`);
+  });
+  page.on('response', (r) => {
+    const u = r.url();
+    if (r.status() >= 400 && u.startsWith(BASE) && !u.endsWith('/favicon.ico')) page.errors.push(`HTTP ${r.status()} ${u.slice(BASE.length)}`);
+  });
+  page.on('requestfailed', (r) => {
+    const why = r.failure()?.errorText || '';
+    if (!BLOCKED.test(r.url()) && !/ERR_ABORTED/.test(why)) page.errors.push(`request failed (${why}): ${r.url()}`);
+  });
+  await page.setViewport({ width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr || 1, isMobile: !!vp.mobile, hasTouch: !!vp.mobile });
+  await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: reduce ? 'reduce' : 'no-preference' }]);
+  if (motion) await page.evaluateOnNewDocument((m) => { try { localStorage.setItem('mb-motion', m); } catch { /* private mode */ } }, motion);
+  const url = `${BASE}${route}${qa ? `${route.includes('?') ? '&' : '?'}qa=1` : ''}`;
+  const res = await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
+  page.status = res?.status();
+  await page.evaluate(() => document.fonts.ready.then(() => document.querySelector('astro-dev-toolbar')?.remove()));
+  return page;
+}
+
+const ready = (page) => page.waitForFunction(() => document.documentElement.classList.contains('range-ready'), { timeout: 30000 });
+
+async function state(page) {
+  const s = await page.evaluate(() => {
+    const q = window.__sidereal;
+    return q ? { sun: q.sun, idle: q.idle, raf: q.raf, moonVis: q.moonVis, moonAlt: q.moonAlt, phase: document.documentElement.dataset.phase } : null;
+  });
+  assert.ok(s, 'the engine did not expose its state (window.__sidereal, opened with ?qa=1)');
+  return s;
+}
+
+const walk = (page) => page.evaluate(async () => {
+  const max = document.documentElement.scrollHeight;
+  for (let y = 0; y <= max; y += Math.round(innerHeight * 0.7)) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 120)); }
+  scrollTo(0, 0);
+});
+
+const stopsOf = (page, frac = 0.6) => page.evaluate((frac) => {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  const ys = [];
+  for (let y = 0; y < max; y += Math.round(innerHeight * frac)) ys.push(y);
+  ys.push(Math.max(0, max));
+  return [...new Set(ys)];
+}, frac);
+
+async function scrollSettle(page, y, ms = 650) {
+  await page.evaluate((y) => window.scrollTo(0, y), y);
+  await wait(ms);
+}
+
+async function diffPct(a, b, threshold = 12) {
+  const A = await sharp(a).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const B = await sharp(b).removeAlpha().raw().toBuffer();
+  const n = A.info.width * A.info.height;
+  let changed = 0;
+  for (let i = 0; i < n; i++) {
+    const j = i * 3;
+    if (Math.abs(A.data[j] - B[j]) + Math.abs(A.data[j + 1] - B[j + 1]) + Math.abs(A.data[j + 2] - B[j + 2]) > threshold) changed++;
+  }
+  return (changed / n) * 100;
+}
+
+async function frameDiff(page, ms) {
+  const a = await page.screenshot({ type: 'png' });
+  await wait(ms);
+  const b = await page.screenshot({ type: 'png' });
+  return diffPct(a, b);
+}
+
+// ── contrast: glyph colour against the scene actually behind it ──────────────
+// Background is captured with every glyph made transparent but text-shadows
+// kept (WCAG accepts a halo as the thing that provides contrast). Each line of
+// text is sampled over its glyph band; the 90th-percentile pixel (10th for dark
+// text) is the background it is judged against, so a single star or snow speck
+// cannot fail a line but a bright band behind it will.
+const LIN = Float64Array.from({ length: 256 }, (_, i) => { const c = i / 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; });
+const lum = (r, g, b) => 0.2126 * LIN[r] + 0.7152 * LIN[g] + 0.0722 * LIN[b];
+const ratioOf = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+const GLYPHS_OFF = 'body, body *, body *::before, body *::after { color: transparent !important; -webkit-text-fill-color: transparent !important; text-decoration-color: transparent !important; }';
+
+async function contrastFailures(page, where) {
+  const dpr = page.viewport().deviceScaleFactor || 1;
+  const runs = await page.evaluate(() => {
+    const vw = innerWidth, vh = innerHeight;
+    const hd = document.querySelector('.hd');
+    const band = hd ? parseFloat(getComputedStyle(hd, '::before').height) || 0 : 0;
+    const shown = (el) => {
+      let o = 1;
+      for (let e = el; e && e.nodeType === 1; e = e.parentElement) {
+        const cs = getComputedStyle(e);
+        if (cs.display === 'none' || cs.visibility !== 'visible') return 0;
+        o *= parseFloat(cs.opacity);
+      }
+      return o;
+    };
+    const out = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      const text = node.textContent.replace(/\s+/g, ' ').trim();
+      if (!/[A-Za-z0-9]/.test(text)) continue;
+      const el = node.parentElement;
+      if (!el || el.closest('.stage, .skip-link, .sr-only, script, style, noscript')) continue;
+      if (shown(el) < 0.98) continue;
+      const inMain = !!el.closest('main');
+      const cs = getComputedStyle(el);
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      for (const q of range.getClientRects()) {
+        if (q.width < 4 || q.height < 6) continue;
+        if (q.top < 0 || q.bottom > vh || q.left < 0 || q.right > vw) continue;
+        if (inMain && q.top < band) continue;   // passing under the header's title-safe band
+        out.push({ text: text.slice(0, 64), color: cs.color, size: parseFloat(cs.fontSize), weight: parseInt(cs.fontWeight, 10) || 400, decorative: !!el.closest('[aria-hidden="true"]'), x: q.left, y: q.top, w: q.width, h: q.height });
+      }
+    }
+    return out;
+  });
+  if (!runs.length) return [];
+  const tag = await page.addStyleTag({ content: GLYPHS_OFF });
+  await wait(80);
+  const png = await page.screenshot({ type: 'png' });
+  await tag.evaluate((n) => n.remove());
+  const { data, info } = await sharp(png).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const W = info.width, H = info.height;
+  const fails = [];
+  for (const r of runs) {
+    const m = r.color.match(/rgba?\(([^)]+)\)/);
+    if (!m) continue;
+    const [cr, cg, cb, ca = 1] = m[1].split(/[\s,/]+/).filter(Boolean).map(Number);
+    if (!ca) continue;
+    const x0 = Math.max(0, Math.floor(r.x * dpr)), x1 = Math.min(W, Math.ceil((r.x + r.w) * dpr));
+    const y0 = Math.max(0, Math.floor((r.y + r.h * 0.2) * dpr)), y1 = Math.min(H, Math.ceil((r.y + r.h * 0.8) * dpr));
+    const stride = Math.max(1, Math.round(Math.sqrt(((x1 - x0) * (y1 - y0)) / 6000)));
+    const lums = [], at = [];
+    for (let y = y0; y < y1; y += stride) for (let x = x0; x < x1; x += stride) {
+      const i = (y * W + x) * 3;
+      lums.push(lum(data[i], data[i + 1], data[i + 2]));
+      at.push(i);
+    }
+    if (!lums.length) continue;
+    const order = lums.map((_, k) => k).sort((a, b) => lums[a] - lums[b]);
+    const over = (i) => [0, 1, 2].map((c) => Math.round(ca * [cr, cg, cb][c] + (1 - ca) * data[i + c]));
+    const median = order[order.length >> 1];
+    const lightText = lum(...over(at[median])) > lums[median];
+    const k = order[Math.round((lightText ? 0.9 : 0.1) * (order.length - 1))];
+    const ratio = ratioOf(lum(...over(at[k])), lums[k]);
+    const large = r.size >= 24 || (r.size >= 18.66 && r.weight >= 700);
+    const need = r.decorative || large ? 3 : 4.5;
+    if (ratio < need) fails.push({ where, text: r.text, ratio, need, size: r.size, x: Math.round(r.x), y: Math.round(r.y) });
+  }
+  return fails;
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+describe('1 · content is untouched', () => {
+  test('content sources are identical to where this branch left main', () => {
+    const base = git('merge-base', 'main', 'HEAD');
+    const diff = git('diff', '--stat', base, '--', 'src/content', 'src/consts.ts');
+    assert.equal(diff, '', `content changed since ${base.slice(0, 7)}:\n${diff}`);
+  });
+
+  test('every string in consts.ts is on the home page', () => {
+    const home = pageWords('index.html');
+    const expected = [
+      C.HERO.name, C.HERO.role, C.HERO.tagline, C.HERO.kicker,
+      ...C.ABOUT.split('\n\n'),
+      ...C.EXPERIENCE.flatMap((j) => [j.company, j.role, j.period, j.location, ...j.highlights]),
+      C.EDUCATION.school, C.EDUCATION.degree, C.EDUCATION.period,
+      ...C.SKILLS.flatMap((g) => [g.group, ...g.items]),
+      C.SOCIALS.location, C.SOCIALS.phone, C.SOCIALS.email,
+      ...C.WRITING.map((w) => w.title),
+      "Products & agents I've shipped.", "Where I've shipped.", "Let's build something reliable.",
+      ...STUDIES.filter((s) => s.featured).flatMap((s) => [s.title, s.summary, s.company, s.timeline, ...s.metrics.flatMap((m) => [m.value, m.label])]),
+    ];
+    const miss = missingFrom(home, expected);
+    assert.deepEqual(miss, [], `missing from the home page:\n${miss.map((m) => `  · ${m.slice(0, 100)}`).join('\n')}`);
+    const raw = read('index.html');
+    const links = [C.SOCIALS.linkedin, C.SOCIALS.medium, C.SOCIALS.github, `mailto:${C.SOCIALS.email}`, ...C.WRITING.map((w) => w.href), '/resume.pdf'].filter(Boolean);
+    assert.deepEqual(links.filter((h) => !raw.includes(`href="${h}"`)), [], 'links missing from the home page');
+  });
+
+  test('every case study renders all of its text', () => {
+    const problems = [];
+    for (const s of STUDIES) {
+      const page = pageWords(`work/${s.slug}/index.html`);
+      const expected = [s.title, s.summary, s.company, s.role, s.timeline, ...s.metrics.flatMap((m) => [m.value, m.label]), ...s.tags, ...paragraphs(s.body)];
+      for (const miss of missingFrom(page, expected)) problems.push(`${s.slug}: ${miss.slice(0, 100)}`);
+    }
+    assert.deepEqual(problems, []);
+  });
+
+  test('the work index and the writing page list everything', () => {
+    const work = pageWords('work/index.html');
+    assert.deepEqual(missingFrom(work, [...STUDIES.flatMap((s) => [s.title, s.summary]), "Products & agents I've shipped.",
+      'How I think about building AI-native products — the problem, the agent and eval design, the tradeoffs I made, and what moved.']), []);
+    assert.deepEqual(missingFrom(pageWords('writing/index.html'), C.WRITING.map((w) => w.title)), []);
+  });
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+describe('2 · every page loads cleanly', () => {
+  for (const route of ROUTES) {
+    for (const vp of [DESKTOP, PHONE]) {
+      test(`${route} · ${vp.name}: 200, WebGL live, no errors while scrolling`, { timeout: 120000 }, async () => {
+        const page = await open(route, vp);
+        try {
+          assert.equal(page.status, 200);
+          await ready(page);
+          assert.ok(await page.evaluate(() => document.documentElement.classList.contains('webgl')), 'WebGL stage not active');
+          await walk(page);
+          await wait(800);
+          assert.deepEqual(page.errors, []);
+        } finally { await page.close(); }
+      });
+    }
+  }
+
+  test('every internal link and in-page anchor resolves', () => {
+    const bad = [];
+    for (const route of ROUTES) {
+      const html = read(distFile(route));
+      const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
+      for (const [, href] of html.matchAll(/\shref="([^"]+)"/g)) {
+        if (/^(https?:|mailto:|tel:|\/\/)/.test(href)) continue;
+        const [p, hash] = href.split('#');
+        if (!p) { if (hash && !ids.has(hash)) bad.push(`${route}: #${hash}`); continue; }
+        const clean = p.split('?')[0];
+        const target = path.extname(clean) ? path.join(DIST, clean) : path.join(DIST, clean, 'index.html');
+        if (!fs.existsSync(target)) { bad.push(`${route}: ${href}`); continue; }
+        if (hash && target.endsWith('.html') && !fs.readFileSync(target, 'utf8').includes(`id="${hash}"`)) bad.push(`${route}: ${href}`);
+      }
+    }
+    assert.deepEqual(bad, []);
+  });
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+describe('3 · the world behaves', () => {
+  test("the sky's clock keeps running while the reader is still", { timeout: 90000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      const a = await state(page);
+      await wait(1500);
+      const b = await state(page);
+      assert.ok(b.idle - a.idle > 0.8, `engine clock went ${a.idle} → ${b.idle} in 1.5 s`);
+    } finally { await page.close(); }
+  });
+
+  test('each home chapter holds its own light', { timeout: 120000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      const got = {};
+      for (const id of Object.keys(CHAPTER_LIGHT)) {
+        await page.evaluate((id) => {
+          const el = document.getElementById(id);
+          window.scrollTo(0, id === 'hero' ? 0 : el.getBoundingClientRect().top + scrollY - 72);
+        }, id);
+        await wait(1800);
+        got[id] = (await state(page)).phase;
+      }
+      assert.deepEqual(got, CHAPTER_LIGHT);
+    } finally { await page.close(); }
+  });
+
+  test('the moon stays below the ridge until the last chapter, then rises', { timeout: 90000 }, async (t) => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      await wait(800);
+      const top = await state(page);
+      if (top.moonVis === undefined) return t.skip('engine does not expose moon state');
+      assert.equal(top.moonVis, 0, 'moon visible at golden hour');
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await wait(2500);
+      const end = await state(page);
+      assert.ok(end.moonVis > 0.9 && end.moonAlt > 0, `moon at the end: vis ${end.moonVis}, alt ${end.moonAlt}`);
+    } finally { await page.close(); }
+  });
+
+  test('reading pages hang the moon only in a margin that holds it clear of the text', { timeout: 180000 }, async () => {
+    const problems = [];
+    const sizes = [LAPTOP, { name: 'laptop 1366', width: 1366, height: 768 }, { name: 'laptop 1440', width: 1440, height: 900 }, DESKTOP, { name: 'desktop 1920', width: 1920, height: 1080 }, PHONE];
+    for (const vp of sizes) {
+      const page = await open(CASE, vp);
+      try {
+        await ready(page);
+        await wait(1500);
+        const r = await page.evaluate(() => {
+          const s = window.__sidereal;
+          const wrap = document.querySelector('main .wrap');
+          const box = wrap.getBoundingClientRect();
+          return { vis: s.moonVis, rect: s.moonRect, contentRight: box.right - parseFloat(getComputedStyle(wrap).paddingRight) };
+        });
+        if (r.vis > 0 && (!r.rect || r.rect.left < r.contentRight + 8)) problems.push(`${vp.name}: moon ${r.rect ? `${Math.round(r.rect.left)}–${Math.round(r.rect.right)}px` : 'without a rect'}, text column ends at ${Math.round(r.contentRight)}px`);
+        if (vp === DESKTOP && !(r.vis > 0)) problems.push('desktop 1600: the moon should hang in the wide right margin');
+      } finally { await page.close(); }
+    }
+    assert.deepEqual(problems, []);
+  });
+
+  test('the sky moves, slowly, at golden hour and at night', { timeout: 90000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      await wait(1500);
+      const golden = await frameDiff(page, 3000);
+      await page.evaluate(() => { window.__sidereal.sun = -22; });
+      await wait(2500);
+      const night = await frameDiff(page, 3000);
+      assert.ok(golden >= 1 && golden <= 25, `golden hour: ${golden.toFixed(2)}% of pixels changed in 3 s`);
+      assert.ok(night >= 1 && night <= 25, `night: ${night.toFixed(2)}% of pixels changed in 3 s`);
+    } finally { await page.close(); }
+  });
+
+  test('reduced motion: one still frame, all content visible, render loop asleep', { timeout: 90000 }, async () => {
+    const page = await open('/', DESKTOP, { reduce: true });
+    try {
+      await ready(page);
+      await wait(2500);
+      const s = await page.evaluate(() => ({
+        animOk: document.documentElement.classList.contains('anim-ok'),
+        hiddenBlocks: [...document.querySelectorAll('.rv')].filter((el) => getComputedStyle(el).opacity !== '1').length,
+        raf: window.__sidereal.raf,
+        toggleDisabled: document.getElementById('motion-toggle')?.disabled,
+      }));
+      assert.deepEqual(s, { animOk: false, hiddenBlocks: 0, raf: 0, toggleDisabled: true });
+      const changed = await frameDiff(page, 2500);
+      assert.ok(changed < 0.05, `${changed.toFixed(3)}% of pixels changed under reduced motion`);
+    } finally { await page.close(); }
+  });
+
+  test('the motion toggle stops the world and remembers the choice', { timeout: 90000 }, async () => {
+    const page = await open('/', DESKTOP, { motion: null });
+    const read = () => page.evaluate(() => ({
+      attr: document.documentElement.dataset.motion,
+      stored: localStorage.getItem('mb-motion'),
+      pressed: document.getElementById('motion-toggle').getAttribute('aria-pressed'),
+      label: document.querySelector('#motion-toggle .hd__motion-state').textContent,
+    }));
+    try {
+      await ready(page);
+      await page.evaluate(() => localStorage.setItem('mb-motion', 'on'));
+      await page.reload({ waitUntil: 'networkidle2' });
+      await ready(page);
+      await page.click('#motion-toggle');
+      await wait(1500);
+      assert.deepEqual(await read(), { attr: 'off', stored: 'off', pressed: 'false', label: 'off' });
+      assert.equal((await state(page)).raf, 0, 'render loop still running with motion off');
+      await page.reload({ waitUntil: 'networkidle2' });
+      await wait(1200);
+      assert.deepEqual(await read(), { attr: 'off', stored: 'off', pressed: 'false', label: 'off' });
+      await page.click('#motion-toggle');
+      await wait(600);
+      assert.deepEqual(await read(), { attr: 'on', stored: 'on', pressed: 'true', label: 'on' });
+    } finally {
+      await page.evaluate(() => localStorage.setItem('mb-motion', 'on')).catch(() => {});
+      await page.close();
+    }
+  });
+
+  test('without WebGL the poster stands in and every page still reads', { timeout: 120000 }, async () => {
+    const plain = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--hide-scrollbars', '--disable-3d-apis'] });
+    try {
+      for (const route of ['/', CASE]) {
+        const page = await open(route, DESKTOP, { b: plain });
+        await wait(1500);
+        const s = await page.evaluate(() => {
+          const poster = document.querySelector('.stage__poster');
+          return {
+            noWebgl: document.documentElement.classList.contains('no-webgl'),
+            posterOpacity: getComputedStyle(poster).opacity,
+            posterImage: /poster/.test(getComputedStyle(poster, '::after').backgroundImage),
+            hiddenBlocks: [...document.querySelectorAll('.rv')].filter((el) => getComputedStyle(el).opacity !== '1').length,
+          };
+        });
+        const errors = page.errors;
+        await page.close();
+        assert.deepEqual(s, { noWebgl: true, posterOpacity: '1', posterImage: true, hiddenBlocks: 0 }, route);
+        assert.deepEqual(errors, [], route);
+      }
+    } finally { await plain.close(); }
+  });
+
+  test('losing the GL context mid-visit falls back to the poster', { timeout: 90000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      const lost = await page.evaluate(() => {
+        const gl = document.getElementById('sky').getContext('webgl');
+        const ext = gl && gl.getExtension('WEBGL_lose_context');
+        if (!ext) return false;
+        ext.loseContext();
+        return true;
+      });
+      assert.ok(lost, 'could not simulate a context loss');
+      await wait(1800);
+      const s = await page.evaluate(() => ({
+        noWebgl: document.documentElement.classList.contains('no-webgl'),
+        posterOpacity: getComputedStyle(document.querySelector('.stage__poster')).opacity,
+      }));
+      assert.deepEqual(s, { noWebgl: true, posterOpacity: '1' });
+      assert.deepEqual(page.errors, []);
+    } finally { await page.close(); }
+  });
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+describe('4 · layout holds at every size', () => {
+  const SIZES = [
+    { name: 'phone 360', width: 360, height: 740, dpr: 2, mobile: true },
+    PHONE,
+    { name: 'tablet 768', width: 768, height: 1024, dpr: 2, mobile: true },
+    { name: 'tablet 1024', width: 1024, height: 768, dpr: 1 },
+    LAPTOP,
+    { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 },
+    { name: 'laptop 1440', width: 1440, height: 900, dpr: 1 },
+    DESKTOP,
+    { name: 'desktop 1920', width: 1920, height: 1080, dpr: 1 },
+  ];
+
+  test('no line of text leaves the viewport sideways', { timeout: 300000 }, async () => {
+    const problems = [];
+    for (const vp of SIZES) {
+      for (const route of ['/', CASE]) {
+        const page = await open(route, vp);
+        const bad = await page.evaluate(() => {
+          const vw = innerWidth, out = [];
+          if (document.documentElement.scrollWidth > vw + 1) out.push(`page is ${document.documentElement.scrollWidth}px wide`);
+          const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+          while (walker.nextNode()) {
+            const n = walker.currentNode;
+            if (!n.textContent.trim() || n.parentElement.closest('.skip-link, .sr-only, .stage, script, style')) continue;
+            const range = document.createRange();
+            range.selectNodeContents(n);
+            for (const q of range.getClientRects()) {
+              if (q.width && (q.left < -1 || q.right > vw + 1)) { out.push(`"${n.textContent.trim().slice(0, 40)}" spans ${Math.round(q.left)}–${Math.round(q.right)}`); break; }
+            }
+          }
+          return out;
+        });
+        await page.close();
+        if (bad.length) problems.push(`${route} @ ${vp.name}: ${bad.slice(0, 3).join(' | ')}`);
+      }
+    }
+    assert.deepEqual(problems, []);
+  });
+
+  test('the header band hides whatever scrolls beneath the nav', { timeout: 300000 }, async () => {
+    const problems = [];
+    for (const [route, vp] of [['/', DESKTOP], ['/', PHONE], [CASE, DESKTOP], ['/work', LAPTOP]]) {
+      const page = await open(route, vp, { motion: 'off' });
+      await ready(page);
+      for (const y of await stopsOf(page)) {
+        await scrollSettle(page, y);
+        const strip = await page.evaluate(() => Math.ceil(document.querySelector('.hd__inner').getBoundingClientRect().bottom) + 6);
+        const clip = { x: 0, y: 0, width: vp.width, height: strip };
+        const a = await page.screenshot({ type: 'png', clip });
+        await page.evaluate(() => { document.querySelector('main').style.visibility = 'hidden'; });
+        const b = await page.screenshot({ type: 'png', clip });
+        await page.evaluate(() => { document.querySelector('main').style.visibility = ''; });
+        const pct = await diffPct(a, b, 16);
+        if (pct > 0.2) problems.push(`${route} @ ${vp.name}, scrollY ${y}: ${pct.toFixed(2)}% of the nav strip shows page content`);
+      }
+      await page.close();
+    }
+    assert.deepEqual(problems, []);
+  });
+
+  test('the hero results never touch the name', { timeout: 120000 }, async () => {
+    for (const vp of [{ name: '1440', width: 1440, height: 900 }, DESKTOP, { name: '1920', width: 1920, height: 1080 }, { name: '2560', width: 2560, height: 1440 }]) {
+      const page = await open('/', vp);
+      const r = await page.evaluate(() => {
+        const inst = document.querySelector('.hero__instruments');
+        if (!inst || getComputedStyle(inst).display === 'none') return null;
+        const range = document.createRange();
+        range.selectNodeContents(document.querySelector('.hero__name'));
+        const rects = [...range.getClientRects()];
+        const i = inst.getBoundingClientRect();
+        return { gap: Math.round(i.left - Math.max(...rects.map((q) => q.right))), overlapsVertically: i.top < Math.max(...rects.map((q) => q.bottom)) };
+      });
+      await page.close();
+      if (r) assert.ok(r.gap >= 24 || !r.overlapsVertically, `at ${vp.name}px the results sit ${r.gap}px from the name`);
+    }
+  });
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+describe('5 · text reads against the scene', () => {
+  const PASSES = [['/', DESKTOP], ['/', { name: 'laptop 1440', width: 1440, height: 900, dpr: 1 }], ['/', LAPTOP], ['/', PHONE], ['/work', DESKTOP], [CASE, DESKTOP], [CASE, LAPTOP], [CASE, PHONE], ['/writing', DESKTOP]];
+  for (const [route, vp] of PASSES) {
+    test(`contrast · ${route} · ${vp.name}: 4.5:1 for text, 3:1 for large or decorative`, { timeout: 300000 }, async () => {
+      const page = await open(route, vp, { motion: 'off' });
+      const fails = [];
+      try {
+        await ready(page);
+        for (const y of await stopsOf(page)) {
+          await scrollSettle(page, y);
+          const phase = await page.evaluate(() => document.documentElement.dataset.phase);
+          fails.push(...await contrastFailures(page, `scrollY ${y} (${phase})`));
+        }
+      } finally { await page.close(); }
+      const worst = new Map();
+      for (const f of fails) if (!worst.has(f.text) || f.ratio < worst.get(f.text).ratio) worst.set(f.text, f);
+      const list = [...worst.values()].sort((a, b) => a.ratio - b.ratio);
+      assert.equal(list.length, 0, `\n${list.map((f) => `    ${f.ratio.toFixed(2)} < ${f.need}  "${f.text}"  ${f.size}px at (${f.x}, ${f.y})  ${f.where}`).join('\n')}\n`);
+    });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+describe('6 · accessible structure and navigation', () => {
+  test('heading outline: one h1 per page, one h2 per home chapter, no skipped levels', () => {
+    const bad = [];
+    for (const route of ROUTES) {
+      const levels = [...read(distFile(route)).matchAll(/<h([1-6])[\s>]/g)].map((m) => Number(m[1]));
+      const h1 = levels.filter((l) => l === 1).length;
+      if (h1 !== 1) bad.push(`${route}: ${h1} h1`);
+      if (levels[0] !== 1) bad.push(`${route}: first heading is h${levels[0]}`);
+      levels.forEach((l, i) => { if (i && l > levels[i - 1] + 1) bad.push(`${route}: h${levels[i - 1]} → h${l}`); });
+    }
+    for (const chunk of read('index.html').split(/<section\b/).slice(1)) {
+      const openTag = chunk.slice(0, chunk.indexOf('>'));
+      if (!/data-chapter/.test(openTag)) continue;
+      const id = (openTag.match(/\sid="([^"]+)"/) || [])[1];
+      const h2 = (chunk.split(/<\/section>/)[0].match(/<h2[\s>]/g) || []).length;
+      if (id !== 'hero' && h2 !== 1) bad.push(`#${id}: ${h2} h2`);
+    }
+    assert.deepEqual(bad, []);
+  });
+
+  test('skip link and in-page links land below the header and take focus', { timeout: 120000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      await page.keyboard.press('Tab');
+      assert.ok(await page.evaluate(() => document.activeElement?.classList.contains('skip-link')), 'first Tab does not reach the skip link');
+      await page.keyboard.press('Enter');
+      await wait(1200);
+      assert.equal(await page.evaluate(() => document.activeElement?.id), 'top', 'skip link did not move focus to main');
+      await page.click('a[href="#work"]');
+      await wait(1800);
+      const w = await page.evaluate(() => ({ id: document.activeElement?.id, top: Math.round(document.getElementById('work').getBoundingClientRect().top), offset: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--head-offset')) }));
+      assert.equal(w.id, 'work');
+      assert.ok(Math.abs(w.top - w.offset) <= 4, `#work landed at ${w.top}px, expected ${w.offset}px`);
+    } finally { await page.close(); }
+
+    const caseStudy = await open(CASE, DESKTOP);
+    try {
+      await ready(caseStudy);
+      const hash = await caseStudy.evaluate(() => document.querySelector('.toc a')?.getAttribute('href'));
+      assert.ok(hash, 'case study has no contents links');
+      await caseStudy.click('.toc a');
+      await wait(1800);
+      const h = await caseStudy.evaluate((hash) => {
+        const el = document.getElementById(hash.slice(1));
+        return { focused: document.activeElement === el, top: Math.round(el.getBoundingClientRect().top), offset: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--head-offset')) };
+      }, hash);
+      assert.ok(h.focused, `${hash} did not take focus`);
+      assert.ok(Math.abs(h.top - h.offset) <= 4, `${hash} landed at ${h.top}px, expected ${h.offset}px`);
+    } finally { await caseStudy.close(); }
+  });
+
+  test('keyboard focus is always visible', { timeout: 60000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await page.keyboard.press('Tab');
+      await page.keyboard.press('Tab');
+      const f = await page.evaluate(() => { const cs = getComputedStyle(document.activeElement); return { style: cs.outlineStyle, width: parseFloat(cs.outlineWidth) }; });
+      assert.ok(f.style !== 'none' && f.width >= 2, `focus outline ${f.style} ${f.width}px`);
+    } finally { await page.close(); }
+  });
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+describe('7 · build, search and social', () => {
+  test('every page ships a title, description, canonical URL and social image', () => {
+    const bad = [];
+    for (const route of ROUTES) {
+      const html = read(distFile(route));
+      for (const [name, re] of [
+        ['title', /<title>[^<]+<\/title>/],
+        ['description', /<meta name="description" content="[^"]+"/],
+        ['canonical', /<link rel="canonical" href="https:\/\/moonbatant\.com\/[^"]*"/],
+        ['og:image', /<meta property="og:image" content="https:\/\/moonbatant\.com\/og-image\.jpg"/],
+      ]) if (!re.test(html)) bad.push(`${route}: ${name}`);
+    }
+    assert.deepEqual(bad, []);
+    assert.ok(fs.existsSync(path.join(DIST, 'og-image.jpg')), 'og-image.jpg missing');
+  });
+
+  test('the superseded /flight page stays out of search; the new pages are in the sitemap', () => {
+    const sitemap = read('sitemap-0.xml');
+    assert.ok(!sitemap.includes('/flight'), '/flight is in the sitemap');
+    assert.match(read('flight/index.html'), /<meta name="robots" content="noindex"/);
+    assert.deepEqual(STUDIES.filter((s) => !sitemap.includes(`/work/${s.slug}`)).map((s) => s.slug), []);
+  });
+
+  test('?og=1 frames a clean thumbnail; ordinary query strings leave the page alone', { timeout: 90000 }, async () => {
+    const probe = (page) => page.evaluate(() => ({
+      og: document.documentElement.classList.contains('og'),
+      dek: getComputedStyle(document.querySelector('.hero__dek')).display,
+      nav: getComputedStyle(document.querySelector('.hd__nav')).display,
+    }));
+    const og = await open('/?og=1', DESKTOP);
+    const a = await probe(og);
+    await og.close();
+    assert.deepEqual(a, { og: true, dek: 'none', nav: 'none' });
+    const tracked = await open('/?utm_source=google&ref=blog', DESKTOP);
+    const b = await probe(tracked);
+    await tracked.close();
+    assert.deepEqual(b, { og: false, dek: 'block', nav: 'flex' });
+  });
+
+  test('the home page stays light', (t) => {
+    const html = read('index.html');
+    const scripts = [...new Set([...html.matchAll(/(?:src|href)="(\/_astro\/[^"]+\.js)"/g)].map((m) => m[1]))];
+    const jsBytes = scripts.reduce((sum, f) => sum + fs.statSync(path.join(DIST, f)).size, 0);
+    const assetBytes = fs.readdirSync(path.join(DIST, 'sidereal')).reduce((sum, f) => sum + fs.statSync(path.join(DIST, 'sidereal', f)).size, 0);
+    t.diagnostic(`home JS ${(jsBytes / 1024).toFixed(1)} KB · sky assets ${(assetBytes / 1024).toFixed(0)} KB`);
+    assert.ok(jsBytes <= 80_000, `home page JavaScript is ${jsBytes} bytes`);
+    assert.ok(assetBytes <= 1_600_000, `public/sidereal is ${assetBytes} bytes`);
+  });
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+describe('8 · the scene is never annotated', () => {
+  for (const route of ROUTES) {
+    test(`${route}: no coordinates, degrees, clock, weather, place names or sky data, and none fetched`, { timeout: 120000 }, async () => {
+      const found = [];
+      for (const vp of [DESKTOP, PHONE]) {
+        const page = await open(route, vp);
+        try {
+          await ready(page);
+          await walk(page);
+          const hits = await page.evaluate((patterns) => {
+            const texts = [document.body.innerText];
+            for (const el of document.body.querySelectorAll('*')) {
+              for (const a of ['aria-label', 'title', 'alt', 'placeholder']) { const v = el.getAttribute(a); if (v) texts.push(v); }
+              for (const pseudo of ['::before', '::after']) {
+                const cs = getComputedStyle(el, pseudo);
+                if (cs.display === 'none') continue;
+                const c = cs.content;
+                if (!c || c === 'none' || c === 'normal') continue;
+                const attr = c.match(/^attr\(([\w-]+)\)$/);
+                if (attr) { const v = el.getAttribute(attr[1]); if (v) texts.push(v); } else if (/^".+"$/.test(c)) texts.push(c.slice(1, -1));
+              }
+            }
+            const all = texts.join('\n');
+            return patterns.map(([name, source, flags]) => { const m = all.match(new RegExp(source, flags)); return m ? `${name}: "${m[0]}"` : null; }).filter(Boolean);
+          }, SCENE_DATA.map(([name, re]) => [name, re.source, re.flags]));
+          found.push(...hits.map((h) => `${vp.name} → ${h}`));
+          found.push(...page.external.filter((u) => !/posthog\.com/.test(u)).map((u) => `${vp.name} → fetches outside data: ${u.slice(0, 90)}`));
+        } finally { await page.close(); }
+      }
+      assert.deepEqual(found, []);
+    });
+  }
+});

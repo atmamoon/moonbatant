@@ -8,7 +8,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "node --test --test-reporter=spec tests/sidereal.test.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

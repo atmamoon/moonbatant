@@ -5,8 +5,10 @@
 // Milky Way (isophote bake) → 5,044 real stars → moon → the range (relit in
 // the shader) → cloud strips → spindrift, satellites, meteors.
 // Iron rules: effects READ scroll, never write it; nothing per-frame touches
-// DOM style except the HUD text (on change) and the scale marker (transform);
-// everything dies under prefers-reduced-motion / [data-motion=off].
+// DOM style except the chapter fade (opacity, written on change); everything
+// dies under prefers-reduced-motion / [data-motion=off]. The scene is never
+// annotated: altitude, phase, clock and place drive the light but are never
+// printed, so nothing on screen competes with the content.
 
 type Mode = 'clock' | 'night';
 interface Opts { mode: Mode; }
@@ -57,7 +59,7 @@ function keyAt<T extends { alt: number }>(keys: T[], alt: number): [T, T, number
 }
 const mix3 = (a: V3, b: V3, t: number): V3 => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 
-import { phaseOf, clockOf, PHASE_LABEL } from './twilight';
+import { phaseOf } from './twilight';
 
 // ── shaders ───────────────────────────────────────────────────────────────
 const VS_QUAD = `attribute vec2 aPos; varying vec2 vUv; void main(){ vUv = aPos*0.5+0.5; gl_Position = vec4(aPos,0.0,1.0); }`;
@@ -350,6 +352,9 @@ export function initSidereal(opts: Opts) {
   let W = 1, H = 1, dpr = 1, aspect = 1, tanX = 1, tanY = 1;
   let sunAlt = 6, sunTarget = 6;          // degrees
   let moonUp = 0;                         // 0..1 rise progress
+  // last drawn moon (CSS px rect), for the test hook
+  const moonState: { vis: number; alt: number; rect: { left: number; right: number; top: number; bottom: number } | null } = { vis: 0, alt: -90, rect: null };
+  let readingCx = -1;                     // reading pages: moon centre in the right margin (fraction of width), -1 when it doesn't fit
   let idleSec = 0;                        // real seconds since load (sky wheels)
   let scrollT = 0;                        // 0..1 page progress
   const isClock = opts.mode === 'clock';
@@ -369,43 +374,23 @@ export function initSidereal(opts: Opts) {
       const pad = parseFloat(getComputedStyle(el).paddingTop) || 0;
       return { el, sun: Number(el.dataset.sun ?? 0), top, height: r.height, center: top + r.height / 2, pad };
     });
-    layoutScale();
+    if (!isClock) {
+      // a reading page's moon may only hang in the right margin, and only when
+      // that margin holds the whole disc clear of the text column
+      const wrap = document.querySelector<HTMLElement>('main .wrap');
+      const vw = window.innerWidth;
+      const rCss = clamp(W * 0.045, 44 * dpr, 92 * dpr) / dpr;   // the radius draw() uses
+      const contentRight = wrap ? wrap.getBoundingClientRect().right - (parseFloat(getComputedStyle(wrap).paddingRight) || 0) : vw;
+      const cxCss = contentRight + 32 + rCss;
+      readingCx = cxCss + rCss + 12 <= vw ? cxCss / vw : -1;
+    }
   }
 
-  // ── HUD ──
-  const hudClock = document.getElementById('tc-clock'), hudSun = document.getElementById('tc-sun'), hudPhase = document.getElementById('tc-phase');
-  const marker = document.getElementById('scale-marker');
-  const scaleTicks = document.getElementById('scale-ticks');
-  const SCALE_TOP = 6, SCALE_BOT = -26;
-  function layoutScale() {
-    if (!scaleTicks || scaleTicks.childElementCount) return;
-    const frag = document.createDocumentFragment();
-    for (let a = SCALE_TOP; a >= SCALE_BOT; a -= 2) {
-      const t = document.createElement('span'); t.className = 'scale__tick' + (a % 6 === 0 ? ' scale__tick--major' : '');
-      t.style.top = `${((SCALE_TOP - a) / (SCALE_TOP - SCALE_BOT)) * 100}%`;
-      if (a % 6 === 0) t.dataset.v = `${a > 0 ? '+' : a < 0 ? '−' : ''}${Math.abs(a)}°`;
-      frag.appendChild(t);
-    }
-    chapters.forEach((c) => {
-      const label = c.el.dataset.chapterLabel; if (!label) return;
-      const a = document.createElement('a'); a.className = 'scale__chapter'; a.href = `#${c.el.id}`; a.textContent = label;
-      a.style.top = `${((SCALE_TOP - c.sun) / (SCALE_TOP - SCALE_BOT)) * 100}%`;
-      frag.appendChild(a);
-    });
-    scaleTicks.appendChild(frag);
-  }
-  let lastHudAlt = 999, lastPhase = '';
-  function hud(alt: number) {
-    const r = Math.round(alt * 10) / 10;
-    if (r !== lastHudAlt) {
-      lastHudAlt = r;
-      const s = `${r > 0 ? '+' : r < 0 ? '−' : ''}${Math.abs(r).toFixed(1)}°`;
-      if (hudSun) hudSun.textContent = s;
-      if (hudClock) hudClock.textContent = clockOf(r);
-      if (marker) marker.style.transform = `translate3d(0, ${((SCALE_TOP - clamp(alt, SCALE_BOT, SCALE_TOP)) / (SCALE_TOP - SCALE_BOT)) * 100}cqh, 0)`;
-    }
-    const ph = phaseOf(r);      // from the rounded value: the chapter slates and the HUD must agree
-    if (ph !== lastPhase) { lastPhase = ph; root.dataset.phase = ph; if (hudPhase) hudPhase.textContent = PHASE_LABEL[ph]; }
+  // ── phase: the one fact about the sky the page itself reads (ink, grads) ──
+  let lastPhase = '';
+  function syncPhase(alt: number) {
+    const ph = phaseOf(Math.round(alt * 10) / 10);
+    if (ph !== lastPhase) { lastPhase = ph; root.dataset.phase = ph; }
   }
 
   // ── scroll → sun ──
@@ -521,9 +506,11 @@ export function initSidereal(opts: Opts) {
     const [r0, r1, rt] = keyAt(RANGE, alt);
     const night = smooth(-12, -18, alt);
     // narrow screens: the moon clears the contact block by rising higher
-    const moonAlt = (isClock ? lerp(-6.8, 11, smooth(0, 1, moonUp)) : (W / dpr >= 1560 || aspect < 0.8 ? 13 : 1.5)) + idleSec * 0.004 + (aspect < 0.8 ? 6 * smooth(0, 1, moonUp) : 0);
-    const moonVis = (moonAlt > -6.6 ? 1 : 0) * smooth(-14, -17, alt);
+    const moonAlt = (isClock ? lerp(-6.8, 11, smooth(0, 1, moonUp)) : 13) + idleSec * 0.004 + (aspect < 0.8 ? 6 * smooth(0, 1, moonUp) : 0);
+    // reading pages: no moon unless the right margin can hold it clear of the text (see resize)
+    const moonVis = (moonAlt > -6.6 ? 1 : 0) * smooth(-14, -17, alt) * (!isClock && readingCx < 0 ? 0 : 1);
     const moonLight = moonVis * clamp(moonAlt / 10, 0, 1);
+    moonState.vis = moonVis; moonState.alt = moonAlt;
     // sidereal time: each degree of sun altitude ≈ 4.6 min ≈ 1.15° of sky; idle at 1×
     const lst = LST0 + ((6 - alt) * 1.15 + idleSec / 240) * DEG;
     const M = matrices(lst);
@@ -584,12 +571,14 @@ export function initSidereal(opts: Opts) {
     // moon + halo (screen-space: rises behind the highest summit)
     const m = rangeMap();
     let moonR = clamp(W * 0.045, 44 * dpr, 92 * dpr) / W; // half-width in ndc-x units (fraction of width)
+    moonState.rect = null;
     if (texMoon && moonVis > 0.001 && peaks.length) {
       const col = summitCol >= 0 ? summitCol : peaks[0];
       const u = col / skyline.length, v = 1 - skyline[col] / rangeH;
       const px = (u - m.ox) / m.sx, py = (v - m.oy) / m.sy - (isClock ? scrollT * 0.03 : 0);   // 0..1 viewport, parallax included
       const rx = moonR, ry = moonR * aspect;
-      const cx = isClock ? (aspect < 0.8 ? 0.72 : clamp(px + rx * 0.15, 0.2, 0.8)) : (aspect < 0.8 ? 0.72 : 0.93), cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
+      const cx = isClock ? (aspect < 0.8 ? 0.72 : clamp(px + rx * 0.15, 0.2, 0.8)) : readingCx, cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
+      { const vwCss = W / dpr, vhCss = H / dpr; moonState.rect = { left: (cx - rx) * vwCss, right: (cx + rx) * vwCss, top: (1 - cy - ry) * vhCss, bottom: (1 - cy + ry) * vhCss }; }
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(pSprite); bindUnit(pSprite);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texMoon); gl.uniform1i(U(pSprite, 'uTex'), 0);
@@ -683,7 +672,7 @@ export function initSidereal(opts: Opts) {
         gl.disableVertexAttribArray(aS); gl.disableVertexAttribArray(aA);
       }
     }
-    hud(alt);
+    syncPhase(alt);
   }
 
   // ── loop ──
@@ -739,6 +728,10 @@ export function initSidereal(opts: Opts) {
     animScroll = requestAnimationFrame(step);
     setTimeout(() => { if (!stepped) window.scrollTo(0, target); }, 150);
   }
+  // document y of an element's layout box, ignoring transforms: a block that has
+  // not revealed yet is still shifted by its reveal offset, and measuring that
+  // would land the anchor short once the reveal settles
+  const layoutTop = (el: HTMLElement) => { let y = 0; for (let e: HTMLElement | null = el; e; e = e.offsetParent as HTMLElement | null) y += e.offsetTop; return y; };
   document.addEventListener('click', (e) => {
     const a = (e.target as Element).closest?.('a[href^="#"]') as HTMLAnchorElement | null;
     if (!a) return;
@@ -747,7 +740,7 @@ export function initSidereal(opts: Opts) {
     if (!el) return;
     e.preventDefault(); history.pushState(null, '', `#${id}`);
     const headOffset = parseFloat(getComputedStyle(root).getPropertyValue('--head-offset')) || 110;
-    scrollToY(id === 'top' || id === '' ? 0 : el.getBoundingClientRect().top + window.scrollY - headOffset);
+    scrollToY(id === 'top' || id === '' ? 0 : layoutTop(el) - headOffset);
     if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
     el.focus({ preventScroll: true });
   });
@@ -783,6 +776,14 @@ export function initSidereal(opts: Opts) {
   setTimeout(() => { resize(); scrollDirty = true; }, 1200);
   window.addEventListener('load', () => { resize(); scrollDirty = true; });
   rafId = requestAnimationFrame(frame);
-  // live tuning: window.__sidereal.sun = -12; window.__sidereal.dbg.fog = 3
-  (window as any).__sidereal = { get sun() { return sunAlt; }, set sun(v: number) { sunTarget = v; sunAlt = v; wake(); }, get idle() { return idleSec; }, get raf() { return rafId; }, get lastFrame() { return lastFrameTs; }, resize, dbg };
+  // test + tuning hook, only on the dev server or a page opened with ?qa=1:
+  // window.__sidereal.sun = -12; window.__sidereal.dbg.fog = 3
+  if (import.meta.env.DEV || new URLSearchParams(location.search).has('qa')) {
+    (window as any).__sidereal = {
+      get sun() { return sunAlt; }, set sun(v: number) { sunTarget = v; sunAlt = v; wake(); },
+      get idle() { return idleSec; }, get raf() { return rafId; }, get lastFrame() { return lastFrameTs; },
+      get moonVis() { return moonState.vis; }, get moonAlt() { return moonState.alt; }, get moonRect() { return moonState.rect; },
+      resize, dbg,
+    };
+  }
 }

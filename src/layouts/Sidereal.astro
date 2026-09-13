@@ -7,8 +7,6 @@ import '../styles/sidereal/tokens.css';
 import '../styles/sidereal/base.css';
 import Header from '../components/sidereal/Header.astro';
 import Stage from '../components/sidereal/Stage.astro';
-import TimeCard from '../components/sidereal/TimeCard.astro';
-import SolarScale from '../components/sidereal/SolarScale.astro';
 import Analytics from '../components/Analytics.astro';
 import { SITE } from '../consts';
 
@@ -37,7 +35,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <meta property="og:image" content={new URL('/og-image.jpg', SITE.url).href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Mamoon Mondal — AI Product Manager. One evening below the Himalaya: the sky as a clock, real stars, the range relit from golden hour to night." />
+    <meta property="og:image:alt" content="Mamoon Mondal, AI Product Manager, set over a mountain range in evening light." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={new URL('/og-image.jpg', SITE.url).href} />
     <link rel="preload" as="fetch" href="/sidereal/stars.bin" />
@@ -52,8 +50,6 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <main id="top" class="above" tabindex="-1">
       <slot />
     </main>
-    {mode === 'clock' && <TimeCard />}
-    {mode === 'clock' && <SolarScale />}
     <script is:inline>
       // ?og=1 → a clean frame for social thumbnails (title + range only)
       if (new URLSearchParams(location.search).get('og') === '1') document.documentElement.classList.add('og');

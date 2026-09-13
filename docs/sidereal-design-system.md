@@ -1,6 +1,6 @@
 # SIDEREAL — the moonbatant design system
 
-*One evening at a high camp below a great range. The page is a clock.*
+*One evening at a high camp below a great range. The page is a clock nobody has to read.*
 
 Sidereal replaces the "Living Expedition" (float-glass cards over crossfading
 photos, an altitude rope) with a single physically-driven world. Every visual
@@ -22,10 +22,10 @@ boxes.**
 
 ## 1. The clock — chapters as solar altitude
 
-The home page is one evening at ~28°N (the Khumbu), late October, looking north
-at the range. Each section is a chapter of twilight, pinned to a real solar
-altitude and the phase name astronomers use. A fixed *time-card* (mono) reads
-the clock; a vertical *solar scale* on the right edge shows the sun sinking.
+The home page is one evening at ~28°N, late October, looking north at the
+range. Each section is a chapter of twilight, pinned to a real solar altitude.
+The altitudes and phase names below are the engine's model, not page copy: they
+decide the light and are never printed (see *The scene is never annotated*).
 
 | Chapter | Content | Sun altitude | Phase | What the world does | The frame |
 |---|---|---|---|---|---|
@@ -37,12 +37,18 @@ the clock; a vertical *solar scale* on the right edge shows the sun sinking.
 | 06 | Writing | −18° | Night | Milky Way at full strength; constellation figures as 8% hairlines | Rows, narrowed to 960px |
 | 07 | Contact | −22° | Moonrise | The moon breaks the highest summit's ridge and climbs; the sky wheels at 1× while you read | One sentence, centred, the whole sky |
 
-Chapter slates: each header carries its own burn-in (`Sun −1° · Sunset`), derived from
-the same `phaseOf()` the HUD uses, so the instruments never disagree; the time-card is
-the only clock on the page.
-The fixed time-card lives in the title-safe band under the wordmark (header, top-left);
-the solar scale sits on the right edge, with chapter labels only when there is room
-(≥ 1400px). Outgoing chapters fade to zero under the header band (opacity only).
+Outgoing chapters fade to zero under the header band (opacity only).
+
+### The scene is never annotated
+
+No coordinates, degrees, local clock, weather readings, place names or sky-phase
+labels appear anywhere on the page, in visible text or in accessible names, and
+the page fetches no weather. An earlier version carried a time-card (clock, sun
+altitude, live summit weather), a solar-altitude scale and per-chapter slates.
+They were removed on 2026-09-13: readers could mistake that data for the
+portfolio's content, and it pulled the eye while reading. The light still changes
+with every chapter; the reader feels the evening without being told about it.
+Group 8 of `tests/sidereal.test.mjs` fails if any of it comes back.
 
 Rules:
 - The sun altitude is derived from scroll progress (eased), never the reverse.
@@ -71,8 +77,9 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    its base on the way up — the Ridgemoon mark, realised in the world. A full moon
    owns its sky: limiting magnitude drops ~2.4, the Milky Way and the figures go, a
    wide aureole lifts the sky around it. On reading pages it hangs at 13° in the right
-   margin where there is room (≥ 1560px) and sits on the right-hand ridge elsewhere;
-   it drifts at the real rate either way.
+   margin, measured from the text column's real edge, and only when that margin holds
+   the whole disc clear of the text (from roughly 1440px wide); narrower reading pages
+   show no moon, because it would sit behind a line of text. It drifts at the real rate.
 5. **The range** — one real-looking plate of a Himalayan range at golden hour,
    sky keyed out (`public/sidereal/range.webp`, RGBA, padded to a power-of-two
    canvas so it mipmaps; `range.json` carries the sub-rect and the skyline). Relit *in the shader* by
@@ -96,7 +103,7 @@ never draws in a hidden tab. Motion dies under `prefers-reduced-motion` and `[da
 |---|---|---|
 | Wordmark / chapter cards / numerals | **Archivo** (variable, `wdth` 125) | Uppercase, weight 300–400, tracking 0.16–0.22em. The name is set as a horizon-wide inscription above the peaks. |
 | Headlines, titles, prose | **Newsreader** (variable, opsz) | Weight 400 (never semibold), leading 1.02–1.1 for display, 1.6 for prose at 18–19px. Italic only for pull quotes and the dek. |
-| Labels, HUD, meta | **JetBrains Mono** | 11–12px, uppercase, tracking 0.14em, muted. |
+| Labels, meta, readouts | **JetBrains Mono** | 11–12px, uppercase, tracking 0.14em, muted. |
 | UI copy (nav, buttons, summaries) | **Archivo** (`wdth` 100) | 14–15px, weight 400–500. |
 
 Colour of type follows the light: `--ink` is warm snow in golden hour and cool
@@ -118,7 +125,7 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
   get the numeral; phrases ("Minutes") stay at text size.
 - **Legibility without boxes** comes from placement (text lives in the dark
   upper sky; the range lives low), from three cinematographer's grads on the stage
-  (a lower ND grad, a left-weighted grad and a right-rail grad that appear only
+  (a lower ND grad, a left-weighted grad and a right-edge grad that appear only
   while the sky is bright), from a tight ink shadow keyed to the phase, and from an
   opaque title-safe band behind the header.
 
@@ -128,10 +135,8 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
 - Text is **left-weighted** (columns 1–7). The right side is kept open — that is
   where the peaks stand and where the moon rises.
 - Reading measure 34em (≈ 72 characters of Newsreader; `ch` overstates a serif).
-- The solar scale reserves its rail: content narrows to `100vw − 300px` from 1100px and
-  `100vw − 420px` from 1560px (where the chapter labels appear).
-- Contact carries the one primary action of the page: the address itself as a solid slate. Section spacing `clamp(140px, 22vh, 260px)` — each
-  chapter must feel like time passing.
+- Contact carries the one primary action of the page: the address itself, as an outlined slate.
+- Section spacing `clamp(140px, 22vh, 260px)`: each chapter must feel like time passing.
 - Manifest rows (case studies): `index · title · meta` left, `metrics` right,
   full-row link, hairline above; hover reveals a sweep and a right arrow.
 - Ledger (experience): company as a serif heading, role/period in mono, bullets
@@ -143,7 +148,6 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
 |---|---|---|
 | Sky | star wheel (real rate), scintillation, Milky Way fade, moonrise, clouds, spindrift, satellite, meteor | per-frame DOM style writes, filters on layers |
 | Content | one-shot reveal (opacity + 12px rise), hairline sweeps on hover, numeral count-up once | anything continuous under text |
-| HUD | time-card text (on change only), solar-scale marker (transform) | — |
 
 ## 7. Files
 
@@ -151,10 +155,16 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
 docs/sidereal-design-system.md      this document
 src/styles/sidereal/tokens.css      colour, type, spacing, rules
 src/styles/sidereal/base.css        element defaults, prose, hairlines
-src/scripts/sky.ts                  the WebGL stage + solar clock + HUD
-src/scripts/sky-data.ts             star catalogue loader
-src/components/sidereal/*           Stage, Header, TimeCard, SolarScale, Manifest, Credits, Ledger, Slate
+src/styles/sidereal/pages.css       reading pages (work index, case studies, writing)
+src/scripts/sky.ts                  the WebGL stage: sky, stars, moon, range, atmosphere
+src/scripts/twilight.ts             solar altitude → phase (drives ink and grads, never shown)
+src/layouts/Sidereal.astro          page shell: stage, header, main
+src/components/sidereal/*           Stage, Header, HomeChapters, Manifest
 public/sidereal/                    range.webp (RGBA), range-2k.webp, range.json (skyline), stars.bin,
-                                    constellations.bin, milkyway.webp, moon.webp, poster.webp, poster-night.webp
-scripts/bake-sky.mjs                builds stars.bin + milkyway.webp from d3-celestial data
+                                    constellations.bin, milkyway.webp, moon.webp, poster.webp,
+                                    poster-night.webp, NOTICE.txt (star data license)
+scripts/bake-sky.mjs                stars.bin, constellations.bin, milkyway.webp from d3-celestial
+scripts/publish-range.mjs           keyed range plate → range.webp, range-2k.webp, range.json, poster.webp
+scripts/qa-sidereal.mjs             screenshots of every chapter, desktop and phone
+tests/sidereal.test.mjs             acceptance suite (`npm test`)
 ```

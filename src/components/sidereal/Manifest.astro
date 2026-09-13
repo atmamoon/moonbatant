@@ -49,9 +49,9 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
   /* the sweep: a warm rule that grows from the left on hover */
   .mf__row::before { content: ''; position: absolute; left: 0; top: -1px; height: 1px; width: 0; background: var(--alpenglow); transition: width 0.55s var(--ease-out); }
   .mf__row:hover::before { width: 100%; }
-  .mf__idx { color: var(--ink-3); padding-top: 0.3em; }
+  .mf__idx { color: var(--ink-2); padding-top: 0.3em; text-shadow: var(--instrument-shadow); }
   .mf__main { display: grid; gap: 12px; }
-  .mf__meta { color: var(--ink-2); text-shadow: var(--instrument-shadow); }
+  .mf__meta { color: var(--ink); text-shadow: var(--instrument-shadow); }
   .mf__sep { color: var(--ink-4); margin: 0 6px; }
   .mf__title { font-family: var(--font-serif); font-size: clamp(1.45rem, 2.3vw, 2rem); line-height: 1.12; color: var(--ink); letter-spacing: -0.012em; text-shadow: var(--ink-shadow); transition: color var(--dur) var(--ease); text-wrap: balance; }
   .mf__row:hover .mf__title { color: var(--venus); }
@@ -60,7 +60,7 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
   .mf__metrics { display: grid; grid-template-columns: minmax(72px, max-content) minmax(0, 1fr); column-gap: 16px; row-gap: 12px; padding-top: 6px; align-content: start; align-items: baseline; }
   .mf__metric { display: contents; }
   .mf__val { font-size: clamp(1.15rem, 1.7vw, 1.55rem); white-space: nowrap; text-shadow: var(--ink-shadow); }
-  .mf__val--word { font-family: var(--font-display); font-stretch: 100%; font-weight: 400; font-size: var(--text-ui); color: var(--ink-2); letter-spacing: 0; white-space: normal; }
+  .mf__val--word { font-family: var(--font-display); font-stretch: 100%; font-weight: 400; font-size: var(--text-ui); color: var(--ink); letter-spacing: 0; white-space: normal; }
   .mf__val--lead { color: var(--alpenglow); min-width: 2.4em; }
   :global(html[data-phase='sunset']) .mf__val--lead, :global(html[data-phase='golden']) .mf__val--lead { color: var(--venus); }
   .mf__cap { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); line-height: 1.4; text-shadow: var(--instrument-shadow); }

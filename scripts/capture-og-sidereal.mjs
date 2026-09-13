@@ -1,6 +1,6 @@
 // Social thumbnails for SIDEREAL: 1200×630 at 2x. Headless Chrome with
 // SwiftShader so the WebGL stage renders. Writes scratch_qa/sidereal-og/*.jpg;
-// copy og-hero.jpg → public/og-image.jpg and og-night.jpg → public/social/og-summit.jpg.
+// copy og-hero.jpg → public/og-image.jpg and og-night.jpg → public/social/og-moonrise.jpg.
 import puppeteer from 'puppeteer-core';
 import sharp from 'sharp';
 import { mkdirSync } from 'fs';

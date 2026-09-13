@@ -21,15 +21,20 @@ the sky, the stars, the moonrise and the light on the range. Spec:
 | Piece | Where |
 |------|-------|
 | Engine (WebGL sky, stars, moon, range relighting, clouds, spindrift) | `src/scripts/sky.ts` |
-| Twilight clock helpers (phases, local time) | `src/scripts/twilight.ts` |
+| Phase helper (solar altitude → phase; drives ink and grads, never displayed) | `src/scripts/twilight.ts` |
 | Tokens / base / reading-page styles | `src/styles/sidereal/` |
-| Layout + components (Stage, Header, TimeCard, SolarScale, HomeChapters, Manifest) | `src/layouts/Sidereal.astro`, `src/components/sidereal/` |
+| Layout + components (Stage, Header, HomeChapters, Manifest) | `src/layouts/Sidereal.astro`, `src/components/sidereal/` |
 | Baked sky data (real star catalogue, Milky Way), range plate, moon, poster | `public/sidereal/` — rebuilt by `scripts/bake-sky.mjs` and `scripts/publish-range.mjs` |
 | QA captures (real Chrome, every chapter, desktop + mobile) | `node scripts/qa-sidereal.mjs` (dev server on :4321) |
 | Social thumbnails | `node scripts/capture-og-sidereal.mjs` |
+| Acceptance tests: content, errors, WebGL, motion, layout, contrast, accessibility, SEO, no scene data | `npm test` (builds, serves `dist/`, drives Chrome) |
 
 Star positions come from the d3-celestial data (Hipparcos-derived, BSD-3);
-the Milky Way is baked from its isophote contours.
+the Milky Way is baked from its isophote contours. The license notice ships
+with the data in `public/sidereal/NOTICE.txt`.
+
+The scene is never annotated: no coordinates, degrees, clock, weather or
+place names appear on the page, and `npm test` fails if any come back.
 
 ## Editing content
 

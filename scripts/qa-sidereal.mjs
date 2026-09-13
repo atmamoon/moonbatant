@@ -1,6 +1,6 @@
 // QA harness for SIDEREAL: real Chrome (WebGL via SwiftShader), captures every
 // chapter of the home page + the reading pages, desktop and mobile, and
-// reports console errors, the solar clock state, and scroll FPS.
+// reports console errors, the light phase per chapter, and scroll FPS.
 import puppeteer from 'puppeteer-core';
 import { mkdirSync } from 'fs';
 const BASE = process.env.BASE || 'http://localhost:4321';
@@ -36,7 +36,7 @@ async function run(viewport, tag) {
     if (ONLY && !ONLY.split(',').includes(id)) continue;
     await page.evaluate((id) => { const el = document.getElementById(id); if (!el) return; const y = id === 'hero' ? 0 : el.getBoundingClientRect().top + scrollY - 72; window.scrollTo(0, y); }, id);
     await new Promise((r) => setTimeout(r, 2600));
-    const st = await page.evaluate(() => ({ y: Math.round(scrollY), sun: +(window.__sidereal?.sun ?? NaN).toFixed(1), phase: document.documentElement.dataset.phase, clock: document.getElementById('tc-clock')?.textContent, webgl: document.documentElement.classList.contains('webgl'), ready: document.documentElement.classList.contains('range-ready') }));
+    const st = await page.evaluate(() => ({ y: Math.round(scrollY), sun: +(window.__sidereal?.sun ?? NaN).toFixed(1), phase: document.documentElement.dataset.phase, webgl: document.documentElement.classList.contains('webgl'), ready: document.documentElement.classList.contains('range-ready') }));
     await noToolbar();
     await page.screenshot({ path: `${OUT}/${tag}-${id}.png` });
     report.push({ id, ...st });

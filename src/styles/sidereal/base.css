@@ -216,5 +216,5 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 
 /* ── OG capture mode (?og=1): title and range only ── */
-html.og .hero__dek, html.og .hero__cta, html.og .hero__hint, html.og .tc, html.og .scale, html.og .hd__nav, html.og .hd__menu { display: none !important; }
+html.og .hero__dek, html.og .hero__cta, html.og .hero__hint, html.og .hero__instruments, html.og .hd__nav, html.og .hd__menu { display: none !important; }
 html.og .hero { padding-top: clamp(120px, 26vh, 260px); }
