@@ -31,7 +31,7 @@ const current = (href: string) => (href.includes('#') ? undefined : here === hre
   </div>
   <nav id="mobile-nav" class="hd__mobile" aria-label="Mobile">
     {nav.map((n) => <a href={link(n.href)} aria-current={current(n.href)}>{n.label}</a>)}
-    <a href="/resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+    <a href="/resume.pdf" target="_blank" rel="noopener">Résumé <span aria-hidden="true">↗</span></a>
   </nav>
 </header>
 

@@ -199,6 +199,23 @@ const stopsOf = (page, frac = 0.6) => page.evaluate((frac) => {
   return [...new Set(ys)];
 }, frac);
 
+// scroll positions where the sun crosses into each twilight (just after sunset, into nautical, into astronomical): a reader
+// can stop there with the last light of the phase before still in the sky behind the text
+const handoverStops = (page) => page.evaluate(async () => {
+  const s = window.__sidereal, max = document.documentElement.scrollHeight - innerHeight, out = [];
+  const frame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const at = async (y) => { window.scrollTo(0, y); await frame(); return s.sunTarget; };
+  for (const alt of [-0.4, -6.1, -12.1]) {
+    if (await at(max) > alt) continue;
+    let lo = 0, hi = max;
+    while (hi - lo > 6) { const mid = Math.round((lo + hi) / 2); if (await at(mid) > alt) lo = mid; else hi = mid; }
+    out.push(hi);
+  }
+  window.scrollTo(0, 0);
+  await frame();
+  return out;
+});
+
 async function scrollSettle(page, y, ms = 650) {
   await page.evaluate((y) => window.scrollTo(0, y), y);
   await wait(ms);
@@ -609,7 +626,7 @@ describe('3 · the world behaves', () => {
 
   test('reading pages hang the moon only in a margin that holds it clear of the text', { timeout: 180000 }, async () => {
     const problems = [];
-    const sizes = [LAPTOP, { name: 'laptop 1366', width: 1366, height: 768 }, { name: 'laptop 1440', width: 1440, height: 900 }, DESKTOP, { name: 'desktop 1920', width: 1920, height: 1080 }, PHONE];
+    const sizes = [LAPTOP, { name: 'laptop 1366', width: 1366, height: 768 }, { name: 'laptop 1440', width: 1440, height: 900 }, { name: 'laptop 1536x730', width: 1536, height: 730 }, { name: 'desktop 1600x800', width: 1600, height: 800 }, DESKTOP, { name: 'desktop 1920', width: 1920, height: 1080 }, PHONE];
     for (const vp of sizes) {
       const page = await open(CASE, vp);
       try {
@@ -623,6 +640,13 @@ describe('3 · the world behaves', () => {
         });
         if (r.vis > 0 && (!r.rect || r.rect.left < r.contentRight + 8)) problems.push(`${vp.name}: moon ${r.rect ? `${Math.round(r.rect.left)}–${Math.round(r.rect.right)}px` : 'without a rect'}, text column ends at ${Math.round(r.contentRight)}px`);
         if (vp === DESKTOP && !(r.vis > 0)) problems.push('desktop 1600: the moon should hang in the wide right margin');
+        if (r.vis > 0) {
+          // it drifts up with time on the page: after ten minutes it must still sit below the header band
+          await page.evaluate(() => { window.__sidereal.idle = 600; });
+          await wait(1200);
+          const late = await page.evaluate(() => ({ rect: window.__sidereal.moonRect, band: parseFloat(getComputedStyle(document.querySelector('.hd'), '::before').height) || 0 }));
+          if (late.rect && late.rect.top < late.band) problems.push(`${vp.name}: after ten minutes the moon's top is at ${Math.round(late.rect.top)}px, under the ${late.band}px header band`);
+        }
       } finally { await page.close(); }
     }
     assert.deepEqual(problems, []);
@@ -872,10 +896,10 @@ describe('4 · layout holds at every size', () => {
     assert.deepEqual(problems, []);
   });
 
-  test('no line of text is printed over another', { timeout: 420000 }, async () => {
+  test('no line of text is printed over another', { timeout: 900000 }, async () => {
     const problems = [];
     for (const vp of [{ name: 'phone 320', width: 320, height: 568, dpr: 2, mobile: true }, PHONE, { name: 'tablet 768', width: 768, height: 1024, dpr: 2, mobile: true }, { name: 'tablet 1024', width: 1024, height: 768, dpr: 1 }, DESKTOP]) {
-      for (const route of ['/', '/work', CASE]) {
+      for (const route of ['/', '/work', ...STUDIES.map((st) => `/work/${st.slug}`)]) {
         const page = await open(route, vp, { reduce: true });
         const hits = await page.evaluate(() => {
           const runs = [];
@@ -981,7 +1005,7 @@ describe('4 · layout holds at every size', () => {
 
 // ═════════════════════════════════════════════════════════════════════════════
 describe('5 · text reads against the scene', () => {
-  const PASSES = [['/', DESKTOP], ['/', { name: 'laptop 1440', width: 1440, height: 900, dpr: 1 }], ['/', LAPTOP], ['/', { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }], ['/', { name: 'tablet 1024x768', width: 1024, height: 768, dpr: 1 }], ['/', { name: 'tablet 768x1024', width: 768, height: 1024, dpr: 2, mobile: true }], ['/', { name: 'phone landscape 844x390', width: 844, height: 390, dpr: 2, mobile: true }], ['/', PHONE], ['/work', DESKTOP], [CASE, DESKTOP], [CASE, LAPTOP], [CASE, PHONE], ['/writing', DESKTOP]];
+  const PASSES = [['/', DESKTOP], ['/', { name: 'laptop 1440', width: 1440, height: 900, dpr: 1 }], ['/', LAPTOP], ['/', { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }], ['/', { name: 'laptop 1536x730', width: 1536, height: 730, dpr: 1 }], ['/', { name: 'tablet 1024x768', width: 1024, height: 768, dpr: 1 }], ['/', { name: 'tablet 768x1024', width: 768, height: 1024, dpr: 2, mobile: true }], ['/', { name: 'phone landscape 844x390', width: 844, height: 390, dpr: 2, mobile: true }], ['/', PHONE], ['/work', DESKTOP], [CASE, DESKTOP], [CASE, LAPTOP], [CASE, PHONE], ['/writing', DESKTOP]];
   for (const [route, vp] of PASSES) {
     test(`contrast · ${route} · ${vp.name}: 4.5:1 for text, 3:1 for large or decorative`, { timeout: 300000 }, async () => {
       const page = await open(route, vp, { reduce: true });
@@ -989,11 +1013,13 @@ describe('5 · text reads against the scene', () => {
       try {
         await ready(page);
         // the home page at laptop and desktop widths: a finer stride catches the handovers between chapters
-        for (const y of await stopsOf(page, route === '/' && vp.width >= 1280 ? 0.25 : 0.6)) {
+        const stops = await stopsOf(page, route === '/' && vp.width >= 1280 ? 0.25 : 0.6);
+        if (route === '/') stops.push(...await handoverStops(page));   // and exactly where the sun crosses into each twilight
+        for (const y of stops) {
           await scrollSettle(page, y);
           const phase = await page.evaluate(() => document.documentElement.dataset.phase);
           // while the sky is bright the drifting clouds matter: judge three points in their drift
-          const drift = ['golden', 'sunset', 'civil'].includes(phase) ? [0, 45, 90] : [0];
+          const drift = ['golden', 'sunset', 'civil', 'nautical'].includes(phase) ? [0, 45, 90] : [0];
           for (const idle of drift) {
             if (idle) { await page.evaluate((v) => { window.__sidereal.idle = v; }, idle); await wait(300); }
             fails.push(...await contrastFailures(page, `scrollY ${y} (${phase}, clouds at ${idle}s)`));
@@ -1227,6 +1253,144 @@ describe('6 · accessible structure and navigation', () => {
     assert.deepEqual(problems, []);
   });
 
+  test('results in words carry the weight of the numbers beside them', { timeout: 120000 }, async () => {
+    const bad = [];
+    let judged = 0;
+    for (const [route, val, cap] of [...STUDIES.map((st) => [`/work/${st.slug}`, '.case__val--word', '.case__cap']), ['/work', '.mf__val--word', '.mf__cap']]) {
+      const page = await open(route, DESKTOP, { reduce: true });
+      try {
+        const r = await page.evaluate((val, cap) => {
+          const c = document.querySelector(cap);
+          return { words: [...document.querySelectorAll(val)].map((el) => parseFloat(getComputedStyle(el).fontSize)), cap: c ? parseFloat(getComputedStyle(c).fontSize) : 0 };
+        }, val, cap);
+        judged += r.words.length;
+        for (const w of r.words) if (w < r.cap * 1.35) bad.push(`${route}: a result in words is ${w}px over a ${r.cap}px caption`);
+      } finally { await page.close(); }
+    }
+    assert.ok(judged > 0, 'no result in words found to judge');
+    assert.deepEqual(bad, []);
+  });
+
+  test('phone work rows give their text the full width, the arrow clear of the title', { timeout: 60000 }, async () => {
+    const bad = [];
+    for (const route of ['/', '/work']) {
+      const page = await open(route, PHONE, { reduce: true });
+      try {
+        const rows = await page.evaluate(() => [...document.querySelectorAll('.mf__row')].map((row) => {
+          const r = row.getBoundingClientRect(), main = row.querySelector('.mf__main').getBoundingClientRect(), metrics = row.querySelector('.mf__metrics')?.getBoundingClientRect();
+          const go = row.querySelector('.mf__go').getBoundingClientRect(), title = row.querySelector('.mf__title');
+          const range = document.createRange();
+          range.selectNodeContents(title);
+          const hit = [...range.getClientRects()].some((q) => q.width && Math.min(q.right, go.right) - Math.max(q.left, go.left) > 0 && Math.min(q.bottom, go.bottom) - Math.max(q.top, go.top) > 0);
+          return { title: title.textContent.trim().slice(0, 30), short: Math.round(r.right - main.right), edges: metrics ? Math.round(Math.abs(metrics.right - main.right)) : 0, hit };
+        }));
+        if (!rows.length) bad.push(`${route}: no work rows`);
+        for (const row of rows) {
+          if (row.short > 4) bad.push(`${route}: "${row.title}" text stops ${row.short}px short of the row's right edge`);
+          if (row.edges > 2) bad.push(`${route}: "${row.title}" readouts and text end ${row.edges}px apart`);
+          if (row.hit) bad.push(`${route}: "${row.title}" has the arrow on its title`);
+        }
+      } finally { await page.close(); }
+    }
+    assert.deepEqual(bad, []);
+  });
+
+  test('the hero actions share one line on a 390px phone', { timeout: 60000 }, async () => {
+    const page = await open('/', PHONE, { reduce: true });
+    try {
+      const r = await page.evaluate(() => [...document.querySelectorAll('.hero__cta > a')].map((a) => { const q = a.getBoundingClientRect(); return { top: q.top, bottom: q.bottom }; }));
+      assert.equal(r.length, 2);
+      assert.ok(r[1].top < r[0].bottom && r[1].bottom > r[0].top, `the actions sit on separate lines (${r.map((q) => Math.round(q.top)).join(', ')})`);
+    } finally { await page.close(); }
+  });
+
+  test('with JavaScript off, the phone header band ends above the hero', { timeout: 60000 }, async () => {
+    const page = await open('/', PHONE, { js: false, qa: false });
+    try {
+      const r = await page.evaluate(() => ({
+        band: parseFloat(getComputedStyle(document.querySelector('.hd'), '::before').height) || 0,
+        nav: Math.max(...[...document.querySelectorAll('.hd__nav a')].map((a) => a.getBoundingClientRect().bottom)),
+        kicker: document.querySelector('.hero__kicker').getBoundingClientRect().top,
+      }));
+      assert.ok(r.kicker >= r.band, `the hero's first line starts at ${Math.round(r.kicker)}px, under a ${r.band}px band`);
+      assert.ok(r.nav <= r.band * 0.8, `the nav runs to ${Math.round(r.nav)}px, past the band's opaque ${Math.round(r.band * 0.8)}px`);
+    } finally { await page.close(); }
+  });
+
+  test('reading pages open with their first screen in place, never fading in', { timeout: 120000 }, async () => {
+    const bad = [];
+    for (const [route, vp] of [['/work', DESKTOP], [CASE, DESKTOP], [CASE, PHONE], ['/writing', DESKTOP]]) {
+      const page = await open(route, vp);
+      try {
+        // record the lowest opacity each first-screen block shows, from the first frame of a fresh load
+        await page.evaluateOnNewDocument(() => {
+          window.__firstScreen = {};
+          const sample = () => {
+            for (const el of document.querySelectorAll('.rv')) {
+              const q = el.getBoundingClientRect();
+              if (!q.height || q.top >= innerHeight) continue;
+              const key = [...el.classList].filter((c) => c !== 'is-in').join('.');
+              window.__firstScreen[key] = Math.min(window.__firstScreen[key] ?? 1, parseFloat(getComputedStyle(el).opacity));
+            }
+            if (performance.now() < 3500) requestAnimationFrame(sample);
+          };
+          requestAnimationFrame(sample);
+        });
+        await page.reload({ waitUntil: 'networkidle2' });
+        await wait(600);
+        const seen = await page.evaluate(() => window.__firstScreen);
+        if (!Object.keys(seen).length) bad.push(`${route} @ ${vp.name}: no first-screen block was sampled`);
+        for (const [key, min] of Object.entries(seen)) if (min < 0.98) bad.push(`${route} @ ${vp.name}: .${key} faded in from opacity ${min.toFixed(2)}`);
+      } finally { await page.close(); }
+    }
+    assert.deepEqual(bad, []);
+  });
+
+  test('the hero actions keep their lines whether or not the web font has arrived', { timeout: 180000 }, async () => {
+    const bad = [];
+    for (const width of [360, 375, 390, 412, 430]) {
+      const heights = [];
+      for (const blockFonts of [true, false]) {
+        const page = await browser.newPage();
+        try {
+          await page.setViewport({ width, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+          await page.setRequestInterception(true);
+          page.on('request', (r) => (BLOCKED.test(r.url()) || (blockFonts && r.resourceType() === 'font') ? r.abort() : r.continue()));
+          await page.goto(`${BASE}/`, { waitUntil: 'networkidle2', timeout: 60000 });
+          await page.evaluate(() => document.fonts.ready);
+          heights.push(await page.evaluate(() => Math.round(document.querySelector('.hero__cta').getBoundingClientRect().height)));
+        } finally { await page.close(); }
+      }
+      if (Math.abs(heights[0] - heights[1]) > 2) bad.push(`${width}px: the actions take ${heights[0]}px in the fallback font and ${heights[1]}px in the web font`);
+    }
+    assert.deepEqual(bad, []);
+  });
+
+  test('a hidden tab puts the sky to sleep, and showing it wakes the sky again', { timeout: 60000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      const setHidden = (hidden) => page.evaluate((hidden) => {
+        Object.defineProperty(document, 'hidden', { configurable: true, get: () => hidden });
+        Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => (hidden ? 'hidden' : 'visible') });
+        document.dispatchEvent(new Event('visibilitychange'));
+      }, hidden);
+      const skyTime = () => page.evaluate(() => window.__sidereal.idle);
+      await setHidden(true);
+      await wait(300);
+      const a = await skyTime();
+      await wait(1500);
+      const b = await skyTime();
+      assert.ok(b - a < 0.05, `the sky ran ${(b - a).toFixed(2)}s in 1.5s while the tab was hidden`);
+      await setHidden(false);
+      await wait(300);
+      const c = await skyTime();
+      await wait(1500);
+      const d = await skyTime();
+      assert.ok(d - c > 0.5, `the sky ran only ${(d - c).toFixed(2)}s in 1.5s after the tab came back`);
+    } finally { await page.close(); }
+  });
+
   test('the nav shows the reader where they are', { timeout: 60000 }, async () => {
     const page = await open('/work', DESKTOP, { reduce: true });
     try {
@@ -1238,9 +1402,9 @@ describe('6 · accessible structure and navigation', () => {
     } finally { await page.close(); }
   });
 
-  test('with WCAG text-spacing overrides no text is cut off at 320px', { timeout: 120000 }, async () => {
+  test('with WCAG text-spacing overrides no text is cut off at 320px', { timeout: 240000 }, async () => {
     const bad = [];
-    for (const route of ['/', CASE]) {
+    for (const route of ['/', ...STUDIES.map((st) => `/work/${st.slug}`)]) {
       const page = await open(route, { name: 'phone 320', width: 320, height: 568, dpr: 2, mobile: true }, { reduce: true });
       try {
         await page.addStyleTag({ content: '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }' });

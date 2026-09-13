@@ -62,7 +62,7 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
   .mf__metrics { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 14px; padding-top: 6px; align-content: start; }
   .mf__metric { display: grid; row-gap: 5px; }
   .mf__val { font-size: clamp(1.15rem, 1.7vw, 1.55rem); white-space: nowrap; text-shadow: var(--ink-shadow); }
-  .mf__val--word { font-family: var(--font-display); font-stretch: 100%; font-weight: 400; font-size: var(--text-ui); color: var(--ink); letter-spacing: 0; white-space: normal; }
+  .mf__val--word { font-family: var(--font-serif); font-stretch: 100%; font-weight: 400; font-size: clamp(1.05rem, 1.35vw, 1.3rem); line-height: 1.15; color: var(--ink); letter-spacing: 0; white-space: normal; }
   .mf__val--lead { color: var(--alpenglow); min-width: 2.4em; }
   :global(html[data-phase='sunset']) .mf__val--lead, :global(html[data-phase='golden']) .mf__val--lead { color: var(--venus); }
   .mf__cap { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); line-height: 1.4; text-shadow: var(--instrument-shadow); }
@@ -78,10 +78,12 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
     .mf__go { grid-column: 3; grid-row: 1; }
   }
   @media (max-width: 560px) {
-    .mf__row { grid-template-columns: 26px minmax(0, 1fr) 40px; column-gap: 12px; }
+    /* the arrow leaves the grid for the row's top-right corner, so title, summary and readouts share the full width */
+    .mf__row { grid-template-columns: 26px minmax(0, 1fr); column-gap: 12px; }
     .mf__main { grid-column: 2; grid-row: 1; }
-    .mf__metrics { grid-column: 2 / -1; grid-row: 2; }
-    .mf__go { grid-column: 3; grid-row: 1; }
+    .mf__metrics { grid-column: 2; grid-row: 2; }
+    .mf__meta { padding-right: 32px; }
+    .mf__go { grid-column: auto; grid-row: auto; position: absolute; top: clamp(28px, 3.4vw, 40px); right: 0; }   /* auto placement: a placed item would be positioned in its grid area, below the row's padding */
     .mf__go-text { display: none; }
   }
 </style>

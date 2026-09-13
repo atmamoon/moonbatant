@@ -68,7 +68,8 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    vertical field and crop the sides, like the range plate, so the fall-off below the
    horizon stays as gentle as it is on desktop.
 2. **Milky Way** — a texture baked from the d3-celestial isophote contours
-   (`scripts/bake-sky.mjs`), mapped on the celestial sphere, faded in below −12°.
+   (`scripts/bake-sky.mjs`), mapped on the celestial sphere, faded in below −12°. Its core is
+   lifted and smoothed, with only a faint grain fixed to the sky: a strong grain reads as digital static.
 3. **Stars** — 5,044 real stars (d3-celestial `stars.6`, Hipparcos-derived,
    mag ≤ 6) as GL points. Real RA/Dec → alt/az for the site's latitude and the
    chapter's sidereal time, with east on the right of the north-north-east view, where
@@ -86,22 +87,27 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    long visit never floats it up behind the text. On reading pages a smaller disc (80px) hangs
    centred in the right margin, measured from the text column's real edge, with at
    least 48px of air on each side. Where the margin can't hold that (below roughly
-   1440px wide, and on phones) reading pages show no moon. It drifts slowly upward.
+   1440px wide, and on phones) reading pages show no moon. It drifts slowly upward, never under the header band.
 5. **The range** — one real-looking plate of a Himalayan range at golden hour,
    sky keyed out (`public/sidereal/range.webp`, RGBA, padded to a power-of-two
    canvas so it mipmaps; `range.json` carries the sub-rect and the skyline). Relit *in the shader* by
    the same sun altitude: warm highlight lift at golden hour, rose alpenglow at
-   sunset, desaturated silver-blue at night, with the shadow side always cool.
+   sunset, desaturated silver-blue at night, with the shadow side always cool. Cloud and
+   plume baked in above the ridge were lit by the low sun, so they thin out as it sets and are
+   gone by −4° (the shader reads the skyline profile as a one-row texture), leaving clean peaks at night.
 6. **Atmosphere** — two cloud layers drifting downwind at different depths (about 8
-   and 6 px/s at 1600px wide), their tiles never narrower than the screen is tall;
+   and 6 px/s at 1600px wide), their tiles never narrower than the screen is tall, the faint
+   haze around each cloud cut so it keeps an edge; a cloud carries light only while the sky or the moon lights it, so on a moonless night it is
+   darker than the sky it hides, a silhouette, denser and drifting a little lower, across the last glow
+   above the ridge and the starlit snow;
    cloud shadows shaped by the nearer layer, travelling with it and falling on the
    range only, while there is sun to cast them;
    spindrift puffs blowing off the summits; an occasional satellite; a rare meteor,
-   one continuous streak, after dark. Measured: about 1.6% (golden hour) to 2.2% (night) of pixels change over
+   one continuous streak, after dark. Measured: about 1.6% (golden hour) to 2.7% (night) of pixels change over
    six seconds, slow but alive.
 
 Performance contract: a canvas pixel ratio between 1 and 1.5, lowered on large dense screens so
-the canvas stays near 3 MP (never below CSS resolution), cloud passes scissored to their band,
+the canvas stays near 3 MP (never below CSS resolution) and asks for the low-power GPU, cloud passes scissored to their band,
 ~8 draw calls per frame (the moon is a small
 quad, masks upload as LUMINANCE_ALPHA, uniform locations are cached), zero DOM
 paint animation; the loop sleeps under reduced motion once the sun has settled and
@@ -138,11 +144,13 @@ measure it; body text over open sky runs 7:1 or better.
   start a line is clipped away, so none ever dangles. On phones the group sits above.
 - **Metrics** are Archivo-expanded numerals, each over its mono caption, so captions
   share one left edge in every row: instrument readouts, not badges. Only values that
-  are numbers get the numeral; phrases ("Minutes") stay at text size.
+  are numbers get the numeral; phrases ("Minutes") are set in the reading serif at a comparable
+  size, so a result in words carries the weight of a number. On phones a case study's results
+  stack one to a row.
 - **Legibility without boxes** comes from placement (text lives in the dark
   upper sky; the range lives low), from three cinematographer's grads on the stage
-  (a lower ND grad, a left-weighted grad and a right-edge grad that appear only
-  while the sky is bright; the last two are multiplied into the WebGL frame, so they
+  (a lower ND grad, a left-weighted grad and a right-edge grad that fade out
+  continuously as the sun sinks through nautical twilight; the last two are multiplied into the WebGL frame, so they
   darken without a blue cast, with CSS copies for the poster fallbacks), from a tight ink shadow keyed to the phase, and from an
   opaque title-safe band behind the header. Clouds keep full strength with motion off,
   so a still frame is the worst case for contrast, and the tests judge bright chapters
@@ -155,7 +163,9 @@ measure it; body text over open sky runs 7:1 or better.
 - **The header band** is opaque where the nav sits, in a darker shade of the sky's own colour
   while the sky is bright (golden hour to nautical twilight), so it reads as dusk overhead,
   not a toolbar.
-- **Below 1100px** the hero's four results sit beneath its actions as a two-by-two readout.
+- **Below 1100px** the hero's four results sit beneath its actions as a two-by-two readout; from 375px
+  wide both actions share one line, in the web font and its fallback alike, so the font's arrival never
+  shifts the page; narrower phones stack them.
 - **Case-study section headings** are set in the reading serif, larger than the body, each
   numbered in small alpenglow mono; the sticky contents column marks the section being read,
   down to the last one, and a click marks its own entry.
@@ -175,14 +185,15 @@ measure it; body text over open sky runs 7:1 or better.
 - Reading measure 34em (≈ 72 characters of Newsreader; `ch` overstates a serif).
 - In-page links land a chapter's first line just under the header band, never its empty
   sky; a shared link to a case-study section lands the same way. Long-form article text
-  never fades in, nor does the first screen (a phone would flash the name away), and
+  never fades in, nor does the first screen of any page (a phone would flash the name away), and
   keyboard focus shows any block that hasn't revealed yet. The header band's opaque top
   takes the clicks it covers.
 - Contact carries the one primary action of the page: the address itself, as a solid
   slate a shade dimmer than the moon.
 - Section spacing `clamp(140px, 22vh, 260px)`: each chapter must feel like time passing.
 - Manifest rows (case studies): `index · title · meta` left, `metrics` right,
-  full-row link, hairline above; hover reveals a sweep and a right arrow.
+  full-row link, hairline above; hover reveals a sweep and a right arrow. On phones the arrow
+  sits in the row's top-right corner, so title, summary and readouts share the full width.
 - Ledger (experience): company as a serif heading, role/period in mono, bullets
   with hairline leaders, no bullet glyphs.
 

@@ -48,13 +48,12 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
         html[data-phase] { --ink: #eaf0fb !important; --ink-2: rgba(234, 240, 251, 0.78) !important; --ink-3: rgba(234, 240, 251, 0.7) !important; --ink-4: rgba(234, 240, 251, 0.56) !important; }
         .stage__poster { background: linear-gradient(180deg, #05070f 0%, #0b1226 60%, #131a33 100%) !important; }
         .stage__poster::after { background-image: url('/sidereal/poster-night.webp') !important; }
-        /* no script, no menu button: on phones the nav itself shows, in two rows, over a taller band */
+        /* no script, no menu button: on phones the nav itself shows, in two rows, over a band that ends above the hero */
         .hd__menu { display: none !important; }
         @media (max-width: 760px) {
-          :root { --head-offset: 160px !important; }
           .hd__inner { flex-wrap: wrap !important; row-gap: 6px !important; }
           .hd__nav { display: flex !important; flex-wrap: wrap !important; width: 100% !important; margin-left: 0 !important; gap: 2px 16px !important; }
-          .hd::before { height: 190px !important; background: linear-gradient(180deg, rgb(var(--band)) 0%, rgb(var(--band)) 76%, rgb(var(--band) / 0) 100%) !important; }
+          .hd::before { height: 120px !important; background: linear-gradient(180deg, rgb(var(--band)) 0%, rgb(var(--band)) 80%, rgb(var(--band) / 0) 100%) !important; }
         }
       </style>
     </noscript>

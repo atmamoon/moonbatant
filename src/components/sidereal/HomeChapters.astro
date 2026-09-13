@@ -217,6 +217,10 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .hero__role { font-size: clamp(0.72rem, 1.1vw, 0.9rem); color: var(--ink-2); margin-bottom: clamp(28px, 4vw, 44px); text-shadow: var(--ink-shadow); }
   .hero__dek { max-width: 28em; margin-bottom: clamp(30px, 4vw, 44px); text-shadow: 0 1px 2px rgba(6, 8, 18, 0.7), 0 0 10px rgba(6, 8, 18, 0.6), 0 0 28px rgba(6, 8, 18, 0.55); color: var(--ink); hyphens: none; }
   .hero__cta { display: flex; align-items: baseline; gap: 32px; flex-wrap: wrap; }
+  /* phones: one line from 375px, in the web font and its fallback alike, so the font's arrival never re-wraps the actions
+     and shifts the page; narrower screens stack them on purpose */
+  @media (max-width: 640px) { .hero__cta { flex-wrap: nowrap; column-gap: 18px; } .hero__cta .slate { padding-inline: 13px; letter-spacing: 0.12em; } }
+  @media (max-width: 374px) { .hero__cta { flex-direction: column; align-items: flex-start; row-gap: 22px; } }
   .hero__hint { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; pointer-events: none; }
   .hero__hint-line { width: 1px; height: 44px; background: linear-gradient(180deg, transparent, var(--ink-2)); animation: hint 3.2s var(--ease) 4 both; transform-origin: top; }   /* four passes, then still: no endless style work */
   @keyframes hint { 0% { transform: scaleY(0); opacity: 0; } 35% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }

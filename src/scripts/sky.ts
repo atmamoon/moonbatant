@@ -100,8 +100,8 @@ void main(){
   float ra = atan(e.y, e.x); float dec = asin(clamp(e.z,-1.0,1.0));
   vec2 muv = vec2((ra+PI)/(2.0*PI), (PI*0.5-dec)/PI);
   float mw = texture2D(uMWTex, muv).r;
-  // the bake is soft: keep its core, drop its haze, and break it into a fine grain fixed to the sky
-  mw = smoothstep(0.03, 0.45, mw) * mix(0.4, 1.3, h12(floor(muv * vec2(4096.0, 2048.0))));
+  // the bake is soft: lift its core, with only a faint grain fixed to the sky (a strong one reads as digital static)
+  mw = smoothstep(0.0, 0.55, mw) * mix(0.9, 1.06, h12(floor(muv * vec2(4096.0, 2048.0))));
   col += vec3(0.62,0.70,0.94) * mw * uMW * 1.0 * smoothstep(-0.02, 0.28, alt);
   // dither (kills banding on 8-bit displays)
   col += (hash(gl_FragCoord.xy + uSeed) - 0.5) * (1.6/255.0);
@@ -118,7 +118,7 @@ void main(){
   gl_Position = vec4(c.x/c.z/uTan.x, c.y/c.z/uTan.y, 0.0, 1.0);
   float alt = asin(clamp(h.z,-1.0,1.0));
   float vis = 1.0 - smoothstep(uLimMag - 0.8, uLimMag, aMag);
-  float I = pow(10.0, -0.4*(aMag - 2.3)*mix(0.55, 0.45, step(3.0, aMag)));   // a gentler curve for the faint majority
+  float I = pow(10.0, -0.4*(aMag - 2.3)*mix(0.55, 0.40, step(3.0, aMag)));   // a gentler curve for the faint majority
   I *= mix(0.3, 1.0, smoothstep(0.0, 0.25, alt));           // extinction
   // scintillation, not a pulse: three incommensurate tones (about 1.5 to 7 Hz) under a slow
   // gust of seeing, strongest through the thick air near the horizon
@@ -150,7 +150,7 @@ void main(){
   vec2 p = gl_PointCoord*2.0-1.0; float d = dot(p,p);
   float core = exp(-d*5.5);
   // faint stars: a Gaussian of about 0.65 px in device pixels, the same total light, whatever the sub-pixel position
-  if (vBig < 0.15) { vec2 q = (gl_PointCoord - 0.5) * vSize; core = 0.40 * exp(-dot(q, q) / (1.1 * uPx * uPx)); }
+  if (vBig < 0.15) { vec2 q = (gl_PointCoord - 0.5) * vSize; core = 0.62 * exp(-dot(q, q) / (1.1 * uPx * uPx)); }
   float halo = exp(-sqrt(d)*2.6) * 0.55 * vBig * vBig;
   float a = vI * (core + halo);
   if (a < 0.003) discard;
@@ -164,6 +164,8 @@ uniform sampler2D uTex; uniform vec4 uMap; uniform vec2 uSub;
 uniform float uExposure, uSat, uHiMix, uLift, uContrast, uMoonLift;
 uniform vec3 uTint, uHiTint;
 uniform sampler2D uCloud; uniform float uShA, uShOff, uShRep;
+uniform sampler2D uSky; uniform vec2 uSkyTexel; uniform float uWisp;   // the skyline profile (16-bit ridge row per column), 1/(columns, plate rows)
+float ridgeAt(float x){ vec4 k = texture2D(uSky, vec2(x, 0.5)); return (k.r * 65280.0 + k.g * 255.0) / 65535.0; }
 void main(){
   vec2 uv = vUv * uMap.xy + uMap.zw;
   if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) { gl_FragColor = vec4(0.0); return; }
@@ -178,7 +180,14 @@ void main(){
   // cloud shadow: the nearer layer's density darkens the range, sunlit snow most
   float cl = texture2D(uCloud, vec2(vUv.x*uShRep + uShOff, 1.0 - vUv.y)).a;
   g *= 1.0 - uShA * smoothstep(0.02, 0.16, cl) * mix(0.35, 1.0, hi);
-  gl_FragColor = vec4(g * c.a, c.a);
+  // cloud and plume baked in above the ridge were lit by the low sun: they thin out as the light goes
+  // (the highest of three neighbouring profile samples, so a steep face never loses rock between samples)
+  float keep = 1.0;
+  if (uWisp > 0.0) {
+    float ridge = min(ridgeAt(uv.x), min(ridgeAt(uv.x - uSkyTexel.x), ridgeAt(uv.x + uSkyTexel.x)));
+    keep = 1.0 - uWisp * (1.0 - smoothstep(ridge - 14.0 * uSkyTexel.y, ridge - 6.0 * uSkyTexel.y, 1.0 - uv.y));
+  }
+  gl_FragColor = vec4(g * c.a * keep, c.a * keep);
 }`;
 
 const VS_SPRITE = `attribute vec2 aPos; uniform vec4 uRect; varying vec2 vUv;
@@ -207,7 +216,7 @@ uniform sampler2D uTex; uniform float uOffset, uAlpha, uY0, uY1, uRepeat; unifor
 void main(){
   float band = smoothstep(uY0, uY0 + 0.1, vUv.y) * (1.0 - smoothstep(uY1 - 0.12, uY1, vUv.y));
   vec4 fc = texture2D(uTex, vec2(vUv.x*uRepeat + uOffset, 1.0 - (vUv.y - uY0)/(uY1-uY0)));
-  float l = fc.a * max(fc.r, 0.6);   // LUMINANCE_ALPHA plate: density in alpha
+  float l = fc.a * max(fc.r, 0.6) * smoothstep(0.0, 0.12, fc.a) * 1.15;   // density in alpha, structure in luminance; the faint haze around each cloud is cut, so it keeps an edge without a flat top
   float a = clamp(l * band * uAlpha * 2.6, 0.0, 0.85);
   gl_FragColor = vec4(uTint*a, a);
 }`;
@@ -251,7 +260,7 @@ function compile(gl: WebGLRenderingContext, vs: string, fs: string) {
   if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p) || 'link');
   return p;
 }
-function loadTex(gl: WebGLRenderingContext, url: string, opts: { repeat?: boolean; alpha?: boolean; mip?: boolean; lum?: boolean; premultiply?: boolean } = {}): Promise<WebGLTexture> {
+function loadTex(gl: WebGLRenderingContext, url: string, opts: { repeat?: boolean; mip?: boolean; lum?: boolean; premultiply?: boolean } = {}): Promise<WebGLTexture> {
   return new Promise((res, rej) => {
     const img = new Image();
     img.onload = async () => {
@@ -291,7 +300,8 @@ export function initSidereal(opts: Opts) {
   try { localStorage.removeItem('mb-motion'); } catch { /* storage blocked */ }
   const motionOff = () => mqReduce.matches;
 
-  const gl = (canvas.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance', preserveDrawingBuffer: false }) ||
+  // an ambient sky: the integrated GPU is plenty, and asking for the discrete one wakes it on dual-GPU laptops for the whole read
+  const gl = (canvas.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'low-power', preserveDrawingBuffer: false }) ||
     canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null;
   // no engine: the poster is a night still, so the page reads in night ink
   if (!gl) { root.classList.add('no-webgl'); root.dataset.phase = 'night'; return; }
@@ -351,6 +361,7 @@ export function initSidereal(opts: Opts) {
     gl.bindBuffer(gl.ARRAY_BUFFER, starBuf); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW);
     redraw();
   }).catch(() => {});
+  let texSky: WebGLTexture | null = null;   // the skyline profile as a one-row texture, for the range shader
   let texMW: WebGLTexture | null = null, texRange: WebGLTexture | null = null, texMoon: WebGLTexture | null = null, texFogA: WebGLTexture | null = null, texFogB: WebGLTexture | null = null;
   let redraw: () => void = () => {};   // set once the loop exists; assets call it when they land
   let rangeW = 3168, rangeH = 1344; let skyline: number[] = []; let peaks: number[] = [];
@@ -361,12 +372,23 @@ export function initSidereal(opts: Opts) {
   loadTex(gl, '/sidereal/milkyway.webp', { repeat: true, lum: true, mip: false }).then((t) => { texMW = t; redraw(); }).catch(() => {});
   // must match the plate preload media queries in Sidereal.astro, or the browser fetches both plates
   const small = window.innerWidth < 900 || window.matchMedia('(pointer: coarse)').matches;
-  loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { alpha: true, premultiply: true })   /* premultiplied: no stored sky colour bleeds into the filtered cut edge */.then((t) => { texRange = t; root.classList.add('range-ready'); redraw(); }).catch(() => fallBack());   // no plate: the night still, not an empty sky
-  loadTex(gl, '/sidereal/moon.webp', { alpha: true }).then((t) => { texMoon = t; redraw(); }).catch(() => {});
+  loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { premultiply: true })   /* premultiplied: no stored sky colour bleeds into the filtered cut edge */.then((t) => { texRange = t; root.classList.add('range-ready'); redraw(); }).catch(() => fallBack());   // no plate: the night still, not an empty sky
+  loadTex(gl, '/sidereal/moon.webp').then((t) => { texMoon = t; redraw(); }).catch(() => {});
   loadTex(gl, '/photos/fog-plate-a.webp', { repeat: true, lum: true, mip: false }).then((t) => { texFogA = t; redraw(); }).catch(() => {});
   loadTex(gl, '/photos/fog-plate-b.webp', { repeat: true, lum: true, mip: false }).then((t) => { texFogB = t; redraw(); }).catch(() => {});
   fetch('/sidereal/range.json').then((r) => r.json()).then((j) => {
     rangeW = j.w; rangeH = j.h; skyline = j.skyline; if (j.sub) sub = j.sub;
+    // the profile as a one-row texture, the ridge's row in 16 bits (R high, G low) per column
+    const px = new Uint8Array(skyline.length * 4);
+    skyline.forEach((y, i) => { const v = Math.round(clamp(y / rangeH, 0, 1) * 65535); px[i * 4] = v >> 8; px[i * 4 + 1] = v & 255; px[i * 4 + 3] = 255; });
+    const ts = gl.createTexture();
+    if (ts && skyline.length) {
+      gl.bindTexture(gl.TEXTURE_2D, ts);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, skyline.length, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, px);
+      for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.NEAREST], [gl.TEXTURE_MAG_FILTER, gl.NEAREST], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v);
+      texSky = ts; redraw();
+    }
     // spindrift emitters: local maxima of the skyline (smallest y), spaced
     const cand: number[] = [];
     for (let i = 2; i < skyline.length - 2; i++) if (skyline[i] < skyline[i - 1] && skyline[i] <= skyline[i + 1] && skyline[i] < skyline[i - 2] && skyline[i] <= skyline[i + 2]) cand.push(i);
@@ -385,7 +407,7 @@ export function initSidereal(opts: Opts) {
   const moonState: { vis: number; alt: number; rect: { left: number; right: number; top: number; bottom: number } | null } = { vis: 0, alt: -90, rect: null };
   let readingCx = -1;                     // reading pages: moon centre in the right margin (fraction of width), -1 when it doesn't fit
   let readingR = 0;                       // reading pages: moon radius in CSS px
-  let bandCss = 0, labelDocTop = Infinity; // home page: the header band's height and the contact label's page position, for the moon's fit
+  let bandCss = 0, labelDocTop = Infinity; // the header band's height (every page) and the home contact label's page position, for the moon's fit
   let moonSummitFor: object | null = null, moonSummitCol = -1;   // the summit the moon rises behind, per viewport mapping
   let idleSec = 0;                        // real seconds since load (sky wheels)
   let scrollT = 0;                        // 0..1 page progress
@@ -422,11 +444,11 @@ export function initSidereal(opts: Opts) {
       readingR = Math.min(40, (margin - 96) / 2);             // at least 48px of air on each side
       readingCx = readingR >= 28 ? (contentRight + margin / 2) / vw : -1;
     } else {
-      const hd = document.querySelector('.hd');
-      bandCss = hd ? parseFloat(getComputedStyle(hd, '::before').height) || 0 : 0;
       const label = document.querySelector<HTMLElement>('.final__label');
       labelDocTop = label ? layoutTop(label) : Infinity;
     }
+    const hd = document.querySelector('.hd');
+    bandCss = hd ? parseFloat(getComputedStyle(hd, '::before').height) || 0 : 0;
   }
 
   // ── phase: the one fact about the sky the page itself reads (ink, grads) ──
@@ -623,13 +645,19 @@ export function initSidereal(opts: Opts) {
       const px = (u - m.ox) / m.sx, py = (v - m.oy) / m.sy - (isClock ? scrollT * 0.03 : 0);   // 0..1 viewport, parallax included
       let rx = moonR, ry = moonR * aspect;
       const shortLand = aspect >= 0.8 && H / dpr < 500;   // landscape phones: keep the disc right of the centred contact text
-      let cx = isClock ? (aspect < 0.8 ? 0.72 : shortLand ? 0.86 : clamp(px + rx * 0.15, 0.2, 0.86) + 0.05 * rise) : readingCx, cy = isClock ? py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2 : 0.78 + Math.min(0.03, idleSec * 5e-5);
+      let cx: number, cy: number;
       if (isClock) {
+        cx = aspect < 0.8 ? 0.72 : shortLand ? 0.86 : clamp(px + rx * 0.15, 0.2, 0.86) + 0.05 * rise;
+        cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
         // clear of the header band, and on portrait screens above the contact label: the disc shrinks to fit, or sets
         const vhCss = H / dpr, top = bandCss + 8, bottom = aspect < 0.8 ? labelDocTop - window.scrollY - 16 : vhCss;
         const rCss = ry * vhCss, fit = Math.min(rCss, (bottom - top) / 2);
         if (fit < 20) { rx = ry = 0; moonState.vis = 0; }
         else { const k = fit / rCss; rx *= k; ry *= k; cy = clamp(cy, 1 - bottom / vhCss + ry, 1 - top / vhCss - ry); }
+      } else {
+        // reading pages: centred in the margin, drifting slowly up, and never up under the header band on a short screen
+        cx = readingCx;
+        cy = Math.min(0.78 + Math.min(0.03, idleSec * 5e-5), 1 - (bandCss + 24) / (H / dpr) - ry);
       }
       { const vwCss = W / dpr, vhCss = H / dpr; moonState.rect = { left: (cx - rx) * vwCss, right: (cx + rx) * vwCss, top: (1 - cy - ry) * vhCss, bottom: (1 - cy + ry) * vhCss }; }
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -673,6 +701,10 @@ export function initSidereal(opts: Opts) {
       gl.uniform1f(U(pRange, 'uShA'), shA);
       gl.uniform1f(U(pRange, 'uShOff'), -idleSec * dbg.speed / 128);
       gl.uniform1f(U(pRange, 'uShRep'), 1.6 * fogRep);
+      // the plumes baked above the ridge were lit by the low sun: gone once it has set
+      gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, texSky || texRange); gl.uniform1i(U(pRange, 'uSky'), 2);
+      gl.uniform1f(U(pRange, 'uWisp'), texSky ? smooth(2, -4, alt) : 0);
+      gl.uniform2f(U(pRange, 'uSkyTexel'), 1 / Math.max(1, skyline.length), 1 / rangeH);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       gl.activeTexture(gl.TEXTURE0);
     }
@@ -682,6 +714,9 @@ export function initSidereal(opts: Opts) {
     const fogK = (0.26 + 0.30 * smooth(6, -4, alt) * (1 - smooth(-9, -16, alt)) + 0.10 * night) * dbg.fog;
     const hz = mix3(s0.horizon, s1.horizon, st);
     const fogTint: V3 = [lerp(hz[0], 1, 0.35), lerp(hz[1], 1, 0.35), lerp(hz[2], 1, 0.35)];
+    // a cloud carries light only while the sky or the moon lights it: on a moonless night it is darker than the sky it hides
+    const unlit = smooth(-6, -14, alt) * (1 - moonLight);
+    for (let i = 0; i < 3; i++) fogTint[i] = lerp(fogTint[i], [0.010, 0.014, 0.034][i], unlit);
     const drawFog = (tex: WebGLTexture | null, off: number, a: number, y0: number, y1: number, rep: number) => {
       if (!tex) return;
       gl.useProgram(pFog); bindQuad(pFog);
@@ -690,11 +725,14 @@ export function initSidereal(opts: Opts) {
       gl.uniform3f(U(pFog, 'uTint'), fogTint[0], fogTint[1], fogTint[2]);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
+    // on a moonless night the clouds are silhouettes: denser, and drifting a little lower, across the last glow above
+    // the ridge and the starlit snow, where a dark cloud can be seen at all
+    const nightK = 1 + 3 * unlit, low = 0.15 * unlit;
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    // the cloud layers only ever cover their band (0.40–0.98 of the plate height): skip the rest of the frame
-    gl.enable(gl.SCISSOR_TEST); gl.scissor(0, Math.max(0, Math.floor(H * bandBase * 0.40) - 2), W, Math.ceil(H * bandBase * 0.58) + 4);
-    drawFog(texFogA, -idleSec * dbg.speed / 128, fogK, bandBase * 0.40, bandBase * 0.86, 1.6 * fogRep);   // both layers drift downwind, slowly
-    drawFog(texFogB, -idleSec * dbg.speed / 260, fogK * 0.8, bandBase * 0.52, bandBase * 0.98, 1.1 * fogRep);
+    // the cloud layers only ever cover their band (0.40–0.98 of the plate height, lower on a moonless night): skip the rest of the frame
+    gl.enable(gl.SCISSOR_TEST); gl.scissor(0, Math.max(0, Math.floor(H * bandBase * (0.40 - low)) - 2), W, Math.ceil(H * bandBase * 0.58) + 4);
+    drawFog(texFogA, -idleSec * dbg.speed / 128, fogK * nightK, bandBase * (0.40 - low), bandBase * (0.86 - low), 1.6 * fogRep);   // both layers drift downwind, slowly
+    drawFog(texFogB, -idleSec * dbg.speed / 260, fogK * 0.8 * nightK, bandBase * (0.52 - low), bandBase * (0.98 - low), 1.1 * fogRep);
     gl.disable(gl.SCISSOR_TEST);
 
     // spindrift + satellite + meteor
@@ -731,9 +769,11 @@ export function initSidereal(opts: Opts) {
     // the graduated filters (see FS_GRADE): per-phase opacities as the CSS had them (.stage__grad × its ::after;
     // the rail from 1100px), eased over about a second like the CSS transitions; at once on the first frame
     {
-      const ph = phaseOf(Math.round(alt * 10) / 10), vwCss = W / dpr, vhCss = H / dpr;
-      const leftTarget = ph === 'golden' ? 1 : ph === 'sunset' || ph === 'civil' ? 0.765 : 0;
-      const railTarget = vwCss < 1100 ? 0 : ph === 'golden' || ph === 'sunset' || ph === 'civil' ? 1 : ph === 'nautical' ? 0.5 : 0;
+      const vwCss = W / dpr, vhCss = H / dpr;
+      // continuous with the sun, not stepped by phase: a reader who stops in the handover into nautical twilight keeps
+      // the grads while the afterglow still lights the sky behind the chapter label
+      const leftTarget = alt > 0 ? 1 : 0.765 * smooth(-10, -6, alt);
+      const railTarget = vwCss < 1100 ? 0 : smooth(-12, -6, alt);
       const ease = motionOff() || !gradeInit ? 1 : 1 - Math.exp(-dt / 0.4);
       gradeInit = true;
       gradeLeft += (leftTarget - gradeLeft) * ease; gradeRail += (railTarget - gradeRail) * ease;
@@ -751,7 +791,7 @@ export function initSidereal(opts: Opts) {
   }
 
   // ── loop ──
-  let rafId = 0, lastNow = performance.now(), lastFrameTs = 0, scrollDirty = true, drawFailed = false;
+  let rafId = 0, lastNow = performance.now(), lastFrameTs = 0, scrollDirty = true;
   let lastScrollAt = performance.now(), lastDrawn = 0;
   function frame(now: number) {
     if (contextLost) { rafId = 0; return; }
@@ -763,7 +803,7 @@ export function initSidereal(opts: Opts) {
     if (!motionOff()) idleSec += dt;
     if (scrollDirty) { readScroll(); scrollDirty = false; }
     sunAlt = motionOff() ? sunTarget : lerp(sunAlt, sunTarget, 1 - Math.pow(0.001, dt)); // ~settles in 1s
-    try { draw(now, dt); } catch (e) { drawFailed = true; console.error('[sidereal] draw failed, showing the night still', e); fallBack(); rafId = 0; return; }
+    try { draw(now, dt); } catch (e) { console.error('[sidereal] draw failed, showing the night still', e); fallBack(); rafId = 0; return; }
     // reduced motion: the world is a still — draw it once per change, then sleep
     if (motionOff() && Math.abs(sunAlt - sunTarget) < 0.01) { rafId = 0; return; }
     rafId = requestAnimationFrame(frame);
@@ -776,7 +816,7 @@ export function initSidereal(opts: Opts) {
     const now = performance.now();
     if (now - lastFrameTs < 400) return;
     readScroll(); sunAlt = sunTarget;
-    try { draw(now, 0.016); } catch (e) { drawFailed = true; console.error('[sidereal] draw failed, showing the night still', e); fallBack(); }
+    try { draw(now, 0.016); } catch (e) { console.error('[sidereal] draw failed, showing the night still', e); fallBack(); }
   }, 250);
 
   window.addEventListener('scroll', () => { scrollDirty = true; lastScrollAt = performance.now(); wake(); }, { passive: true });
@@ -828,6 +868,8 @@ export function initSidereal(opts: Opts) {
   // ── reveal + numeral count-up (once, gated) ──
   function engage() {
     if (motionOff() || !('IntersectionObserver' in window)) return;
+    // the first screen is already there when the page opens: only what scrolls in later fades in
+    document.querySelectorAll<HTMLElement>('.rv').forEach((el) => { if (el.getBoundingClientRect().top < innerHeight) el.classList.add('is-in'); });
     root.classList.add('anim-ok');
     let alive = false;
     new IntersectionObserver((_, o) => { alive = true; o.disconnect(); }).observe(document.body);
@@ -858,7 +900,7 @@ export function initSidereal(opts: Opts) {
   // window.__sidereal.sun = -12; window.__sidereal.dbg.fog = 3
   if (import.meta.env.DEV || new URLSearchParams(location.search).has('qa')) {
     (window as any).__sidereal = {
-      get sun() { return sunAlt; }, set sun(v: number) { sunTarget = v; sunAlt = v; wake(); },
+      get sun() { return sunAlt; }, set sun(v: number) { sunTarget = v; sunAlt = v; wake(); }, get sunTarget() { return sunTarget; },
       get idle() { return idleSec; }, set idle(v: number) { idleSec = v; wake(); }, get raf() { return rafId; }, get lastFrame() { return lastFrameTs; },
       get fov() { return { h: (2 * Math.atan(tanX) * 180) / Math.PI, v: (2 * Math.atan(tanY) * 180) / Math.PI }; },
       get moonVis() { return moonState.vis; }, get moonAlt() { return moonState.alt; }, get moonRect() { return moonState.rect; },
