@@ -42,6 +42,14 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <link rel="preload" as="fetch" href="/sidereal/stars.bin" crossorigin="anonymous" />
     <link rel="preload" as="image" href="/sidereal/range.webp" media="(min-width: 900px) and (pointer: fine)" />
     <link rel="preload" as="image" href="/sidereal/range-2k.webp" media="(max-width: 899px), (pointer: coarse)" />
+    <noscript>
+      <style is:inline>
+        /* without JavaScript the scene can't run: the night still, read in night ink */
+        html[data-phase] { --ink: #eaf0fb !important; --ink-2: rgba(234, 240, 251, 0.78) !important; --ink-3: rgba(234, 240, 251, 0.7) !important; --ink-4: rgba(234, 240, 251, 0.56) !important; }
+        .stage__poster { background: linear-gradient(180deg, #05070f 0%, #0b1226 60%, #131a33 100%) !important; }
+        .stage__poster::after { background-image: url('/sidereal/poster-night.webp') !important; }
+      </style>
+    </noscript>
     <Analytics />
   </head>
   <body>

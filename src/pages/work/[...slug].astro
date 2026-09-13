@@ -46,7 +46,7 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
       )}
 
       <div class="case__grid">
-        <div class="prose rv">
+        <div class="prose">   {/* long-form reading never fades in */}
           <Content />
         </div>
         <aside class="case__aside rv" aria-label="On this page">

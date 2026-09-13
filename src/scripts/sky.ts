@@ -322,7 +322,8 @@ export function initSidereal(opts: Opts) {
   let sub: [number, number] = [1, 1];   // plate / texture size (POT padding)
   let summitCol = -1;                    // the highest in-frame summit, found once
   loadTex(gl, '/sidereal/milkyway.webp', { repeat: true, lum: true }).then((t) => { texMW = t; redraw(); }).catch(() => {});
-  const small = window.innerWidth < 900 || window.matchMedia('(pointer: coarse)').matches || ((navigator as any).deviceMemory ?? 8) < 4;
+  // must match the plate preload media queries in Sidereal.astro, or the browser fetches both plates
+  const small = window.innerWidth < 900 || window.matchMedia('(pointer: coarse)').matches;
   loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { alpha: true }).then((t) => { texRange = t; root.classList.add('range-ready'); redraw(); }).catch(() => {});
   loadTex(gl, '/sidereal/moon.webp', { alpha: true }).then((t) => { texMoon = t; redraw(); }).catch(() => {});
   loadTex(gl, '/photos/fog-plate-a.webp', { repeat: true, lum: true, mip: false }).then((t) => { texFogA = t; redraw(); }).catch(() => {});
@@ -725,7 +726,8 @@ export function initSidereal(opts: Opts) {
     if (!el) return;
     e.preventDefault(); history.pushState(null, '', `#${id}`);
     const headOffset = parseFloat(getComputedStyle(root).getPropertyValue('--head-offset')) || 110;
-    scrollToY(id === 'top' || id === '' ? 0 : layoutTop(el) - headOffset);
+    // a chapter's negative scroll-margin (its own top padding) lands its first line, not its sky, under the header
+    scrollToY(id === 'top' || id === '' ? 0 : layoutTop(el) - headOffset - (parseFloat(getComputedStyle(el).scrollMarginTop) || 0));
     if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
     el.focus({ preventScroll: true });
   });

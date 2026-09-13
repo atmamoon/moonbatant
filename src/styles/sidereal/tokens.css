@@ -86,3 +86,13 @@ html[data-phase='night']     { --ink: #eaf0fb; --ink-2: rgba(234, 240, 251, 0.78
     --instrument-shadow: 0 0 10px rgba(5, 7, 15, 0.95), 0 0 3px rgba(5, 7, 15, 0.95), 0 1px 2px rgba(5, 7, 15, 0.9);
   }
 }
+
+/* landscape phones: the header band is shallower, so anchors land higher */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root { --head-offset: 92px; }
+}
+
+/* the narrowest phones (320px): the name's two lines stay inside the text column */
+@media (max-width: 359px) {
+  :root { --text-inscription: 2.25rem; }
+}

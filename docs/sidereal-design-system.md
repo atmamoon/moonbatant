@@ -95,15 +95,16 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    cloud shadows shaped by the nearer layer, travelling with it and falling on the
    range only, while there is sun to cast them;
    spindrift puffs blowing off the summits; an occasional satellite; a rare meteor
-   after dark. Measured across test runs: 2.1–2.6% of pixels change over six seconds,
-   at golden hour and at night, slow but alive.
+   after dark. Measured: about 1.6% (golden hour) to 2.2% (night) of pixels change over
+   six seconds, slow but alive.
 
 Performance contract: DPR ≤ 1.5, ~8 draw calls per frame (the moon is a small
 quad, masks upload as LUMINANCE_ALPHA, uniform locations are cached), zero DOM
 paint animation; the loop sleeps under reduced motion once the sun has settled and
 never draws in a hidden tab. Motion is always on, with no site toggle; only the reader's
 own `prefers-reduced-motion` setting stills it (a still night frame is drawn once). Without WebGL, or when the context is lost
-mid-visit, every page shows a night still in night ink, with every chapter visible.
+mid-visit, every page shows a night still in night ink, with every chapter visible; so
+does a page with JavaScript off.
 
 ## 3. Typography — wide, quiet, exact
 
@@ -151,6 +152,9 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
 - Text is **left-weighted** (columns 1–7). The right side is kept open — that is
   where the peaks stand and where the moon rises.
 - Reading measure 34em (≈ 72 characters of Newsreader; `ch` overstates a serif).
+- In-page links land a chapter's first line just under the header band, never its empty
+  sky; a shared link to a case-study section lands the same way. Long-form article text
+  never fades in, and keyboard focus shows any block that hasn't revealed yet.
 - Contact carries the one primary action of the page: the address itself, as a solid
   slate a shade dimmer than the moon.
 - Section spacing `clamp(140px, 22vh, 260px)`: each chapter must feel like time passing.

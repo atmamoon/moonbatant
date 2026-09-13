@@ -6,8 +6,7 @@
 .page__head .t-label:not(.case__meta)::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--rule-strong); vertical-align: middle; margin-right: 12px; }
 
 /* case study */
-.case__meta { display: flex; flex-wrap: wrap; gap: 8px 14px; color: var(--ink-2); }
-.case__meta .sep { color: var(--ink-4); }
+.case__meta { display: flex; flex-wrap: wrap; gap: 8px 0; color: var(--ink-2); }
 .case__metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: clamp(24px, 3vw, 48px); row-gap: 28px; align-items: baseline; padding: 30px 0 34px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin-bottom: clamp(36px, 5vw, 60px); }
 .case__metric { display: grid; gap: 10px; align-content: start; }
 .case__val { font-size: clamp(1.9rem, 3.2vw, 2.8rem); text-shadow: var(--ink-shadow); }
@@ -15,8 +14,13 @@
 .case__val--lead { color: var(--alpenglow); }
 .case__cap { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); max-width: 32ch; line-height: 1.45; text-wrap: balance; }
 .case__tags { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--ink-3); margin-bottom: clamp(36px, 5vw, 56px); display: flex; flex-wrap: wrap; gap: 6px 0; }
-.case__tags .sep { display: none; }
-.case__tags > span:not(.sep):not(:last-of-type)::after { content: '·'; margin: 0 10px; color: var(--ink-4); }
+/* meta and tags: a thin dot before each item; the dot that would start a line is clipped away, so none dangles */
+.case__meta .sep, .case__tags .sep { display: none; }
+.case__meta, .case__tags { margin-left: -1.6em; clip-path: inset(-1em -1em -1em 1.6em); }
+.case__meta > span:not(.sep), .case__tags > span:not(.sep) { position: relative; padding-left: 1.6em; }
+.case__meta > span:not(.sep)::before, .case__tags > span:not(.sep)::before { content: '·'; position: absolute; left: 0.55em; color: var(--ink-4); }
+/* the metrics band's own rules frame the header's end: no second, parallel rule above it */
+.page__head:has(+ .case__metrics) { border-bottom: 0; padding-bottom: 0; margin-bottom: 28px; }
 .case__grid { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); column-gap: clamp(40px, 6vw, 96px); align-items: start; }
 .case__grid > .prose { max-width: min(var(--measure), 100%); }
 .case__aside { position: sticky; top: calc(var(--head-offset, 118px) + 12px); display: grid; gap: 26px; padding-top: 6px; }

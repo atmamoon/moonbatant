@@ -20,7 +20,9 @@ const { mode = 'clock' } = Astro.props;
 
 <style is:global>
   .stage { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: var(--zenith); }
-  .stage__sky { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .stage__sky { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity 0.9s ease; }
+  /* until the range arrives the poster holds the frame; then the live sky crossfades in over it */
+  html.webgl:not(.range-ready) .stage__sky { opacity: 0; }
   /* First paint / no WebGL: a still of the golden-hour frame (baked) under a sky gradient. */
   .stage__poster {
     position: absolute; inset: 0;

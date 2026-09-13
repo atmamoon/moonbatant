@@ -6,6 +6,10 @@ const nav = [
   { href: '/#writing', label: 'Writing' },
   { href: '/#contact', label: 'Contact' },
 ];
+// on the home page chapter links are plain fragments: the engine eases them, and a query string
+// in the address (a tagged share link) can't turn a click into a full reload
+const onHome = Astro.url.pathname === '/';
+const link = (href: string) => (onHome && href.startsWith('/#') ? href.slice(1) : href);
 ---
 <header class="hd">
   <div class="hd__inner">
@@ -14,7 +18,7 @@ const nav = [
       <span class="hd__word">moonbatant</span>
     </a>
     <nav class="hd__nav" aria-label="Primary">
-      {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+      {nav.map((n) => <a href={link(n.href)}>{n.label}</a>)}
       <a href="/resume.pdf" target="_blank" rel="noopener" class="hd__cv">Résumé <span aria-hidden="true">↗</span></a>
     </nav>
     <button id="menu-btn" class="hd__menu" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
@@ -22,7 +26,7 @@ const nav = [
     </button>
   </div>
   <nav id="mobile-nav" class="hd__mobile" aria-label="Mobile">
-    {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+    {nav.map((n) => <a href={link(n.href)}>{n.label}</a>)}
     <a href="/resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
   </nav>
 </header>
@@ -61,7 +65,7 @@ const nav = [
     display: none; pointer-events: auto; flex-direction: column;
     margin: 12px var(--gutter) 0; padding: 8px 0 12px;
     border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
-    background: rgba(5, 7, 15, 0.72); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    background: rgba(5, 7, 15, 0.94);   /* near-opaque night; no blur surface over the live canvas */
   }
   .hd__mobile.open { display: flex; }
   .hd__mobile a { padding: 12px 16px; font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
@@ -70,6 +74,11 @@ const nav = [
     .hd__nav { display: none; }
     .hd__menu { display: inline-flex; }
     .hd__inner { padding-top: 16px; }
+  }
+  /* landscape phones: a shallower band, so the header doesn't take a third of the view */
+  @media (max-height: 500px) and (orientation: landscape) {
+    .hd::before { height: 84px; background: linear-gradient(180deg, rgba(5, 7, 15, 1) 0%, rgba(5, 7, 15, 1) 62%, rgba(5, 7, 15, 0.5) 82%, rgba(5, 7, 15, 0) 100%); }
+    .hd__inner { padding-top: 14px; }
   }
 </style>
 

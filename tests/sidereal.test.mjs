@@ -129,9 +129,10 @@ after(async () => {
   if (server) { try { process.kill(-server.pid, 'SIGTERM'); } catch { /* already gone */ } }
 });
 
-async function open(route, vp = DESKTOP, { reduce = false, qa = true, b = browser, blockStorage = false, storage = null } = {}) {
+async function open(route, vp = DESKTOP, { reduce = false, qa = true, b = browser, blockStorage = false, storage = null, js = true } = {}) {
   const page = await b.newPage();
   await page.setCacheEnabled(false);   // every page is a first visit: 200s, not 304s from an earlier test
+  if (!js) await page.setJavaScriptEnabled(false);
   page.errors = [];
   page.warnings = [];
   page.external = [];
@@ -160,18 +161,19 @@ async function open(route, vp = DESKTOP, { reduce = false, qa = true, b = browse
   await page.setViewport({ width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr || 1, isMobile: !!vp.mobile, hasTouch: !!vp.mobile });
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: reduce ? 'reduce' : 'no-preference' }]);
   if (blockStorage) await page.evaluateOnNewDocument(() => {
-    // what Chrome does when the reader blocks site data: touching localStorage throws
-    Object.defineProperty(window, 'localStorage', { configurable: true, get() { throw new DOMException('Access is denied for this document.', 'SecurityError'); } });
+    // what Chrome does when the reader blocks site data: touching either storage throws
+    for (const name of ['localStorage', 'sessionStorage']) Object.defineProperty(window, name, { configurable: true, get() { throw new DOMException('Access is denied for this document.', 'SecurityError'); } });
   });
   if (storage) await page.evaluateOnNewDocument((kv) => { try { for (const [k, v] of Object.entries(kv)) localStorage.setItem(k, v); } catch { /* private mode */ } }, storage);
   const url = `${BASE}${route}${qa ? `${route.includes('?') ? '&' : '?'}qa=1` : ''}`;
   const res = await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
   page.status = res?.status();
-  await page.evaluate(() => document.fonts.ready.then(() => document.querySelector('astro-dev-toolbar')?.remove()));
+  await page.evaluate(() => document.fonts.ready.then(() => document.querySelector('astro-dev-toolbar')?.remove())).catch(() => {});
   return page;
 }
 
-const ready = (page) => page.waitForFunction(() => document.documentElement.classList.contains('range-ready'), { timeout: 30000 });
+// the range has arrived and the live sky has finished crossfading in over the poster
+const ready = async (page) => { await page.waitForFunction(() => document.documentElement.classList.contains('range-ready'), { timeout: 30000 }); await wait(950); };
 
 async function state(page) {
   const s = await page.evaluate(() => {
@@ -578,6 +580,28 @@ describe('3 · the world behaves', () => {
     assert.deepEqual(widened, []);
   });
 
+  test('zoomed and short screens: every fade-in completes as the page is read', { timeout: 900000 }, async () => {
+    const problems = [];
+    for (const vp of [{ name: '400% zoom (320x256)', width: 320, height: 256, dpr: 4 }, { name: 'landscape phone 568x320', width: 568, height: 320, dpr: 2, mobile: true }]) {
+      for (const route of ROUTES) {
+        const page = await open(route, vp);
+        try {
+          await ready(page);
+          const stuck = await page.evaluate(async () => {
+            const max = document.documentElement.scrollHeight - innerHeight;
+            for (let y = 0; y <= max; y += Math.round(innerHeight * 0.9)) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 120)); }
+            scrollTo(0, max);
+            await new Promise((r) => setTimeout(r, 500));
+            // only blocks that render at this size: one hidden on purpose (display: none) never intersects
+            return [...document.querySelectorAll('.rv')].filter((el) => el.getClientRects().length > 0 && !el.classList.contains('is-in')).map((el) => String(el.className).split(' ')[0]);
+          });
+          if (stuck.length) problems.push(`${route} @ ${vp.name}: ${stuck.length} never revealed (${stuck.slice(0, 3).join(', ')})`);
+        } finally { await page.close(); }
+      }
+    }
+    assert.deepEqual(problems, []);
+  });
+
   test('the sky moves, slowly, at golden hour and at night', { timeout: 120000 }, async (t) => {
     const page = await open('/', DESKTOP);
     try {
@@ -602,8 +626,9 @@ describe('3 · the world behaves', () => {
         animOk: document.documentElement.classList.contains('anim-ok'),
         hiddenBlocks: [...document.querySelectorAll('.rv')].filter((el) => getComputedStyle(el).opacity !== '1').length,
         raf: window.__sidereal.raf,
+        running: document.getAnimations().filter((a) => a.playState === 'running').map((a) => a.animationName || a.transitionProperty || 'animation'),
       }));
-      assert.deepEqual(s, { animOk: false, hiddenBlocks: 0, raf: 0 });
+      assert.deepEqual(s, { animOk: false, hiddenBlocks: 0, raf: 0, running: [] });
       const changed = await frameDiff(page, 2500);
       assert.ok(changed < 0.05, `${changed.toFixed(3)}% of pixels changed under reduced motion`);
     } finally { await page.close(); }
@@ -734,9 +759,11 @@ describe('3 · the world behaves', () => {
 // ═════════════════════════════════════════════════════════════════════════════
 describe('4 · layout holds at every size', () => {
   const SIZES = [
+    { name: 'phone 320', width: 320, height: 568, dpr: 2, mobile: true },
     { name: 'phone 360', width: 360, height: 740, dpr: 2, mobile: true },
     PHONE,
     { name: 'tablet 768', width: 768, height: 1024, dpr: 2, mobile: true },
+    { name: 'phone landscape 844x390', width: 844, height: 390, dpr: 2, mobile: true },
     { name: 'tablet 1024', width: 1024, height: 768, dpr: 1 },
     LAPTOP,
     { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 },
@@ -745,10 +772,10 @@ describe('4 · layout holds at every size', () => {
     { name: 'desktop 1920', width: 1920, height: 1080, dpr: 1 },
   ];
 
-  test('no line of text or hairline leaves the viewport or its content column', { timeout: 300000 }, async () => {
+  test('no line of text or hairline leaves the viewport or its content column', { timeout: 900000 }, async () => {
     const problems = [];
     for (const vp of SIZES) {
-      for (const route of ['/', CASE]) {
+      for (const route of ['/', CASE, '/work', '/writing']) {
         const page = await open(route, vp);
         const bad = await page.evaluate(() => {
           const vw = document.documentElement.clientWidth, out = [];   // not innerWidth: a phone zooms out to fit overflow, which inflates it
@@ -788,7 +815,7 @@ describe('4 · layout holds at every size', () => {
 
   test('the header band hides whatever scrolls beneath the nav', { timeout: 300000 }, async () => {
     const problems = [];
-    for (const [route, vp] of [['/', DESKTOP], ['/', PHONE], [CASE, DESKTOP], ['/work', LAPTOP]]) {
+    for (const [route, vp] of [['/', DESKTOP], ['/', PHONE], [CASE, DESKTOP], ['/work', LAPTOP], [CASE, { name: 'phone landscape 844x390', width: 844, height: 390, dpr: 2, mobile: true }]]) {
       const page = await open(route, vp, { reduce: true });
       await ready(page);
       for (const y of await stopsOf(page)) {
@@ -854,6 +881,21 @@ describe('5 · text reads against the scene', () => {
     });
   }
 
+  for (const vp of [DESKTOP, PHONE]) {
+    test(`contrast · JavaScript off · / · ${vp.name}: the night still in night ink`, { timeout: 300000 }, async () => {
+      const page = await open('/', vp, { js: false, qa: false });
+      const fails = [];
+      try {
+        await wait(1500);
+        for (const y of await stopsOf(page)) {
+          await scrollSettle(page, y, 300);
+          fails.push(...await contrastFailures(page, `scrollY ${y}`));
+        }
+      } finally { await page.close(); }
+      assertReadable(fails);
+    });
+  }
+
   for (const [route, vp] of [['/', DESKTOP], ['/', PHONE], [CASE, DESKTOP]]) {
     test(`contrast · no WebGL · ${route} · ${vp.name}: every line reads against the night still`, { timeout: 300000 }, async () => {
       const plain = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--hide-scrollbars', '--disable-3d-apis'] });
@@ -904,9 +946,9 @@ describe('6 · accessible structure and navigation', () => {
       assert.equal(await page.evaluate(() => document.activeElement?.id), 'top', 'skip link did not move focus to main');
       await page.click('a[href="#work"]');
       await wait(1800);
-      const w = await page.evaluate(() => ({ id: document.activeElement?.id, top: Math.round(document.getElementById('work').getBoundingClientRect().top), offset: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--head-offset')) }));
+      const w = await page.evaluate(() => { const el = document.getElementById('work'); return { id: document.activeElement?.id, top: Math.round(el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop)), offset: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--head-offset')) }; });
       assert.equal(w.id, 'work');
-      assert.ok(Math.abs(w.top - w.offset) <= 4, `#work landed at ${w.top}px, expected ${w.offset}px`);
+      assert.ok(Math.abs(w.top - w.offset) <= 4, `#work's first line landed at ${w.top}px, expected ${w.offset}px`);
     } finally { await page.close(); }
 
     const caseStudy = await open(CASE, DESKTOP);
@@ -925,15 +967,54 @@ describe('6 · accessible structure and navigation', () => {
     } finally { await caseStudy.close(); }
   });
 
-  test('keyboard focus is visible at every stop along the Tab order', { timeout: 240000 }, async () => {
+  test('header links, shared section links and links without WebGL all land a first line under the header', { timeout: 180000 }, async () => {
+    const offsetOf = (page) => page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--head-offset')));
+    // the header's chapter link, clicked on a home page reached through a tagged share link
+    const tagged = await open('/?utm_source=linkedin', DESKTOP);
+    try {
+      await ready(tagged);
+      await tagged.evaluate(() => { window.__sameDocument = true; });
+      await tagged.click('.hd__nav a[href="#about"]');
+      await wait(1800);
+      const r = await tagged.evaluate(() => { const el = document.getElementById('about'); return { same: window.__sameDocument === true, top: Math.round(el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop)) }; });
+      const off = await offsetOf(tagged);
+      assert.ok(r.same, 'the header link reloaded the page');
+      assert.ok(Math.abs(r.top - off) <= 4, `#about's first line landed at ${r.top}px, expected ${off}px`);
+    } finally { await tagged.close(); }
+    // a shared link straight to a case-study section
+    const hash = (read(distFile(CASE)).match(/class="toc"[\s\S]*?href="(#[^"]+)"/) || [])[1];
+    assert.ok(hash, 'case study has no contents links');
+    const deep = await open(`${CASE}${hash}`, DESKTOP, { qa: false });
+    try {
+      await wait(2500);
+      const d = await deep.evaluate((h) => Math.round(document.getElementById(h.slice(1)).getBoundingClientRect().top), hash);
+      const off = await offsetOf(deep);
+      assert.ok(Math.abs(d - off) <= 4, `${hash} opened from a shared link lands at ${d}px, expected ${off}px`);
+    } finally { await deep.close(); }
+    // a contents link on a page without WebGL, where the browser jumps natively
+    const plain = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--hide-scrollbars', '--disable-3d-apis'] });
+    try {
+      const page = await open(CASE, DESKTOP, { b: plain });
+      await wait(1200);
+      await page.click(`.toc a[href="${hash}"]`);
+      await wait(1500);
+      const t = await page.evaluate((h) => Math.round(document.getElementById(h.slice(1)).getBoundingClientRect().top), hash);
+      const off = await offsetOf(page);
+      await page.close();
+      assert.ok(Math.abs(t - off) <= 4, `without WebGL, ${hash} lands at ${t}px, expected ${off}px`);
+    } finally { await plain.close(); }
+  });
+
+  test('keyboard focus is visible at every stop along the Tab order, never inside an invisible block', { timeout: 420000 }, async () => {
     const bad = [];
-    for (const [route, vp] of [['/', DESKTOP], [CASE, DESKTOP], ['/', PHONE]]) {
+    for (const [route, vp] of [['/', DESKTOP], ['/', { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }], [CASE, DESKTOP], ['/', PHONE]]) {
       const page = await open(route, vp);
       try {
         await ready(page);
         const seen = new Set();
         for (let i = 0; i < 90; i++) {
           await page.keyboard.press('Tab');
+          await wait(60);
           const f = await page.evaluate(() => {
             const el = document.activeElement;
             if (!el || el === document.body) return null;
@@ -942,11 +1023,13 @@ describe('6 · accessible structure and navigation', () => {
               index: [...document.querySelectorAll('*')].indexOf(el),
               label: `${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ''} ${el.getAttribute('href') || el.textContent.trim().slice(0, 32)}`,
               ring: (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2) || cs.boxShadow !== 'none',
+              opacity: (() => { let o = 1; for (let e = el; e && e.nodeType === 1; e = e.parentElement) o *= parseFloat(getComputedStyle(e).opacity); return o; })(),
             };
           });
           if (!f || seen.has(f.index)) break;   // back round to the start
           seen.add(f.index);
           if (!f.ring) bad.push(`${route} @ ${vp.name}: ${f.label}`);
+          if (f.opacity < 0.98) bad.push(`${route} @ ${vp.name}: ${f.label} takes focus at opacity ${f.opacity.toFixed(2)}`);
         }
         if (seen.size < 5) bad.push(`${route} @ ${vp.name}: only ${seen.size} Tab stops reached`);
       } finally { await page.close(); }
@@ -1011,6 +1094,18 @@ describe('7 · build, search and social', () => {
     const b = await probe(tracked);
     await tracked.close();
     assert.deepEqual(b, { og: false, dek: 'block', nav: 'flex' });
+  });
+
+  test('the home page downloads a light first load', { timeout: 90000 }, async (t) => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      await wait(2000);
+      const bytes = await page.evaluate(() => performance.getEntriesByType('navigation').concat(performance.getEntriesByType('resource'))
+        .filter((e) => e.name.startsWith(location.origin)).reduce((sum, e) => sum + (e.encodedBodySize || 0), 0));
+      t.diagnostic(`home first load: ${(bytes / 1024).toFixed(0)} KB over the wire, fonts, plates, clouds and scripts included`);
+      assert.ok(bytes <= 1_600_000, `the home page's first load is ${bytes} bytes (measured 1185 KB when this budget was set)`);
+    } finally { await page.close(); }
   });
 
   test('the home page stays light', (t) => {

@@ -172,7 +172,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   display: flex;
   align-items: baseline;
   gap: 14px;
-  scroll-margin-top: var(--head-offset, 118px);
 }
 .prose h2::before { content: counter(chapter, decimal-leading-zero); counter-increment: chapter; font-size: 1.5em; font-weight: 300; color: var(--ink-4); }
 .prose { counter-reset: chapter; }
@@ -195,7 +194,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .prose blockquote p { margin: 0; }
 /* an opening note ("full write-up on Medium…") is a pointer, not a pull quote */
-.prose > blockquote:first-child { text-align: left; font-size: 0.95em; font-style: italic; color: var(--ink-3); padding: 0.9em 0; border-top: 0; }
+.prose > blockquote:first-child { text-align: left; font-size: 0.95em; font-style: italic; color: var(--ink-3); padding: 0.9em 0; border-top: 0; border-bottom: 0; }
 .prose code { font-family: var(--font-mono); font-size: 0.86em; color: var(--glacier); }
 .prose hr { border: 0; height: 1px; background: var(--rule); margin: 2.4em 0; }
 
@@ -206,6 +205,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   transform: translate3d(0, 0, 0);
   transition: opacity 0.9s var(--ease-out) var(--rv-delay, 0s), transform 0.9s var(--ease-out) var(--rv-delay, 0s);
 }
+/* keyboard focus inside a block that hasn't revealed yet shows it at once */
+:root.anim-ok .rv:focus-within { opacity: 1; transform: none; transition: none; }
 
 /* ── Visually hidden, still in the outline ── */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

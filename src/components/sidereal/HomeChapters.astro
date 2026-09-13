@@ -173,9 +173,11 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
 
 <style>
   /* ── chapters ── */
-  .ch { position: relative; padding-top: var(--chapter-gap); }
-  .ch--short { padding-top: calc(var(--chapter-gap) * 0.55); }
-  #writing { padding-top: calc(var(--chapter-gap) * 0.75); }
+  /* --ch-pad is the sky above a chapter's first line; the same amount as a negative scroll-margin
+     lands in-page links on that first line, just under the header, instead of on empty sky */
+  .ch { --ch-pad: var(--chapter-gap); position: relative; padding-top: var(--ch-pad); scroll-margin-top: calc(-1 * var(--ch-pad)); }
+  .ch--short { --ch-pad: calc(var(--chapter-gap) * 0.55); }
+  #writing { --ch-pad: calc(var(--chapter-gap) * 0.75); }
   .ch__head { display: grid; grid-template-columns: minmax(0, 1fr); align-items: baseline; gap: 22px 24px; margin-bottom: clamp(28px, 3.4vw, 44px); padding-bottom: 18px; border-bottom: 1px solid var(--rule); }
   .ch__head > .t-label:first-child { grid-column: 1; }
   .ch__title { grid-column: 1 / -1; max-width: 760px; font-size: var(--text-h2); line-height: 1.08; color: var(--ink); text-shadow: var(--ink-shadow); }
@@ -184,7 +186,7 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .ch__head .t-label::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--rule-strong); vertical-align: middle; margin-right: 12px; }
 
   /* ── 01 hero: the inscription, two lines, left-weighted; the right two-thirds stay open ── */
-  .ch--hero { min-height: 100svh; display: flex; align-items: flex-start; padding-top: 0; }
+  .ch--hero { --ch-pad: 0px; min-height: 100svh; display: flex; align-items: flex-start; padding-top: 0; }
   .hero { padding-top: clamp(140px, 21vh, 240px); padding-bottom: 20vh; position: relative; }
   /* the reserved right third carries the proof: one lead result per case, as instruments */
   .hero__instruments { list-style: none; position: absolute; right: var(--gutter); top: clamp(140px, 19vh, 230px); width: clamp(220px, 19vw, 300px); display: none; }
@@ -195,7 +197,7 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .hero__instruments a:hover .hero__inst-val { color: var(--venus); }
   .hero__inst-idx { grid-row: 1 / span 2; color: var(--ink); padding-top: 0.5em; }
   .hero__inst-val { font-size: clamp(1.6rem, 2.2vw, 2.1rem); color: var(--ink); transition: color var(--dur) var(--ease); }
-  .hero__inst-cap { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); line-height: 1.4; }
+  .hero__inst-cap { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); line-height: 1.4; text-wrap: balance; }
   .hero__kicker { margin-bottom: clamp(22px, 3vw, 34px); color: var(--alpenglow); }
   .hero__kicker::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--alpenglow); vertical-align: middle; margin-right: 12px; }
   .hero__name { margin: 0 0 22px -0.04em; text-shadow: var(--ink-shadow); max-width: 11ch; }
@@ -256,17 +258,17 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
 
   /* ── 07 moonrise: one sentence, the whole sky. The moon rises behind the
         highest summit and hangs above the line; the text waits below it. ── */
-  .ch--final { min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding-top: calc(var(--chapter-gap) * 0.8); padding-bottom: 28px; }
+  .ch--final { min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding-top: calc(var(--chapter-gap) * 0.8); padding-bottom: 28px; scroll-margin-top: 0; }
   .final { display: grid; justify-items: center; text-align: center; gap: 18px; margin-bottom: clamp(60px, 10vh, 120px); }
 
   .final__title { font-size: clamp(2.2rem, 4.6vw, 3.8rem); line-height: 1.05; color: var(--ink); text-shadow: var(--ink-shadow); max-width: 14ch; }
   .final__line { font-family: var(--font-display); font-size: var(--text-ui); color: var(--ink-2); }
   .final__line a { border-bottom: 1px solid var(--rule-strong); padding-bottom: 2px; }
   .final__line a:hover { color: var(--venus); border-color: var(--rule-glow); }
-  .final__actions { display: grid; justify-items: center; gap: 22px; margin-top: 14px; }
-  .final__mail { min-height: 48px; font-size: var(--text-ui); letter-spacing: 0.02em; text-transform: none; font-stretch: 100%; font-weight: 500; background: #c2bbaf; border-color: #c2bbaf; color: #0b0f1c; }
+  .final__actions { display: grid; justify-items: center; gap: 22px; margin-top: 14px; max-width: 100%; }
+  .final__mail { min-height: 48px; font-size: clamp(0.8125rem, 4.1vw, 0.9375rem); padding-inline: clamp(10px, 5vw, 20px); letter-spacing: 0.02em; text-transform: none; font-stretch: 100%; font-weight: 500; background: #c2bbaf; border-color: #c2bbaf; color: #0b0f1c; }
   .final__mail:hover { background: var(--ink); color: #0b0f1c; border-color: var(--ink); }
-  .final__more { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; }
+  .final__more { display: flex; flex-wrap: wrap; justify-content: center; column-gap: clamp(14px, 5vw, 24px); row-gap: 12px; }
   .final__more .rule-link { color: var(--ink-2); }
   .colophon { padding-top: 22px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
   .colophon .t-label { color: var(--ink-4); }
@@ -278,8 +280,8 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
     .credits__group { text-align: left; justify-content: flex-start; }
   }
   @media (max-width: 640px) {
-    .ch { padding-top: var(--chapter-gap-mobile); }
-    .ch--short { padding-top: calc(var(--chapter-gap-mobile) * 0.7); }
+    .ch { --ch-pad: var(--chapter-gap-mobile); padding-top: var(--ch-pad); }
+    .ch--short { --ch-pad: calc(var(--chapter-gap-mobile) * 0.7); }
     .ch__head { grid-template-columns: 1fr; gap: 10px; margin-bottom: 26px; }
     .ledger__head { flex-direction: column; gap: 12px; }
     .ledger__meta { justify-items: start; text-align: left; }
