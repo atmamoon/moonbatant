@@ -36,6 +36,9 @@ const { mode = 'clock' } = Astro.props;
   }
   .stage[data-mode='night'] .stage__poster { background: linear-gradient(180deg, #05070f 0%, #0b1226 60%, #131a33 100%); }
   .stage[data-mode='night'] .stage__poster::after { background-image: url('/sidereal/poster-night.webp'); }
+  /* the range still arriving (a slow phone): a chapter already past golden hour reads over the night still, not the golden one */
+  html.webgl:not(.range-ready):not([data-phase='golden']) .stage__poster { background: linear-gradient(180deg, #05070f 0%, #0b1226 60%, #131a33 100%); }
+  html.webgl:not(.range-ready):not([data-phase='golden']) .stage__poster::after { background-image: url('/sidereal/poster-night.webp'); }
   .range-ready .stage__poster { opacity: 0; visibility: hidden; }
   /* a third grad from the right edge, under the hero results and the manifest readouts, while the sky is
      bright; long and soft so it meets the left grad without leaving a light pillar between them */
@@ -43,6 +46,9 @@ const { mode = 'clock' } = Astro.props;
     background: linear-gradient(270deg, rgba(5, 7, 15, 0.66) 0px, rgba(5, 7, 15, 0.5) 260px, rgba(5, 7, 15, 0.2) 520px, rgba(5, 7, 15, 0) 820px); }
   html[data-phase='golden'] .stage__rail, html[data-phase='sunset'] .stage__rail, html[data-phase='civil'] .stage__rail { opacity: 1; }
   html[data-phase='nautical'] .stage__rail { opacity: 0.5; }
+  /* with the live sky up, the left grad and the rail are multiplied into the WebGL frame (no blue cast); these CSS
+     grads stay for the poster: no WebGL, a lost context, JavaScript off, and the first moment of a load */
+  html.webgl.range-ready .stage__grad::after, html.webgl.range-ready .stage__rail { opacity: 0 !important; }
   @media (max-width: 1099px) { .stage__rail { display: none; } }
   .no-webgl .stage__sky { display: none; }
   /* no WebGL, or a lost context: a night still on every page (the page switches to night ink) */

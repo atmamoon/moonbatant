@@ -44,6 +44,8 @@ const current = (href: string) => (href.includes('#') ? undefined : here === hre
   :global(html[data-phase='nautical']) .hd { --band: 9 14 31; }
   /* a quiet top scrim so scrolled text never collides with the nav (static paint, fixed) */
   .hd::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 132px; background: linear-gradient(180deg, rgb(var(--band)) 0%, rgb(var(--band)) 50%, rgb(var(--band) / 0.55) 72%, rgb(var(--band) / 0) 100%); pointer-events: none; }
+  /* the band's opaque top hides what scrolls beneath it, so it takes those clicks too (the nav sits above and stays clickable) */
+  .hd::after { content: ''; position: absolute; inset: 0 0 auto 0; height: 66px; pointer-events: auto; }
   .hd__inner {
     position: relative; z-index: 1;   /* above the title-safe scrim (an absolutely positioned ::before) */
     pointer-events: auto;
@@ -80,6 +82,7 @@ const current = (href: string) => (href.includes('#') ? undefined : here === hre
   .hd__mobile a { padding: 12px 16px; font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
   @media (max-width: 760px) {
     .hd::before { height: 116px; background: linear-gradient(180deg, rgb(var(--band)) 0%, rgb(var(--band)) 56%, rgb(var(--band) / 0.5) 76%, rgb(var(--band) / 0) 100%); }
+    .hd::after { height: 65px; }
     .hd__nav { display: none; }
     .hd__menu { display: inline-flex; }
     .hd__inner { padding-top: 16px; }
@@ -87,6 +90,7 @@ const current = (href: string) => (href.includes('#') ? undefined : here === hre
   /* landscape phones: a shallower band, so the header doesn't take a third of the view */
   @media (max-height: 500px) and (orientation: landscape) {
     .hd::before { height: 84px; background: linear-gradient(180deg, rgb(var(--band)) 0%, rgb(var(--band)) 62%, rgb(var(--band) / 0.5) 82%, rgb(var(--band) / 0) 100%); }
+    .hd::after { height: 52px; }
     .hd__inner { padding-top: 14px; }
   }
   /* forced colours (high contrast): gradients drop out, so the band becomes a solid system background */

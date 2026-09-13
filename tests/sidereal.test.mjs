@@ -129,7 +129,7 @@ after(async () => {
   if (server) { try { process.kill(-server.pid, 'SIGTERM'); } catch { /* already gone */ } }
 });
 
-async function open(route, vp = DESKTOP, { reduce = false, qa = true, b = browser, blockStorage = false, storage = null, js = true } = {}) {
+async function open(route, vp = DESKTOP, { reduce = false, qa = true, b = browser, blockStorage = false, storage = null, js = true, holdPlate = false } = {}) {
   const page = await b.newPage();
   await page.setCacheEnabled(false);   // every page is a first visit: 200s, not 304s from an earlier test
   if (!js) await page.setJavaScriptEnabled(false);
@@ -140,6 +140,7 @@ async function open(route, vp = DESKTOP, { reduce = false, qa = true, b = browse
   page.on('request', (r) => {
     const u = r.url();
     if (!u.startsWith(BASE) && !/^(data|blob):/.test(u)) page.external.push(u);
+    if (holdPlate && /\/sidereal\/range(-2k)?\.webp/.test(u)) { page.heldPlate = r; return; }   // a slow network: the plate hasn't arrived
     return BLOCKED.test(u) ? r.abort() : r.continue();
   });
   page.on('pageerror', (e) => page.errors.push(`pageerror: ${e.message}`));
@@ -396,6 +397,15 @@ describe('1 · content is untouched', () => {
       for (const miss of missingFrom(page, expected)) problems.push(`${s.slug}: ${miss.slice(0, 100)}`);
     }
     assert.deepEqual(problems, []);
+  });
+
+  test('every case metric appears character for character, symbols included', () => {
+    const missing = [];
+    for (const st of STUDIES) {
+      const html = decode(read(`work/${st.slug}/index.html`));
+      for (const m of st.metrics) for (const v of [m.value, m.label]) if (!html.includes(v)) missing.push(`${st.slug}: ${v}`);
+    }
+    assert.deepEqual(missing, []);
   });
 
   test('the work index and the writing page list everything', () => {
@@ -896,6 +906,17 @@ describe('4 · layout holds at every size', () => {
     assert.deepEqual(problems, []);
   });
 
+  test('clicks on the header band never reach the page beneath it', { timeout: 60000 }, async () => {
+    const page = await open('/', DESKTOP, { reduce: true });
+    try {
+      await ready(page);
+      const y = await page.evaluate(() => Math.round(document.querySelector('.mf__row').getBoundingClientRect().top + scrollY - 40));
+      await scrollSettle(page, y);
+      const reachesPage = await page.evaluate(() => [30, 50, 60].map((yy) => !!document.elementFromPoint(700, yy)?.closest('main')));
+      assert.deepEqual(reachesPage, [false, false, false]);
+    } finally { await page.close(); }
+  });
+
   test('in forced colours the header band stays solid over scrolled text', { timeout: 90000 }, async () => {
     const page = await open('/', DESKTOP, { reduce: true });
     try {
@@ -906,7 +927,7 @@ describe('4 · layout holds at every size', () => {
       const y = await page.evaluate(() => { const w = document.getElementById('work'); return Math.round(w.getBoundingClientRect().top + scrollY + parseFloat(getComputedStyle(w).paddingTop) - 30); });
       await scrollSettle(page, y);
       const strip = await page.evaluate(() => Math.ceil(document.querySelector('.hd__inner').getBoundingClientRect().bottom) + 6);
-      const clip = { x: 0, y: 0, width: DESKTOP.width, height: strip };
+      const clip = { x: 0, y: await page.evaluate(() => scrollY), width: DESKTOP.width, height: strip };   // puppeteer's clip is in document coordinates
       const a = await page.screenshot({ type: 'png', clip });
       await page.evaluate(() => { document.querySelector('main').style.visibility = 'hidden'; });
       const b = await page.screenshot({ type: 'png', clip });
@@ -923,7 +944,7 @@ describe('4 · layout holds at every size', () => {
       for (const y of await stopsOf(page)) {
         await scrollSettle(page, y);
         const strip = await page.evaluate(() => Math.ceil(document.querySelector('.hd__inner').getBoundingClientRect().bottom) + 6);
-        const clip = { x: 0, y: 0, width: vp.width, height: strip };
+        const clip = { x: 0, y: await page.evaluate(() => scrollY), width: vp.width, height: strip };   // puppeteer's clip is in document coordinates
         const a = await page.screenshot({ type: 'png', clip });
         await page.evaluate(() => { document.querySelector('main').style.visibility = 'hidden'; });
         const b = await page.screenshot({ type: 'png', clip });
@@ -967,7 +988,8 @@ describe('5 · text reads against the scene', () => {
       const fails = [];
       try {
         await ready(page);
-        for (const y of await stopsOf(page)) {
+        // the home page at laptop and desktop widths: a finer stride catches the handovers between chapters
+        for (const y of await stopsOf(page, route === '/' && vp.width >= 1280 ? 0.25 : 0.6)) {
           await scrollSettle(page, y);
           const phase = await page.evaluate(() => document.documentElement.dataset.phase);
           // while the sky is bright the drifting clouds matter: judge three points in their drift
@@ -977,6 +999,22 @@ describe('5 · text reads against the scene', () => {
             fails.push(...await contrastFailures(page, `scrollY ${y} (${phase}, clouds at ${idle}s)`));
           }
           if (drift.length > 1) { await page.evaluate(() => { window.__sidereal.idle = 0; }); await wait(300); }
+        }
+      } finally { await page.close(); }
+      assertReadable(fails);
+    });
+  }
+
+  for (const vp of [DESKTOP, PHONE]) {
+    test(`contrast · while the range is still arriving · / · ${vp.name}`, { timeout: 300000 }, async () => {
+      const page = await open('/', vp, { reduce: true, holdPlate: true });
+      const fails = [];
+      try {
+        await wait(1500);
+        assert.ok(await page.evaluate(() => document.documentElement.classList.contains('webgl') && !document.documentElement.classList.contains('range-ready')), 'the plate was not held back');
+        for (const y of await stopsOf(page)) {
+          await scrollSettle(page, y, 500);
+          fails.push(...await contrastFailures(page, `scrollY ${y}, plate still arriving`));
         }
       } finally { await page.close(); }
       assertReadable(fails);

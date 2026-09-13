@@ -79,7 +79,7 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
 4. **Moon** — photographic disc, opaque, drawn behind the range: it starts below
    the highest in-frame summit and climbs through chapter 07, so the ridge bites
    its base on the way up — the Ridgemoon mark, realised in the world. A full moon
-   owns its sky: limiting magnitude drops ~2.4, the Milky Way goes, a wide aureole lifts
+   owns its sky: limiting magnitude drops ~1.3, the Milky Way goes, a wide aureole lifts
    the sky around it, and the disc itself, lifted and hugged by a tight glow, is the
    brightest thing in the frame. Time on the page lifts only a risen moon, a little, so a
    long visit never floats it up behind the text. On reading pages a smaller disc (80px) hangs
@@ -95,8 +95,8 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    and 6 px/s at 1600px wide), their tiles never narrower than the screen is tall;
    cloud shadows shaped by the nearer layer, travelling with it and falling on the
    range only, while there is sun to cast them;
-   spindrift puffs blowing off the summits; an occasional satellite; a rare meteor
-   after dark. Measured: about 1.6% (golden hour) to 2.2% (night) of pixels change over
+   spindrift puffs blowing off the summits; an occasional satellite; a rare meteor,
+   one continuous streak, after dark. Measured: about 1.6% (golden hour) to 2.2% (night) of pixels change over
    six seconds, slow but alive.
 
 Performance contract: a canvas pixel ratio between 1 and 1.5, lowered on large dense screens so
@@ -107,20 +107,22 @@ paint animation; the loop sleeps under reduced motion once the sun has settled a
 never draws in a hidden tab. Motion is always on, with no site toggle; only the reader's
 own `prefers-reduced-motion` setting stills it (a still night frame is drawn once). Without WebGL, or when the context is lost
 mid-visit, every page shows a night still in night ink, with every chapter visible; so
-does a page with JavaScript off.
+does a page with JavaScript off, and a range plate that fails to load. While the plate is
+still arriving, a chapter past golden hour reads over the night still.
 
 ## 3. Typography — wide, quiet, exact
 
 | Role | Face | Setting |
 |---|---|---|
 | Wordmark / chapter cards / numerals | **Archivo** (variable, `wdth` 125) | Uppercase, weight 300–400, tracking 0.16–0.22em. The name is set as a horizon-wide inscription above the peaks. |
-| Headlines, titles, prose | **Newsreader** (variable, opsz) | Weight 400 (never semibold), leading 1.02–1.1 for display, 1.6 for prose at 18–19px. Italic only for pull quotes and the dek. |
+| Headlines, titles, prose | **Newsreader** (variable, opsz) | Weight 400 (never semibold), leading 1.02–1.1 for display, 1.7 for prose at 18px. Italic only for pull quotes and the dek. |
 | Labels, meta, readouts | **JetBrains Mono** | 11–12px, uppercase, tracking 0.14em, muted. |
 | UI copy (nav, buttons, summaries) | **Archivo** (`wdth` 100) | 14–15px, weight 400–500. |
 
 Colour of type follows the light: `--ink` is warm snow in golden hour and cool
 snow at night, switched per chapter (a discrete change, never animated
-per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
+per-frame). Every line meets WCAG AA (4.5:1, 3:1 for large text) against the live scene, as the tests
+measure it; body text over open sky runs 7:1 or better.
 
 ## 4. Surfaces — none
 
@@ -139,7 +141,8 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
 - **Legibility without boxes** comes from placement (text lives in the dark
   upper sky; the range lives low), from three cinematographer's grads on the stage
   (a lower ND grad, a left-weighted grad and a right-edge grad that appear only
-  while the sky is bright), from a tight ink shadow keyed to the phase, and from an
+  while the sky is bright; the last two are multiplied into the WebGL frame, so they
+  darken without a blue cast, with CSS copies for the poster fallbacks), from a tight ink shadow keyed to the phase, and from an
   opaque title-safe band behind the header. Clouds keep full strength with motion off,
   so a still frame is the worst case for contrast, and the tests judge bright chapters
   at three points in the clouds' drift.
@@ -168,7 +171,9 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
 - Reading measure 34em (≈ 72 characters of Newsreader; `ch` overstates a serif).
 - In-page links land a chapter's first line just under the header band, never its empty
   sky; a shared link to a case-study section lands the same way. Long-form article text
-  never fades in, and keyboard focus shows any block that hasn't revealed yet.
+  never fades in, nor does the first screen (a phone would flash the name away), and
+  keyboard focus shows any block that hasn't revealed yet. The header band's opaque top
+  takes the clicks it covers.
 - Contact carries the one primary action of the page: the address itself, as a solid
   slate a shade dimmer than the moon.
 - Section spacing `clamp(140px, 22vh, 260px)`: each chapter must feel like time passing.

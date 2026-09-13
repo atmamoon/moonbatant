@@ -51,7 +51,7 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
         </div>
         <aside class="case__aside rv" aria-label="On this page">
           {toc.length > 0 && (
-            <nav>
+            <nav aria-label="Contents">
               <span class="t-label">Contents</span>
               <ol class="toc">
                 {toc.map((h, i) => (<li><a href={`#${h.slug}`}><span class="toc__n">{pad(i + 1)}</span><span>{h.text}</span></a></li>))}

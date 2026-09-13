@@ -29,8 +29,8 @@ const smooth = (a: number, b: number, x: number) => { const t = clamp((x - a) / 
 type V3 = [number, number, number];
 interface SkyKey { alt: number; zenith: V3; mid: V3; horizon: V3; glow: V3; glowK: number; belt: V3; shadow: V3; beltK: number; airglow: V3; limMag: number; mw: number; }
 const SKY: SkyKey[] = [
-  { alt: 6,   zenith: [0.09, 0.21, 0.56], mid: [0.32, 0.47, 0.80], horizon: [0.84, 0.76, 0.64], glow: [1.0, 0.78, 0.45], glowK: 0.40, belt: [0.0, 0, 0], shadow: [0, 0, 0], beltK: 0,    airglow: [0, 0, 0], limMag: -9, mw: 0 },
-  { alt: 2,   zenith: [0.08, 0.18, 0.50], mid: [0.29, 0.42, 0.76], horizon: [0.90, 0.74, 0.58], glow: [1.0, 0.72, 0.40], glowK: 0.50, belt: [0.9, 0.62, 0.66], shadow: [0.30, 0.34, 0.52], beltK: 0.25, airglow: [0, 0, 0], limMag: -9, mw: 0 },
+  { alt: 6,   zenith: [0.09, 0.21, 0.56], mid: [0.32, 0.47, 0.80], horizon: [0.90, 0.73, 0.54], glow: [1.0, 0.78, 0.45], glowK: 0.40, belt: [0.0, 0, 0], shadow: [0, 0, 0], beltK: 0,    airglow: [0, 0, 0], limMag: -9, mw: 0 },
+  { alt: 2,   zenith: [0.08, 0.18, 0.50], mid: [0.29, 0.42, 0.76], horizon: [0.94, 0.70, 0.50], glow: [1.0, 0.72, 0.40], glowK: 0.50, belt: [0.9, 0.62, 0.66], shadow: [0.30, 0.34, 0.52], beltK: 0.25, airglow: [0, 0, 0], limMag: -9, mw: 0 },
   { alt: -1,  zenith: [0.06, 0.13, 0.42], mid: [0.24, 0.33, 0.68], horizon: [0.86, 0.60, 0.50], glow: [1.0, 0.58, 0.32], glowK: 0.50, belt: [0.88, 0.56, 0.62], shadow: [0.26, 0.29, 0.48], beltK: 0.7,  airglow: [0, 0, 0], limMag: -0.5, mw: 0 },
   { alt: -5,  zenith: [0.035, 0.075, 0.28], mid: [0.14, 0.20, 0.50], horizon: [0.70, 0.50, 0.52], glow: [1.0, 0.60, 0.35], glowK: 0.32, belt: [0.80, 0.50, 0.60], shadow: [0.19, 0.21, 0.40], beltK: 1.0,  airglow: [0, 0, 0], limMag: 2.2, mw: 0 },
   { alt: -10, zenith: [0.018, 0.038, 0.15], mid: [0.06, 0.10, 0.30], horizon: [0.33, 0.31, 0.50], glow: [0.9, 0.50, 0.35], glowK: 0.16, belt: [0.6, 0.42, 0.55], shadow: [0.12, 0.13, 0.27], beltK: 0.35, airglow: [0.05, 0.07, 0.05], limMag: 4.2, mw: 0.05 },
@@ -70,6 +70,7 @@ uniform vec2 uTan; uniform mat3 uCamToHor; uniform mat3 uHorToEq;
 uniform vec3 uZenith, uMid, uHorizon, uGlow, uBelt, uShadow, uAirglow;
 uniform float uGlowK, uBeltK, uSunAz, uMW, uSeed;
 uniform sampler2D uMWTex;
+float h12(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }   // hash without sine
 const float PI = 3.141592653589793;
 float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233)))*43758.5453); }
 void main(){
@@ -99,7 +100,9 @@ void main(){
   float ra = atan(e.y, e.x); float dec = asin(clamp(e.z,-1.0,1.0));
   vec2 muv = vec2((ra+PI)/(2.0*PI), (PI*0.5-dec)/PI);
   float mw = texture2D(uMWTex, muv).r;
-  col += vec3(0.62,0.70,0.94) * mw * uMW * 1.15 * smoothstep(-0.02, 0.28, alt);
+  // the bake is soft: keep its core, drop its haze, and break it into a fine grain fixed to the sky
+  mw = smoothstep(0.06, 0.8, mw) * mix(0.4, 1.3, h12(floor(muv * vec2(4096.0, 2048.0))));
+  col += vec3(0.62,0.70,0.94) * mw * uMW * 0.85 * smoothstep(-0.02, 0.28, alt);
   // dither (kills banding on 8-bit displays)
   col += (hash(gl_FragCoord.xy + uSeed) - 0.5) * (1.6/255.0);
   gl_FragColor = vec4(col, 1.0);
@@ -108,10 +111,10 @@ void main(){
 const VS_STARS = `
 attribute vec3 aDir; attribute float aMag; attribute float aBv; attribute float aSeed;
 uniform mat3 uEqToHor, uHorToCam; uniform vec2 uTan; uniform float uLimMag, uTime, uDpr, uTwk;
-varying float vI; varying vec3 vCol; varying float vBig;
+varying float vI; varying vec3 vCol; varying float vBig; varying float vSize;
 void main(){
   vec3 h = uEqToHor * aDir; vec3 c = uHorToCam * h;
-  if (c.z <= 0.02 || h.z < -0.02) { gl_Position = vec4(2.0,2.0,2.0,1.0); gl_PointSize = 0.0; vI = 0.0; vCol = vec3(0.0); vBig = 0.0; return; }
+  if (c.z <= 0.02 || h.z < -0.02) { gl_Position = vec4(2.0,2.0,2.0,1.0); gl_PointSize = 0.0; vI = 0.0; vCol = vec3(0.0); vBig = 0.0; vSize = 0.0; return; }
   gl_Position = vec4(c.x/c.z/uTan.x, c.y/c.z/uTan.y, 0.0, 1.0);
   float alt = asin(clamp(h.z,-1.0,1.0));
   float vis = 1.0 - smoothstep(uLimMag - 1.3, uLimMag, aMag);
@@ -129,7 +132,9 @@ void main(){
   vI = clamp(I*vis*twk, 0.0, 1.8);
   float b = clamp((3.6 - aMag)/5.2, 0.0, 1.0);
   vBig = b;
-  gl_PointSize = mix(2.0, 9.0, b*b) * uDpr;
+  float ps = mix(2.0, 9.0, b*b) * uDpr;
+  if (b < 0.15) ps = max(4.0, ps);   // faint stars: room for a pixel-sized Gaussian
+  gl_PointSize = ps; vSize = ps;
   vec3 col = aBv < 0.0 ? mix(vec3(0.62,0.76,1.0), vec3(1.0), clamp((aBv+0.45)/0.45,0.0,1.0))
        : aBv < 0.65 ? mix(vec3(1.0), vec3(1.0,0.94,0.82), aBv/0.65)
        : mix(vec3(1.0,0.94,0.82), vec3(1.0,0.66,0.40), clamp((aBv-0.65)/1.2,0.0,1.0));
@@ -139,10 +144,13 @@ void main(){
 }`;
 const FS_STARS = `
 precision mediump float;
-varying float vI; varying vec3 vCol; varying float vBig;
+varying float vI; varying vec3 vCol; varying float vBig; varying float vSize;
+uniform float uPx;   // device pixels per CSS pixel (its own name: a shared uniform would need matching precision)
 void main(){
   vec2 p = gl_PointCoord*2.0-1.0; float d = dot(p,p);
   float core = exp(-d*5.5);
+  // faint stars: a Gaussian of about 0.65 px in device pixels, the same total light, whatever the sub-pixel position
+  if (vBig < 0.15) { vec2 q = (gl_PointCoord - 0.5) * vSize; core = 0.215 * exp(-dot(q, q) / (0.845 * uPx * uPx)); }
   float halo = exp(-sqrt(d)*2.6) * 0.55 * vBig * vBig;
   float a = vI * (core + halo);
   if (a < 0.003) discard;
@@ -160,9 +168,10 @@ void main(){
   vec2 uv = vUv * uMap.xy + uMap.zw;
   if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) { gl_FragColor = vec4(0.0); return; }
   vec4 c = texture2D(uTex, vec2(uv.x * uSub.x, (1.0 - uv.y) * uSub.y));   // plate = top-left uSub of a POT texture; row 0 is its top
-  float L = dot(c.rgb, vec3(0.299,0.587,0.114));
-  vec3 g = mix(vec3(L), c.rgb, uSat);
-  float hi = smoothstep(0.48, 0.95, L);
+  vec3 rgb = c.rgb / max(c.a, 1e-4);   // uploaded premultiplied; grade the straight colour
+  float L = dot(rgb, vec3(0.299,0.587,0.114));
+  vec3 g = mix(vec3(L), rgb, uSat);
+  float hi = smoothstep(0.48, 0.95, L) * smoothstep(0.9, 1.0, c.a);   // no highlight lift on the half-transparent cut edge
   g = mix(g, g*uHiTint, uHiMix*hi);
   g = (g - 0.5)*uContrast + 0.5 + uLift;
   g *= uTint * (uExposure + uMoonLift*hi*0.35);
@@ -203,6 +212,29 @@ void main(){
   gl_FragColor = vec4(uTint*a, a);
 }`;
 
+// The camera's graduated filters, multiplied into the frame (dst *= keep): the CSS left grad
+// (linear-gradient(100deg, .72 0%, .50 46%, .12 82%)), its radial over the horizon glow on narrow and
+// landscape screens (radial-gradient(90% 45% at 100% 58%, .55 0%, .30 55%, 0 100%)) and the right-edge rail
+// (linear-gradient(270deg, .66 0px, .50 260px, .20 520px, 0 820px)). A multiply darkens without the blue cast
+// a near-black overlay leaves, so golden hour keeps its warmth. Geometry in CSS pixels, y down.
+const FS_GRADE = `
+precision mediump float;
+varying vec2 vUv;
+uniform vec2 uView; uniform float uLeftK, uRailK, uRadial;
+void main(){
+  vec2 p = vec2(vUv.x * uView.x, (1.0 - vUv.y) * uView.y);
+  vec2 dir = vec2(0.98481, 0.17365);
+  float len = dir.x * uView.x + dir.y * uView.y;
+  float t = clamp(dot(p - 0.5 * uView, dir) / len + 0.5, 0.0, 1.0);
+  float aL = t < 0.46 ? mix(0.72, 0.50, t / 0.46) : (t < 0.82 ? mix(0.50, 0.12, (t - 0.46) / 0.36) : 0.12);
+  float d = length((p - vec2(uView.x, 0.58 * uView.y)) / vec2(0.9 * uView.x, 0.45 * uView.y));
+  float aR = uRadial * (d < 0.55 ? mix(0.55, 0.30, d / 0.55) : (d < 1.0 ? mix(0.30, 0.0, (d - 0.55) / 0.45) : 0.0));
+  float r = uView.x - p.x;
+  float aRail = r < 260.0 ? mix(0.66, 0.50, r / 260.0) : (r < 520.0 ? mix(0.50, 0.20, (r - 260.0) / 260.0) : (r < 820.0 ? mix(0.20, 0.0, (r - 520.0) / 300.0) : 0.0));
+  float keep = (1.0 - uLeftK * (1.0 - (1.0 - aL) * (1.0 - aR))) * (1.0 - uRailK * aRail);
+  gl_FragColor = vec4(vec3(keep), 1.0);
+}`;
+
 const VS_PTS = `
 attribute vec2 aPos; attribute float aSize; attribute float aAlpha;
 uniform float uDpr; varying float vA;
@@ -219,14 +251,14 @@ function compile(gl: WebGLRenderingContext, vs: string, fs: string) {
   if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p) || 'link');
   return p;
 }
-function loadTex(gl: WebGLRenderingContext, url: string, opts: { repeat?: boolean; alpha?: boolean; mip?: boolean; lum?: boolean } = {}): Promise<WebGLTexture> {
+function loadTex(gl: WebGLRenderingContext, url: string, opts: { repeat?: boolean; alpha?: boolean; mip?: boolean; lum?: boolean; premultiply?: boolean } = {}): Promise<WebGLTexture> {
   return new Promise((res, rej) => {
     const img = new Image();
     img.onload = async () => {
       try { await img.decode?.(); } catch { /* upload anyway */ }
       const t = gl.createTexture()!;
       gl.bindTexture(gl.TEXTURE_2D, t);
-      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, opts.premultiply ? 1 : 0);
       const fmt = opts.lum ? gl.LUMINANCE_ALPHA : gl.RGBA;     // masks: 2 channels instead of 4
       gl.texImage2D(gl.TEXTURE_2D, 0, fmt, fmt, gl.UNSIGNED_BYTE, img);
       const wrap = opts.repeat ? gl.REPEAT : gl.CLAMP_TO_EDGE;
@@ -266,7 +298,7 @@ export function initSidereal(opts: Opts) {
   root.classList.add('webgl');
 
   // programs — a compile failure on an old GPU must fall back to the poster, not a black canvas
-  let pSky: WebGLProgram, pStars: WebGLProgram, pRange: WebGLProgram, pSprite: WebGLProgram, pFog: WebGLProgram, pPts: WebGLProgram;
+  let pSky: WebGLProgram, pStars: WebGLProgram, pRange: WebGLProgram, pSprite: WebGLProgram, pFog: WebGLProgram, pPts: WebGLProgram, pGrade: WebGLProgram;
   try {
     pSky = compile(gl, VS_QUAD, FS_SKY);
     pStars = compile(gl, VS_STARS, FS_STARS);
@@ -274,6 +306,7 @@ export function initSidereal(opts: Opts) {
     pSprite = compile(gl, VS_SPRITE, FS_SPRITE);
     pFog = compile(gl, VS_QUAD, FS_FOG);
     pPts = compile(gl, VS_PTS, FS_PTS);
+    pGrade = compile(gl, VS_QUAD, FS_GRADE);
   } catch (e) {
     root.classList.remove('webgl'); root.classList.add('no-webgl'); root.dataset.phase = 'night';
     console.warn('[sidereal] shaders failed, showing the poster', e);
@@ -282,12 +315,14 @@ export function initSidereal(opts: Opts) {
   let contextLost = false;
   // a lost context stops the loop for good: night still, night ink, and every chapter
   // shown again (the fades under the header would otherwise freeze where they were)
-  canvas.addEventListener('webglcontextlost', (e) => {
-    e.preventDefault(); contextLost = true;
+  // the one way down: night still, night ink, every chapter shown again (fades under the header would freeze)
+  const fallBack = () => {
+    contextLost = true;
     root.classList.remove('webgl', 'range-ready'); root.classList.add('no-webgl');
     root.dataset.phase = 'night';
     document.querySelectorAll<HTMLElement>('[data-chapter]').forEach((el) => { el.style.opacity = ''; });
-  });
+  };
+  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); fallBack(); });
   // locations are immutable after link — look each up once
   const uCache = new Map<WebGLProgram, Record<string, WebGLUniformLocation | null>>();
   const aCache = new Map<WebGLProgram, Record<string, number>>();
@@ -326,7 +361,7 @@ export function initSidereal(opts: Opts) {
   loadTex(gl, '/sidereal/milkyway.webp', { repeat: true, lum: true, mip: false }).then((t) => { texMW = t; redraw(); }).catch(() => {});
   // must match the plate preload media queries in Sidereal.astro, or the browser fetches both plates
   const small = window.innerWidth < 900 || window.matchMedia('(pointer: coarse)').matches;
-  loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { alpha: true }).then((t) => { texRange = t; root.classList.add('range-ready'); redraw(); }).catch(() => {});
+  loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { alpha: true, premultiply: true })   /* premultiplied: no stored sky colour bleeds into the filtered cut edge */.then((t) => { texRange = t; root.classList.add('range-ready'); redraw(); }).catch(() => fallBack());   // no plate: the night still, not an empty sky
   loadTex(gl, '/sidereal/moon.webp', { alpha: true }).then((t) => { texMoon = t; redraw(); }).catch(() => {});
   loadTex(gl, '/photos/fog-plate-a.webp', { repeat: true, lum: true, mip: false }).then((t) => { texFogA = t; redraw(); }).catch(() => {});
   loadTex(gl, '/photos/fog-plate-b.webp', { repeat: true, lum: true, mip: false }).then((t) => { texFogB = t; redraw(); }).catch(() => {});
@@ -447,13 +482,14 @@ export function initSidereal(opts: Opts) {
   }
 
   // ── particles: spindrift, satellite, meteor ──
-  const NP = 260;
+  const NP = 340;
   const parts = Array.from({ length: NP }, () => ({ x: 0, y: 0, vx: 0, vy: 0, life: 0, max: 1, size: 1, a: 0 }));
   const ptData = new Float32Array(NP * 4);
   const ptBuf = gl.createBuffer()!;
   gl.bindBuffer(gl.ARRAY_BUFFER, ptBuf); gl.bufferData(gl.ARRAY_BUFFER, ptData.byteLength, gl.DYNAMIC_DRAW);
   let sat = { on: false, x: 0, y: 0, vx: 0, vy: 0, t: 0 }, nextSat = 25;
   let meteor = { on: false, x: 0, y: 0, dx: 0, dy: 0, t: 0 }, nextMeteor = 40;
+  let gradeLeft = 0, gradeRail = 0, gradeInit = false;   // the multiplied grads' phase opacities, eased like the CSS they replace
   let mapCache: { sx: number; sy: number; ox: number; oy: number } | null = null;
   function rangeMap() {
     if (mapCache) return mapCache;
@@ -480,7 +516,7 @@ export function initSidereal(opts: Opts) {
       if (p.life > 0) continue;
       const col = peaks[Math.floor(Math.random() * Math.min(peaks.length, 6))];
       const u = col / skyline.length, v = 1 - skyline[col] / rangeH;
-      p.x = (u - m.ox) / m.sx * 2 - 1; p.y = (v - m.oy) / m.sy * 2 - 1;
+      p.x = (u - m.ox) / m.sx * 2 - 1; p.y = (v - m.oy - (isClock ? scrollT * 0.03 : 0)) / m.sy * 2 - 1;   // follow the plate's parallax
       p.x += (Math.random() - 0.4) * 0.02; p.y += Math.random() * 0.006;
       // plumes: soft puffs, downwind and slightly up, then settling — blowing snow, not sparks
       p.vx = (0.03 + Math.random() * 0.06) * wind; p.vy = 0.005 + Math.random() * 0.012;
@@ -539,7 +575,7 @@ export function initSidereal(opts: Opts) {
 
     gl.enable(gl.BLEND);
     // stars — additive
-    const limMag = lerp(s0.limMag, s1.limMag, st) - moonLight * 2.4;   // a full moon takes ~2.4 magnitudes off the naked eye
+    const limMag = lerp(s0.limMag, s1.limMag, st) - moonLight * 1.3;   // a full moon still leaves stars to about magnitude 5 high in the sky
     if (nStars && limMag > -3) {
       gl.blendFunc(gl.ONE, gl.ONE);
       gl.useProgram(pStars);
@@ -554,7 +590,7 @@ export function initSidereal(opts: Opts) {
       gl.uniform2f(U(pStars, 'uTan'), tanX, tanY);
       gl.uniform1f(U(pStars, 'uLimMag'), limMag);
       gl.uniform1f(U(pStars, 'uTime'), (now / 1000) % 1024);   // wrapped: the shimmer's sines keep their precision on a tab open for days
-      gl.uniform1f(U(pStars, 'uDpr'), dpr);
+      gl.uniform1f(U(pStars, 'uDpr'), dpr); gl.uniform1f(U(pStars, 'uPx'), dpr);
       gl.uniform1f(U(pStars, 'uTwk'), motionOff() ? 0 : 0.55);
       gl.drawArrays(gl.POINTS, 0, nStars);
       gl.disableVertexAttribArray(aMag); gl.disableVertexAttribArray(aBv); gl.disableVertexAttribArray(aSeed);
@@ -605,7 +641,7 @@ export function initSidereal(opts: Opts) {
       gl.uniform1f(U(pRange, 'uHiMix'), lerp(r0.hiMix, r1.hiMix, rt));
       gl.uniform1f(U(pRange, 'uLift'), lerp(r0.lift, r1.lift, rt));
       gl.uniform1f(U(pRange, 'uContrast'), lerp(r0.contrast, r1.contrast, rt));
-      gl.uniform1f(U(pRange, 'uMoonLift'), moonLight * 0.5);
+      gl.uniform1f(U(pRange, 'uMoonLift'), moonLight * (isClock ? 0.5 : 0.15));   // reading pages: less moonlit snow behind long text
       t3('uTint', r0.tint, r1.tint); t3('uHiTint', r0.hiTint, r1.hiTint);
       // cloud shadows, while there is sun to cast them: cloud layer A's own shape and drift
       const shA = texFogA ? 0.44 * smooth(-2.5, 3, alt) * (motionOff() ? 0 : 1) * dbg.shadow : 0;
@@ -651,7 +687,7 @@ export function initSidereal(opts: Opts) {
       if (meteor.on) {
         meteor.t += dt; const life = meteor.t / 0.7;
         if (life > 1) meteor.on = false;
-        else for (let i = 0; i < 14 && n < NP; i++) { const u = life - i * 0.02; if (u < 0) break; ptData[n * 4] = meteor.x + meteor.dx * u; ptData[n * 4 + 1] = meteor.y + meteor.dy * u; ptData[n * 4 + 2] = 2.6 - i * 0.12; ptData[n * 4 + 3] = (1 - life) * (1 - i / 14) * 0.9 * night; n++; }
+        else for (let i = 0; i < 64 && n < NP; i++) { const u = life - i * 0.004; if (u < 0) break; ptData[n * 4] = meteor.x + meteor.dx * u; ptData[n * 4 + 1] = meteor.y + meteor.dy * u; ptData[n * 4 + 2] = 3.0 - i * 0.025; ptData[n * 4 + 3] = (1 - life) * (1 - i / 64) * 0.5 * night; n++; }   // a continuous streak, not beads
       }
       if (n > 0) {
         gl.blendFunc(gl.ONE, gl.ONE);
@@ -668,6 +704,25 @@ export function initSidereal(opts: Opts) {
         gl.disableVertexAttribArray(aS); gl.disableVertexAttribArray(aA);
       }
     }
+    // the graduated filters (see FS_GRADE): per-phase opacities as the CSS had them (.stage__grad × its ::after;
+    // the rail from 1100px), eased over about a second like the CSS transitions; at once on the first frame
+    {
+      const ph = phaseOf(Math.round(alt * 10) / 10), vwCss = W / dpr, vhCss = H / dpr;
+      const leftTarget = ph === 'golden' ? 1 : ph === 'sunset' || ph === 'civil' ? 0.765 : 0;
+      const railTarget = vwCss < 1100 ? 0 : ph === 'golden' || ph === 'sunset' || ph === 'civil' ? 1 : ph === 'nautical' ? 0.5 : 0;
+      const ease = motionOff() || !gradeInit ? 1 : 1 - Math.exp(-dt / 0.4);
+      gradeInit = true;
+      gradeLeft += (leftTarget - gradeLeft) * ease; gradeRail += (railTarget - gradeRail) * ease;
+      if (gradeLeft > 0.002 || gradeRail > 0.002) {
+        gl.blendFunc(gl.ZERO, gl.SRC_COLOR);
+        gl.useProgram(pGrade); bindQuad(pGrade);
+        gl.uniform2f(U(pGrade, 'uView'), vwCss, vhCss);
+        gl.uniform1f(U(pGrade, 'uLeftK'), gradeLeft);
+        gl.uniform1f(U(pGrade, 'uRailK'), gradeRail);
+        gl.uniform1f(U(pGrade, 'uRadial'), vwCss < 1100 || (vhCss <= 500 && vwCss > vhCss) ? 1 : 0);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
+    }
     syncPhase(alt);
   }
 
@@ -677,14 +732,14 @@ export function initSidereal(opts: Opts) {
   function frame(now: number) {
     if (contextLost) { rafId = 0; return; }
     // resting: the sky wheels at 15°/hour — 30 fps is indistinguishable and halves the GPU cost
-    if (now - lastScrollAt > 2000 && now - lastDrawn < 30 && !scrollDirty) { rafId = requestAnimationFrame(frame); return; }
+    if (now - lastScrollAt > 2000 && now - lastDrawn < 30 && !scrollDirty && !meteor.on) { rafId = requestAnimationFrame(frame); return; }   // a meteor gets every frame
     lastDrawn = now;
     lastFrameTs = now;
     const dt = clamp((now - lastNow) / 1000, 0, 0.05); lastNow = now;
     if (!motionOff()) idleSec += dt;
     if (scrollDirty) { readScroll(); scrollDirty = false; }
     sunAlt = motionOff() ? sunTarget : lerp(sunAlt, sunTarget, 1 - Math.pow(0.001, dt)); // ~settles in 1s
-    try { draw(now, dt); } catch (e) { if (!drawFailed) { drawFailed = true; console.error('[sidereal] draw failed', e); } }
+    try { draw(now, dt); } catch (e) { drawFailed = true; console.error('[sidereal] draw failed, showing the night still', e); fallBack(); rafId = 0; return; }
     // reduced motion: the world is a still — draw it once per change, then sleep
     if (motionOff() && Math.abs(sunAlt - sunTarget) < 0.01) { rafId = 0; return; }
     rafId = requestAnimationFrame(frame);
@@ -697,7 +752,7 @@ export function initSidereal(opts: Opts) {
     const now = performance.now();
     if (now - lastFrameTs < 400) return;
     readScroll(); sunAlt = sunTarget;
-    try { draw(now, 0.016); } catch (e) { if (!drawFailed) { drawFailed = true; console.error('[sidereal] draw failed', e); } }
+    try { draw(now, 0.016); } catch (e) { drawFailed = true; console.error('[sidereal] draw failed, showing the night still', e); fallBack(); }
   }, 250);
 
   window.addEventListener('scroll', () => { scrollDirty = true; lastScrollAt = performance.now(); wake(); }, { passive: true });
