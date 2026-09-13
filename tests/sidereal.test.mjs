@@ -1559,24 +1559,30 @@ describe('7 · build, search and social', () => {
     }
   });
 
-  test('the range plate has no keying holes in its rock', async () => {
-    // rectangles (4096-wide texture px) where the keyed cutout once showed sky through solid rock
-    const HOLES = { 'slit A': [3174, 1162, 3186, 1240], 'slit B': [3234, 1154, 3256, 1215], 'window C': [2841, 1182, 2876, 1229], 'window D': [1769, 1152, 1804, 1205] };
+  test('the range plates show no sky through the rock, and the skyline profile sits on the rock', async () => {
+    const j = JSON.parse(fs.readFileSync(path.join(DIST, 'sidereal', 'range.json'), 'utf8'));
     const found = [];
     for (const file of ['range.webp', 'range-2k.webp']) {
       const { data, info } = await sharp(path.join(DIST, 'sidereal', file)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-      const W = info.width, s = W / 4096, A = (x, y) => data[(y * W + x) * 4 + 3];
-      const firstSolid = (x, yFrom, yTo) => { for (let y = yFrom; y <= yTo; y++) if (A(x, y) >= 250) return y; return yTo; };
-      for (const [name, r] of Object.entries(HOLES)) {
-        const [x0, y0, x1, y1] = r.map((v) => Math.round(v * s)), xa = x0 - 3, xb = x1 + 3, top = y0 - Math.round(80 * s);
-        const rL = firstSolid(xa - 2, top, y1), rR = firstSolid(xb + 2, top, y1);   // the ridge, read from solid rock either side
-        let seeThrough = 0;
-        for (let x = xa; x <= xb; x++) {
-          const ridge = Math.round(rL + (rR - rL) * (x - xa) / (xb - xa));
-          for (let y = ridge + 3; y <= y1; y++) if (A(x, y) < 200) seeThrough++;
-        }
-        if (seeThrough) found.push(`${file} ${name}: ${seeThrough} see-through pixels below the ridge`);
+      const W = info.width, K = W / j.w, rows = Math.min(info.height, Math.round(j.h * K)), A = (x, y) => data[(y * W + x) * 4 + 3];
+      const below = Math.round(12 * K), edge = Math.round(12 * K);
+      // sky showing through: anything short of solid well under the ridge (the lowest of three neighbouring samples)
+      let holes = 0, first = null;
+      for (let x = edge; x < W - edge; x++) {
+        const k = Math.min(j.skyline.length - 1, Math.round(x / K / j.step));
+        const ridge = Math.max(j.skyline[Math.max(0, k - 1)], j.skyline[k], j.skyline[Math.min(j.skyline.length - 1, k + 1)]) * K;
+        for (let y = Math.ceil(ridge) + below; y < rows - edge; y++) if (A(x, y) < 200) { holes++; first ??= `x ${x}, y ${y}`; }
       }
+      if (holes) found.push(`${file}: ${holes} see-through pixels under the ridge, the first at ${first}`);
+      // the profile must sit on the rock, not down in a hole it would hide: solid rock never rises more than 6px above a sample
+      const dips = [];
+      for (let k = 0; k < j.skyline.length; k++) {
+        const x = Math.min(W - 1, Math.round(k * j.step * K)), prof = Math.round(j.skyline[k] * K);
+        let y = prof;
+        while (y > prof - Math.round(160 * K) && A(x, y - 1) >= 250) y--;
+        if (prof - y > 6) dips.push(`sample ${k} (${prof - y}px)`);
+      }
+      if (dips.length) found.push(`${file}: the skyline profile sits under solid rock at ${dips.slice(0, 5).join(', ')}${dips.length > 5 ? ` and ${dips.length - 5} more` : ''}`);
     }
     assert.deepEqual(found, []);
   });

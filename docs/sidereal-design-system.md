@@ -90,7 +90,8 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    1440px wide, and on phones) reading pages show no moon. It drifts slowly upward, never under the header band.
 5. **The range** — one real-looking plate of a Himalayan range at golden hour,
    sky keyed out (`public/sidereal/range.webp`, RGBA, padded to a power-of-two
-   canvas so it mipmaps; `range.json` carries the sub-rect and the skyline). Relit *in the shader* by
+   canvas so it mipmaps; `range.json` carries the sub-rect and the skyline profile, which sits on the solid rock; the suite
+   scans both plates for sky showing through beneath it). Relit *in the shader* by
    the same sun altitude: warm highlight lift at golden hour, rose alpenglow at
    sunset, desaturated silver-blue at night, with the shadow side always cool. Cloud and
    plume baked in above the ridge were lit by the low sun, so they thin out as it sets and are
