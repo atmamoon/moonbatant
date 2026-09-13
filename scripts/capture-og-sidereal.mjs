@@ -22,8 +22,9 @@ for (const [name, path, anchor] of shots) {
   const p = await b.newPage();
   await p.goto(BASE + path, { waitUntil: 'networkidle2', timeout: 60000 });
   await new Promise((r) => setTimeout(r, 3500));
-  if (anchor && anchor !== 'hero') {
-    await p.evaluate((id) => { const el = document.getElementById(id); if (el) window.scrollTo(0, el.getBoundingClientRect().top + scrollY - 200); }, anchor);
+  if (anchor === 'contact') {
+    // the last frame of the page: the risen moon over the closing sentence
+    await p.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await new Promise((r) => setTimeout(r, 3000));
   }
   await p.evaluate(() => document.querySelector('astro-dev-toolbar')?.remove());   // dev-build chrome, not the design
