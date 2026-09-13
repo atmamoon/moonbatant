@@ -26,7 +26,7 @@ const dateStr = d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'lo
           <p class="case__tags">{d.tags.map((t, i) => (<><span>{t}</span>{i < d.tags.length - 1 && <span class="sep" aria-hidden="true">·</span>}</>))}</p>
         )}
       </header>
-      <div class="prose rv">
+      <div class="prose">   {/* long-form reading never fades in */}
         <Content />
       </div>
       <footer class="case__foot rv">

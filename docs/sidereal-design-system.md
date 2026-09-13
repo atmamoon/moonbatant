@@ -81,7 +81,8 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    its base on the way up — the Ridgemoon mark, realised in the world. A full moon
    owns its sky: limiting magnitude drops ~2.4, the Milky Way goes, a wide aureole lifts
    the sky around it, and the disc itself, lifted and hugged by a tight glow, is the
-   brightest thing in the frame. On reading pages a smaller disc (80px) hangs
+   brightest thing in the frame. Time on the page lifts only a risen moon, a little, so a
+   long visit never floats it up behind the text. On reading pages a smaller disc (80px) hangs
    centred in the right margin, measured from the text column's real edge, with at
    least 48px of air on each side. Where the margin can't hold that (below roughly
    1440px wide, and on phones) reading pages show no moon. It drifts slowly upward.
@@ -98,7 +99,9 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    after dark. Measured: about 1.6% (golden hour) to 2.2% (night) of pixels change over
    six seconds, slow but alive.
 
-Performance contract: DPR ≤ 1.5, ~8 draw calls per frame (the moon is a small
+Performance contract: a canvas pixel ratio between 1 and 1.5, lowered on large dense screens so
+the canvas stays near 3 MP (never below CSS resolution), cloud passes scissored to their band,
+~8 draw calls per frame (the moon is a small
 quad, masks upload as LUMINANCE_ALPHA, uniform locations are cached), zero DOM
 paint animation; the loop sleeps under reduced motion once the sun has settled and
 never draws in a hidden tab. Motion is always on, with no site toggle; only the reader's
@@ -140,11 +143,17 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
   opaque title-safe band behind the header. Clouds keep full strength with motion off,
   so a still frame is the worst case for contrast, and the tests judge bright chapters
   at three points in the clouds' drift.
-- **Phones** step secondary ink up to full ink and widen the readout halo on the home
-  page, where the lit range sits behind more of the text, and a soft radial grad dims
+- **Below 1100px wide, and on landscape phones,** secondary ink steps up to full ink and the
+  readout halo widens on the home page, where the lit range sits behind more of the text, and a soft radial grad dims
   the horizon glow that the portrait crop puts behind the hero's lines. Contrast is
   judged in windows about two and a half characters wide, so a bright patch behind a
-  few words fails.
+  few words fails, and generated numbers (section and list counters) are judged too.
+- **The header band** is opaque where the nav sits, in a darker shade of the sky's own colour
+  while the sky is bright (golden hour to nautical twilight), so it reads as dusk overhead,
+  not a toolbar.
+- **Below 1100px** the hero's four results sit beneath its actions as a two-by-two readout.
+- **Case-study section headings** are set in the reading serif, larger than the body, each
+  numbered in small alpenglow mono.
 
 ## 5. Layout
 

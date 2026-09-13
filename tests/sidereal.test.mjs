@@ -231,11 +231,43 @@ async function frameDiff(page, ms) {
 const LIN = Float64Array.from({ length: 256 }, (_, i) => { const c = i / 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; });
 const lum = (r, g, b) => 0.2126 * LIN[r] + 0.7152 * LIN[g] + 0.0722 * LIN[b];
 const ratioOf = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+// Generated numbers (the counters before case-study headings and list items) are text a reader sees, but no
+// text node holds them: while measuring, a real span with the pseudo-element's own styles stands in for each.
+const STAND_IN_COUNTERS = () => {
+  const hosts = [];
+  for (const [sel, index] of [
+    ['.prose > h2', (el) => [...el.parentElement.querySelectorAll(':scope > h2')].indexOf(el) + 1],
+    ['.prose ol > li', (el) => [...el.parentElement.children].indexOf(el) + 1],
+  ]) {
+    for (const el of document.querySelectorAll(sel)) {
+      const ps = getComputedStyle(el, '::before');
+      if (!/counter\(/.test(ps.content) || ps.display === 'none') continue;
+      const span = document.createElement('span');
+      span.setAttribute('data-cf-stand-in', '');
+      span.textContent = String(index(el)).padStart(2, '0');
+      for (const k of ['display', 'position', 'left', 'top', 'flex', 'font-family', 'font-size', 'font-weight', 'font-style', 'font-stretch', 'letter-spacing', 'line-height', 'color', 'text-shadow', 'text-transform', 'margin-right', 'padding-top']) span.style.setProperty(k, ps.getPropertyValue(k));
+      hosts.push([el, span]);
+    }
+  }
+  const style = document.createElement('style');
+  style.id = 'cf-host-style';
+  style.textContent = '[data-cf-host]::before { content: none !important; }';
+  document.head.append(style);
+  for (const [el, span] of hosts) { el.setAttribute('data-cf-host', ''); el.prepend(span); }
+};
+const REMOVE_STAND_INS = () => {
+  document.querySelectorAll('[data-cf-stand-in]').forEach((n) => n.remove());
+  document.querySelectorAll('[data-cf-host]').forEach((n) => n.removeAttribute('data-cf-host'));
+  document.getElementById('cf-host-style')?.remove();
+};
 const GLYPHS_OFF = 'body, body *, body *::before, body *::after { color: transparent !important; -webkit-text-fill-color: transparent !important; text-decoration-color: transparent !important; }';
 
 async function contrastFailures(page, where) {
   const dpr = page.viewport().deviceScaleFactor || 1;
-  const runs = await page.evaluate(() => {
+  await page.evaluate(STAND_IN_COUNTERS);
+  let runs, png;
+  try {
+  runs = await page.evaluate(() => {
     const vw = document.documentElement.clientWidth, vh = innerHeight;
     const hd = document.querySelector('.hd');
     const band = hd ? parseFloat(getComputedStyle(hd, '::before').height) || 0 : 0;
@@ -273,8 +305,11 @@ async function contrastFailures(page, where) {
   if (!runs.length) return [];
   const tag = await page.addStyleTag({ content: GLYPHS_OFF });
   await wait(80);
-  const png = await page.screenshot({ type: 'png' });
+  png = await page.screenshot({ type: 'png' });
   await tag.evaluate((n) => n.remove());
+  } finally {
+    await page.evaluate(REMOVE_STAND_INS).catch(() => {});
+  }
   const { data, info } = await sharp(png).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const W = info.width, H = info.height;
   const fails = [];
@@ -466,32 +501,45 @@ describe('3 · the world behaves', () => {
     } finally { await page.close(); }
   });
 
-  test('the risen moon never sits behind a line of text', { timeout: 300000 }, async () => {
+  test('the moon never sits behind a line of text, from Writing to the end, even after a long visit', { timeout: 900000 }, async () => {
     const problems = [];
-    const sizes = [DESKTOP, { name: 'desktop 1920', width: 1920, height: 1080 }, { name: 'laptop 1440', width: 1440, height: 900 }, { name: 'laptop 1366', width: 1366, height: 768 }, LAPTOP, { name: 'laptop 1280x720', width: 1280, height: 720 }, { name: 'tablet 768', width: 768, height: 1024, dpr: 2, mobile: true }, PHONE];
+    const sizes = [DESKTOP, { name: 'desktop 1920', width: 1920, height: 1080 }, { name: 'laptop 1440', width: 1440, height: 900 }, { name: 'laptop 1366', width: 1366, height: 768 }, LAPTOP, { name: 'laptop 1280x720', width: 1280, height: 720 }, { name: 'tablet 768', width: 768, height: 1024, dpr: 2, mobile: true }, PHONE, { name: 'phone landscape 667x375', width: 667, height: 375, dpr: 2, mobile: true }, { name: 'phone landscape 844x390', width: 844, height: 390, dpr: 2, mobile: true }];
     for (const vp of sizes) {
       const page = await open('/', vp);
       try {
         await ready(page);
-        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-        await wait(3000);
-        const r = await page.evaluate(() => {
-          const s = window.__sidereal, m = s.moonRect;
-          if (!(s.moonVis > 0.05) || !m) return null;
-          const pad = 16, hits = [];
-          const walker = document.createTreeWalker(document.querySelector('main'), NodeFilter.SHOW_TEXT);
-          while (walker.nextNode()) {
-            const n = walker.currentNode;
-            if (!/[A-Za-z0-9]/.test(n.textContent)) continue;
-            const range = document.createRange();
-            range.selectNodeContents(n);
-            for (const q of range.getClientRects()) {
-              if (q.width && q.right > m.left - pad && q.left < m.right + pad && q.bottom > m.top - pad && q.top < m.bottom + pad) { hits.push(n.textContent.trim().slice(0, 40)); break; }
-            }
-          }
-          return { hits, moon: [m.left, m.top, m.right, m.bottom].map(Math.round) };
+        await page.evaluate(() => { window.__sidereal.idle = 600; });   // ten minutes on the page: past the cap on the moon's idle lift
+        const stops = await page.evaluate(() => {
+          const from = document.getElementById('writing').getBoundingClientRect().top + scrollY - innerHeight * 0.5;
+          const max = document.documentElement.scrollHeight - innerHeight, out = [];
+          for (let y = Math.max(0, from); y < max; y += Math.round(innerHeight * 0.5)) out.push(Math.round(y));
+          out.push(max);
+          return out;
         });
-        if (r && r.hits.length) problems.push(`${vp.name}: moon at ${r.moon.join(', ')} is behind "${r.hits.join('", "')}"`);
+        for (const y of stops) {
+          await page.evaluate((y) => window.scrollTo(0, y), y);
+          await wait(1100);
+          const r = await page.evaluate(() => {
+            const s = window.__sidereal, m = s.moonRect;
+            if (!(s.moonVis > 0.05) || !m) return null;
+            const band = parseFloat(getComputedStyle(document.querySelector('.hd'), '::before').height) || 0;
+            const cx = (m.left + m.right) / 2, cy = (m.top + m.bottom) / 2, rad = (m.right - m.left) / 2, pad = 12, hits = [];
+            const walker = document.createTreeWalker(document.querySelector('main'), NodeFilter.SHOW_TEXT);
+            while (walker.nextNode()) {
+              const n = walker.currentNode;
+              if (!/[A-Za-z0-9]/.test(n.textContent)) continue;
+              const range = document.createRange();
+              range.selectNodeContents(n);
+              for (const q of range.getClientRects()) {
+                if (!q.width || q.bottom < band) continue;   // text passing under the header band is hidden anyway
+                const dx = Math.max(q.left - cx, 0, cx - q.right), dy = Math.max(q.top - cy, 0, cy - q.bottom);
+                if (Math.hypot(dx, dy) < rad + pad) { hits.push(n.textContent.trim().slice(0, 40)); break; }
+              }
+            }
+            return hits.length ? { hits, moon: [m.left, m.top, m.right, m.bottom].map(Math.round) } : null;
+          });
+          if (r) { problems.push(`${vp.name} at scrollY ${y}: moon at ${r.moon.join(', ')} behind "${r.hits.slice(0, 2).join('", "')}"`); break; }
+        }
       } finally { await page.close(); }
     }
     assert.deepEqual(problems, []);
@@ -858,7 +906,7 @@ describe('4 · layout holds at every size', () => {
 
 // ═════════════════════════════════════════════════════════════════════════════
 describe('5 · text reads against the scene', () => {
-  const PASSES = [['/', DESKTOP], ['/', { name: 'laptop 1440', width: 1440, height: 900, dpr: 1 }], ['/', LAPTOP], ['/', { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }], ['/', PHONE], ['/work', DESKTOP], [CASE, DESKTOP], [CASE, LAPTOP], [CASE, PHONE], ['/writing', DESKTOP]];
+  const PASSES = [['/', DESKTOP], ['/', { name: 'laptop 1440', width: 1440, height: 900, dpr: 1 }], ['/', LAPTOP], ['/', { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }], ['/', { name: 'tablet 1024x768', width: 1024, height: 768, dpr: 1 }], ['/', { name: 'tablet 768x1024', width: 768, height: 1024, dpr: 2, mobile: true }], ['/', { name: 'phone landscape 844x390', width: 844, height: 390, dpr: 2, mobile: true }], ['/', PHONE], ['/work', DESKTOP], [CASE, DESKTOP], [CASE, LAPTOP], [CASE, PHONE], ['/writing', DESKTOP]];
   for (const [route, vp] of PASSES) {
     test(`contrast · ${route} · ${vp.name}: 4.5:1 for text, 3:1 for large or decorative`, { timeout: 300000 }, async () => {
       const page = await open(route, vp, { reduce: true });
@@ -1005,6 +1053,29 @@ describe('6 · accessible structure and navigation', () => {
     } finally { await plain.close(); }
   });
 
+  test('in-page links leave modified clicks (new tab, new window) to the browser', { timeout: 60000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      const r = await page.evaluate(() => {
+        const a = document.querySelector('a[href="#work"]');
+        const click = (init) => { const ev = new MouseEvent('click', { bubbles: true, cancelable: true, button: 0, ...init }); a.dispatchEvent(ev); return ev.defaultPrevented; };
+        return { plain: click({}), meta: click({ metaKey: true }), ctrl: click({ ctrlKey: true }), shift: click({ shiftKey: true }), alt: click({ altKey: true }) };
+      });
+      assert.deepEqual(r, { plain: true, meta: false, ctrl: false, shift: false, alt: false });
+    } finally { await page.close(); }
+  });
+
+  test('accessible names sit only on elements that can carry them, and the nav marks the current page', () => {
+    const bad = [];
+    for (const route of ROUTES) {
+      for (const [tag] of read(distFile(route)).matchAll(/<(?:div|span|dl|p)\b(?![^>]*\brole=)[^>]*\baria-label=[^>]*>/g)) bad.push(`${route}: ${tag.slice(0, 90)}`);
+    }
+    assert.deepEqual(bad, []);
+    assert.match(read('work/index.html'), /<a href="\/work" aria-current="page"/);
+    assert.match(read(distFile(CASE)), /<a href="\/work" aria-current="true"/);
+  });
+
   test('keyboard focus is visible at every stop along the Tab order, never inside an invisible block', { timeout: 420000 }, async () => {
     const bad = [];
     for (const [route, vp] of [['/', DESKTOP], ['/', { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }], [CASE, DESKTOP], ['/', PHONE]]) {
@@ -1106,6 +1177,22 @@ describe('7 · build, search and social', () => {
       t.diagnostic(`home first load: ${(bytes / 1024).toFixed(0)} KB over the wire, fonts, plates, clouds and scripts included`);
       assert.ok(bytes <= 1_600_000, `the home page's first load is ${bytes} bytes (measured 1185 KB when this budget was set)`);
     } finally { await page.close(); }
+  });
+
+  test('the sky canvas stays within a pixel budget on large, dense screens', { timeout: 120000 }, async (t) => {
+    // the engine lowers the canvas's pixel ratio toward ~3 MP, but never below CSS resolution (softer stars)
+    for (const [vp, limit, rule] of [
+      [{ name: '1920x1080@2', width: 1920, height: 1080, dpr: 2 }, 3.1e6, 'about 3 MP'],
+      [{ name: '2560x1440@2', width: 2560, height: 1440, dpr: 2 }, 2560 * 1440 * 1.01, 'CSS resolution'],
+    ]) {
+      const page = await open('/', vp);
+      try {
+        await ready(page);
+        const px = await page.evaluate(() => { const c = document.getElementById('sky'); return c.width * c.height; });
+        t.diagnostic(`canvas at ${vp.name}: ${(px / 1e6).toFixed(2)} MP (a device-resolution canvas would be ${((vp.width * vp.height * 4) / 1e6).toFixed(1)} MP)`);
+        assert.ok(px <= limit, `at ${vp.name} the canvas is ${(px / 1e6).toFixed(2)} MP; the budget is ${rule}`);
+      } finally { await page.close(); }
+    }
   });
 
   test('the home page stays light', (t) => {

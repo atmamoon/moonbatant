@@ -321,7 +321,9 @@ export function initSidereal(opts: Opts) {
   let rangeW = 3168, rangeH = 1344; let skyline: number[] = []; let peaks: number[] = [];
   let sub: [number, number] = [1, 1];   // plate / texture size (POT padding)
   let summitCol = -1;                    // the highest in-frame summit, found once
-  loadTex(gl, '/sidereal/milkyway.webp', { repeat: true, lum: true }).then((t) => { texMW = t; redraw(); }).catch(() => {});
+  // no mipmaps: atan wraps u from 1 to 0 across one pixel, and a mip chain samples its blurriest level there,
+  // drawing a hairline along the RA 12h meridian (the bake is ~6 texels per degree, well under screen density)
+  loadTex(gl, '/sidereal/milkyway.webp', { repeat: true, lum: true, mip: false }).then((t) => { texMW = t; redraw(); }).catch(() => {});
   // must match the plate preload media queries in Sidereal.astro, or the browser fetches both plates
   const small = window.innerWidth < 900 || window.matchMedia('(pointer: coarse)').matches;
   loadTex(gl, small ? '/sidereal/range-2k.webp' : '/sidereal/range.webp', { alpha: true }).then((t) => { texRange = t; root.classList.add('range-ready'); redraw(); }).catch(() => {});
@@ -356,7 +358,8 @@ export function initSidereal(opts: Opts) {
 
   function resize() {
     vh = window.innerHeight;
-    dpr = clamp(window.devicePixelRatio || 1, 1, 1.5);
+    // at most ~3 MP of canvas: several full-screen passes redraw 30 times a second while someone reads
+    dpr = clamp(Math.min(window.devicePixelRatio || 1, Math.sqrt(3.0e6 / Math.max(1, canvas.clientWidth * canvas.clientHeight))), 1, 1.5);
     W = Math.round(canvas.clientWidth * dpr); H = Math.round(canvas.clientHeight * dpr);
     if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
     aspect = W / H;
@@ -506,7 +509,10 @@ export function initSidereal(opts: Opts) {
     const [r0, r1, rt] = keyAt(RANGE, alt);
     const night = smooth(-12, -18, alt);
     // narrow screens: the moon clears the contact block by rising higher
-    const moonAlt = (isClock ? lerp(-6.8, 11, smooth(0, 1, moonUp)) : 13) + idleSec * 0.004 + (aspect < 0.8 ? 6 * smooth(0, 1, moonUp) : 0);
+    // time on the page lifts only a risen moon, and only a little: before moonrise it must never float the
+    // disc up behind the text (portrait screens pin it at 72% across, where the ridge can't hide it)
+    const rise = smooth(0, 1, moonUp);
+    const moonAlt = isClock ? lerp(-6.8, 11, rise) + Math.min(idleSec * 0.004, 1.5) * rise + (aspect < 0.8 ? 6 * rise : 0) : 13 + idleSec * 0.004 + (aspect < 0.8 ? 6 : 0);
     // reading pages: no moon unless the right margin can hold it clear of the text (see resize)
     const moonVis = (moonAlt > -6.6 ? 1 : 0) * smooth(-14, -17, alt) * (!isClock && readingCx < 0 ? 0 : 1);
     const moonLight = moonVis * clamp(moonAlt / 10, 0, 1);
@@ -563,7 +569,8 @@ export function initSidereal(opts: Opts) {
       const u = col / skyline.length, v = 1 - skyline[col] / rangeH;
       const px = (u - m.ox) / m.sx, py = (v - m.oy) / m.sy - (isClock ? scrollT * 0.03 : 0);   // 0..1 viewport, parallax included
       const rx = moonR, ry = moonR * aspect;
-      const cx = isClock ? (aspect < 0.8 ? 0.72 : clamp(px + rx * 0.15, 0.2, 0.8)) : readingCx, cy = isClock ? py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2 : 0.78 + Math.min(0.03, idleSec * 5e-5);
+      const shortLand = aspect >= 0.8 && H / dpr < 500;   // landscape phones: keep the disc right of the centred contact text
+      const cx = isClock ? (aspect < 0.8 ? 0.72 : shortLand ? 0.86 : clamp(px + rx * 0.15, 0.2, 0.8)) : readingCx, cy = isClock ? py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2 : 0.78 + Math.min(0.03, idleSec * 5e-5);
       { const vwCss = W / dpr, vhCss = H / dpr; moonState.rect = { left: (cx - rx) * vwCss, right: (cx + rx) * vwCss, top: (1 - cy - ry) * vhCss, bottom: (1 - cy + ry) * vhCss }; }
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(pSprite); bindUnit(pSprite);
@@ -624,8 +631,11 @@ export function initSidereal(opts: Opts) {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    // the cloud layers only ever cover their band (0.40–0.98 of the plate height): skip the rest of the frame
+    gl.enable(gl.SCISSOR_TEST); gl.scissor(0, Math.max(0, Math.floor(H * bandBase * 0.40) - 2), W, Math.ceil(H * bandBase * 0.58) + 4);
     drawFog(texFogA, -idleSec * dbg.speed / 128, fogK, bandBase * 0.40, bandBase * 0.86, 1.6 * fogRep);   // both layers drift downwind, slowly
     drawFog(texFogB, -idleSec * dbg.speed / 260, fogK * 0.8, bandBase * 0.52, bandBase * 0.98, 1.1 * fogRep);
+    gl.disable(gl.SCISSOR_TEST);
 
     // spindrift + satellite + meteor
     if (!motionOff()) {
@@ -686,7 +696,8 @@ export function initSidereal(opts: Opts) {
     if (document.hidden || motionOff() || contextLost) return;
     const now = performance.now();
     if (now - lastFrameTs < 400) return;
-    readScroll(); sunAlt = sunTarget; draw(now, 0.016);
+    readScroll(); sunAlt = sunTarget;
+    try { draw(now, 0.016); } catch (e) { if (!drawFailed) { drawFailed = true; console.error('[sidereal] draw failed', e); } }
   }, 250);
 
   window.addEventListener('scroll', () => { scrollDirty = true; lastScrollAt = performance.now(); wake(); }, { passive: true });
@@ -719,6 +730,7 @@ export function initSidereal(opts: Opts) {
   // would land the anchor short once the reveal settles
   const layoutTop = (el: HTMLElement) => { let y = 0; for (let e: HTMLElement | null = el; e; e = e.offsetParent as HTMLElement | null) y += e.offsetTop; return y; };
   document.addEventListener('click', (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // new tab, new window, download: the browser's call
     const a = (e.target as Element).closest?.('a[href^="#"]') as HTMLAnchorElement | null;
     if (!a) return;
     const id = a.getAttribute('href')!.slice(1);

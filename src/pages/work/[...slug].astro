@@ -35,7 +35,7 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
       </header>
 
       {d.metrics.length > 0 && (
-        <div class="case__metrics rv" aria-label="Headline metrics">
+        <div class="case__metrics rv" role="group" aria-label="Headline metrics">
           {d.metrics.map((m, i) => (
             <div class="case__metric">
               <span class:list={[isNumeric(m.value) ? 't-numeral' : 'case__val--word', 'case__val', i === 0 && 'case__val--lead', i === 0 && isNumeric(m.value) && 'numeral-live']}>{m.value}</span>
@@ -68,7 +68,7 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
       </div>
 
       <footer class="case__foot rv">
-        <div class="hero__cta" style="display:flex;gap:28px;align-items:center;flex-wrap:wrap">
+        <div class="case__actions">
           <a class="rule-link" href="/work">← Back to all work</a>
           <a class="slate" href="/#contact">Let's talk <span aria-hidden="true">→</span></a>
         </div>

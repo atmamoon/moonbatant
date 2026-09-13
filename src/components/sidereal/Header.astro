@@ -10,6 +10,9 @@ const nav = [
 // in the address (a tagged share link) can't turn a click into a full reload
 const onHome = Astro.url.pathname === '/';
 const link = (href: string) => (onHome && href.startsWith('/#') ? href.slice(1) : href);
+// the nav marks where the reader is: the page itself, or the section a case study belongs to
+const here = Astro.url.pathname.length > 1 && Astro.url.pathname.endsWith('/') ? Astro.url.pathname.slice(0, -1) : Astro.url.pathname;
+const current = (href: string) => (href.includes('#') ? undefined : here === href ? 'page' : here.startsWith(href + '/') ? 'true' : undefined);
 ---
 <header class="hd">
   <div class="hd__inner">
@@ -18,7 +21,7 @@ const link = (href: string) => (onHome && href.startsWith('/#') ? href.slice(1) 
       <span class="hd__word">moonbatant</span>
     </a>
     <nav class="hd__nav" aria-label="Primary">
-      {nav.map((n) => <a href={link(n.href)}>{n.label}</a>)}
+      {nav.map((n) => <a href={link(n.href)} aria-current={current(n.href)}>{n.label}</a>)}
       <a href="/resume.pdf" target="_blank" rel="noopener" class="hd__cv">Résumé <span aria-hidden="true">↗</span></a>
     </nav>
     <button id="menu-btn" class="hd__menu" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
@@ -26,15 +29,20 @@ const link = (href: string) => (onHome && href.startsWith('/#') ? href.slice(1) 
     </button>
   </div>
   <nav id="mobile-nav" class="hd__mobile" aria-label="Mobile">
-    {nav.map((n) => <a href={link(n.href)}>{n.label}</a>)}
+    {nav.map((n) => <a href={link(n.href)} aria-current={current(n.href)}>{n.label}</a>)}
     <a href="/resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
   </nav>
 </header>
 
 <style>
-  .hd { position: fixed; top: 0; left: 0; right: 0; z-index: 50; pointer-events: none; }
+  .hd { --band: 5 7 15; position: fixed; top: 0; left: 0; right: 0; z-index: 50; pointer-events: none; }
+  /* the band takes a darker shade of the sky's own colour while the sky is bright, so it reads as dusk overhead,
+     not a toolbar; a discrete change per phase, like the ink, and always opaque where the nav sits */
+  :global(html[data-phase='golden']) .hd, :global(html[data-phase='sunset']) .hd { --band: 16 26 60; }
+  :global(html[data-phase='civil']) .hd { --band: 12 18 42; }
+  :global(html[data-phase='nautical']) .hd { --band: 9 14 31; }
   /* a quiet top scrim so scrolled text never collides with the nav (static paint, fixed) */
-  .hd::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 132px; background: linear-gradient(180deg, rgba(5, 7, 15, 1) 0%, rgba(5, 7, 15, 1) 50%, rgba(5, 7, 15, 0.55) 72%, rgba(5, 7, 15, 0) 100%); pointer-events: none; }
+  .hd::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 132px; background: linear-gradient(180deg, rgb(var(--band)) 0%, rgb(var(--band)) 50%, rgb(var(--band) / 0.55) 72%, rgb(var(--band) / 0) 100%); pointer-events: none; }
   .hd__inner {
     position: relative; z-index: 1;   /* above the title-safe scrim (an absolutely positioned ::before) */
     pointer-events: auto;
@@ -70,14 +78,14 @@ const link = (href: string) => (onHome && href.startsWith('/#') ? href.slice(1) 
   .hd__mobile.open { display: flex; }
   .hd__mobile a { padding: 12px 16px; font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
   @media (max-width: 760px) {
-    .hd::before { height: 116px; background: linear-gradient(180deg, rgba(5, 7, 15, 1) 0%, rgba(5, 7, 15, 1) 56%, rgba(5, 7, 15, 0.5) 76%, rgba(5, 7, 15, 0) 100%); }
+    .hd::before { height: 116px; background: linear-gradient(180deg, rgb(var(--band)) 0%, rgb(var(--band)) 56%, rgb(var(--band) / 0.5) 76%, rgb(var(--band) / 0) 100%); }
     .hd__nav { display: none; }
     .hd__menu { display: inline-flex; }
     .hd__inner { padding-top: 16px; }
   }
   /* landscape phones: a shallower band, so the header doesn't take a third of the view */
   @media (max-height: 500px) and (orientation: landscape) {
-    .hd::before { height: 84px; background: linear-gradient(180deg, rgba(5, 7, 15, 1) 0%, rgba(5, 7, 15, 1) 62%, rgba(5, 7, 15, 0.5) 82%, rgba(5, 7, 15, 0) 100%); }
+    .hd::before { height: 84px; background: linear-gradient(180deg, rgb(var(--band)) 0%, rgb(var(--band)) 62%, rgb(var(--band) / 0.5) 82%, rgb(var(--band) / 0) 100%); }
     .hd__inner { padding-top: 14px; }
   }
 </style>

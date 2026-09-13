@@ -64,7 +64,7 @@ const { mode = 'clock' } = Astro.props;
   /* Phones: the text column is the full width, and the portrait crop puts the horizon glow behind
      the hero's lines where the left grad has faded out. A soft radial grad dims that glow; the left
      grad stays as it is, so this only ever adds shade. */
-  @media (max-width: 760px) {
+  @media (max-width: 1099px), (max-height: 500px) and (orientation: landscape) {
     .stage__grad::after {
       background: radial-gradient(90% 45% at 100% 58%, rgba(6, 8, 20, 0.55) 0%, rgba(6, 8, 20, 0.3) 55%, rgba(6, 8, 20, 0) 100%),
         linear-gradient(100deg, rgba(6, 8, 20, 0.72) 0%, rgba(6, 8, 20, 0.5) 46%, rgba(6, 8, 20, 0.12) 82%, rgba(6, 8, 20, 0.12) 100%);

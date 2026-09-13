@@ -159,21 +159,23 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .prose em { font-style: italic; }
 .prose a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule-strong); text-underline-offset: 4px; text-decoration-thickness: 1px; }
 .prose a:hover { color: var(--venus); text-decoration-color: var(--rule-glow); }
+/* section headings anchor a long read: the reading serif, larger than the body, numbered in small mono */
 .prose h2 {
-  font-family: var(--font-mono);
-  font-size: 0.86rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--alpenglow);
-  margin: 3.4em 0 1.4em;
-  padding-top: 1.4em;
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 2.1vw, 1.85rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  color: var(--ink);
+  margin: 2.2em 0 0.75em;
+  padding-top: 1em;
   border-top: 1px solid var(--rule);
   display: flex;
   align-items: baseline;
-  gap: 14px;
+  gap: 16px;
+  text-wrap: balance;
 }
-.prose h2::before { content: counter(chapter, decimal-leading-zero); counter-increment: chapter; font-size: 1.5em; font-weight: 300; color: var(--ink-4); }
+.prose h2::before { content: counter(chapter, decimal-leading-zero); counter-increment: chapter; flex: none; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em; color: var(--alpenglow); }
 .prose { counter-reset: chapter; }
 .prose h3 { font-size: var(--text-h3); margin: 2em 0 0.6em; color: var(--ink); }
 .prose ul, .prose ol { margin: 0 0 1.3em; padding-left: 0; list-style: none; counter-reset: li; }

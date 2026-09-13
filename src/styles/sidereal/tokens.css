@@ -78,9 +78,10 @@ html[data-phase='nautical']  { --ink: #eef0f6; --ink-2: rgba(238, 240, 246, 0.78
 html[data-phase='astro'],
 html[data-phase='night']     { --ink: #eaf0fb; --ink-2: rgba(234, 240, 251, 0.78); --ink-3: rgba(234, 240, 251, 0.70); --ink-4: rgba(234, 240, 251, 0.56); }
 
-/* Phones, home page: the lit range sits behind more of the text, so secondary ink
-   steps up to full ink and readouts carry a wider halo. */
-@media (max-width: 760px) {
+/* Below 1100px wide, and on landscape phones, home page: without the right-edge grad the lit
+   range sits behind more of the text, so secondary ink steps up to full ink and readouts carry
+   a wider halo. */
+@media (max-width: 1099px), (max-height: 500px) and (orientation: landscape) {
   html[data-mode='clock'] {
     --ink-2: var(--ink);
     --instrument-shadow: 0 0 10px rgba(5, 7, 15, 0.95), 0 0 3px rgba(5, 7, 15, 0.95), 0 1px 2px rgba(5, 7, 15, 0.9);

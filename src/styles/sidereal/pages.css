@@ -31,6 +31,7 @@
 .toc__n { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.1em; color: var(--ink-3); padding-top: 0.2em; }
 .case__aside .t-label { display: block; margin-bottom: 8px; }
 .case__aside p { font-family: var(--font-display); font-size: var(--text-small); line-height: 1.6; color: var(--ink-2); }
+.case__actions { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
 .case__foot { margin-top: clamp(56px, 8vw, 96px); padding-top: 28px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
 .case__next { display: grid; gap: 8px; text-align: right; }
 .case__next .t-label { color: var(--ink-4); }
