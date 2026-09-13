@@ -223,3 +223,15 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* ── OG capture mode (?og=1): title and range only ── */
 html.og .hero__dek, html.og .hero__cta, html.og .hero__hint, html.og .hero__instruments, html.og .hd__nav, html.og .hd__menu { display: none !important; }
 html.og .hero { padding-top: clamp(120px, 26vh, 260px); }
+
+/* ── Print: dark text on white, no scene, no page furniture ── */
+@media print {
+  .stage, .hd, .skip-link, .case__aside, .case__foot, .hero__hint { display: none !important; }
+  html, body { background: #fff !important; }
+  html, html[data-phase] { --ink: #111; --ink-2: #2b2b2b; --ink-3: #444; --ink-4: #555; --rule: #bbb; --rule-strong: #888; --alpenglow: #8a4513; --glacier: #1f4e79; --venus: #8a4513; --ink-read: #111; --ink-shadow: none; --instrument-shadow: none; }
+  *, *::before, *::after { text-shadow: none !important; }
+  :root.anim-ok .rv, [data-chapter] { opacity: 1 !important; transform: none !important; }
+  .slate--solid { background: none !important; color: #111 !important; border-color: #111 !important; }
+  .page { padding-top: 0; }
+  .prose h2 { break-after: avoid; }
+}

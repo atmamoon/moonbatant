@@ -153,7 +153,12 @@ per-frame). Contrast against the darkest sky region ≥ 7:1 for body text.
   not a toolbar.
 - **Below 1100px** the hero's four results sit beneath its actions as a two-by-two readout.
 - **Case-study section headings** are set in the reading serif, larger than the body, each
-  numbered in small alpenglow mono.
+  numbered in small alpenglow mono; the sticky contents column marks the section being read.
+- **Details stay beside what they describe:** writing rows keep a 960px measure, education
+  dates end with the school's line, experience dates sit beside the highlights.
+- **The nav** links Work, About, Experience, Writing and Contact. In forced colours the header
+  band turns to a solid system background; printed pages are dark text on white, without the
+  scene or the header.
 
 ## 5. Layout
 

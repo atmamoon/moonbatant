@@ -297,7 +297,8 @@ async function contrastFailures(page, where) {
         if (q.width < 4 || q.height < 6) continue;
         if (q.top < 0 || q.bottom > vh || q.left < 0 || q.right > vw) continue;
         if (inMain && q.top < band) continue;   // passing under the header's title-safe band
-        out.push({ text: text.slice(0, 64), color: cs.color, size: parseFloat(cs.fontSize), weight: parseInt(cs.fontWeight, 10) || 400, decorative: !!el.closest('[aria-hidden="true"]'), x: q.left, y: q.top, w: q.width, h: q.height });
+        // aria-hidden words are still text to a sighted reader: only symbols get the 3:1 decorative bar
+        out.push({ text: text.slice(0, 64), color: cs.color, size: parseFloat(cs.fontSize), weight: parseInt(cs.fontWeight, 10) || 400, decorative: !!el.closest('[aria-hidden="true"]') && !/[A-Za-z]{2,}/.test(text), x: q.left, y: q.top, w: q.width, h: q.height });
       }
     }
     return out;
@@ -861,6 +862,59 @@ describe('4 · layout holds at every size', () => {
     assert.deepEqual(problems, []);
   });
 
+  test('no line of text is printed over another', { timeout: 420000 }, async () => {
+    const problems = [];
+    for (const vp of [{ name: 'phone 320', width: 320, height: 568, dpr: 2, mobile: true }, PHONE, { name: 'tablet 768', width: 768, height: 1024, dpr: 2, mobile: true }, { name: 'tablet 1024', width: 1024, height: 768, dpr: 1 }, DESKTOP]) {
+      for (const route of ['/', '/work', CASE]) {
+        const page = await open(route, vp, { reduce: true });
+        const hits = await page.evaluate(() => {
+          const runs = [];
+          const walker = document.createTreeWalker(document.querySelector('main'), NodeFilter.SHOW_TEXT);
+          while (walker.nextNode()) {
+            const n = walker.currentNode, el = n.parentElement;
+            if (!/\S/.test(n.textContent) || el.closest('.sr-only, .skip-link') || getComputedStyle(el).visibility !== 'visible') continue;
+            const range = document.createRange();
+            range.selectNodeContents(n);
+            for (const q of range.getClientRects()) if (q.width > 1 && q.height > 1) runs.push({ el, text: n.textContent.trim().slice(0, 30), l: q.left, r: q.right, t: q.top + scrollY, b: q.bottom + scrollY });
+          }
+          runs.sort((a, b) => a.t - b.t);
+          const out = [];
+          for (let i = 0; i < runs.length && out.length < 5; i++) {
+            for (let j = i + 1; j < runs.length && runs[j].t < runs[i].b; j++) {
+              const a = runs[i], b = runs[j];
+              if (a.el === b.el || a.el.contains(b.el) || b.el.contains(a.el)) continue;
+              const ix = Math.min(a.r, b.r) - Math.max(a.l, b.l), iy = Math.min(a.b, b.b) - Math.max(a.t, b.t);
+              if (ix > 2 && iy > 0.35 * Math.min(a.b - a.t, b.b - b.t)) out.push(`"${a.text}" over "${b.text}" (${Math.round(ix)}x${Math.round(iy)}px)`);
+            }
+          }
+          return out;
+        });
+        await page.close();
+        if (hits.length) problems.push(`${route} @ ${vp.name}: ${hits.slice(0, 3).join(' | ')}`);
+      }
+    }
+    assert.deepEqual(problems, []);
+  });
+
+  test('in forced colours the header band stays solid over scrolled text', { timeout: 90000 }, async () => {
+    const page = await open('/', DESKTOP, { reduce: true });
+    try {
+      // puppeteer's emulateMediaFeatures rejects forced-colors; the DevTools protocol accepts it
+      const cdp = await page.createCDPSession();
+      await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'forced-colors', value: 'active' }, { name: 'prefers-reduced-motion', value: 'reduce' }] });
+      await ready(page);
+      const y = await page.evaluate(() => { const w = document.getElementById('work'); return Math.round(w.getBoundingClientRect().top + scrollY + parseFloat(getComputedStyle(w).paddingTop) - 30); });
+      await scrollSettle(page, y);
+      const strip = await page.evaluate(() => Math.ceil(document.querySelector('.hd__inner').getBoundingClientRect().bottom) + 6);
+      const clip = { x: 0, y: 0, width: DESKTOP.width, height: strip };
+      const a = await page.screenshot({ type: 'png', clip });
+      await page.evaluate(() => { document.querySelector('main').style.visibility = 'hidden'; });
+      const b = await page.screenshot({ type: 'png', clip });
+      const pct = await diffPct(a, b, 16);
+      assert.ok(pct <= 0.5, `${pct.toFixed(2)}% of the nav strip shows page content in forced colours`);
+    } finally { await page.close(); }
+  });
+
   test('the header band hides whatever scrolls beneath the nav', { timeout: 300000 }, async () => {
     const problems = [];
     for (const [route, vp] of [['/', DESKTOP], ['/', PHONE], [CASE, DESKTOP], ['/work', LAPTOP], [CASE, { name: 'phone landscape 844x390', width: 844, height: 390, dpr: 2, mobile: true }]]) {
@@ -983,6 +1037,13 @@ describe('6 · accessible structure and navigation', () => {
     assert.deepEqual(bad, []);
   });
 
+  test('case titles in the work list are headings, one level under their section', () => {
+    const home = [...read('index.html').matchAll(/<(h[1-6])\b[^>]*class="mf__title/g)].map((m) => m[1]);
+    const work = [...read('work/index.html').matchAll(/<(h[1-6])\b[^>]*class="mf__title/g)].map((m) => m[1]);
+    assert.ok(home.length > 0 && home.every((h) => h === 'h3'), `home work titles: ${home.join(', ') || 'none'}`);
+    assert.ok(work.length === STUDIES.length && work.every((h) => h === 'h2'), `/work titles: ${work.join(', ') || 'none'}`);
+  });
+
   test('skip link and in-page links land below the header and take focus', { timeout: 120000 }, async () => {
     const page = await open('/', DESKTOP);
     try {
@@ -1076,6 +1137,39 @@ describe('6 · accessible structure and navigation', () => {
     assert.match(read(distFile(CASE)), /<a href="\/work" aria-current="true"/);
   });
 
+  test('printing a case study gives dark text on white, without the scene or the header', { timeout: 60000 }, async () => {
+    const page = await open(CASE, DESKTOP, { reduce: true });
+    try {
+      await page.emulateMediaType('print');
+      const s = await page.evaluate(() => {
+        const lumOf = (c) => { const [r, g, b] = c.match(/[\d.]+/g).slice(0, 3).map(Number).map((v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+        return {
+          stage: getComputedStyle(document.querySelector('.stage')).display,
+          header: getComputedStyle(document.querySelector('.hd')).display,
+          // every line of the article reads at 7:1 or better on the white page (the opening note prints in #444)
+          textOnWhite: Math.min(...[...document.querySelectorAll('.page__title, .prose p, .prose li, .prose h2')].map((el) => 1.05 / (lumOf(getComputedStyle(el).color) + 0.05))) >= 7,
+          pageWhite: lumOf(getComputedStyle(document.body).backgroundColor) > 0.9,
+        };
+      });
+      assert.deepEqual(s, { stage: 'none', header: 'none', textOnWhite: true, pageWhite: true });
+    } finally { await page.close(); }
+  });
+
+  test('the case-study contents mark the section being read', { timeout: 60000 }, async () => {
+    const page = await open(CASE, DESKTOP, { reduce: true });
+    try {
+      const target = await page.evaluate(() => {
+        const hs = [...document.querySelectorAll('.prose > h2[id]')].filter((h) => document.querySelector(`.toc a[href="#${CSS.escape(h.id)}"]`));
+        const h = hs[Math.min(1, hs.length - 1)];
+        window.scrollTo(0, h.getBoundingClientRect().top + scrollY - innerHeight * 0.2);
+        return h.id;
+      });
+      await wait(700);
+      const marked = await page.evaluate(() => [...document.querySelectorAll('.toc a[aria-current]')].map((a) => a.getAttribute('href')));
+      assert.deepEqual(marked, [`#${target}`]);
+    } finally { await page.close(); }
+  });
+
   test('keyboard focus is visible at every stop along the Tab order, never inside an invisible block', { timeout: 420000 }, async () => {
     const bad = [];
     for (const [route, vp] of [['/', DESKTOP], ['/', { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }], [CASE, DESKTOP], ['/', PHONE]]) {
@@ -1123,6 +1217,11 @@ describe('6 · accessible structure and navigation', () => {
       await page.keyboard.press('Escape');
       await wait(250);
       assert.deepEqual(await probe(), { expanded: 'false', shown: false, focus: 'menu-btn' });
+      await page.click('#menu-btn');
+      await wait(250);
+      await page.mouse.click(8, PHONE.height - 40);   // a tap in the gutter, outside the menu and any link
+      await wait(250);
+      assert.equal((await probe()).expanded, 'false', 'a tap outside the open menu should close it');
     } finally { await page.close(); }
   });
 });

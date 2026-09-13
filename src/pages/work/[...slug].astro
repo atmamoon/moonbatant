@@ -79,4 +79,23 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
       </footer>
     </div>
   </article>
+  <script>
+    // contents: mark the section being read, the last heading above a reading line 30% down the view
+    const tocLinks = new Map([...document.querySelectorAll<HTMLAnchorElement>('.toc a[href^="#"]')].map((a) => [decodeURIComponent(a.getAttribute('href')!.slice(1)), a] as const));
+    const headings = [...document.querySelectorAll<HTMLElement>('.prose > h2[id]')].filter((h) => tocLinks.has(h.id));
+    if (headings.length && 'IntersectionObserver' in window) {
+      let current = '';
+      const update = () => {
+        const line = window.innerHeight * 0.3;
+        let id = headings[0].id;
+        for (const h of headings) if (h.getBoundingClientRect().top <= line) id = h.id;
+        if (id === current) return;
+        current = id;
+        tocLinks.forEach((a, key) => (key === id ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current')));
+      };
+      const io = new IntersectionObserver(update, { rootMargin: '0px 0px -70% 0px' });
+      headings.forEach((h) => io.observe(h));
+      update();
+    }
+  </script>
 </Sidereal>

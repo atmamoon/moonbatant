@@ -2,8 +2,10 @@
 // Manifest — the case-study register. No cards: hairlines, indices, and
 // instrument-style numerals. Each row is one link.
 import type { CollectionEntry } from 'astro:content';
-interface Props { studies: CollectionEntry<'work'>[]; }
-const { studies } = Astro.props;
+interface Props { studies: CollectionEntry<'work'>[]; headingLevel?: 2 | 3; }
+const { studies, headingLevel = 3 } = Astro.props;
+// each case title is a heading, one level under the section it's listed in (h3 in the home chapter, h2 on /work)
+const Title = headingLevel === 2 ? 'h2' : 'h3';
 const pad = (n: number) => String(n).padStart(2, '0');
 // only numbers earn the instrument numeral; phrases stay at text size
 const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
@@ -13,11 +15,11 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
     <li class="rv">
       <a class="mf__row" href={`/work/${s.slug}`} aria-labelledby={`mf-title-${i}`}>
         <span class="mf__idx t-label">{pad(i + 1)}</span>
-        <span class="mf__main">
+        <div class="mf__main">
           <span class="mf__meta t-label">{s.data.company} <span class="mf__sep" aria-hidden="true">·</span> {s.data.timeline}</span>
-          <span class="mf__title" id={`mf-title-${i}`}>{s.data.title}</span>
+          <Title class="mf__title" id={`mf-title-${i}`}>{s.data.title}</Title>
           <span class="mf__summary">{s.data.summary}</span>
-        </span>
+        </div>
         <span class="mf__metrics">
           {s.data.metrics.slice(0, 3).map((m, k) => (
             <span class="mf__metric">
