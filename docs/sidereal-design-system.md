@@ -77,7 +77,8 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    way it really does. They scintillate quickly and irregularly, never a slow pulse,
    most through the thick air near the horizon, where the brightest flash faint colour.
 4. **Moon** — photographic disc, opaque, drawn behind the range: it starts below
-   the highest in-frame summit and climbs through chapter 07, so the ridge bites
+   the highest summit on the right of the frame, where a moon really rises in this view,
+   and climbs through chapter 07, drifting a little rightward and kept clear of the header band, so the ridge bites
    its base on the way up — the Ridgemoon mark, realised in the world. A full moon
    owns its sky: limiting magnitude drops ~1.3, the Milky Way goes, a wide aureole lifts
    the sky around it, and the disc itself, lifted and hugged by a tight glow, is the
@@ -156,12 +157,15 @@ measure it; body text over open sky runs 7:1 or better.
   not a toolbar.
 - **Below 1100px** the hero's four results sit beneath its actions as a two-by-two readout.
 - **Case-study section headings** are set in the reading serif, larger than the body, each
-  numbered in small alpenglow mono; the sticky contents column marks the section being read.
+  numbered in small alpenglow mono; the sticky contents column marks the section being read,
+  down to the last one, and a click marks its own entry.
 - **Details stay beside what they describe:** writing rows keep a 960px measure, education
   dates end with the school's line, experience dates sit beside the highlights.
 - **The nav** links Work, About, Experience, Writing and Contact. In forced colours the header
   band turns to a solid system background; printed pages are dark text on white, without the
-  scene or the header.
+  scene or the header. The page being read is marked in the nav in full ink.
+- **Result captions** are 12px mono (13px on case studies): a number means nothing without its caption, and
+  each hero result names the company where it was earned.
 
 ## 5. Layout
 

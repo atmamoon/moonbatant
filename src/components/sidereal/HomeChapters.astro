@@ -33,6 +33,7 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
         <li>
           <a href={`/work/${s.slug}`}>
             <span class="t-label hero__inst-idx">{pad(i + 1)}</span>
+            <span class="t-label hero__inst-co">{s.data.company}</span>
             <span class="t-numeral hero__inst-val">{s.data.metrics[0].value}</span>
             <span class="hero__inst-cap">{s.data.metrics[0].label}</span>
           </a>
@@ -194,11 +195,13 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   @media (min-width: 1100px) { .hero__instruments { display: grid; } }   /* from the width where the right-edge grad behind it switches on */
   .hero__instruments li { border-top: 1px solid var(--rule); }
   .hero__instruments li:last-child { border-bottom: 1px solid var(--rule); }
-  .hero__instruments a { display: grid; grid-template-columns: 28px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 12px; row-gap: 4px; padding: 14px 0; text-shadow: 0 0 2px rgba(5, 7, 15, 1), 0 0 8px rgba(5, 7, 15, 0.95), 0 0 20px rgba(5, 7, 15, 0.8); transition: color var(--dur) var(--ease); }
+  .hero__instruments a { display: grid; grid-template-columns: 28px minmax(0, 1fr); grid-template-rows: auto auto auto; column-gap: 12px; row-gap: 4px; padding: 14px 0; text-shadow: 0 0 2px rgba(5, 7, 15, 1), 0 0 8px rgba(5, 7, 15, 0.95), 0 0 20px rgba(5, 7, 15, 0.8); transition: color var(--dur) var(--ease); }
   .hero__instruments a:hover .hero__inst-val { color: var(--venus); }
-  .hero__inst-idx { grid-row: 1 / span 2; color: var(--ink); padding-top: 0.5em; }
+  .hero__inst-idx { grid-row: 1 / span 3; color: var(--ink); padding-top: 0.5em; }
+  .hero__inst-co { grid-column: 2; color: var(--ink); }   /* where the result was earned: each case's own company field */
+  .hero__inst-val, .hero__inst-cap { grid-column: 2; }
   .hero__inst-val { font-size: clamp(1.6rem, 2.2vw, 2.1rem); color: var(--ink); transition: color var(--dur) var(--ease); }
-  .hero__inst-cap { font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); line-height: 1.4; text-wrap: balance; }
+  .hero__inst-cap { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); line-height: 1.4; text-wrap: balance; }
   /* narrower screens: the four results sit beneath the actions as a two-by-two readout. After the base
      instrument rules on purpose: same specificity, so this must come later or the numbers overprint captions */
   @media (max-width: 1099px) {
@@ -206,6 +209,7 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
     .hero__instruments li:nth-last-child(-n + 2) { border-bottom: 1px solid var(--rule); }
     .hero__instruments a { grid-template-columns: minmax(0, 1fr); padding: 10px 0; }
     .hero__inst-idx { display: none; }
+    .hero__inst-co, .hero__inst-val, .hero__inst-cap { grid-column: 1; }
   }
   .hero__kicker { margin-bottom: clamp(22px, 3vw, 34px); color: var(--alpenglow); }
   .hero__kicker::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--alpenglow); vertical-align: middle; margin-right: 12px; }
@@ -277,7 +281,7 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .final__line a { border-bottom: 1px solid var(--rule-strong); padding-bottom: 2px; }
   .final__line a:hover { color: var(--venus); border-color: var(--rule-glow); }
   .final__actions { display: grid; justify-items: center; gap: 22px; margin-top: 14px; max-width: 100%; }
-  .final__mail { min-height: 48px; font-size: clamp(0.8125rem, 4.1vw, 0.9375rem); padding-inline: clamp(10px, 5vw, 20px); letter-spacing: 0.02em; text-transform: none; font-stretch: 100%; font-weight: 500; background: #d6dae3; border-color: #d6dae3; color: #0b0f1c; }
+  .final__mail { min-height: 48px; font-size: clamp(0.8125rem, 4.1vw, 0.9375rem); padding-inline: clamp(10px, 5vw, 20px); letter-spacing: 0.02em; text-transform: none; font-stretch: 100%; font-weight: 500; background: #d6dae3; border-color: #d6dae3; color: #0b0f1c; white-space: normal; overflow-wrap: anywhere; max-width: 100%; text-align: center; }
   .final__mail:hover { background: var(--ink); color: #0b0f1c; border-color: var(--ink); }
   .final__more { display: flex; flex-wrap: wrap; justify-content: center; column-gap: clamp(14px, 5vw, 24px); row-gap: 12px; }
   .final__more .rule-link { color: var(--ink-2); }

@@ -13,6 +13,9 @@ const browser = await puppeteer.launch({
   args: ['--window-size=1600,1000', '--hide-scrollbars', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
   defaultViewport: { width: 1600, height: 1000, deviceScaleFactor: 1 },
 });
+// every page blocks PostHog: the site loads it wherever a key is set, localhost included, and QA must never reach its analytics
+const openPage = browser.newPage.bind(browser);
+browser.newPage = async () => { const p = await openPage(); await p.setRequestInterception(true); p.on('request', (r) => (/posthog/i.test(r.url()) ? r.abort() : r.continue())); return p; };
 const errors = [];
 async function run(viewport, tag) {
   const page = await browser.newPage();

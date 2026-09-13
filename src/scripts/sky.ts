@@ -101,8 +101,8 @@ void main(){
   vec2 muv = vec2((ra+PI)/(2.0*PI), (PI*0.5-dec)/PI);
   float mw = texture2D(uMWTex, muv).r;
   // the bake is soft: keep its core, drop its haze, and break it into a fine grain fixed to the sky
-  mw = smoothstep(0.06, 0.8, mw) * mix(0.4, 1.3, h12(floor(muv * vec2(4096.0, 2048.0))));
-  col += vec3(0.62,0.70,0.94) * mw * uMW * 0.85 * smoothstep(-0.02, 0.28, alt);
+  mw = smoothstep(0.03, 0.45, mw) * mix(0.4, 1.3, h12(floor(muv * vec2(4096.0, 2048.0))));
+  col += vec3(0.62,0.70,0.94) * mw * uMW * 1.0 * smoothstep(-0.02, 0.28, alt);
   // dither (kills banding on 8-bit displays)
   col += (hash(gl_FragCoord.xy + uSeed) - 0.5) * (1.6/255.0);
   gl_FragColor = vec4(col, 1.0);
@@ -117,8 +117,8 @@ void main(){
   if (c.z <= 0.02 || h.z < -0.02) { gl_Position = vec4(2.0,2.0,2.0,1.0); gl_PointSize = 0.0; vI = 0.0; vCol = vec3(0.0); vBig = 0.0; vSize = 0.0; return; }
   gl_Position = vec4(c.x/c.z/uTan.x, c.y/c.z/uTan.y, 0.0, 1.0);
   float alt = asin(clamp(h.z,-1.0,1.0));
-  float vis = 1.0 - smoothstep(uLimMag - 1.3, uLimMag, aMag);
-  float I = pow(10.0, -0.4*(aMag - 2.3)*0.55);
+  float vis = 1.0 - smoothstep(uLimMag - 0.8, uLimMag, aMag);
+  float I = pow(10.0, -0.4*(aMag - 2.3)*mix(0.55, 0.45, step(3.0, aMag)));   // a gentler curve for the faint majority
   I *= mix(0.3, 1.0, smoothstep(0.0, 0.25, alt));           // extinction
   // scintillation, not a pulse: three incommensurate tones (about 1.5 to 7 Hz) under a slow
   // gust of seeing, strongest through the thick air near the horizon
@@ -150,7 +150,7 @@ void main(){
   vec2 p = gl_PointCoord*2.0-1.0; float d = dot(p,p);
   float core = exp(-d*5.5);
   // faint stars: a Gaussian of about 0.65 px in device pixels, the same total light, whatever the sub-pixel position
-  if (vBig < 0.15) { vec2 q = (gl_PointCoord - 0.5) * vSize; core = 0.215 * exp(-dot(q, q) / (0.845 * uPx * uPx)); }
+  if (vBig < 0.15) { vec2 q = (gl_PointCoord - 0.5) * vSize; core = 0.40 * exp(-dot(q, q) / (1.1 * uPx * uPx)); }
   float halo = exp(-sqrt(d)*2.6) * 0.55 * vBig * vBig;
   float a = vI * (core + halo);
   if (a < 0.003) discard;
@@ -385,6 +385,8 @@ export function initSidereal(opts: Opts) {
   const moonState: { vis: number; alt: number; rect: { left: number; right: number; top: number; bottom: number } | null } = { vis: 0, alt: -90, rect: null };
   let readingCx = -1;                     // reading pages: moon centre in the right margin (fraction of width), -1 when it doesn't fit
   let readingR = 0;                       // reading pages: moon radius in CSS px
+  let bandCss = 0, labelDocTop = Infinity; // home page: the header band's height and the contact label's page position, for the moon's fit
+  let moonSummitFor: object | null = null, moonSummitCol = -1;   // the summit the moon rises behind, per viewport mapping
   let idleSec = 0;                        // real seconds since load (sky wheels)
   let scrollT = 0;                        // 0..1 page progress
   const isClock = opts.mode === 'clock';
@@ -419,6 +421,11 @@ export function initSidereal(opts: Opts) {
       const margin = vw - contentRight;
       readingR = Math.min(40, (margin - 96) / 2);             // at least 48px of air on each side
       readingCx = readingR >= 28 ? (contentRight + margin / 2) / vw : -1;
+    } else {
+      const hd = document.querySelector('.hd');
+      bandCss = hd ? parseFloat(getComputedStyle(hd, '::before').height) || 0 : 0;
+      const label = document.querySelector<HTMLElement>('.final__label');
+      labelDocTop = label ? layoutTop(label) : Infinity;
     }
   }
 
@@ -506,6 +513,16 @@ export function initSidereal(opts: Opts) {
     const sx = 1 / plateW;
     const ox = clamp(0.42 - 0.42 * sx, 0, 1 - sx);
     return (mapCache = { sx, sy: 1, ox, oy: 0 });
+  }
+  // the moon rises behind the highest summit on the right of the frame: a real moonrise at 28°N is east of this
+  // north-north-east view, so right of centre. Portrait screens, and a frame with no summit there, keep the highest in frame.
+  function moonSummit() {
+    const m = rangeMap();
+    if (moonSummitFor === m) return moonSummitCol;
+    moonSummitFor = m;
+    const right = aspect >= 0.8 ? peaks.filter((c) => { const vx = (c / skyline.length - m.ox) / m.sx; return vx >= 0.66 && vx <= 0.9; }) : [];
+    moonSummitCol = right.length ? right.slice().sort((a, b) => skyline[a] - skyline[b])[0] : (summitCol >= 0 ? summitCol : peaks[0]);
+    return moonSummitCol;
   }
   function emit(dt: number, strength: number, wind: number) {
     if (!peaks.length || strength <= 0.01) return;
@@ -601,12 +618,19 @@ export function initSidereal(opts: Opts) {
     let moonR = (isClock ? clamp(W * 0.045, 44 * dpr, 92 * dpr) : Math.max(readingR, 0) * dpr) / W; // half-width as a fraction of width
     moonState.rect = null;
     if (texMoon && moonVis > 0.001 && peaks.length) {
-      const col = summitCol >= 0 ? summitCol : peaks[0];
+      const col = moonSummit();
       const u = col / skyline.length, v = 1 - skyline[col] / rangeH;
       const px = (u - m.ox) / m.sx, py = (v - m.oy) / m.sy - (isClock ? scrollT * 0.03 : 0);   // 0..1 viewport, parallax included
-      const rx = moonR, ry = moonR * aspect;
+      let rx = moonR, ry = moonR * aspect;
       const shortLand = aspect >= 0.8 && H / dpr < 500;   // landscape phones: keep the disc right of the centred contact text
-      const cx = isClock ? (aspect < 0.8 ? 0.72 : shortLand ? 0.86 : clamp(px + rx * 0.15, 0.2, 0.8)) : readingCx, cy = isClock ? py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2 : 0.78 + Math.min(0.03, idleSec * 5e-5);
+      let cx = isClock ? (aspect < 0.8 ? 0.72 : shortLand ? 0.86 : clamp(px + rx * 0.15, 0.2, 0.86) + 0.05 * rise) : readingCx, cy = isClock ? py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2 : 0.78 + Math.min(0.03, idleSec * 5e-5);
+      if (isClock) {
+        // clear of the header band, and on portrait screens above the contact label: the disc shrinks to fit, or sets
+        const vhCss = H / dpr, top = bandCss + 8, bottom = aspect < 0.8 ? labelDocTop - window.scrollY - 16 : vhCss;
+        const rCss = ry * vhCss, fit = Math.min(rCss, (bottom - top) / 2);
+        if (fit < 20) { rx = ry = 0; moonState.vis = 0; }
+        else { const k = fit / rCss; rx *= k; ry *= k; cy = clamp(cy, 1 - bottom / vhCss + ry, 1 - top / vhCss - ry); }
+      }
       { const vwCss = W / dpr, vhCss = H / dpr; moonState.rect = { left: (cx - rx) * vwCss, right: (cx + rx) * vwCss, top: (1 - cy - ry) * vhCss, bottom: (1 - cy + ry) * vhCss }; }
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(pSprite); bindUnit(pSprite);

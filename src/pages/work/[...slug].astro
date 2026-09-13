@@ -46,9 +46,6 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
       )}
 
       <div class="case__grid">
-        <div class="prose">   {/* long-form reading never fades in */}
-          <Content />
-        </div>
         <aside class="case__aside rv" aria-label="On this page">
           {toc.length > 0 && (
             <nav aria-label="Contents">
@@ -65,6 +62,9 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
             </div>
           )}
         </aside>
+        <div class="prose">   {/* long-form reading never fades in */}
+          <Content />
+        </div>
       </div>
 
       <footer class="case__foot rv">
@@ -80,21 +80,25 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
     </div>
   </article>
   <script>
-    // contents: mark the section being read, the last heading above a reading line 30% down the view
+    // contents: mark the section being read
     const tocLinks = new Map([...document.querySelectorAll<HTMLAnchorElement>('.toc a[href^="#"]')].map((a) => [decodeURIComponent(a.getAttribute('href')!.slice(1)), a] as const));
     const headings = [...document.querySelectorAll<HTMLElement>('.prose > h2[id]')].filter((h) => tocLinks.has(h.id));
-    if (headings.length && 'IntersectionObserver' in window) {
-      let current = '';
+    // the reading line sits 30% down the view and slides to the bottom over the last 0.7 screen, so a short closing
+    // section still gets its turn; a click marks its own entry until the reader scrolls again
+    if (headings.length) {
+      let current = '', pinned = '';
+      const mark = (id: string) => { if (id === current) return; current = id; tocLinks.forEach((a, key) => (key === id ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current'))); };
       const update = () => {
-        const line = window.innerHeight * 0.3;
+        if (pinned) return mark(pinned);
+        const rest = document.documentElement.scrollHeight - innerHeight - scrollY;
+        const line = innerHeight * (0.3 + 0.7 * Math.min(1, Math.max(0, 1 - rest / (innerHeight * 0.7))));
         let id = headings[0].id;
         for (const h of headings) if (h.getBoundingClientRect().top <= line) id = h.id;
-        if (id === current) return;
-        current = id;
-        tocLinks.forEach((a, key) => (key === id ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current')));
+        mark(id);
       };
-      const io = new IntersectionObserver(update, { rootMargin: '0px 0px -70% 0px' });
-      headings.forEach((h) => io.observe(h));
+      tocLinks.forEach((a, key) => a.addEventListener('click', () => { pinned = key; mark(key); }));
+      for (const ev of ['wheel', 'touchstart', 'keydown']) addEventListener(ev, () => { pinned = ''; }, { passive: true });
+      addEventListener('scroll', update, { passive: true });
       update();
     }
   </script>

@@ -514,7 +514,7 @@ describe('3 · the world behaves', () => {
 
   test('the moon never sits behind a line of text, from Writing to the end, even after a long visit', { timeout: 900000 }, async () => {
     const problems = [];
-    const sizes = [DESKTOP, { name: 'desktop 1920', width: 1920, height: 1080 }, { name: 'laptop 1440', width: 1440, height: 900 }, { name: 'laptop 1366', width: 1366, height: 768 }, LAPTOP, { name: 'laptop 1280x720', width: 1280, height: 720 }, { name: 'tablet 768', width: 768, height: 1024, dpr: 2, mobile: true }, PHONE, { name: 'phone landscape 667x375', width: 667, height: 375, dpr: 2, mobile: true }, { name: 'phone landscape 844x390', width: 844, height: 390, dpr: 2, mobile: true }];
+    const sizes = [DESKTOP, { name: 'desktop 1920', width: 1920, height: 1080 }, { name: 'laptop 1440', width: 1440, height: 900 }, { name: 'laptop 1366', width: 1366, height: 768 }, LAPTOP, { name: 'laptop 1280x720', width: 1280, height: 720 }, { name: 'tablet 768', width: 768, height: 1024, dpr: 2, mobile: true }, PHONE, { name: 'phone landscape 667x375', width: 667, height: 375, dpr: 2, mobile: true }, { name: 'phone landscape 844x390', width: 844, height: 390, dpr: 2, mobile: true }, { name: 'phone 375x553', width: 375, height: 553, dpr: 2, mobile: true }, { name: 'phone 320x568', width: 320, height: 568, dpr: 2, mobile: true }];
     for (const vp of sizes) {
       const page = await open('/', vp);
       try {
@@ -542,14 +542,14 @@ describe('3 · the world behaves', () => {
               const range = document.createRange();
               range.selectNodeContents(n);
               for (const q of range.getClientRects()) {
-                if (!q.width || q.bottom < band) continue;   // text passing under the header band is hidden anyway
+                if (!q.width) continue;
                 const dx = Math.max(q.left - cx, 0, cx - q.right), dy = Math.max(q.top - cy, 0, cy - q.bottom);
                 if (Math.hypot(dx, dy) < rad + pad) { hits.push(n.textContent.trim().slice(0, 40)); break; }
               }
             }
-            return hits.length ? { hits, moon: [m.left, m.top, m.right, m.bottom].map(Math.round) } : null;
+            return hits.length || m.top < band - 1 ? { hits, underBand: m.top < band - 1, moon: [m.left, m.top, m.right, m.bottom].map(Math.round) } : null;
           });
-          if (r) { problems.push(`${vp.name} at scrollY ${y}: moon at ${r.moon.join(', ')} behind "${r.hits.slice(0, 2).join('", "')}"`); break; }
+          if (r) { problems.push(`${vp.name} at scrollY ${y}: moon at ${r.moon.join(', ')}${r.underBand ? ' reaches under the header band' : ''}${r.hits.length ? ` behind "${r.hits.slice(0, 2).join('", "')}"` : ''}`); break; }
         }
       } finally { await page.close(); }
     }
@@ -1193,28 +1193,86 @@ describe('6 · accessible structure and navigation', () => {
     } finally { await page.close(); }
   });
 
-  test('the case-study contents mark the section being read', { timeout: 60000 }, async () => {
-    const page = await open(CASE, DESKTOP, { reduce: true });
+  test('the case-study contents follow every section to the last, and a click marks its own entry', { timeout: 300000 }, async () => {
+    const problems = [];
+    for (const st of STUDIES) {
+      for (const vp of [DESKTOP, { name: 'desktop 1920', width: 1920, height: 1080 }]) {
+        const page = await open(`/work/${st.slug}`, vp, { reduce: true });
+        try {
+          const ids = await page.evaluate(() => [...document.querySelectorAll('.prose > h2[id]')].filter((h) => document.querySelector(`.toc a[href="#${CSS.escape(h.id)}"]`)).map((h) => h.id));
+          const marked = () => page.evaluate(() => [...document.querySelectorAll('.toc a[aria-current]')].map((a) => a.getAttribute('href').slice(1)));
+          for (const id of ids.slice(0, -1)) {
+            // reading down; sections in the last screen are judged at the page end instead
+            const reachable = await page.evaluate((id) => {
+              const h = document.getElementById(id), y = h.getBoundingClientRect().top + scrollY - innerHeight * 0.2;
+              if (y > document.documentElement.scrollHeight - innerHeight * 1.7) return false;
+              window.scrollTo(0, y); return true;
+            }, id);
+            if (!reachable) continue;
+            await wait(250);
+            const m = await marked();
+            if (m.length !== 1 || m[0] !== id) problems.push(`${st.slug} @ ${vp.name}: reading "${id}" marks ${m.join(', ') || 'nothing'}`);
+          }
+          await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+          await wait(300);
+          const end = await marked();
+          if (end.length !== 1 || end[0] !== ids.at(-1)) problems.push(`${st.slug} @ ${vp.name}: at the end the contents mark ${end.join(', ') || 'nothing'}, not "${ids.at(-1)}"`);
+          await page.click(`.toc a[href="#${ids[0]}"]`);
+          await wait(400);
+          const clicked = await marked();
+          if (clicked.length !== 1 || clicked[0] !== ids[0]) problems.push(`${st.slug} @ ${vp.name}: clicking "${ids[0]}" marks ${clicked.join(', ') || 'nothing'}`);
+        } finally { await page.close(); }
+      }
+    }
+    assert.deepEqual(problems, []);
+  });
+
+  test('the nav shows the reader where they are', { timeout: 60000 }, async () => {
+    const page = await open('/work', DESKTOP, { reduce: true });
     try {
-      const target = await page.evaluate(() => {
-        const hs = [...document.querySelectorAll('.prose > h2[id]')].filter((h) => document.querySelector(`.toc a[href="#${CSS.escape(h.id)}"]`));
-        const h = hs[Math.min(1, hs.length - 1)];
-        window.scrollTo(0, h.getBoundingClientRect().top + scrollY - innerHeight * 0.2);
-        return h.id;
+      const s = await page.evaluate(() => {
+        const cur = document.querySelector('.hd__nav a[aria-current]'), other = document.querySelector('.hd__nav a:not([aria-current]):not(.hd__cv)');
+        return { current: cur?.textContent.trim(), differs: !!cur && !!other && getComputedStyle(cur).color !== getComputedStyle(other).color };
       });
-      await wait(700);
-      const marked = await page.evaluate(() => [...document.querySelectorAll('.toc a[aria-current]')].map((a) => a.getAttribute('href')));
-      assert.deepEqual(marked, [`#${target}`]);
+      assert.deepEqual(s, { current: 'Work', differs: true });
     } finally { await page.close(); }
+  });
+
+  test('with WCAG text-spacing overrides no text is cut off at 320px', { timeout: 120000 }, async () => {
+    const bad = [];
+    for (const route of ['/', CASE]) {
+      const page = await open(route, { name: 'phone 320', width: 320, height: 568, dpr: 2, mobile: true }, { reduce: true });
+      try {
+        await page.addStyleTag({ content: '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }' });
+        await wait(300);
+        // the page clips sideways overflow (overflow-x: clip), so it never scrolls: look for text cut off at the edges instead
+        const cut = await page.evaluate(() => {
+          const vw = document.documentElement.clientWidth, out = [];
+          const skip = (el) => { for (let e = el; e && e !== document.body; e = e.parentElement) { const c = getComputedStyle(e); if (c.visibility === 'hidden' || /auto|scroll/.test(c.overflowX) || e.matches('.sr-only, .skip-link, [aria-hidden="true"]')) return true; } return false; };
+          const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+          while (walker.nextNode()) {
+            const n = walker.currentNode;
+            if (!/\S/.test(n.textContent) || !n.parentElement || n.parentElement.closest('script, style, noscript') || skip(n.parentElement)) continue;
+            const range = document.createRange();
+            range.selectNodeContents(n);
+            for (const q of range.getClientRects()) if (q.width && (q.right > vw + 1 || q.left < -1)) { out.push(`"${n.textContent.trim().slice(0, 30)}" spans ${Math.round(q.left)} to ${Math.round(q.right)}px of ${vw}`); break; }
+          }
+          return out;
+        });
+        for (const c of cut) bad.push(`${route}: ${c}`);
+      } finally { await page.close(); }
+    }
+    assert.deepEqual(bad, []);
   });
 
   test('keyboard focus is visible at every stop along the Tab order, never inside an invisible block', { timeout: 420000 }, async () => {
     const bad = [];
-    for (const [route, vp] of [['/', DESKTOP], ['/', { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }], [CASE, DESKTOP], ['/', PHONE]]) {
+    for (const [route, vp] of [['/', DESKTOP], ['/', { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }], [CASE, DESKTOP], ['/', PHONE], [CASE, PHONE]]) {
       const page = await open(route, vp);
       try {
         await ready(page);
         const seen = new Set();
+        let lastY = null, lastX = null;
         for (let i = 0; i < 90; i++) {
           await page.keyboard.press('Tab');
           await wait(60);
@@ -1227,12 +1285,17 @@ describe('6 · accessible structure and navigation', () => {
               label: `${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ''} ${el.getAttribute('href') || el.textContent.trim().slice(0, 32)}`,
               ring: (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2) || cs.boxShadow !== 'none',
               opacity: (() => { let o = 1; for (let e = el; e && e.nodeType === 1; e = e.parentElement) o *= parseFloat(getComputedStyle(e).opacity); return o; })(),
+              docY: el.closest('.hd, .skip-link') ? null : Math.round(el.getBoundingClientRect().top + scrollY),
+              docX: Math.round(el.getBoundingClientRect().left),
             };
           });
           if (!f || seen.has(f.index)) break;   // back round to the start
           seen.add(f.index);
           if (!f.ring) bad.push(`${route} @ ${vp.name}: ${f.label}`);
           if (f.opacity < 0.98) bad.push(`${route} @ ${vp.name}: ${f.label} takes focus at opacity ${f.opacity.toFixed(2)}`);
+          // Tab order follows the layout: within one column, focus never jumps back up the page
+          if (f.docY !== null && lastY !== null && Math.abs(f.docX - lastX) < 200 && f.docY < lastY - 120) bad.push(`${route} @ ${vp.name}: Tab jumps back up to ${f.label} (${lastY} → ${f.docY}px)`);
+          if (f.docY !== null) { lastY = f.docY; lastX = f.docX; }
         }
         if (seen.size < 5) bad.push(`${route} @ ${vp.name}: only ${seen.size} Tab stops reached`);
       } finally { await page.close(); }
