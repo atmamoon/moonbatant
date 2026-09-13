@@ -246,23 +246,23 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .ledger__entry:last-child { border-bottom: 1px solid var(--rule); }
   .ledger__head { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; margin-bottom: 26px; max-width: 74ch; }   /* dates beside the highlights, not stranded at the far edge */
   .ledger__company { font-size: clamp(1.5rem, 2.4vw, 2rem); line-height: 1.1; color: var(--ink); text-shadow: var(--ink-shadow); }
-  .ledger__role { font-family: var(--font-display); font-size: var(--text-ui); color: var(--ink-2); margin-top: 8px; }
+  .ledger__role { font-family: var(--font-display); font-size: var(--text-ui); color: var(--ink); margin-top: 8px; }   /* what a recruiter scans for: full ink */
   .ledger__meta { display: grid; justify-items: end; gap: 6px; text-align: right; white-space: nowrap; padding-top: 6px; }
-  .ledger__meta .t-label { color: var(--ink-2); }
-  .ledger__loc { color: var(--ink-2) !important; }
+  .ledger__meta .t-label { color: var(--ink); font-size: 0.75rem; }
+  .ledger__loc { color: var(--ink) !important; }
   .ledger__list { list-style: none; display: grid; gap: 14px; max-width: 74ch; }
   .ledger__list li { display: grid; grid-template-columns: 58px minmax(0, 1fr); column-gap: 14px; font-family: var(--font-serif); font-size: 1.08rem; line-height: 1.55; color: var(--ink); }
   .ledger__n { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; color: var(--ink-2); padding-top: 0.45em; font-variant-numeric: tabular-nums; text-shadow: var(--instrument-shadow); }
 
   /* ── 05 education ── */
-  .edu { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; flex-wrap: wrap; padding-bottom: 28px; border-bottom: 1px solid var(--rule); max-width: 760px; }
+  .edu { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; flex-wrap: wrap; padding-bottom: 28px; border-bottom: 1px solid var(--rule); max-width: 960px; }
   .edu__degree { font-family: var(--font-display); font-size: var(--text-ui); color: var(--ink-2); }
   .edu__period { color: var(--ink-2); }
 
   /* ── 06 writing ── */
   .wl { list-style: none; display: grid; max-width: 960px; }
   #writing .ch__head { max-width: 960px; }   /* the writing measure: each outlet sits near its title, not across the sky */
-  #education .ch__head { max-width: 760px; }   /* the heading's rule ends where the degree row's does */
+  #education .ch__head { max-width: 960px; }   /* the heading's rule ends where the degree row's, and Writing's below, do */
   .wl li:first-child .wl__row { border-top: 0; }
   .wl__row { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto 24px; align-items: start; column-gap: 18px; padding: 22px 0; border-top: 1px solid var(--rule); transition: border-color var(--dur) var(--ease); }
   .wl li:last-child .wl__row { border-bottom: 1px solid var(--rule); }

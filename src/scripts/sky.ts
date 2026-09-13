@@ -71,6 +71,9 @@ uniform vec3 uZenith, uMid, uHorizon, uGlow, uBelt, uShadow, uAirglow;
 uniform float uGlowK, uBeltK, uSunAz, uMW, uSeed;
 uniform sampler2D uMWTex;
 float h12(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }   // hash without sine
+// value noise on a lattice that wraps every n cells, so the sky closes at 24h of right ascension
+float vnoise(vec2 p, vec2 n){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); vec2 j = mod(i + 1.0, n); i = mod(i, n);
+  return mix(mix(h12(i), h12(vec2(j.x, i.y)), f.x), mix(h12(vec2(i.x, j.y)), h12(j), f.x), f.y); }
 const float PI = 3.141592653589793;
 float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233)))*43758.5453); }
 void main(){
@@ -100,9 +103,13 @@ void main(){
   float ra = atan(e.y, e.x); float dec = asin(clamp(e.z,-1.0,1.0));
   vec2 muv = vec2((ra+PI)/(2.0*PI), (PI*0.5-dec)/PI);
   float mw = texture2D(uMWTex, muv).r;
-  // the bake is soft: lift its core, with only a faint grain fixed to the sky (a strong one reads as digital static)
-  mw = smoothstep(0.0, 0.55, mw) * mix(0.9, 1.06, h12(floor(muv * vec2(4096.0, 2048.0))));
-  col += vec3(0.62,0.70,0.94) * mw * uMW * 1.0 * smoothstep(-0.02, 0.28, alt);
+  // the bake is a stack of soft isophote plateaus: value noise fixed to the sky (0.7° cells) breaks it into star clouds
+  // and dark lanes, and the densest light warms toward the core's colour
+  vec2 P = vec2(512.0, 256.0);
+  mw = pow(clamp(mw / 0.8, 0.0, 1.0), 1.3);
+  mw *= 0.5 + 0.5 * vnoise(muv * P, P) * (0.7 + 0.3 * vnoise(muv * 3.0 * P, 3.0 * P));
+  mw *= 1.0 - 0.45 * smoothstep(0.35, 0.7, mw) * smoothstep(0.55, 0.8, vnoise(muv * 0.5 * P, 0.5 * P));
+  col += mix(vec3(0.55, 0.63, 0.92), vec3(0.90, 0.88, 0.84), mw) * mw * uMW * 1.6 * smoothstep(-0.02, 0.28, alt);
   // dither (kills banding on 8-bit displays)
   col += (hash(gl_FragCoord.xy + uSeed) - 0.5) * (1.6/255.0);
   gl_FragColor = vec4(col, 1.0);
@@ -212,13 +219,19 @@ void main(){
 const FS_FOG = `
 precision mediump float;
 varying vec2 vUv;
-uniform sampler2D uTex; uniform float uOffset, uAlpha, uY0, uY1, uRepeat; uniform vec3 uTint;
+uniform sampler2D uTex; uniform float uOffset, uAlpha, uY0, uY1, uRepeat, uUnlit; uniform vec3 uTint, uRim;
 void main(){
   float band = smoothstep(uY0, uY0 + 0.1, vUv.y) * (1.0 - smoothstep(uY1 - 0.12, uY1, vUv.y));
-  vec4 fc = texture2D(uTex, vec2(vUv.x*uRepeat + uOffset, 1.0 - (vUv.y - uY0)/(uY1-uY0)));
-  float l = fc.a * max(fc.r, 0.6) * smoothstep(0.0, 0.12, fc.a) * 1.15;   // density in alpha, structure in luminance; the faint haze around each cloud is cut, so it keeps an edge without a flat top
-  float a = clamp(l * band * uAlpha * 2.6, 0.0, 0.85);
-  gl_FragColor = vec4(uTint*a, a);
+  vec2 st = vec2(vUv.x*uRepeat + uOffset, 1.0 - (vUv.y - uY0)/(uY1-uY0));
+  vec4 fc = texture2D(uTex, st);
+  float l = fc.a * max(fc.r, 0.6) * smoothstep(0.0, 0.12, fc.a) * 1.15;   // density in alpha, structure in luminance; the faint haze around each cloud is cut
+  float a = clamp(l * band * uAlpha * 2.6, 0.0, 0.7);
+  // form: the luminance lights the body unevenly, and the edge facing the low sun (left, below) catches its glow
+  vec3 c = uTint * mix(0.72, 1.12, smoothstep(0.35, 0.95, fc.r));
+  float toSun = texture2D(uTex, st + vec2(-0.004, 0.006)).a;
+  c += uRim * clamp(fc.a - toSun, 0.0, 1.0) * 1.5;
+  // unlit, on a moonless night, a cloud gives no light of its own: it only dims the sky behind it and keeps that sky's gradient
+  gl_FragColor = vec4(c * a * (1.0 - uUnlit), a * mix(1.0, 0.55, uUnlit));
 }`;
 
 // The camera's graduated filters, multiplied into the frame (dst *= keep): the CSS left grad
@@ -265,11 +278,14 @@ function loadTex(gl: WebGLRenderingContext, url: string, opts: { repeat?: boolea
     const img = new Image();
     img.onload = async () => {
       try { await img.decode?.(); } catch { /* upload anyway */ }
+      // a bitmap is prepared off the main thread where the browser can, so the 4096px plate's upload doesn't stall a scroll
+      const src: TexImageSource = 'createImageBitmap' in window ? await createImageBitmap(img, { premultiplyAlpha: opts.premultiply ? 'premultiply' : 'none' }).catch(() => img) : img;
       const t = gl.createTexture()!;
       gl.bindTexture(gl.TEXTURE_2D, t);
-      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, opts.premultiply ? 1 : 0);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, src === img && opts.premultiply ? 1 : 0);   // a bitmap carries its own premultiplication
       const fmt = opts.lum ? gl.LUMINANCE_ALPHA : gl.RGBA;     // masks: 2 channels instead of 4
-      gl.texImage2D(gl.TEXTURE_2D, 0, fmt, fmt, gl.UNSIGNED_BYTE, img);
+      gl.texImage2D(gl.TEXTURE_2D, 0, fmt, fmt, gl.UNSIGNED_BYTE, src);
+      if (src !== img) (src as ImageBitmap).close();
       const wrap = opts.repeat ? gl.REPEAT : gl.CLAMP_TO_EDGE;
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap);
@@ -330,7 +346,7 @@ export function initSidereal(opts: Opts) {
     contextLost = true;
     root.classList.remove('webgl', 'range-ready'); root.classList.add('no-webgl');
     root.dataset.phase = 'night';
-    document.querySelectorAll<HTMLElement>('[data-chapter]').forEach((el) => { el.style.opacity = ''; });
+    document.querySelectorAll<HTMLElement>('[data-chapter]').forEach((el) => { el.style.opacity = ''; el.style.willChange = ''; });
   };
   canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); fallBack(); });
   // locations are immutable after link — look each up once
@@ -407,12 +423,14 @@ export function initSidereal(opts: Opts) {
   const moonState: { vis: number; alt: number; rect: { left: number; right: number; top: number; bottom: number } | null } = { vis: 0, alt: -90, rect: null };
   let readingCx = -1;                     // reading pages: moon centre in the right margin (fraction of width), -1 when it doesn't fit
   let readingR = 0;                       // reading pages: moon radius in CSS px
+  let contactBox: { left: number; right: number; top: number; bottom: number } | null = null;   // home page: where the contact text's lines sit (CSS px, page coordinates)
   let bandCss = 0, labelDocTop = Infinity; // the header band's height (every page) and the home contact label's page position, for the moon's fit
   let moonSummitFor: object | null = null, moonSummitCol = -1;   // the summit the moon rises behind, per viewport mapping
   let idleSec = 0;                        // real seconds since load (sky wheels)
   let scrollT = 0;                        // 0..1 page progress
   const isClock = opts.mode === 'clock';
   let chapters: { el: HTMLElement; sun: number; center: number; top: number; height: number; pad: number }[] = [];
+  let navChapter = '';                    // the chapter the home nav marks as being read
   let docH = 1, vh = window.innerHeight;
 
   function resize() {
@@ -446,6 +464,21 @@ export function initSidereal(opts: Opts) {
     } else {
       const label = document.querySelector<HTMLElement>('.final__label');
       labelDocTop = label ? layoutTop(label) : Infinity;
+      // the extent of the contact chapter's actual lines of text (not its full-width boxes), for the moon's rest
+      contactBox = null;
+      const contact = document.getElementById('contact');
+      if (contact) {
+        let l = Infinity, r = -Infinity, t = Infinity, b = -Infinity;
+        const walker = document.createTreeWalker(contact, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) {
+          const n = walker.currentNode;
+          if (!/\S/.test(n.textContent || '')) continue;
+          const range = document.createRange();
+          range.selectNodeContents(n);
+          for (const q of range.getClientRects()) { if (!q.width) continue; l = Math.min(l, q.left); r = Math.max(r, q.right); t = Math.min(t, q.top + window.scrollY); b = Math.max(b, q.bottom + window.scrollY); }
+        }
+        if (r > l) contactBox = { left: l, right: r, top: t, bottom: b };
+      }
     }
     const hd = document.querySelector('.hd');
     bandCss = hd ? parseFloat(getComputedStyle(hd, '::before').height) || 0 : 0;
@@ -464,7 +497,7 @@ export function initSidereal(opts: Opts) {
       const bottom = c.top + c.height - s;              // viewport y of the chapter's end
       const o = clamp((bottom - 96) / (vh * 0.12), 0, 1);
       const v = o < 0.995 ? o.toFixed(2) : '';
-      if ((c.el.style.opacity || '') !== v) c.el.style.opacity = v;
+      if ((c.el.style.opacity || '') !== v) { c.el.style.opacity = v; c.el.style.willChange = v ? 'opacity' : ''; }   // its own layer while it fades: no repaint per frame
     }
   }
   function readScroll() {
@@ -475,6 +508,10 @@ export function initSidereal(opts: Opts) {
     // band (its box minus its own top padding); the sun sinks only in the gaps
     // between chapters. The page bottom is always the deepest night.
     const vc = s + vh * 0.5;
+    // wayfinding: the nav marks the chapter at the centre of the view, written only when it changes
+    let at = '';
+    for (const c of chapters) if (c.top <= vc) at = c.el.id;
+    if (at !== navChapter) { navChapter = at; document.querySelectorAll<HTMLAnchorElement>('.hd a[href^="#"]').forEach((a) => (a.getAttribute('href') === `#${at}` ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current'))); }
     const bands = chapters.map((c) => ({ a: c.top + c.pad, b: c.top + c.height, sun: c.sun }));
     bands[0].a = 0;
     bands[bands.length - 1].b = Math.max(bands[bands.length - 1].b, docH + vh);
@@ -558,8 +595,8 @@ export function initSidereal(opts: Opts) {
       p.x = (u - m.ox) / m.sx * 2 - 1; p.y = (v - m.oy - (isClock ? scrollT * 0.03 : 0)) / m.sy * 2 - 1;   // follow the plate's parallax
       p.x += (Math.random() - 0.4) * 0.02; p.y += Math.random() * 0.006;
       // plumes: soft puffs, downwind and slightly up, then settling — blowing snow, not sparks
-      p.vx = (0.03 + Math.random() * 0.06) * wind; p.vy = 0.005 + Math.random() * 0.012;
-      p.max = 1.8 + Math.random() * 2.4; p.life = p.max; p.size = 3 + Math.random() * 5; p.a = (0.035 + Math.random() * 0.06) * strength;
+      p.vx = (0.25 + Math.random() * 0.4) * wind * DEG / tanX; p.vy = 0.005 + Math.random() * 0.012;   // a quarter to two-thirds of a degree a second, not timelapse speed
+      p.max = 5 + Math.random() * 4; p.life = p.max; p.size = 3 + Math.random() * 5; p.a = (0.035 + Math.random() * 0.06) * strength;
       n--;
     }
   }
@@ -568,8 +605,8 @@ export function initSidereal(opts: Opts) {
     for (const p of parts) {
       if (p.life <= 0) continue;
       p.life -= dt; const u = 1 - p.life / p.max;
-      p.vy -= 0.008 * dt; p.vx += (Math.sin(idleSec * 2.1 + p.x * 9) * 0.012) * dt; p.size += 1.6 * dt;   // puffs spread a little as they drift
-      p.x += (p.vx + wind * 0.008) * dt; p.y += p.vy * dt;
+      p.vy -= 0.008 * dt; p.vx += (Math.sin(idleSec * 2.1 + p.x * 9) * 0.012) * dt; p.size += 0.8 * dt;   // puffs spread a little as they drift
+      p.x += (p.vx + wind * 0.08 * DEG / tanX) * dt; p.y += p.vy * dt;
       const fade = Math.sin(u * Math.PI);
       ptData[k++] = p.x; ptData[k++] = p.y; ptData[k++] = p.size; ptData[k++] = p.a * fade;
     }
@@ -587,10 +624,12 @@ export function initSidereal(opts: Opts) {
     // time on the page lifts only a risen moon, and only a little: before moonrise it must never float the
     // disc up behind the text (portrait screens pin it at 72% across, where the ridge can't hide it)
     const rise = smooth(0, 1, moonUp);
-    const moonAlt = isClock ? lerp(-6.8, 11, rise) + Math.min(idleSec * 0.004, 1.5) * rise + (aspect < 0.8 ? 6 * rise : 0) : 13 + idleSec * 0.004 + (aspect < 0.8 ? 6 : 0);
+    // landscape: at the page's end the disc rests on its summit, the ridge biting its lower quarter (the Ridgemoon at rest),
+    // and time on the page lifts it clear at the moon's own 15°/h; portrait screens raise it above the contact text
+    const moonAlt = isClock ? (aspect < 0.8 ? lerp(-6.8, 11, rise) + 6 * rise : lerp(-6.8, 0.5, rise)) + Math.min(idleSec * 0.004, 1.5) * rise : 13 + idleSec * 0.004 + (aspect < 0.8 ? 6 : 0);
     // reading pages: no moon unless the right margin can hold it clear of the text (see resize)
     const moonVis = (moonAlt > -6.6 ? 1 : 0) * smooth(-14, -17, alt) * (!isClock && readingCx < 0 ? 0 : 1);
-    const moonLight = moonVis * clamp(moonAlt / 10, 0, 1);
+    const moonLight = moonVis * smooth(-3, 2, moonAlt);   // a moon resting on the ridge already lights the snow and the clouds
     moonState.vis = moonVis; moonState.alt = moonAlt;
     // sidereal time: each degree of sun altitude ≈ 4.6 min ≈ 1.15° of sky; idle at 1×
     const lst = LST0 + ((6 - alt) * 1.15 + idleSec / 240) * DEG;
@@ -637,7 +676,7 @@ export function initSidereal(opts: Opts) {
 
     // moon + halo (screen-space: rises behind the highest summit)
     const m = rangeMap();
-    let moonR = (isClock ? clamp(W * 0.045, 44 * dpr, 92 * dpr) : Math.max(readingR, 0) * dpr) / W; // half-width as a fraction of width
+    let moonR = (isClock ? (aspect < 0.8 ? clamp(W * 0.045, 44 * dpr, 92 * dpr) : clamp(W * 0.032, 36 * dpr, 64 * dpr)) : Math.max(readingR, 0) * dpr) / W; // half-width as a fraction of width
     moonState.rect = null;
     if (texMoon && moonVis > 0.001 && peaks.length) {
       const col = moonSummit();
@@ -649,6 +688,12 @@ export function initSidereal(opts: Opts) {
       if (isClock) {
         cx = aspect < 0.8 ? 0.72 : shortLand ? 0.86 : clamp(px + rx * 0.15, 0.2, 0.86) + 0.05 * rise;
         cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
+        // it rests on its summit only where that's clear of the contact text: where its column crosses the lines, it rises above them
+        if (aspect >= 0.8 && contactBox) {
+          const vwC = W / dpr, vhC = H / dpr, pad = 16, tTop = contactBox.top - window.scrollY, tBottom = contactBox.bottom - window.scrollY;
+          const l = (cx - rx) * vwC, r = (cx + rx) * vwC;
+          if (r > contactBox.left - pad && l < contactBox.right + pad && tBottom > 0 && tTop < vhC) cy = Math.max(cy, 1 - (tTop - pad) / vhC + ry);
+        }
         // clear of the header band, and on portrait screens above the contact label: the disc shrinks to fit, or sets
         const vhCss = H / dpr, top = bandCss + 8, bottom = aspect < 0.8 ? labelDocTop - window.scrollY - 16 : vhCss;
         const rCss = ry * vhCss, fit = Math.min(rCss, (bottom - top) / 2);
@@ -665,16 +710,18 @@ export function initSidereal(opts: Opts) {
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texMoon); gl.uniform1i(U(pSprite, 'uTex'), 0);
       // halo
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx * 8, cy - ry * 8, rx * 16, ry * 16);
-      gl.uniform1f(U(pSprite, 'uHalo'), 1); gl.uniform3f(U(pSprite, 'uTint'), 0.55, 0.62, 0.85); gl.uniform1f(U(pSprite, 'uAlpha'), 0.30 * moonVis * night * clamp(moonAlt / 6, 0.2, 1));
+      gl.uniform1f(U(pSprite, 'uHalo'), 1); gl.uniform3f(U(pSprite, 'uTint'), 0.55, 0.62, 0.85); gl.uniform1f(U(pSprite, 'uAlpha'), 0.30 * moonVis * night * clamp(moonAlt / 6, 0.6, 1));
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       // a tight glow hugging the disc
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx * 2.4, cy - ry * 2.4, rx * 4.8, ry * 4.8);
       gl.uniform1f(U(pSprite, 'uHalo'), 1); gl.uniform3f(U(pSprite, 'uTint'), 0.85, 0.88, 0.95); gl.uniform1f(U(pSprite, 'uAlpha'), 0.22 * moonVis * night);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       // disc — warm near the horizon, silver higher up
-      const warm = 1 - clamp(moonAlt / 6, 0, 1);
+      const warm = Math.min(0.5, 1 - clamp(moonAlt / 6, 0, 1));
+      // the warm tint changes the hue, not the brightness: even on the ridge the disc stays the brightest thing in the frame
+      const tr = lerp(0.96, 1.0, warm), tg = lerp(0.99, 0.86, warm), tb = lerp(1.04, 0.72, warm), tk = 0.987 / (0.2126 * tr + 0.7152 * tg + 0.0722 * tb);
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx, cy - ry, rx * 2, ry * 2);
-      gl.uniform1f(U(pSprite, 'uHalo'), 0); gl.uniform3f(U(pSprite, 'uTint'), lerp(0.96, 1.0, warm), lerp(0.99, 0.86, warm), lerp(1.04, 0.72, warm)); gl.uniform1f(U(pSprite, 'uAlpha'), moonVis);
+      gl.uniform1f(U(pSprite, 'uHalo'), 0); gl.uniform3f(U(pSprite, 'uTint'), tr * tk, tg * tk, tb * tk); gl.uniform1f(U(pSprite, 'uAlpha'), moonVis);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
@@ -696,7 +743,7 @@ export function initSidereal(opts: Opts) {
       gl.uniform1f(U(pRange, 'uMoonLift'), moonLight * (isClock ? 0.5 : 0.15));   // reading pages: less moonlit snow behind long text
       t3('uTint', r0.tint, r1.tint); t3('uHiTint', r0.hiTint, r1.hiTint);
       // cloud shadows, while there is sun to cast them: cloud layer A's own shape and drift
-      const shA = texFogA ? 0.44 * smooth(-2.5, 3, alt) * (motionOff() ? 0 : 1) * dbg.shadow : 0;
+      const shA = texFogA ? 0.55 * smooth(-2.5, 3, alt) * (motionOff() ? 0 : 1) * dbg.shadow : 0;
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, texFogA || texRange); gl.uniform1i(U(pRange, 'uCloud'), 1);
       gl.uniform1f(U(pRange, 'uShA'), shA);
       gl.uniform1f(U(pRange, 'uShOff'), -idleSec * dbg.speed / 128);
@@ -714,20 +761,21 @@ export function initSidereal(opts: Opts) {
     const fogK = (0.26 + 0.30 * smooth(6, -4, alt) * (1 - smooth(-9, -16, alt)) + 0.10 * night) * dbg.fog;
     const hz = mix3(s0.horizon, s1.horizon, st);
     const fogTint: V3 = [lerp(hz[0], 1, 0.35), lerp(hz[1], 1, 0.35), lerp(hz[2], 1, 0.35)];
-    // a cloud carries light only while the sky or the moon lights it: on a moonless night it is darker than the sky it hides
+    // a cloud carries light only while the sky or the moon lights it; the low sun's glow rims its sunward edge
     const unlit = smooth(-6, -14, alt) * (1 - moonLight);
-    for (let i = 0; i < 3; i++) fogTint[i] = lerp(fogTint[i], [0.010, 0.014, 0.034][i], unlit);
+    const glowK = lerp(s0.glowK, s1.glowK, st), rim = mix3(s0.glow, s1.glow, st).map((v) => v * glowK) as V3;
     const drawFog = (tex: WebGLTexture | null, off: number, a: number, y0: number, y1: number, rep: number) => {
       if (!tex) return;
       gl.useProgram(pFog); bindQuad(pFog);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(U(pFog, 'uTex'), 0);
       gl.uniform1f(U(pFog, 'uOffset'), off); gl.uniform1f(U(pFog, 'uAlpha'), a); gl.uniform1f(U(pFog, 'uY0'), y0); gl.uniform1f(U(pFog, 'uY1'), y1); gl.uniform1f(U(pFog, 'uRepeat'), rep);
       gl.uniform3f(U(pFog, 'uTint'), fogTint[0], fogTint[1], fogTint[2]);
+      gl.uniform3f(U(pFog, 'uRim'), rim[0], rim[1], rim[2]); gl.uniform1f(U(pFog, 'uUnlit'), unlit);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
-    // on a moonless night the clouds are silhouettes: denser, and drifting a little lower, across the last glow above
-    // the ridge and the starlit snow, where a dark cloud can be seen at all
-    const nightK = 1 + 3 * unlit, low = 0.15 * unlit;
+    // on a moonless night the clouds are veils: a little denser, and drifting a little lower, across the last glow above
+    // the ridge and the starlit snow, where a veil can be seen at all
+    const nightK = 1 + 0.8 * unlit, low = 0.15 * unlit;
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     // the cloud layers only ever cover their band (0.40–0.98 of the plate height, lower on a moonless night): skip the rest of the frame
     gl.enable(gl.SCISSOR_TEST); gl.scissor(0, Math.max(0, Math.floor(H * bandBase * (0.40 - low)) - 2), W, Math.ceil(H * bandBase * 0.58) + 4);
@@ -742,10 +790,10 @@ export function initSidereal(opts: Opts) {
       emit(dt, drift, wind); let n = stepParts(dt, wind);
       // satellite: a slow point crossing the dark sky
       nextSat -= dt;
-      if (!sat.on && nextSat < 0 && alt < -9) { sat = { on: true, x: -1.05, y: 0.2 + Math.random() * 0.6, vx: 0.05 + Math.random() * 0.03, vy: (Math.random() - 0.5) * 0.02, t: 0 }; nextSat = 70 + Math.random() * 90; }
+      if (!sat.on && nextSat < 0 && alt < -9 && isClock) { sat = { on: true, x: -1.05, y: 0.2 + Math.random() * 0.6, vx: (0.5 + Math.random() * 0.5) * DEG / tanX, vy: (Math.random() - 0.5) * 0.1 * DEG / tanY, t: 0 }; nextSat = 180 + Math.random() * 240; }
       if (sat.on) { sat.x += sat.vx * dt; sat.y += sat.vy * dt; if (sat.x > 1.05) sat.on = false; else if (n < NP) { ptData[n * 4] = sat.x; ptData[n * 4 + 1] = sat.y; ptData[n * 4 + 2] = 2.2; ptData[n * 4 + 3] = 0.75 * night; n++; } }
       nextMeteor -= dt;
-      if (!meteor.on && nextMeteor < 0 && alt < -14) { meteor = { on: true, x: -0.6 + Math.random() * 1.2, y: 0.3 + Math.random() * 0.6, dx: 0.9 + Math.random() * 0.6, dy: -(0.5 + Math.random() * 0.4), t: 0 }; nextMeteor = 60 + Math.random() * 120; }
+      if (!meteor.on && nextMeteor < 0 && alt < -14 && isClock) { meteor = { on: true, x: -0.6 + Math.random() * 1.2, y: 0.3 + Math.random() * 0.6, dx: (15 + Math.random() * 10) * DEG / tanX, dy: -(8 + Math.random() * 6) * DEG / tanY, t: 0 }; nextMeteor = 480 + Math.random() * 720; }   // a 15-25° streak in 0.7 s, every 8 to 20 minutes
       if (meteor.on) {
         meteor.t += dt; const life = meteor.t / 0.7;
         if (life > 1) meteor.on = false;

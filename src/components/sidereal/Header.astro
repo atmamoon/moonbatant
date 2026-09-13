@@ -7,13 +7,16 @@ const nav = [
   { href: '/#writing', label: 'Writing' },
   { href: '/#contact', label: 'Contact' },
 ];
-// on the home page chapter links are plain fragments: the engine eases them, and a query string
+// on the home page chapter links are plain fragments, Work's too (its chapter holds the same rows): the engine eases them, and a query string
 // in the address (a tagged share link) can't turn a click into a full reload
 const onHome = Astro.url.pathname === '/';
-const link = (href: string) => (onHome && href.startsWith('/#') ? href.slice(1) : href);
+const link = (href: string) => (onHome && href === '/work' ? '#work' : onHome && href.startsWith('/#') ? href.slice(1) : href);
 // the nav marks where the reader is: the page itself, or the section a case study belongs to
 const here = Astro.url.pathname.length > 1 && Astro.url.pathname.endsWith('/') ? Astro.url.pathname.slice(0, -1) : Astro.url.pathname;
-const current = (href: string) => (href.includes('#') ? undefined : here === href ? 'page' : here.startsWith(href + '/') ? 'true' : undefined);
+const current = (href: string) => {
+  if (href === '/#writing' && (here === '/writing' || here.startsWith('/writing/'))) return here === '/writing' ? 'page' : 'true';
+  return href.includes('#') ? undefined : here === href ? 'page' : here.startsWith(href + '/') ? 'true' : undefined;
+};
 ---
 <header class="hd">
   <div class="hd__inner">
@@ -107,6 +110,10 @@ const current = (href: string) => (href.includes('#') ? undefined : here === hre
     nav.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { nav.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }); });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && nav.classList.contains('open')) { nav.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); btn.focus(); }
+    });
+    // keyboard focus leaving the open menu closes it, so it never covers what focus moves on to
+    nav.addEventListener('focusout', function (e) {
+      if (nav.classList.contains('open') && !nav.contains(e.relatedTarget) && e.relatedTarget !== btn) { nav.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
     });
     document.addEventListener('click', function (e) {
       if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) { nav.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }

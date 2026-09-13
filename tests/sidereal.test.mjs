@@ -685,7 +685,7 @@ describe('3 · the world behaves', () => {
     assert.deepEqual(problems, []);
   });
 
-  test('the sky moves, slowly, at golden hour and at night', { timeout: 120000 }, async (t) => {
+  test('the sky moves, slowly: at golden hour, under the risen moon, and faintly on a moonless night', { timeout: 150000 }, async (t) => {
     const page = await open('/', DESKTOP);
     try {
       await ready(page);
@@ -693,10 +693,15 @@ describe('3 · the world behaves', () => {
       const golden = await frameDiff(page, 6000);
       await page.evaluate(() => { window.__sidereal.sun = -22; });
       await wait(2500);
-      const night = await frameDiff(page, 6000);
-      t.diagnostic(`pixels changed in 6 s: golden hour ${golden.toFixed(2)}%, night ${night.toFixed(2)}%`);
+      const moonless = await frameDiff(page, 6000);
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await wait(3500);
+      const moonlit = await frameDiff(page, 6000);
+      t.diagnostic(`pixels changed in 6 s: golden hour ${golden.toFixed(2)}%, moonlit night ${moonlit.toFixed(2)}%, moonless night ${moonless.toFixed(2)}%`);
       assert.ok(golden >= 1 && golden <= 25, `golden hour: ${golden.toFixed(2)}% of pixels changed in 6 s`);
-      assert.ok(night >= 1 && night <= 25, `night: ${night.toFixed(2)}% of pixels changed in 6 s`);
+      assert.ok(moonlit >= 1 && moonlit <= 25, `moonlit night: ${moonlit.toFixed(2)}% of pixels changed in 6 s`);
+      // a moonless night moves faintly by nature: its clouds give no light, they only dim the sky they cross
+      assert.ok(moonless >= 0.25 && moonless <= 25, `moonless night: ${moonless.toFixed(2)}% of pixels changed in 6 s`);
     } finally { await page.close(); }
   });
 
@@ -1247,6 +1252,12 @@ describe('6 · accessible structure and navigation', () => {
           await wait(400);
           const clicked = await marked();
           if (clicked.length !== 1 || clicked[0] !== ids[0]) problems.push(`${st.slug} @ ${vp.name}: clicking "${ids[0]}" marks ${clicked.join(', ') || 'nothing'}`);
+          // then scrolled away without a wheel (a scrollbar drag, find in page): the contents follow again
+          await wait(1600);
+          await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+          await wait(500);
+          const after = await marked();
+          if (after.length !== 1 || after[0] !== ids.at(-1)) problems.push(`${st.slug} @ ${vp.name}: after a click and a scroll to the end the contents mark ${after.join(', ') || 'nothing'}`);
         } finally { await page.close(); }
       }
     }
@@ -1388,6 +1399,60 @@ describe('6 · accessible structure and navigation', () => {
       await wait(1500);
       const d = await skyTime();
       assert.ok(d - c > 0.5, `the sky ran only ${(d - c).toFixed(2)}s in 1.5s after the tab came back`);
+    } finally { await page.close(); }
+  });
+
+  test('parallel hairlines end together: Education with Writing, the work list header with its rows', { timeout: 60000 }, async () => {
+    const bad = [];
+    const home = await open('/', DESKTOP, { reduce: true });
+    try {
+      const r = await home.evaluate(() => {
+        const right = (sel) => document.querySelector(sel).getBoundingClientRect().right;
+        return { 'Education rule': right('.edu'), 'Education heading': right('#education .ch__head'), 'Writing heading': right('#writing .ch__head'), 'Writing list': right('.wl') };
+      });
+      for (const [k, v] of Object.entries(r)) if (Math.abs(v - r['Writing list']) > 1) bad.push(`home: the ${k} ends at ${Math.round(v)}px, Writing's list at ${Math.round(r['Writing list'])}px`);
+    } finally { await home.close(); }
+    const work = await open('/work', DESKTOP, { reduce: true });
+    try {
+      const r = await work.evaluate(() => ({ head: document.querySelector('.page__head').getBoundingClientRect().right, row: document.querySelector('.mf__row').getBoundingClientRect().right }));
+      if (Math.abs(r.head - r.row) > 1) bad.push(`/work: the header rule ends at ${Math.round(r.head)}px, the rows at ${Math.round(r.row)}px`);
+    } finally { await work.close(); }
+    assert.deepEqual(bad, []);
+  });
+
+  test('on the home page the nav keeps the reader on the page and marks the chapter being read', { timeout: 90000 }, async () => {
+    const bad = [];
+    const page = await open('/', DESKTOP, { reduce: true });
+    try {
+      await ready(page);
+      const hrefs = await page.evaluate(() => [...document.querySelectorAll('.hd__nav a:not(.hd__cv)')].map((a) => a.getAttribute('href')));
+      if (hrefs.some((h) => !h.startsWith('#'))) bad.push(`home nav items that leave the page: ${hrefs.filter((h) => !h.startsWith('#')).join(', ')}`);
+      for (const id of ['work', 'about', 'experience', 'writing', 'contact']) {
+        await page.evaluate((id) => { const el = document.getElementById(id), top = el.getBoundingClientRect().top + scrollY; window.scrollTo(0, top + Math.min(el.offsetHeight, innerHeight) / 2 - innerHeight / 2); }, id);
+        await wait(700);
+        const marked = await page.evaluate(() => [...document.querySelectorAll('.hd__nav a[aria-current]')].map((a) => a.getAttribute('href')));
+        if (marked.length !== 1 || marked[0] !== `#${id}`) bad.push(`reading #${id}, the nav marks ${marked.join(', ') || 'nothing'}`);
+      }
+    } finally { await page.close(); }
+    const writing = await open('/writing', DESKTOP, { reduce: true });
+    try {
+      const cur = await writing.evaluate(() => document.querySelector('.hd__nav a[aria-current]')?.textContent.trim() || null);
+      if (cur !== 'Writing') bad.push(`/writing marks ${cur || 'nothing'} in the nav`);
+    } finally { await writing.close(); }
+    assert.deepEqual(bad, []);
+  });
+
+  test('the phone menu closes when keyboard focus leaves it', { timeout: 60000 }, async () => {
+    const page = await open('/', PHONE, { reduce: true });
+    try {
+      await page.click('#menu-btn');
+      await wait(250);
+      const links = await page.$$('#mobile-nav a');
+      await links.at(-1).focus();
+      await page.keyboard.press('Tab');
+      await wait(250);
+      const s = await page.evaluate(() => ({ open: document.getElementById('mobile-nav').classList.contains('open'), expanded: document.getElementById('menu-btn').getAttribute('aria-expanded') }));
+      assert.deepEqual(s, { open: false, expanded: 'false' });
     } finally { await page.close(); }
   });
 

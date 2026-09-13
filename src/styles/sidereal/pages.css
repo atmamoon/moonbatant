@@ -21,6 +21,8 @@
 .case__meta > span:not(.sep)::before, .case__tags > span:not(.sep)::before { content: '·'; position: absolute; left: 0.55em; color: var(--ink-4); }
 /* the metrics band's own rules frame the header's end: no second, parallel rule above it */
 .page__head:has(+ .case__metrics) { border-bottom: 0; padding-bottom: 0; margin-bottom: 28px; }
+.page__head:has(+ .mf) { max-width: none; }
+.page__head:has(+ .mf) > * { max-width: 820px; }   /* the work list's header rule runs the full width of its rows */
 .case__grid { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); column-gap: clamp(40px, 6vw, 96px); align-items: start; }
 .case__grid > .prose { max-width: min(var(--measure), 100%); }
 .case__grid > .prose { grid-column: 1; grid-row: 1; }   /* the contents come first in the markup (reading and Tab order), but sit in the right column */
