@@ -23,6 +23,7 @@
 .page__head:has(+ .case__metrics) { border-bottom: 0; padding-bottom: 0; margin-bottom: 28px; }
 .page__head:has(+ .mf) { max-width: none; }
 .page__head:has(+ .mf) > * { max-width: 820px; }   /* the work list's header rule runs the full width of its rows */
+.page__head:has(+ .wl) { max-width: 960px; }   /* /writing: the header rule ends where the list does */
 .case__grid { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); column-gap: clamp(40px, 6vw, 96px); align-items: start; }
 .case__grid > .prose { max-width: min(var(--measure), 100%); }
 .case__grid > .prose { grid-column: 1; grid-row: 1; }   /* the contents come first in the markup (reading and Tab order), but sit in the right column */
@@ -50,15 +51,6 @@ html[data-mode='night'] .prose { color: var(--ink-read, rgba(234, 240, 251, 0.9)
 .case__next a:hover { color: var(--venus); }
 
 /* writing */
-.wlist { list-style: none; display: grid; max-width: 820px; }
-.wlist__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 24px; padding: 24px 0; border-top: 1px solid var(--rule); transition: border-color var(--dur) var(--ease); }
-.wlist li:first-child .wlist__row { border-top: 0; }
-.wlist li:last-child .wlist__row { border-bottom: 1px solid var(--rule); }
-.wlist__row:hover { border-color: var(--rule-glow); }
-.wlist__title { font-family: var(--font-serif); font-size: clamp(1.2rem, 1.9vw, 1.6rem); line-height: 1.2; color: var(--ink); transition: color var(--dur) var(--ease); }
-.wlist__row:hover .wlist__title { color: var(--venus); }
-.wlist__summary { grid-column: 1; font-family: var(--font-display); font-size: var(--text-ui); color: var(--ink-2); line-height: 1.55; max-width: 60ch; }
-.wlist__date { grid-column: 2; grid-row: 1; white-space: nowrap; color: var(--ink-3); }
 
 @media (max-width: 900px) {
   .case__grid { grid-template-columns: 1fr; }

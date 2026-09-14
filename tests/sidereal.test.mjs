@@ -1427,6 +1427,19 @@ describe('6 · accessible structure and navigation', () => {
     } finally { await page.close(); }
   });
 
+  test('the writing list is one design, on the home page and on /writing', { timeout: 60000 }, async () => {
+    const shape = async (route) => {
+      const page = await open(route, DESKTOP, { reduce: true });
+      try {
+        return await page.evaluate(() => { const l = document.querySelector('.wl'); return l && { width: Math.round(l.getBoundingClientRect().width), rows: l.querySelectorAll('.wl__row').length, indexed: [...l.querySelectorAll('.wl__row')].every((r) => r.querySelector('.wl__n') && r.querySelector('.wl__arrow')) }; });
+      } finally { await page.close(); }
+    };
+    const home = await shape('/'), list = await shape('/writing');
+    assert.ok(home && list, 'a writing list is missing');
+    assert.deepEqual({ width: list.width, indexed: list.indexed }, { width: home.width, indexed: true });
+    assert.ok(list.rows >= home.rows, `/writing lists ${list.rows} pieces, the home chapter ${home.rows}`);
+  });
+
   test('parallel hairlines end together: Education with Writing, the work list header with its rows', { timeout: 60000 }, async () => {
     const bad = [];
     const home = await open('/', DESKTOP, { reduce: true });
@@ -1442,6 +1455,11 @@ describe('6 · accessible structure and navigation', () => {
       const r = await work.evaluate(() => ({ head: document.querySelector('.page__head').getBoundingClientRect().right, row: document.querySelector('.mf__row').getBoundingClientRect().right }));
       if (Math.abs(r.head - r.row) > 1) bad.push(`/work: the header rule ends at ${Math.round(r.head)}px, the rows at ${Math.round(r.row)}px`);
     } finally { await work.close(); }
+    const writingPage = await open('/writing', DESKTOP, { reduce: true });
+    try {
+      const r = await writingPage.evaluate(() => ({ head: document.querySelector('.page__head').getBoundingClientRect().right, list: document.querySelector('.wl').getBoundingClientRect().right }));
+      if (Math.abs(r.head - r.list) > 1) bad.push(`/writing: the header rule ends at ${Math.round(r.head)}px, the list at ${Math.round(r.list)}px`);
+    } finally { await writingPage.close(); }
     assert.deepEqual(bad, []);
   });
 
@@ -1466,6 +1484,14 @@ describe('6 · accessible structure and navigation', () => {
         if (marked.length !== 1 || marked[0] !== `#${prev}`) bad.push(`with #${next}'s first line 70% down the view, the nav marks ${marked.join(', ') || 'nothing'}, not #${prev}`);
       }
     } finally { await page.close(); }
+    const wide = await open('/', { name: 'desktop 1920', width: 1920, height: 1080, dpr: 1 }, { reduce: true });
+    try {
+      await ready(wide);
+      await wide.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await wait(700);
+      const marked = await wide.evaluate(() => [...document.querySelectorAll('.hd__nav a[aria-current]')].map((a) => a.getAttribute('href')));
+      if (marked.length !== 1 || marked[0] !== '#contact') bad.push(`at the end of the page at 1920x1080 the nav marks ${marked.join(', ') || 'nothing'}, not #contact`);
+    } finally { await wide.close(); }
     const writing = await open('/writing', DESKTOP, { reduce: true });
     try {
       const cur = await writing.evaluate(() => document.querySelector('.hd__nav a[aria-current]')?.textContent.trim() || null);
@@ -1505,6 +1531,87 @@ describe('6 · accessible structure and navigation', () => {
       const r = await page.evaluate(() => [...document.querySelectorAll('section[data-chapter]:not(#hero)')].map((s) => ({ id: s.id, name: (document.getElementById(s.getAttribute('aria-labelledby') || '')?.textContent || '').trim() })));
       assert.ok(r.length >= 6, `only ${r.length} chapters found`);
       assert.deepEqual(r.filter((c) => !c.name).map((c) => c.id), []);
+    } finally { await page.close(); }
+  });
+
+  test("arriving at a home chapter from another page starts in that chapter's light, its text already there", { timeout: 150000 }, async () => {
+    const bad = [];
+    for (const [id, vp] of [['contact', DESKTOP], ['experience', DESKTOP], ['contact', PHONE]]) {
+      const page = await open(CASE, vp);
+      try {
+        await ready(page);
+        await page.evaluateOnNewDocument(() => {
+          window.__arrival = { phases: [], minOpacity: 1 };
+          const sample = () => {
+            if (window.__sidereal?.lastFrame > 0) { const ph = document.documentElement.dataset.phase; if (ph && window.__arrival.phases.at(-1) !== ph) window.__arrival.phases.push(ph); }
+            for (const el of document.querySelectorAll('.rv')) { const q = el.getBoundingClientRect(); if (q.height && q.top < innerHeight && q.bottom > 0) window.__arrival.minOpacity = Math.min(window.__arrival.minOpacity, parseFloat(getComputedStyle(el).opacity)); }
+            if (performance.now() < 4500) requestAnimationFrame(sample);
+          };
+          requestAnimationFrame(sample);
+        });
+        await page.goto(`${BASE}/?qa=1#${id}`, { waitUntil: 'networkidle2', timeout: 60000 });
+        await wait(1500);
+        const r = await page.evaluate(() => window.__arrival);
+        if (r.phases.length > 1) bad.push(`${vp.name} → /#${id}: the sky passed through ${r.phases.join(' → ')} on arrival`);
+        if (r.minOpacity < 0.98) bad.push(`${vp.name} → /#${id}: text on the first screen faded in from opacity ${r.minOpacity.toFixed(2)}`);
+      } finally { await page.close(); }
+    }
+    assert.deepEqual(bad, []);
+  });
+
+  test('every nav link, clicked, marks the chapter it lands on', { timeout: 150000 }, async () => {
+    const bad = [];
+    for (const vp of [{ name: 'desktop 1920', width: 1920, height: 1080, dpr: 1 }, { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }]) {
+      const page = await open('/', vp, { reduce: true });
+      try {
+        await ready(page);
+        for (const id of ['work', 'about', 'experience', 'writing', 'contact']) {
+          await page.click(`.hd__nav a[href="#${id}"]`);
+          await wait(1800);
+          const marked = await page.evaluate(() => [...document.querySelectorAll('.hd__nav a[aria-current]')].map((a) => a.getAttribute('href')));
+          if (marked.length !== 1 || marked[0] !== `#${id}`) bad.push(`${vp.name}: clicking ${id} marks ${marked.join(', ') || 'nothing'}`);
+        }
+      } finally { await page.close(); }
+    }
+    assert.deepEqual(bad, []);
+  });
+
+  test('a headline number already on screen never counts up from zero', { timeout: 90000 }, async () => {
+    const bad = [];
+    for (const vp of [DESKTOP, PHONE]) {
+      const page = await open(CASE, vp);
+      try {
+        await page.evaluateOnNewDocument(() => {
+          window.__seen = [];
+          const sample = () => {
+            document.querySelectorAll('.numeral-live').forEach((el, i) => { if (el.getBoundingClientRect().top < innerHeight) (window.__seen[i] ||= []).push(el.textContent); });
+            if (performance.now() < 3500) requestAnimationFrame(sample);
+          };
+          requestAnimationFrame(sample);
+        });
+        await page.reload({ waitUntil: 'networkidle2' });
+        await wait(3700);
+        const r = await page.evaluate(async () => {
+          const html = await (await fetch(location.href)).text();
+          const built = [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('.numeral-live')].map((e) => e.textContent);
+          return window.__seen.flatMap((seen, i) => (seen ? [...new Set(seen)].filter((t) => t !== built[i]) : []));
+        });
+        if (r.length) bad.push(`${vp.name}: an on-screen number showed ${r.slice(0, 4).join(', ')}`);
+      } finally { await page.close(); }
+    }
+    assert.deepEqual(bad, []);
+  });
+
+  test('a key press stops an eased link scroll where the reader takes over', { timeout: 60000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      await page.click('.hd__nav a[href="#contact"]');
+      await wait(250);
+      await page.keyboard.press('Home');
+      await wait(1600);
+      const y = await page.evaluate(() => scrollY);
+      assert.ok(y < 200, `after Home the page sits at ${Math.round(y)}px: the eased scroll kept going`);
     } finally { await page.close(); }
   });
 

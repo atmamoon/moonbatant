@@ -1,0 +1,43 @@
+---
+// One writing list for the home chapter and /writing: index, title, where it ran (or when), the arrow, and a summary
+// when a piece has one.
+interface Item { href: string; title: string; meta: string; summary?: string }
+const { items } = Astro.props as { items: Item[] };
+const pad = (n: number) => String(n).padStart(2, '0');
+const external = (href: string) => href.startsWith('http');
+---
+
+<ul class="wl">
+  {items.map((w, i) => (
+    <li class="rv">
+      <a class="wl__row" href={w.href} target={external(w.href) ? '_blank' : undefined} rel={external(w.href) ? 'noopener' : undefined}>
+        <span class="t-label wl__n">{pad(i + 1)}</span>
+        <span class="wl__title">{w.title}</span>
+        <span class="t-label wl__outlet">{w.meta}</span>
+        <span class="wl__arrow" aria-hidden="true">{external(w.href) ? '↗' : '→'}</span>
+        {w.summary && <span class="wl__summary">{w.summary}</span>}
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .wl { list-style: none; display: grid; max-width: 960px; }
+  .wl li:first-child .wl__row { border-top: 0; }
+  .wl__row { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto 24px; align-items: start; column-gap: 18px; padding: 22px 0; border-top: 1px solid var(--rule); transition: border-color var(--dur) var(--ease); }
+  .wl li:last-child .wl__row { border-bottom: 1px solid var(--rule); }
+  .wl__n { color: var(--ink-2); padding-top: 0.42em; }
+  .wl__outlet, .wl__arrow { padding-top: 0.3em; }
+  .wl__title { font-family: var(--font-serif); font-size: clamp(1.15rem, 1.8vw, 1.5rem); line-height: 1.25; color: var(--ink); transition: color var(--dur) var(--ease); }
+  .wl__outlet { color: var(--ink-2); }
+  .wl__arrow { color: var(--ink-3); justify-self: end; transition: transform var(--dur) var(--ease), color var(--dur) var(--ease); }
+  .wl__row:hover { border-color: var(--rule-glow); }
+  .wl__row:hover .wl__title { color: var(--venus); }
+  .wl__row:hover .wl__arrow { color: var(--alpenglow); transform: translate(3px, -3px); }
+  .wl__summary { grid-column: 2 / -1; font-family: var(--font-display); font-size: var(--text-ui); color: var(--ink-2); line-height: 1.55; max-width: 60ch; }
+  @media (max-width: 640px) {
+    .wl__row { grid-template-columns: 28px minmax(0, 1fr) auto; }
+    .wl__outlet { grid-row: 2; grid-column: 2; }
+    .wl__arrow { grid-row: 1 / span 2; grid-column: 3; }
+  }
+</style>

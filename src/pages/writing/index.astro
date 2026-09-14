@@ -1,5 +1,6 @@
 ---
 import Sidereal from '../../layouts/Sidereal.astro';
+import WritingList from '../../components/sidereal/WritingList.astro';
 import { getCollection } from 'astro:content';
 import { WRITING } from '../../consts';
 import '../../styles/sidereal/pages.css';
@@ -18,25 +19,10 @@ const external = WRITING.filter((w) => w.href.startsWith('http'));
         <p class="t-label">Writing</p>
         <h1 class="page__title">Essays &amp; write-ups</h1>
       </header>
-      <ul class="wlist">
-        {posts.map((p) => (
-          <li class="rv">
-            <a href={`/writing/${p.slug}/`} class="wlist__row">
-              <span class="wlist__title">{p.data.title}</span>
-              <span class="t-label wlist__date">{p.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-              <span class="wlist__summary">{p.data.summary}</span>
-            </a>
-          </li>
-        ))}
-        {external.map((w) => (
-          <li class="rv">
-            <a href={w.href} target="_blank" rel="noopener" class="wlist__row">
-              <span class="wlist__title">{w.title}</span>
-              <span class="t-label wlist__date">{w.outlet} ↗</span>
-            </a>
-          </li>
-        ))}
-      </ul>
+      <WritingList items={[
+        ...posts.map((p) => ({ href: `/writing/${p.slug}/`, title: p.data.title, meta: p.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), summary: p.data.summary })),
+        ...external.map((x) => ({ href: x.href, title: x.title, meta: x.outlet })),
+      ]} />
     </div>
   </section>
 </Sidereal>

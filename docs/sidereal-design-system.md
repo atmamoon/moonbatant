@@ -68,9 +68,9 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    vertical field and crop the sides, like the range plate, so the fall-off below the
    horizon stays as gentle as it is on desktop.
 2. **Milky Way** — a texture baked from the d3-celestial isophote contours
-   (`scripts/bake-sky.mjs`), mapped on the celestial sphere, faded in below −12°. Two octaves of
-   value noise fixed to the sky give its soft isophote plateaus star clouds, a one-pixel grain of unresolved stars
-   runs through it, and the band stays neutral, warming only where it is densest.
+   (`scripts/bake-sky.mjs`), mapped on the celestial sphere, faded in below −12°. Three octaves of
+   value noise fixed to the sky give its soft isophote plateaus star clouds, a grain of unresolved stars grows with its
+   density, and the band stays neutral, warming only where it is densest.
 3. **Stars** — 5,044 real stars (d3-celestial `stars.6`, Hipparcos-derived,
    mag ≤ 6) as GL points. Real RA/Dec → alt/az for the site's latitude and the
    chapter's sidereal time, with east on the right of the north-north-east view, where
@@ -81,7 +81,7 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
 4. **Moon** — photographic disc, opaque, drawn behind the range: it starts below
    the highest summit on the right of the frame, where a moon really rises in this view,
    and rises through chapter 07, drifting a little rightward and kept clear of the header band, until at the page's
-   end it rests on the rock right of the contact text, the ridge biting the lower part of the disc — the Ridgemoon
+   end it rests on the rock right of the contact text, about a disc and a half of sky from it, the ridge biting the lower part of the disc — the Ridgemoon
    mark, realised in the world; on portrait screens it climbs higher, above the text. Rising behind the range, it
    backlights it: a thin cool light runs along the crests beside the disc, and the faces toward the viewer stay in shadow. A full moon
    owns its sky: limiting magnitude drops ~1.3, the Milky Way goes, a wide aureole lifts
@@ -103,7 +103,8 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    and 6 px/s at 1600px wide), their tiles never narrower than the screen is tall, the faint
    haze around each cloud cut so it keeps an edge; a cloud carries light only while the sky or the moon lights it, shading baked into the plates from their
    own density lights it where it thins toward the low sun, whose glow rims that edge, its shape evolves slowly as it
-   drifts, and its shadow falls at its own scale; on a moonless night it gives no light and only dims the
+   drifts, and its shadow falls at its own scale; the plates and their
+   shading come from `scripts/gen-fog.mjs`, soft enough that text reads over them at every hour; on a moonless night it gives no light and only dims the
    sky behind it, keeping that sky's gradient, a little denser and lower, across the last glow above the ridge and
    the starlit snow;
    cloud shadows shaped by the nearer layer, travelling with it and falling on the
@@ -186,7 +187,8 @@ measure it; body text over open sky runs 7:1 or better.
 - **The nav** links Work, About, Experience, Writing and Contact. In forced colours the header
   band turns to a solid system background; printed pages are dark text on white, without the
   scene or the header. The page being read is marked in the nav in full ink. On the home page every nav item
-  scrolls in place, Work included, and the nav marks the chapter whose first line has reached the middle of the view;
+  scrolls in place, Work included, and the nav marks the chapter whose first line has reached the middle of the view (the last chapter's two thirds
+  down, since its label sits low, and always at the page's end);
   each chapter is a region named by its own label.
 - **Result captions** are 12px mono (13px on case studies): a number means nothing without its caption, and
   each hero result names the company where it was earned.
@@ -199,7 +201,8 @@ measure it; body text over open sky runs 7:1 or better.
 - Reading measure 34em (≈ 72 characters of Newsreader; `ch` overstates a serif).
 - In-page links land a chapter's first line just under the header band, never its empty
   sky; a shared link to a case-study section lands the same way. Long-form article text
-  never fades in, nor does the first screen of any page (a phone would flash the name away), and
+  never fades in, nor does the first screen of any page (a phone would flash the name away), a home chapter reached from another
+  page included: it lands before its first frame, in its own light, and
   keyboard focus shows any block that hasn't revealed yet. The header band's opaque top
   takes the clicks it covers.
 - Contact carries the one primary action of the page: the address itself, as a solid
@@ -208,6 +211,8 @@ measure it; body text over open sky runs 7:1 or better.
 - Manifest rows (case studies): `index · title · meta` left, `metrics` right,
   full-row link, hairline above; hover reveals a sweep and a right arrow. On phones the arrow
   sits in the row's top-right corner, so title, summary and readouts share the full width.
+- Writing list (the home chapter and /writing, one component): `index · title · where it ran · arrow`, a summary
+  under the title when a piece has one, 960px wide, hairlines like the manifest's.
 - Ledger (experience): company as a serif heading, role/period in mono, bullets
   with hairline leaders, no bullet glyphs.
 

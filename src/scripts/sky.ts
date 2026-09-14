@@ -103,12 +103,12 @@ void main(){
   float ra = atan(e.y, e.x); float dec = asin(clamp(e.z,-1.0,1.0));
   vec2 muv = vec2((ra+PI)/(2.0*PI), (PI*0.5-dec)/PI);
   float mw = texture2D(uMWTex, muv).r;
-  // the bake is a stack of soft isophote plateaus: two octaves of value noise fixed to the sky give soft star clouds, a
-  // one-pixel grain of unresolved stars, and a neutral band that warms only where it is densest
-  mw = pow(clamp(mw / 0.8, 0.0, 1.0), 1.3);
-  float sc = 0.6 * vnoise(muv * vec2(128.0, 64.0), vec2(128.0, 64.0)) + 0.4 * vnoise(muv * vec2(256.0, 128.0), vec2(256.0, 128.0));
-  mw *= 0.8 + 0.4 * smoothstep(0.25, 0.75, sc);
-  mw += mw * 0.7 * step(0.975, h12(floor(muv * vec2(8192.0, 4096.0))));
+  // the bake is a stack of soft isophote plateaus: three octaves of value noise fixed to the sky give it star clouds, a
+  // grain of unresolved stars grows with its density, and the band stays neutral, warming only where it is densest
+  mw = pow(clamp(mw / 0.75, 0.0, 1.0), 1.7);
+  float sc = 0.5 * vnoise(muv * vec2(512.0, 256.0), vec2(512.0, 256.0)) + 0.3 * vnoise(muv * vec2(1024.0, 512.0), vec2(1024.0, 512.0)) + 0.2 * vnoise(muv * vec2(2048.0, 1024.0), vec2(2048.0, 1024.0));
+  mw *= 0.5 + 1.0 * smoothstep(0.3, 0.7, sc);
+  mw += mw * 2.0 * step(1.0 - 0.12 * smoothstep(0.1, 0.6, mw), h12(floor(muv * vec2(8192.0, 4096.0))));
   col += mix(vec3(0.68, 0.70, 0.78), vec3(0.92, 0.87, 0.78), smoothstep(0.2, 0.8, mw)) * mw * uMW * 1.15 * smoothstep(-0.02, 0.28, alt);
   // dither (kills banding on 8-bit displays)
   col += (hash(gl_FragCoord.xy + uSeed) - 0.5) * (1.6/255.0);
@@ -518,7 +518,8 @@ export function initSidereal(opts: Opts) {
     const vc = s + vh * 0.5;
     // wayfinding: the nav marks the chapter at the centre of the view, written only when it changes
     let at = '';
-    for (const c of chapters) if (c.first <= vc) at = c.el.id;
+    chapters.forEach((c, i) => { if (c.first <= s + vh * (i === chapters.length - 1 ? 0.66 : 0.5)) at = c.el.id; });   // the last chapter's label sits low on its screen
+    if (chapters.length && s >= docH - 2) at = chapters[chapters.length - 1].el.id;   // and at the page's end the reader is in the last chapter
     if (at !== navChapter) { navChapter = at; document.querySelectorAll<HTMLAnchorElement>('.hd a[href^="#"]').forEach((a) => (a.getAttribute('href') === `#${at}` ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current'))); }
     const bands = chapters.map((c) => ({ a: c.top + c.pad, b: c.top + c.height, sun: c.sun }));
     bands[0].a = 0;
@@ -703,7 +704,7 @@ export function initSidereal(opts: Opts) {
         // column it may have drifted off (every major peak sits under the centred title on some screens)
         let rock = py;
         if (aspect >= 0.8 && !shortLand) {
-          if (contactBox) cx = Math.max(cx, (contactBox.right + 16) / (W / dpr) + rx);
+          if (contactBox) cx = Math.min(Math.max(cx, (contactBox.right + 16) / (W / dpr) + rx * 4.2), 0.9 - rx);   // about a disc and a half of sky from the text
           rock = -Infinity;
           for (let i = 0; i <= 12; i++) {
             const col = clamp(Math.round(((cx - rx * 0.6 + rx * 1.2 * i / 12) * m.sx + m.ox) * skyline.length), 0, skyline.length - 1);
@@ -738,7 +739,7 @@ export function initSidereal(opts: Opts) {
       // disc — warm near the horizon, silver higher up
       const warm = Math.min(0.5, 1 - clamp(moonAlt / 6, 0, 1));
       // the warm tint changes the hue, not the brightness: even on the ridge the disc stays the brightest thing in the frame
-      const tr = lerp(0.96, 1.0, warm), tg = lerp(0.99, 0.86, warm), tb = lerp(1.04, 0.72, warm), tk = 1.03 / (0.2126 * tr + 0.7152 * tg + 0.0722 * tb);   // a touch above silver: resting, the rock covers its brightest craters
+      const tr = lerp(0.96, 1.0, warm), tg = lerp(0.99, 0.86, warm), tb = lerp(1.04, 0.72, warm), tk = 1.10 / (0.2126 * tr + 0.7152 * tg + 0.0722 * tb);   // above silver: resting, the rock covers its brightest craters, and it must still outshine the address button
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx, cy - ry, rx * 2, ry * 2);
       gl.uniform1f(U(pSprite, 'uHalo'), 0); gl.uniform3f(U(pSprite, 'uTint'), tr * tk, tg * tk, tb * tk); gl.uniform1f(U(pSprite, 'uAlpha'), moonVis);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -933,6 +934,8 @@ export function initSidereal(opts: Opts) {
   });
   window.addEventListener('wheel', () => cancelAnimationFrame(animScroll), { passive: true });
   window.addEventListener('touchstart', () => cancelAnimationFrame(animScroll), { passive: true });
+  window.addEventListener('keydown', (e) => { if (/^(Arrow|Page|Home|End| )/.test(e.key)) cancelAnimationFrame(animScroll); });
+  window.addEventListener('mousedown', () => cancelAnimationFrame(animScroll));   // a scrollbar drag, a click: the reader takes over
 
   // ── reveal + numeral count-up (once, gated) ──
   function engage() {
@@ -958,10 +961,18 @@ export function initSidereal(opts: Opts) {
         requestAnimationFrame(tick);
       });
     }, { threshold: 0.6 });
-    document.querySelectorAll('.numeral-live').forEach((el) => mio.observe(el));
+    document.querySelectorAll<HTMLElement>('.numeral-live').forEach((el) => { if (el.getBoundingClientRect().top >= innerHeight) mio.observe(el); });   // a number already on screen is never replaced with 0
   }
 
-  resize(); readScroll(); sunAlt = sunTarget; engage();
+  // arriving at a chapter from another page (a header link, a shared /#chapter link): land on it before the first frame,
+  // so the sky starts in that chapter's light and its text is already there, instead of easing through the evening
+  const landing = location.hash.length > 1 ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null;
+  const land = () => { if (landing) window.scrollTo({ top: layoutTop(landing) - (parseFloat(getComputedStyle(root).getPropertyValue('--head-offset')) || 110) - (parseFloat(getComputedStyle(landing).scrollMarginTop) || 0), behavior: 'instant' as ScrollBehavior }); };
+  let moved = false;
+  for (const ev of ['wheel', 'touchstart', 'keydown']) addEventListener(ev, () => { moved = true; }, { passive: true, once: true });
+  land(); resize(); readScroll(); sunAlt = sunTarget; engage();
+  // web fonts can shift the layout under the landing: land again unless the reader has already moved
+  if (landing) document.fonts?.ready.then(() => { if (!moved) { land(); readScroll(); sunAlt = sunTarget; } });
   setTimeout(() => { resize(); scrollDirty = true; }, 1200);
   window.addEventListener('load', () => { resize(); scrollDirty = true; });
   rafId = requestAnimationFrame(frame);

@@ -7,6 +7,7 @@
 import { getCollection } from 'astro:content';
 import { HERO, ABOUT, EXPERIENCE, EDUCATION, SKILLS, SOCIALS, WRITING } from '../../consts';
 import Manifest from './Manifest.astro';
+import WritingList from './WritingList.astro';
 
 const featured = (await getCollection('work'))
   .filter((s) => !s.data.draft && s.data.featured)
@@ -105,7 +106,7 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
           </div>
           <ul class="ledger__list">
             {job.highlights.map((h, i) => (
-              <li><span class="ledger__n">{pad(j + 1)}.{pad(i + 1)}</span><span>{h}</span></li>
+              <li><span class="ledger__n" aria-hidden="true"></span><span>{h}</span></li>
             ))}
           </ul>
         </article>
@@ -135,18 +136,7 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
       <p id="writing-label" class="t-label"><span class="ch__idx">06</span> Writing</p>
       <h2 class="ch__title">Essays &amp; write-ups</h2>
     </header>
-    <ul class="wl">
-      {WRITING.map((w, i) => (
-        <li class="rv">
-          <a class="wl__row" href={w.href} target={w.href.startsWith('http') ? '_blank' : undefined} rel={w.href.startsWith('http') ? 'noopener' : undefined}>
-            <span class="t-label wl__n">{pad(i + 1)}</span>
-            <span class="wl__title">{w.title}</span>
-            <span class="t-label wl__outlet">{w.outlet}</span>
-            <span class="wl__arrow" aria-hidden="true">↗</span>
-          </a>
-        </li>
-      ))}
-    </ul>
+    <WritingList items={WRITING.map((w) => ({ href: w.href, title: w.title, meta: w.outlet }))} />
   </div>
 </section>
 
@@ -191,7 +181,7 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .ch--hero { --ch-pad: 0px; min-height: 100svh; display: flex; align-items: flex-start; padding-top: 0; }
   .hero { padding-top: clamp(140px, 21vh, 240px); padding-bottom: 20vh; position: relative; }
   /* the reserved right third carries the proof: one lead result per case, as instruments */
-  .hero__instruments { list-style: none; position: absolute; right: var(--gutter-r); top: clamp(140px, 19vh, 230px); width: clamp(220px, 19vw, 300px); display: none; }
+  .hero__instruments { list-style: none; position: absolute; right: var(--gutter-r); top: calc(clamp(140px, 21vh, 240px) + 8px); width: clamp(220px, 19vw, 300px); display: none; }
   @media (min-width: 1100px) { .hero__instruments { display: grid; } }   /* from the width where the right-edge grad behind it switches on */
   .hero__instruments li { border-top: 1px solid var(--rule); }
   .hero__instruments li:last-child { border-bottom: 1px solid var(--rule); }
@@ -251,8 +241,8 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .ledger__meta .t-label { color: var(--ink); font-size: 0.75rem; }
   .ledger__loc { color: var(--ink) !important; }
   .ledger__list { list-style: none; display: grid; gap: 14px; max-width: 74ch; }
-  .ledger__list li { display: grid; grid-template-columns: 58px minmax(0, 1fr); column-gap: 14px; font-family: var(--font-serif); font-size: 1.08rem; line-height: 1.55; color: var(--ink); }
-  .ledger__n { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; color: var(--ink-2); padding-top: 0.45em; font-variant-numeric: tabular-nums; text-shadow: var(--instrument-shadow); }
+  .ledger__list li { display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 14px; font-family: var(--font-serif); font-size: 1.08rem; line-height: 1.55; color: var(--ink); }
+  .ledger__n { width: 28px; height: 1px; margin-top: 0.8em; background: var(--rule-strong); }   /* a hairline leader: the numbers in each line are its results */
 
   /* ── 05 education ── */
   .edu { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; flex-wrap: wrap; padding-bottom: 28px; border-bottom: 1px solid var(--rule); max-width: 960px; }
@@ -260,24 +250,12 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .edu__period { color: var(--ink-2); }
 
   /* ── 06 writing ── */
-  .wl { list-style: none; display: grid; max-width: 960px; }
   #writing .ch__head { max-width: 960px; }   /* the writing measure: each outlet sits near its title, not across the sky */
   #education .ch__head { max-width: 960px; }   /* the heading's rule ends where the degree row's, and Writing's below, do */
-  .wl li:first-child .wl__row { border-top: 0; }
-  .wl__row { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto 24px; align-items: start; column-gap: 18px; padding: 22px 0; border-top: 1px solid var(--rule); transition: border-color var(--dur) var(--ease); }
-  .wl li:last-child .wl__row { border-bottom: 1px solid var(--rule); }
-  .wl__n { color: var(--ink-2); padding-top: 0.42em; }
-  .wl__outlet, .wl__arrow { padding-top: 0.3em; }
-  .wl__title { font-family: var(--font-serif); font-size: clamp(1.15rem, 1.8vw, 1.5rem); line-height: 1.25; color: var(--ink); transition: color var(--dur) var(--ease); }
-  .wl__outlet { color: var(--ink-2); }
-  .wl__arrow { color: var(--ink-3); justify-self: end; transition: transform var(--dur) var(--ease), color var(--dur) var(--ease); }
-  .wl__row:hover { border-color: var(--rule-glow); }
-  .wl__row:hover .wl__title { color: var(--venus); }
-  .wl__row:hover .wl__arrow { color: var(--alpenglow); transform: translate(3px, -3px); }
 
   /* ── 07 moonrise: one sentence, the whole sky. The moon rises behind the
         highest summit and hangs above the line; the text waits below it. ── */
-  .ch--final { min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding-top: calc(var(--chapter-gap) * 0.8); padding-bottom: 28px; scroll-margin-top: 0; }
+  .ch--final { min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding-top: calc(var(--chapter-gap) * 0.8); padding-bottom: 28px; scroll-margin-top: calc(-1 * var(--head-offset)); }   /* its link lands at the page's end */
   .final { display: grid; justify-items: center; text-align: center; gap: 18px; margin-bottom: clamp(60px, 10vh, 120px); }
 
   .final__title { font-size: clamp(2.2rem, 4.6vw, 3.8rem); line-height: 1.05; color: var(--ink); text-shadow: var(--ink-shadow); max-width: 14ch; }
@@ -307,12 +285,9 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
     .ledger__head { flex-direction: column; gap: 12px; }
     .ledger__meta { justify-items: start; text-align: left; }
     .ledger__list li { grid-template-columns: 1fr; font-size: 1.02rem; }
-    .ledger__n { padding-top: 0; }   /* on phones the index sits above each highlight as its leader */
+    .ledger__n { margin-top: 0; }   /* on phones the leader sits above each highlight */
     .about__para { font-size: 1.05rem; }
     .about__para--lead { font-size: 1.2rem; line-height: 1.45; }
-    .wl__row { grid-template-columns: 28px minmax(0, 1fr) auto; }
-    .wl__outlet { grid-row: 2; grid-column: 2; }
-    .wl__arrow { grid-row: 1 / span 2; grid-column: 3; }
     .hero__hint { display: none; }
     .credits__row { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
     .credits__item { white-space: normal; }   /* a long skill wraps inside the column on narrow phones */
