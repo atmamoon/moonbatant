@@ -68,9 +68,9 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    vertical field and crop the sides, like the range plate, so the fall-off below the
    horizon stays as gentle as it is on desktop.
 2. **Milky Way** — a texture baked from the d3-celestial isophote contours
-   (`scripts/bake-sky.mjs`), mapped on the celestial sphere, faded in below −12°. Value noise fixed
-   to the sky breaks its soft isophote plateaus into star clouds and dark lanes, and its densest light warms
-   toward the core's colour.
+   (`scripts/bake-sky.mjs`), mapped on the celestial sphere, faded in below −12°. Two octaves of
+   value noise fixed to the sky give its soft isophote plateaus star clouds, a one-pixel grain of unresolved stars
+   runs through it, and the band stays neutral, warming only where it is densest.
 3. **Stars** — 5,044 real stars (d3-celestial `stars.6`, Hipparcos-derived,
    mag ≤ 6) as GL points. Real RA/Dec → alt/az for the site's latitude and the
    chapter's sidereal time, with east on the right of the north-north-east view, where
@@ -81,9 +81,9 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
 4. **Moon** — photographic disc, opaque, drawn behind the range: it starts below
    the highest summit on the right of the frame, where a moon really rises in this view,
    and rises through chapter 07, drifting a little rightward and kept clear of the header band, until at the page's
-   end it rests on its summit, the ridge biting its lower quarter — the Ridgemoon mark, realised in the world.
-   Where that summit sits under the contact text it rises clear of the lines instead, and on portrait screens it
-   climbs higher, above them. A full moon
+   end it rests on the rock right of the contact text, the ridge biting the lower part of the disc — the Ridgemoon
+   mark, realised in the world; on portrait screens it climbs higher, above the text. Rising behind the range, it
+   backlights it: a thin cool light runs along the crests beside the disc, and the faces toward the viewer stay in shadow. A full moon
    owns its sky: limiting magnitude drops ~1.3, the Milky Way goes, a wide aureole lifts
    the sky around it, and the disc itself, lifted and hugged by a tight glow, is the
    brightest thing in the frame. Time on the page lifts only a risen moon, a little, so a
@@ -101,17 +101,18 @@ A single fixed `<canvas>` (`src/scripts/sky.ts`) renders, back to front:
    gone by −4° (the shader reads the skyline profile as a one-row texture), leaving clean peaks at night.
 6. **Atmosphere** — two cloud layers drifting downwind at different depths (about 8
    and 6 px/s at 1600px wide), their tiles never narrower than the screen is tall, the faint
-   haze around each cloud cut so it keeps an edge; a cloud carries light only while the sky or the moon lights it, its body is lit unevenly by its own
-   texture and its sunward edge catches the low sun's glow; on a moonless night it gives no light and only dims the
+   haze around each cloud cut so it keeps an edge; a cloud carries light only while the sky or the moon lights it, shading baked into the plates from their
+   own density lights it where it thins toward the low sun, whose glow rims that edge, its shape evolves slowly as it
+   drifts, and its shadow falls at its own scale; on a moonless night it gives no light and only dims the
    sky behind it, keeping that sky's gradient, a little denser and lower, across the last glow above the ridge and
    the starlit snow;
    cloud shadows shaped by the nearer layer, travelling with it and falling on the
    range only, while there is sun to cast them;
-   spindrift puffs blowing off the summits at a fraction of a degree a second; an occasional satellite crossing at a
+   spindrift streaks blowing off the summits at a fraction of a degree a second; an occasional satellite crossing at a
    low orbit's half to one degree a second; a rare meteor, one continuous 15–25° streak, every 8 to 20 minutes after
    dark. Speeds are angles, not screen units, so a phone and a desktop see the same sky; satellites and meteors keep
-   to the home page, so nothing crosses behind reading-page text. Measured: about 1.9% of pixels change over six seconds at golden
-   hour and 2.5% under the risen moon, slow but alive; a moonless night moves only faintly (about 0.4%), since its
+   to the home page, so nothing crosses behind reading-page text. Measured: about 1.5% of pixels change over six seconds at golden
+   hour and 1.8% under the risen moon, slow but alive; a moonless night moves only faintly (about 0.7%), since its
    clouds give no light and only dim the sky they cross.
 
 Performance contract: a canvas pixel ratio between 1 and 1.5, lowered on large dense screens so
@@ -175,6 +176,8 @@ measure it; body text over open sky runs 7:1 or better.
 - **Below 1100px** the hero's four results sit beneath its actions as a two-by-two readout; from 375px
   wide both actions share one line, in the web font and its fallback alike, so the font's arrival never
   shifts the page; narrower phones stack them.
+- **Phones:** gutters clear a landscape iPhone's notch (`env(safe-area-inset-*)`), and the scene fills the large
+  viewport, so a toolbar sliding away never stretches it.
 - **Case-study section headings** are set in the reading serif, larger than the body, each
   numbered in small alpenglow mono; the sticky contents column marks the section being read,
   down to the last one, and a click marks its own entry.
@@ -183,7 +186,8 @@ measure it; body text over open sky runs 7:1 or better.
 - **The nav** links Work, About, Experience, Writing and Contact. In forced colours the header
   band turns to a solid system background; printed pages are dark text on white, without the
   scene or the header. The page being read is marked in the nav in full ink. On the home page every nav item
-  scrolls in place, Work included, and the nav marks the chapter being read.
+  scrolls in place, Work included, and the nav marks the chapter whose first line has reached the middle of the view;
+  each chapter is a region named by its own label.
 - **Result captions** are 12px mono (13px on case studies): a number means nothing without its caption, and
   each hero result names the company where it was earned.
 

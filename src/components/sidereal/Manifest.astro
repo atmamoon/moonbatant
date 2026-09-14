@@ -62,6 +62,7 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
   .mf__metrics { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 14px; padding-top: 6px; align-content: start; }
   .mf__metric { display: grid; row-gap: 5px; }
   .mf__val { font-size: clamp(1.15rem, 1.7vw, 1.55rem); white-space: nowrap; text-shadow: var(--ink-shadow); }
+  .mf__val.t-numeral { font-weight: 300; font-size: clamp(1.35rem, 1.9vw, 1.7rem); }   /* the lead result is never the lightest mark in its column */
   .mf__val--word { font-family: var(--font-serif); font-stretch: 100%; font-weight: 400; font-size: clamp(1.05rem, 1.35vw, 1.3rem); line-height: 1.15; color: var(--ink); letter-spacing: 0; white-space: normal; }
   .mf__val--lead { color: var(--alpenglow); min-width: 2.4em; }
   :global(html[data-phase='sunset']) .mf__val--lead, :global(html[data-phase='golden']) .mf__val--lead { color: var(--venus); }

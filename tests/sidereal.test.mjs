@@ -594,21 +594,29 @@ describe('3 · the world behaves', () => {
     } finally { await page.close(); }
   });
 
-  test('where its summit is clear of the contact text, the moon rests on it at the page end', { timeout: 90000 }, async () => {
-    const page = await open('/', DESKTOP);
-    try {
-      await ready(page);
-      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-      await wait(2500);
-      const r = await page.evaluate(() => {
-        const s = window.__sidereal, m = s.moonRect, range = document.createRange();
-        range.selectNodeContents(document.querySelector('.final__title'));
-        return { vis: s.moonVis, moon: m && { left: m.left, bottom: m.bottom }, labelTop: document.querySelector('.final__label').getBoundingClientRect().top, titleRight: Math.max(...[...range.getClientRects()].filter((q) => q.width).map((q) => q.right)) };
-      });
-      assert.ok(r.vis > 0.05 && r.moon, 'the moon should be up at the page end');
-      assert.ok(r.moon.left > r.titleRight, `at 1600px the moon (from ${Math.round(r.moon.left)}px) should sit clear of the headline (to ${Math.round(r.titleRight)}px)`);
-      assert.ok(r.moon.bottom > r.labelTop, `the moon hovers above the contact text (its disc ends at ${Math.round(r.moon.bottom)}px, the text starts at ${Math.round(r.labelTop)}px) instead of resting on its summit`);
-    } finally { await page.close(); }
+  test('at the page end the moon rests on the rock right of the contact text, partly behind it, on 16:10 and 16:9 screens', { timeout: 150000 }, async () => {
+    const bad = [];
+    for (const vp of [DESKTOP, { name: 'laptop 1366', width: 1366, height: 768, dpr: 1 }, { name: 'desktop 1920', width: 1920, height: 1080, dpr: 1 }]) {
+      const page = await open('/', vp);
+      try {
+        await ready(page);
+        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+        await wait(2500);
+        const r = await page.evaluate(() => {
+          const s = window.__sidereal, m = s.moonRect;
+          let right = -Infinity;
+          for (const el of document.querySelectorAll('#contact .final__label, #contact .final__title, #contact .final__line, #contact .final__actions')) {
+            const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+            while (walker.nextNode()) { const range = document.createRange(); range.selectNodeContents(walker.currentNode); for (const q of range.getClientRects()) if (q.width) right = Math.max(right, q.right); }
+          }
+          return { vis: s.moonVis, cover: s.moonCover, left: m ? m.left : null, textRight: right };
+        });
+        if (!(r.vis > 0.05) || r.left === null) { bad.push(`${vp.name}: the moon isn't up at the page end`); continue; }
+        if (r.left < r.textRight + 8) bad.push(`${vp.name}: the moon (from ${Math.round(r.left)}px) crowds the contact text (to ${Math.round(r.textRight)}px)`);
+        if (r.cover < 0.15) bad.push(`${vp.name}: only ${Math.round(r.cover * 100)}% of the disc is behind the rock: it floats instead of resting`);
+      } finally { await page.close(); }
+    }
+    assert.deepEqual(bad, []);
   });
 
   test('the risen moon is the brightest thing in the last chapter', { timeout: 90000 }, async () => {
@@ -1450,6 +1458,13 @@ describe('6 · accessible structure and navigation', () => {
         const marked = await page.evaluate(() => [...document.querySelectorAll('.hd__nav a[aria-current]')].map((a) => a.getAttribute('href')));
         if (marked.length !== 1 || marked[0] !== `#${id}`) bad.push(`reading #${id}, the nav marks ${marked.join(', ') || 'nothing'}`);
       }
+      // the next chapter's first line low in the view: the reader is still in the previous chapter
+      for (const [prev, next] of [['work', 'about'], ['about', 'experience'], ['writing', 'contact']]) {
+        await page.evaluate((next) => { const el = document.querySelector(`#${next} .ch__head, #${next} .final__label`); window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.7); }, next);
+        await wait(700);
+        const marked = await page.evaluate(() => [...document.querySelectorAll('.hd__nav a[aria-current]')].map((a) => a.getAttribute('href')));
+        if (marked.length !== 1 || marked[0] !== `#${prev}`) bad.push(`with #${next}'s first line 70% down the view, the nav marks ${marked.join(', ') || 'nothing'}, not #${prev}`);
+      }
     } finally { await page.close(); }
     const writing = await open('/writing', DESKTOP, { reduce: true });
     try {
@@ -1470,6 +1485,26 @@ describe('6 · accessible structure and navigation', () => {
       await wait(250);
       const s = await page.evaluate(() => ({ open: document.getElementById('mobile-nav').classList.contains('open'), expanded: document.getElementById('menu-btn').getAttribute('aria-expanded') }));
       assert.deepEqual(s, { open: false, expanded: 'false' });
+    } finally { await page.close(); }
+  });
+
+  test('a height-only resize on a phone (a toolbar sliding away) never stretches the scene', { timeout: 60000 }, async () => {
+    const page = await open('/', PHONE);
+    try {
+      await ready(page);
+      await page.setViewport({ width: 390, height: 900, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+      await wait(900);
+      const r = await page.evaluate(() => { const c = document.getElementById('sky'); return { sx: c.width / c.clientWidth, sy: c.height / c.clientHeight }; });
+      assert.ok(Math.abs(r.sx - r.sy) < 0.01, `the canvas is scaled ${r.sx.toFixed(3)} across but ${r.sy.toFixed(3)} down`);
+    } finally { await page.close(); }
+  });
+
+  test('every home chapter is a region named by its own label', { timeout: 60000 }, async () => {
+    const page = await open('/', DESKTOP, { reduce: true });
+    try {
+      const r = await page.evaluate(() => [...document.querySelectorAll('section[data-chapter]:not(#hero)')].map((s) => ({ id: s.id, name: (document.getElementById(s.getAttribute('aria-labelledby') || '')?.textContent || '').trim() })));
+      assert.ok(r.length >= 6, `only ${r.length} chapters found`);
+      assert.deepEqual(r.filter((c) => !c.name).map((c) => c.id), []);
     } finally { await page.close(); }
   });
 

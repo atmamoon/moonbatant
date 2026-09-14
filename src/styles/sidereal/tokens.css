@@ -52,6 +52,8 @@
   --maxw: 1280px;
   --measure: 34em;        /* ≈ 72 characters of Newsreader — `ch` lies in a serif */
   --gutter: clamp(24px, 5vw, 48px);
+  --gutter-l: max(var(--gutter), env(safe-area-inset-left));   /* landscape iPhones: lines never start under the notch */
+  --gutter-r: max(var(--gutter), env(safe-area-inset-right));
   --chapter-gap: clamp(140px, 22vh, 260px);
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
 

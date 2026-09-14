@@ -71,6 +71,6 @@ html[data-mode='night'] .prose { color: var(--ink-read, rgba(234, 240, 251, 0.9)
 .prose figure, .plate { margin: 2.4em 0; padding: 1.2em 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .prose figure img, .plate img, .prose > img { display: block; width: 100%; height: auto; }
 .prose figcaption, .plate__cap { margin-top: 12px; font-family: var(--font-mono); font-size: var(--text-label); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--ink-3); }
-.plate--bleed { margin-inline: calc(50% - 50vw); padding-inline: var(--gutter); }
+.plate--bleed { margin-inline: calc(50% - 50vw); padding-inline: var(--gutter-l) var(--gutter-r); }
 @media (max-width: 700px) { .case__metrics { grid-template-columns: 1fr 1fr; } .case__metric:first-child:nth-last-child(odd) { grid-column: 1 / -1; } }   /* an odd count: the lead takes the first row, no orphan */
 @media (max-width: 480px) { .case__metrics { grid-template-columns: 1fr; row-gap: 22px; } }   /* phones: one result a row, so captions keep their length */

@@ -14,7 +14,7 @@ const link = (href: string) => (onHome && href === '/work' ? '#work' : onHome &&
 // the nav marks where the reader is: the page itself, or the section a case study belongs to
 const here = Astro.url.pathname.length > 1 && Astro.url.pathname.endsWith('/') ? Astro.url.pathname.slice(0, -1) : Astro.url.pathname;
 const current = (href: string) => {
-  if (href === '/#writing' && (here === '/writing' || here.startsWith('/writing/'))) return here === '/writing' ? 'page' : 'true';
+  if (href === '/#writing' && (here === '/writing' || here.startsWith('/writing/'))) return 'true';   // the link goes to the home chapter: /writing is its section, not its page
   return href.includes('#') ? undefined : here === href ? 'page' : here.startsWith(href + '/') ? 'true' : undefined;
 };
 ---
@@ -53,7 +53,7 @@ const current = (href: string) => {
     position: relative; z-index: 1;   /* above the title-safe scrim (an absolutely positioned ::before) */
     pointer-events: auto;
     max-width: var(--maxw); margin: 0 auto;
-    padding: 22px var(--gutter) 0;
+    padding: 22px var(--gutter-r) 0 var(--gutter-l);
     display: flex; align-items: center; gap: 24px;
   }
   .hd__brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-shadow: var(--ink-shadow); }
@@ -78,7 +78,7 @@ const current = (href: string) => {
   .hd__mobile {
     position: relative; z-index: 1;
     display: none; pointer-events: auto; flex-direction: column;
-    margin: 12px var(--gutter) 0; padding: 8px 0 12px;
+    margin: 12px var(--gutter-r) 0 var(--gutter-l); padding: 8px 0 12px;
     border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
     background: rgba(5, 7, 15, 0.94);   /* near-opaque night; no blur surface over the live canvas */
   }

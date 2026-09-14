@@ -47,10 +47,10 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
 </section>
 
 {/* 02 · selected work */}
-<section class="ch" id="work" data-chapter data-sun={CH.work}>
+<section class="ch" id="work" aria-labelledby="work-label" data-chapter data-sun={CH.work}>
   <div class="wrap">
     <header class="ch__head rv">
-      <p class="t-label"><span class="ch__idx">02</span> Selected work</p>
+      <p id="work-label" class="t-label"><span class="ch__idx">02</span> Selected work</p>
       <h2 class="ch__title">Products &amp; agents I've shipped.</h2>
     </header>
     <Manifest studies={featured} />
@@ -58,10 +58,10 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
 </section>
 
 {/* 03 · about: one centred measure */}
-<section class="ch ch--centre" id="about" data-chapter data-sun={CH.about}>
+<section class="ch ch--centre" id="about" aria-labelledby="about-label" data-chapter data-sun={CH.about}>
   <div class="wrap">
     <header class="ch__head rv">
-      <p class="t-label"><span class="ch__idx">03</span> About</p>
+      <p id="about-label" class="t-label"><span class="ch__idx">03</span> About</p>
       <h2 class="sr-only">About</h2>
     </header>
     <div class="about">
@@ -84,10 +84,10 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
 </section>
 
 {/* 04 · experience: the ledger */}
-<section class="ch" id="experience" data-chapter data-sun={CH.experience}>
+<section class="ch" id="experience" aria-labelledby="experience-label" data-chapter data-sun={CH.experience}>
   <div class="wrap">
     <header class="ch__head rv">
-      <p class="t-label"><span class="ch__idx">04</span> Experience</p>
+      <p id="experience-label" class="t-label"><span class="ch__idx">04</span> Experience</p>
       <h2 class="ch__title">Where I've shipped.</h2>
     </header>
     <div class="ledger">
@@ -115,10 +115,10 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
 </section>
 
 {/* 05 · education */}
-<section class="ch ch--short" id="education" data-chapter data-sun={CH.education}>
+<section class="ch ch--short" id="education" aria-labelledby="education-label" data-chapter data-sun={CH.education}>
   <div class="wrap">
     <header class="ch__head rv">
-      <p class="t-label"><span class="ch__idx">05</span> Education</p>
+      <p id="education-label" class="t-label"><span class="ch__idx">05</span> Education</p>
       <h2 class="ch__title">{EDUCATION.school}</h2>
     </header>
     <div class="edu rv">
@@ -129,10 +129,10 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
 </section>
 
 {/* 06 · writing */}
-<section class="ch" id="writing" data-chapter data-sun={CH.writing}>
+<section class="ch" id="writing" aria-labelledby="writing-label" data-chapter data-sun={CH.writing}>
   <div class="wrap">
     <header class="ch__head rv">
-      <p class="t-label"><span class="ch__idx">06</span> Writing</p>
+      <p id="writing-label" class="t-label"><span class="ch__idx">06</span> Writing</p>
       <h2 class="ch__title">Essays &amp; write-ups</h2>
     </header>
     <ul class="wl">
@@ -151,9 +151,9 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
 </section>
 
 {/* 07 · contact: one sentence, the whole sky */}
-<section class="ch ch--final" id="contact" data-chapter data-sun={CH.contact}>
+<section class="ch ch--final" id="contact" aria-labelledby="contact-label" data-chapter data-sun={CH.contact}>
   <div class="wrap final">
-    <p class="t-label t-label--glow final__label rv">07 · Contact</p>
+    <p id="contact-label" class="t-label t-label--glow final__label rv">07 · Contact</p>
     <h2 class="final__title rv">Let's build something reliable.</h2>
     <p class="final__line rv">{SOCIALS.location} · <a href={`tel:${SOCIALS.phone.replace(/\s+/g, '')}`}>{SOCIALS.phone}</a></p>
     <div class="final__actions rv">
@@ -191,7 +191,7 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .ch--hero { --ch-pad: 0px; min-height: 100svh; display: flex; align-items: flex-start; padding-top: 0; }
   .hero { padding-top: clamp(140px, 21vh, 240px); padding-bottom: 20vh; position: relative; }
   /* the reserved right third carries the proof: one lead result per case, as instruments */
-  .hero__instruments { list-style: none; position: absolute; right: var(--gutter); top: clamp(140px, 19vh, 230px); width: clamp(220px, 19vw, 300px); display: none; }
+  .hero__instruments { list-style: none; position: absolute; right: var(--gutter-r); top: clamp(140px, 19vh, 230px); width: clamp(220px, 19vw, 300px); display: none; }
   @media (min-width: 1100px) { .hero__instruments { display: grid; } }   /* from the width where the right-edge grad behind it switches on */
   .hero__instruments li { border-top: 1px solid var(--rule); }
   .hero__instruments li:last-child { border-bottom: 1px solid var(--rule); }

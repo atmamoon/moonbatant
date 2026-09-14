@@ -103,13 +103,13 @@ void main(){
   float ra = atan(e.y, e.x); float dec = asin(clamp(e.z,-1.0,1.0));
   vec2 muv = vec2((ra+PI)/(2.0*PI), (PI*0.5-dec)/PI);
   float mw = texture2D(uMWTex, muv).r;
-  // the bake is a stack of soft isophote plateaus: value noise fixed to the sky (0.7° cells) breaks it into star clouds
-  // and dark lanes, and the densest light warms toward the core's colour
-  vec2 P = vec2(512.0, 256.0);
+  // the bake is a stack of soft isophote plateaus: two octaves of value noise fixed to the sky give soft star clouds, a
+  // one-pixel grain of unresolved stars, and a neutral band that warms only where it is densest
   mw = pow(clamp(mw / 0.8, 0.0, 1.0), 1.3);
-  mw *= 0.5 + 0.5 * vnoise(muv * P, P) * (0.7 + 0.3 * vnoise(muv * 3.0 * P, 3.0 * P));
-  mw *= 1.0 - 0.45 * smoothstep(0.35, 0.7, mw) * smoothstep(0.55, 0.8, vnoise(muv * 0.5 * P, 0.5 * P));
-  col += mix(vec3(0.55, 0.63, 0.92), vec3(0.90, 0.88, 0.84), mw) * mw * uMW * 1.6 * smoothstep(-0.02, 0.28, alt);
+  float sc = 0.6 * vnoise(muv * vec2(128.0, 64.0), vec2(128.0, 64.0)) + 0.4 * vnoise(muv * vec2(256.0, 128.0), vec2(256.0, 128.0));
+  mw *= 0.8 + 0.4 * smoothstep(0.25, 0.75, sc);
+  mw += mw * 0.7 * step(0.975, h12(floor(muv * vec2(8192.0, 4096.0))));
+  col += mix(vec3(0.68, 0.70, 0.78), vec3(0.92, 0.87, 0.78), smoothstep(0.2, 0.8, mw)) * mw * uMW * 1.15 * smoothstep(-0.02, 0.28, alt);
   // dither (kills banding on 8-bit displays)
   col += (hash(gl_FragCoord.xy + uSeed) - 0.5) * (1.6/255.0);
   gl_FragColor = vec4(col, 1.0);
@@ -171,7 +171,7 @@ uniform sampler2D uTex; uniform vec4 uMap; uniform vec2 uSub;
 uniform float uExposure, uSat, uHiMix, uLift, uContrast, uMoonLift;
 uniform vec3 uTint, uHiTint;
 uniform sampler2D uCloud; uniform float uShA, uShOff, uShRep;
-uniform sampler2D uSky; uniform vec2 uSkyTexel; uniform float uWisp;   // the skyline profile (16-bit ridge row per column), 1/(columns, plate rows)
+uniform sampler2D uSky; uniform vec2 uSkyTexel; uniform float uWisp, uMoonRim, uMoonX;   // the skyline profile (16-bit ridge row per column), 1/(columns, plate rows)
 float ridgeAt(float x){ vec4 k = texture2D(uSky, vec2(x, 0.5)); return (k.r * 65280.0 + k.g * 255.0) / 65535.0; }
 void main(){
   vec2 uv = vUv * uMap.xy + uMap.zw;
@@ -185,7 +185,7 @@ void main(){
   g = (g - 0.5)*uContrast + 0.5 + uLift;
   g *= uTint * (uExposure + uMoonLift*hi*0.35);
   // cloud shadow: the nearer layer's density darkens the range, sunlit snow most
-  float cl = texture2D(uCloud, vec2(vUv.x*uShRep + uShOff, 1.0 - vUv.y)).a;
+  float cl = texture2D(uCloud, vec2(vUv.x*uShRep + uShOff, 1.0 - vUv.y * 2.2)).a;   // shadows at the clouds' own scale, not stretched over the screen
   g *= 1.0 - uShA * smoothstep(0.02, 0.16, cl) * mix(0.35, 1.0, hi);
   // cloud and plume baked in above the ridge were lit by the low sun: they thin out as the light goes
   // (the highest of three neighbouring profile samples, so a steep face never loses rock between samples)
@@ -194,6 +194,8 @@ void main(){
     float ridge = min(ridgeAt(uv.x), min(ridgeAt(uv.x - uSkyTexel.x), ridgeAt(uv.x + uSkyTexel.x)));
     keep = 1.0 - uWisp * (1.0 - smoothstep(ridge - 14.0 * uSkyTexel.y, ridge - 6.0 * uSkyTexel.y, 1.0 - uv.y));
   }
+  // backlit by the rising moon: a thin cool light along the crests nearest the disc
+  if (uMoonRim > 0.0) g += vec3(0.55, 0.60, 0.72) * 0.15 * uMoonRim * (1.0 - smoothstep(0.0, 5.0 * uSkyTexel.y, (1.0 - uv.y) - ridgeAt(uv.x))) * exp(-abs(vUv.x - uMoonX) * 8.0) * (0.25 + 0.75 * hi);
   gl_FragColor = vec4(g * c.a * keep, c.a * keep);
 }`;
 
@@ -219,17 +221,19 @@ void main(){
 const FS_FOG = `
 precision mediump float;
 varying vec2 vUv;
-uniform sampler2D uTex; uniform float uOffset, uAlpha, uY0, uY1, uRepeat, uUnlit; uniform vec3 uTint, uRim;
+uniform sampler2D uTex; uniform float uOffset, uAlpha, uY0, uY1, uRepeat, uUnlit; uniform vec3 uTint, uRim; uniform vec2 uWarp;
 void main(){
   float band = smoothstep(uY0, uY0 + 0.1, vUv.y) * (1.0 - smoothstep(uY1 - 0.12, uY1, vUv.y));
   vec2 st = vec2(vUv.x*uRepeat + uOffset, 1.0 - (vUv.y - uY0)/(uY1-uY0));
+  st += 0.004 * vec2(sin(uWarp.x + st.y * 11.0), cos(uWarp.y + st.x * 7.0));   // shapes evolve slowly as they drift
   vec4 fc = texture2D(uTex, st);
-  float l = fc.a * max(fc.r, 0.6) * smoothstep(0.0, 0.12, fc.a) * 1.15;   // density in alpha, structure in luminance; the faint haze around each cloud is cut
+  float l = fc.a * 0.66 * smoothstep(0.0, 0.12, fc.a) * 1.15;   // density from alpha alone; the faint haze around each cloud is cut
   float a = clamp(l * band * uAlpha * 2.6, 0.0, 0.7);
-  // form: the luminance lights the body unevenly, and the edge facing the low sun (left, below) catches its glow
+  // form: shading baked into the plates from their own density (lit where it thins toward the low sun), and the
+  // edge facing the sun (left, below) catches its glow
   vec3 c = uTint * mix(0.72, 1.12, smoothstep(0.35, 0.95, fc.r));
-  float toSun = texture2D(uTex, st + vec2(-0.004, 0.006)).a;
-  c += uRim * clamp(fc.a - toSun, 0.0, 1.0) * 1.5;
+  float toSun = texture2D(uTex, st + vec2(-0.012, 0.018)).a;
+  c += uRim * clamp(fc.a - toSun, 0.0, 1.0) * 6.0;
   // unlit, on a moonless night, a cloud gives no light of its own: it only dims the sky behind it and keeps that sky's gradient
   gl_FragColor = vec4(c * a * (1.0 - uUnlit), a * mix(1.0, 0.55, uUnlit));
 }`;
@@ -262,8 +266,8 @@ attribute vec2 aPos; attribute float aSize; attribute float aAlpha;
 uniform float uDpr; varying float vA;
 void main(){ gl_Position = vec4(aPos, 0.0, 1.0); gl_PointSize = aSize*uDpr; vA = aAlpha; }`;
 const FS_PTS = `
-precision mediump float; varying float vA; uniform vec3 uCol;
-void main(){ vec2 p = gl_PointCoord*2.0-1.0; float a = exp(-dot(p,p)*2.2)*vA; if (a < 0.003) discard; gl_FragColor = vec4(uCol*a, a); }`;
+precision mediump float; varying float vA; uniform vec3 uCol; uniform float uStreak;
+void main(){ vec2 p = gl_PointCoord*2.0-1.0; float a = exp(-(p.x*p.x*2.2 + p.y*p.y*mix(2.2, 20.0, uStreak)))*vA; if (a < 0.003) discard; gl_FragColor = vec4(uCol*a, a); }`;
 
 // ── gl helpers ────────────────────────────────────────────────────────────
 function compile(gl: WebGLRenderingContext, vs: string, fs: string) {
@@ -420,7 +424,7 @@ export function initSidereal(opts: Opts) {
   let sunAlt = 6, sunTarget = 6;          // degrees
   let moonUp = 0;                         // 0..1 rise progress
   // last drawn moon (CSS px rect), for the test hook
-  const moonState: { vis: number; alt: number; rect: { left: number; right: number; top: number; bottom: number } | null } = { vis: 0, alt: -90, rect: null };
+  const moonState: { vis: number; alt: number; cover: number; rect: { left: number; right: number; top: number; bottom: number } | null } = { vis: 0, alt: -90, cover: 0, rect: null };
   let readingCx = -1;                     // reading pages: moon centre in the right margin (fraction of width), -1 when it doesn't fit
   let readingR = 0;                       // reading pages: moon radius in CSS px
   let contactBox: { left: number; right: number; top: number; bottom: number } | null = null;   // home page: where the contact text's lines sit (CSS px, page coordinates)
@@ -429,11 +433,12 @@ export function initSidereal(opts: Opts) {
   let idleSec = 0;                        // real seconds since load (sky wheels)
   let scrollT = 0;                        // 0..1 page progress
   const isClock = opts.mode === 'clock';
-  let chapters: { el: HTMLElement; sun: number; center: number; top: number; height: number; pad: number }[] = [];
+  let chapters: { el: HTMLElement; sun: number; center: number; top: number; height: number; pad: number; first: number }[] = [];
   let navChapter = '';                    // the chapter the home nav marks as being read
   let docH = 1, vh = window.innerHeight;
 
-  function resize() {
+  // the canvas's own size and field of view: cheap, and safe on a mid-scroll toolbar resize
+  function sizeCanvas() {
     vh = window.innerHeight;
     // at most ~3 MP of canvas: several full-screen passes redraw 30 times a second while someone reads
     dpr = clamp(Math.min(window.devicePixelRatio || 1, Math.sqrt(3.0e6 / Math.max(1, canvas.clientWidth * canvas.clientHeight))), 1, 1.5);
@@ -446,11 +451,14 @@ export function initSidereal(opts: Opts) {
     { const tanH = Math.tan(HFOV / 2); if (aspect >= 1.6) { tanX = tanH; tanY = tanH / aspect; } else { tanY = tanH / 1.6; tanX = tanY * aspect; } }
     mapCache = null;
     gl.viewport(0, 0, W, H);
+  }
+  function resize() {
+    sizeCanvas();
     docH = Math.max(1, document.body.scrollHeight - vh);
     chapters = Array.from(document.querySelectorAll<HTMLElement>('[data-chapter]')).map((el) => {
       const r = el.getBoundingClientRect(); const top = r.top + window.scrollY;
       const pad = parseFloat(getComputedStyle(el).paddingTop) || 0;
-      return { el, sun: Number(el.dataset.sun ?? 0), top, height: r.height, center: top + r.height / 2, pad };
+      return { el, sun: Number(el.dataset.sun ?? 0), top, height: r.height, center: top + r.height / 2, pad, first: layoutTop(el.querySelector<HTMLElement>('.ch__head, .final__label') ?? el) };
     });
     if (!isClock) {
       // a reading page's moon may only hang in the right margin, and only when
@@ -510,7 +518,7 @@ export function initSidereal(opts: Opts) {
     const vc = s + vh * 0.5;
     // wayfinding: the nav marks the chapter at the centre of the view, written only when it changes
     let at = '';
-    for (const c of chapters) if (c.top <= vc) at = c.el.id;
+    for (const c of chapters) if (c.first <= vc) at = c.el.id;
     if (at !== navChapter) { navChapter = at; document.querySelectorAll<HTMLAnchorElement>('.hd a[href^="#"]').forEach((a) => (a.getAttribute('href') === `#${at}` ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current'))); }
     const bands = chapters.map((c) => ({ a: c.top + c.pad, b: c.top + c.height, sun: c.sun }));
     bands[0].a = 0;
@@ -548,7 +556,7 @@ export function initSidereal(opts: Opts) {
   }
 
   // ── particles: spindrift, satellite, meteor ──
-  const NP = 340;
+  const NP = 1024;
   const parts = Array.from({ length: NP }, () => ({ x: 0, y: 0, vx: 0, vy: 0, life: 0, max: 1, size: 1, a: 0 }));
   const ptData = new Float32Array(NP * 4);
   const ptBuf = gl.createBuffer()!;
@@ -586,7 +594,7 @@ export function initSidereal(opts: Opts) {
   function emit(dt: number, strength: number, wind: number) {
     if (!peaks.length || strength <= 0.01) return;
     const m = rangeMap();
-    let n = Math.round(strength * dt * 45);
+    let n = Math.round(strength * dt * 135);
     for (const p of parts) {
       if (n <= 0) break;
       if (p.life > 0) continue;
@@ -595,8 +603,8 @@ export function initSidereal(opts: Opts) {
       p.x = (u - m.ox) / m.sx * 2 - 1; p.y = (v - m.oy - (isClock ? scrollT * 0.03 : 0)) / m.sy * 2 - 1;   // follow the plate's parallax
       p.x += (Math.random() - 0.4) * 0.02; p.y += Math.random() * 0.006;
       // plumes: soft puffs, downwind and slightly up, then settling — blowing snow, not sparks
-      p.vx = (0.25 + Math.random() * 0.4) * wind * DEG / tanX; p.vy = 0.005 + Math.random() * 0.012;   // a quarter to two-thirds of a degree a second, not timelapse speed
-      p.max = 5 + Math.random() * 4; p.life = p.max; p.size = 3 + Math.random() * 5; p.a = (0.035 + Math.random() * 0.06) * strength;
+      p.vx = (0.25 + Math.random() * 0.4) * wind * DEG / tanX; p.vy = 0.002 + Math.random() * 0.004;   // a quarter to two-thirds of a degree a second, not timelapse speed
+      p.max = 5 + Math.random() * 4; p.life = p.max; p.size = 3 + Math.random() * 5; p.a = (0.035 + Math.random() * 0.06) * strength * 0.4;
       n--;
     }
   }
@@ -608,7 +616,7 @@ export function initSidereal(opts: Opts) {
       p.vy -= 0.008 * dt; p.vx += (Math.sin(idleSec * 2.1 + p.x * 9) * 0.012) * dt; p.size += 0.8 * dt;   // puffs spread a little as they drift
       p.x += (p.vx + wind * 0.08 * DEG / tanX) * dt; p.y += p.vy * dt;
       const fade = Math.sin(u * Math.PI);
-      ptData[k++] = p.x; ptData[k++] = p.y; ptData[k++] = p.size; ptData[k++] = p.a * fade;
+      ptData[k++] = p.x; ptData[k++] = p.y; ptData[k++] = p.size * 2.5; ptData[k++] = p.a * fade;
     }
     return k / 4;
   }
@@ -616,6 +624,9 @@ export function initSidereal(opts: Opts) {
   // ── draw ──
   let mwSeed = 0;
   function draw(now: number, dt: number) {
+    // cloud drift and slow evolution, wrapped: a phone GPU's 16-bit floats would step and jitter as time on the page grows
+    const offA = (idleSec * dbg.speed / 128) % 1, offB = (idleSec * dbg.speed / 260) % 1;
+    const warpA = (idleSec * 0.05) % (Math.PI * 2), warpB = (idleSec * 0.037) % (Math.PI * 2);
     const alt = sunAlt;
     const [s0, s1, st] = keyAt(SKY, alt);
     const [r0, r1, rt] = keyAt(RANGE, alt);
@@ -626,7 +637,7 @@ export function initSidereal(opts: Opts) {
     const rise = smooth(0, 1, moonUp);
     // landscape: at the page's end the disc rests on its summit, the ridge biting its lower quarter (the Ridgemoon at rest),
     // and time on the page lifts it clear at the moon's own 15°/h; portrait screens raise it above the contact text
-    const moonAlt = isClock ? (aspect < 0.8 ? lerp(-6.8, 11, rise) + 6 * rise : lerp(-6.8, 0.5, rise)) + Math.min(idleSec * 0.004, 1.5) * rise : 13 + idleSec * 0.004 + (aspect < 0.8 ? 6 : 0);
+    const moonAlt = isClock ? (aspect < 0.8 ? lerp(-6.8, 11, rise) + 6 * rise : lerp(-6.8, 0.1, rise)) + Math.min(idleSec * 0.004, 1.5) * rise : 13 + idleSec * 0.004 + (aspect < 0.8 ? 6 : 0);
     // reading pages: no moon unless the right margin can hold it clear of the text (see resize)
     const moonVis = (moonAlt > -6.6 ? 1 : 0) * smooth(-14, -17, alt) * (!isClock && readingCx < 0 ? 0 : 1);
     const moonLight = moonVis * smooth(-3, 2, moonAlt);   // a moon resting on the ridge already lights the snow and the clouds
@@ -675,6 +686,7 @@ export function initSidereal(opts: Opts) {
     }
 
     // moon + halo (screen-space: rises behind the highest summit)
+    let moonCxNow = -1;                       // where the disc is, for the crest light on the range
     const m = rangeMap();
     let moonR = (isClock ? (aspect < 0.8 ? clamp(W * 0.045, 44 * dpr, 92 * dpr) : clamp(W * 0.032, 36 * dpr, 64 * dpr)) : Math.max(readingR, 0) * dpr) / W; // half-width as a fraction of width
     moonState.rect = null;
@@ -686,14 +698,20 @@ export function initSidereal(opts: Opts) {
       const shortLand = aspect >= 0.8 && H / dpr < 500;   // landscape phones: keep the disc right of the centred contact text
       let cx: number, cy: number;
       if (isClock) {
-        cx = aspect < 0.8 ? 0.72 : shortLand ? 0.86 : clamp(px + rx * 0.15, 0.2, 0.86) + 0.05 * rise;
-        cy = py - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
-        // it rests on its summit only where that's clear of the contact text: where its column crosses the lines, it rises above them
-        if (aspect >= 0.8 && contactBox) {
-          const vwC = W / dpr, vhC = H / dpr, pad = 16, tTop = contactBox.top - window.scrollY, tBottom = contactBox.bottom - window.scrollY;
-          const l = (cx - rx) * vwC, r = (cx + rx) * vwC;
-          if (r > contactBox.left - pad && l < contactBox.right + pad && tBottom > 0 && tTop < vhC) cy = Math.max(cy, 1 - (tTop - pad) / vhC + ry);
+        cx = aspect < 0.8 ? 0.72 : shortLand ? 0.86 : clamp(px + rx * 0.15, 0.2, 0.86);
+        // landscape: always right of the contact text, and resting on the rock under the disc itself, not on a summit
+        // column it may have drifted off (every major peak sits under the centred title on some screens)
+        let rock = py;
+        if (aspect >= 0.8 && !shortLand) {
+          if (contactBox) cx = Math.max(cx, (contactBox.right + 16) / (W / dpr) + rx);
+          rock = -Infinity;
+          for (let i = 0; i <= 12; i++) {
+            const col = clamp(Math.round(((cx - rx * 0.6 + rx * 1.2 * i / 12) * m.sx + m.ox) * skyline.length), 0, skyline.length - 1);
+            rock = Math.max(rock, (1 - skyline[col] / rangeH - m.oy) / m.sy - scrollT * 0.03);
+          }
         }
+        cy = rock - ry * 0.75 + (moonAlt + 3) / 13 * ry * 4.2;
+        moonState.cover = clamp((rock - (cy - ry)) / (2 * ry), 0, 1);
         // clear of the header band, and on portrait screens above the contact label: the disc shrinks to fit, or sets
         const vhCss = H / dpr, top = bandCss + 8, bottom = aspect < 0.8 ? labelDocTop - window.scrollY - 16 : vhCss;
         const rCss = ry * vhCss, fit = Math.min(rCss, (bottom - top) / 2);
@@ -704,13 +722,14 @@ export function initSidereal(opts: Opts) {
         cx = readingCx;
         cy = Math.min(0.78 + Math.min(0.03, idleSec * 5e-5), 1 - (bandCss + 24) / (H / dpr) - ry);
       }
+      moonCxNow = cx;
       { const vwCss = W / dpr, vhCss = H / dpr; moonState.rect = { left: (cx - rx) * vwCss, right: (cx + rx) * vwCss, top: (1 - cy - ry) * vhCss, bottom: (1 - cy + ry) * vhCss }; }
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(pSprite); bindUnit(pSprite);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texMoon); gl.uniform1i(U(pSprite, 'uTex'), 0);
       // halo
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx * 8, cy - ry * 8, rx * 16, ry * 16);
-      gl.uniform1f(U(pSprite, 'uHalo'), 1); gl.uniform3f(U(pSprite, 'uTint'), 0.55, 0.62, 0.85); gl.uniform1f(U(pSprite, 'uAlpha'), 0.30 * moonVis * night * clamp(moonAlt / 6, 0.6, 1));
+      gl.uniform1f(U(pSprite, 'uHalo'), 1); gl.uniform3f(U(pSprite, 'uTint'), 0.55, 0.62, 0.85); gl.uniform1f(U(pSprite, 'uAlpha'), 0.30 * moonVis * night * clamp(moonAlt / 6, 0.75, 1));
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       // a tight glow hugging the disc
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx * 2.4, cy - ry * 2.4, rx * 4.8, ry * 4.8);
@@ -719,7 +738,7 @@ export function initSidereal(opts: Opts) {
       // disc — warm near the horizon, silver higher up
       const warm = Math.min(0.5, 1 - clamp(moonAlt / 6, 0, 1));
       // the warm tint changes the hue, not the brightness: even on the ridge the disc stays the brightest thing in the frame
-      const tr = lerp(0.96, 1.0, warm), tg = lerp(0.99, 0.86, warm), tb = lerp(1.04, 0.72, warm), tk = 0.987 / (0.2126 * tr + 0.7152 * tg + 0.0722 * tb);
+      const tr = lerp(0.96, 1.0, warm), tg = lerp(0.99, 0.86, warm), tb = lerp(1.04, 0.72, warm), tk = 1.03 / (0.2126 * tr + 0.7152 * tg + 0.0722 * tb);   // a touch above silver: resting, the rock covers its brightest craters
       gl.uniform4f(U(pSprite, 'uRect'), cx - rx, cy - ry, rx * 2, ry * 2);
       gl.uniform1f(U(pSprite, 'uHalo'), 0); gl.uniform3f(U(pSprite, 'uTint'), tr * tk, tg * tk, tb * tk); gl.uniform1f(U(pSprite, 'uAlpha'), moonVis);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -740,13 +759,14 @@ export function initSidereal(opts: Opts) {
       gl.uniform1f(U(pRange, 'uHiMix'), lerp(r0.hiMix, r1.hiMix, rt));
       gl.uniform1f(U(pRange, 'uLift'), lerp(r0.lift, r1.lift, rt));
       gl.uniform1f(U(pRange, 'uContrast'), lerp(r0.contrast, r1.contrast, rt));
-      gl.uniform1f(U(pRange, 'uMoonLift'), moonLight * (isClock ? 0.5 : 0.15));   // reading pages: less moonlit snow behind long text
+      gl.uniform1f(U(pRange, 'uMoonLift'), 0);   // the moon rises behind the range: it doesn't light the faces turned to the viewer
+      gl.uniform1f(U(pRange, 'uMoonRim'), texSky && isClock && moonCxNow >= 0 ? moonLight : 0); gl.uniform1f(U(pRange, 'uMoonX'), moonCxNow);
       t3('uTint', r0.tint, r1.tint); t3('uHiTint', r0.hiTint, r1.hiTint);
       // cloud shadows, while there is sun to cast them: cloud layer A's own shape and drift
-      const shA = texFogA ? 0.55 * smooth(-2.5, 3, alt) * (motionOff() ? 0 : 1) * dbg.shadow : 0;
+      const shA = texFogA ? 0.62 * smooth(-2.5, 3, alt) * (motionOff() ? 0 : 1) * dbg.shadow : 0;
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, texFogA || texRange); gl.uniform1i(U(pRange, 'uCloud'), 1);
       gl.uniform1f(U(pRange, 'uShA'), shA);
-      gl.uniform1f(U(pRange, 'uShOff'), -idleSec * dbg.speed / 128);
+      gl.uniform1f(U(pRange, 'uShOff'), -offA);
       gl.uniform1f(U(pRange, 'uShRep'), 1.6 * fogRep);
       // the plumes baked above the ridge were lit by the low sun: gone once it has set
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, texSky || texRange); gl.uniform1i(U(pRange, 'uSky'), 2);
@@ -770,7 +790,7 @@ export function initSidereal(opts: Opts) {
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(U(pFog, 'uTex'), 0);
       gl.uniform1f(U(pFog, 'uOffset'), off); gl.uniform1f(U(pFog, 'uAlpha'), a); gl.uniform1f(U(pFog, 'uY0'), y0); gl.uniform1f(U(pFog, 'uY1'), y1); gl.uniform1f(U(pFog, 'uRepeat'), rep);
       gl.uniform3f(U(pFog, 'uTint'), fogTint[0], fogTint[1], fogTint[2]);
-      gl.uniform3f(U(pFog, 'uRim'), rim[0], rim[1], rim[2]); gl.uniform1f(U(pFog, 'uUnlit'), unlit);
+      gl.uniform3f(U(pFog, 'uRim'), rim[0], rim[1], rim[2]); gl.uniform1f(U(pFog, 'uUnlit'), unlit); gl.uniform2f(U(pFog, 'uWarp'), warpA, warpB);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
     // on a moonless night the clouds are veils: a little denser, and drifting a little lower, across the last glow above
@@ -779,15 +799,15 @@ export function initSidereal(opts: Opts) {
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     // the cloud layers only ever cover their band (0.40–0.98 of the plate height, lower on a moonless night): skip the rest of the frame
     gl.enable(gl.SCISSOR_TEST); gl.scissor(0, Math.max(0, Math.floor(H * bandBase * (0.40 - low)) - 2), W, Math.ceil(H * bandBase * 0.58) + 4);
-    drawFog(texFogA, -idleSec * dbg.speed / 128, fogK * nightK, bandBase * (0.40 - low), bandBase * (0.86 - low), 1.6 * fogRep);   // both layers drift downwind, slowly
-    drawFog(texFogB, -idleSec * dbg.speed / 260, fogK * 0.8 * nightK, bandBase * (0.52 - low), bandBase * (0.98 - low), 1.1 * fogRep);
+    drawFog(texFogA, -offA, fogK * nightK, bandBase * (0.40 - low), bandBase * (0.86 - low), 1.6 * fogRep);   // both layers drift downwind, slowly
+    drawFog(texFogB, -offB, fogK * 0.8 * nightK, bandBase * (0.52 - low), bandBase * (0.98 - low), 1.1 * fogRep);
     gl.disable(gl.SCISSOR_TEST);
 
     // spindrift + satellite + meteor
     if (!motionOff()) {
       const wind = 0.7 + 0.3 * Math.sin(idleSec * 0.11);
       const drift = (0.35 + 0.65 * smooth(-8, 3, alt)) * dbg.drift; // backlit at golden hour
-      emit(dt, drift, wind); let n = stepParts(dt, wind);
+      emit(dt, drift, wind); let n = stepParts(dt, wind); const nSpin = n;
       // satellite: a slow point crossing the dark sky
       nextSat -= dt;
       if (!sat.on && nextSat < 0 && alt < -9 && isClock) { sat = { on: true, x: -1.05, y: 0.2 + Math.random() * 0.6, vx: (0.5 + Math.random() * 0.5) * DEG / tanX, vy: (Math.random() - 0.5) * 0.1 * DEG / tanY, t: 0 }; nextSat = 180 + Math.random() * 240; }
@@ -810,7 +830,8 @@ export function initSidereal(opts: Opts) {
         gl.uniform1f(U(pPts, 'uDpr'), dpr);
         const c = mix3([0.95, 0.9, 0.85], [0.85, 0.9, 1.0], night);
         gl.uniform3f(U(pPts, 'uCol'), c[0], c[1], c[2]);
-        gl.drawArrays(gl.POINTS, 0, n);
+        gl.uniform1f(U(pPts, 'uStreak'), 1); if (nSpin > 0) gl.drawArrays(gl.POINTS, 0, nSpin);   // spindrift: streaks
+        if (n > nSpin) { gl.uniform1f(U(pPts, 'uStreak'), 0); gl.drawArrays(gl.POINTS, nSpin, n - nSpin); }   // satellite and meteor: points
         gl.disableVertexAttribArray(aS); gl.disableVertexAttribArray(aA);
       }
     }
@@ -870,9 +891,9 @@ export function initSidereal(opts: Opts) {
   window.addEventListener('scroll', () => { scrollDirty = true; lastScrollAt = performance.now(); wake(); }, { passive: true });
   let resizeQueued = 0, lastW = window.innerWidth, lastH = window.innerHeight;
   window.addEventListener('resize', () => {
-    // iOS toolbars fire height-only resizes mid-scroll; only a width change re-lays the world there
+    // iOS toolbars fire height-only resizes mid-scroll: the canvas follows, so the scene never stretches, but only a width change re-lays the chapters
     const coarse = window.matchMedia('(pointer: coarse)').matches;
-    if (coarse && window.innerWidth === lastW && Math.abs(window.innerHeight - lastH) < 160) return;
+    if (coarse && window.innerWidth === lastW && Math.abs(window.innerHeight - lastH) < 160) { sizeCanvas(); scrollDirty = true; wake(); return; }
     lastW = window.innerWidth; lastH = window.innerHeight;
     if (resizeQueued) return;
     resizeQueued = requestAnimationFrame(() => { resizeQueued = 0; resize(); scrollDirty = true; wake(); });
@@ -951,7 +972,7 @@ export function initSidereal(opts: Opts) {
       get sun() { return sunAlt; }, set sun(v: number) { sunTarget = v; sunAlt = v; wake(); }, get sunTarget() { return sunTarget; },
       get idle() { return idleSec; }, set idle(v: number) { idleSec = v; wake(); }, get raf() { return rafId; }, get lastFrame() { return lastFrameTs; },
       get fov() { return { h: (2 * Math.atan(tanX) * 180) / Math.PI, v: (2 * Math.atan(tanY) * 180) / Math.PI }; },
-      get moonVis() { return moonState.vis; }, get moonAlt() { return moonState.alt; }, get moonRect() { return moonState.rect; },
+      get moonVis() { return moonState.vis; }, get moonAlt() { return moonState.alt; }, get moonRect() { return moonState.rect; }, get moonCover() { return moonState.cover; },
       resize, dbg,
       // orientation: equatorial degrees → horizon [north, east, up]; horizon → camera [right, up, forward]
       eqToHor(raDeg: number, decDeg: number, lstDeg: number) { const d = decDeg * DEG, a = raDeg * DEG, e = matrices(lstDeg * DEG).eq2hor, v = [Math.cos(d) * Math.cos(a), Math.cos(d) * Math.sin(a), Math.sin(d)]; return [0, 1, 2].map((r) => e[r] * v[0] + e[3 + r] * v[1] + e[6 + r] * v[2]); },
