@@ -464,12 +464,12 @@ export function initSidereal(opts: Opts) {
     } else {
       const label = document.querySelector<HTMLElement>('.final__label');
       labelDocTop = label ? layoutTop(label) : Infinity;
-      // the extent of the contact chapter's actual lines of text (not its full-width boxes), for the moon's rest
+      // the extent of the contact block's own lines of text (not its full-width boxes, nor the footer below it, which
+      // spans the page and would lift the moon everywhere), for the moon's rest
       contactBox = null;
-      const contact = document.getElementById('contact');
-      if (contact) {
-        let l = Infinity, r = -Infinity, t = Infinity, b = -Infinity;
-        const walker = document.createTreeWalker(contact, NodeFilter.SHOW_TEXT);
+      let l = Infinity, r = -Infinity, t = Infinity, b = -Infinity;
+      for (const el of document.querySelectorAll('#contact .final__label, #contact .final__title, #contact .final__line, #contact .final__actions')) {
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
         while (walker.nextNode()) {
           const n = walker.currentNode;
           if (!/\S/.test(n.textContent || '')) continue;
@@ -477,8 +477,8 @@ export function initSidereal(opts: Opts) {
           range.selectNodeContents(n);
           for (const q of range.getClientRects()) { if (!q.width) continue; l = Math.min(l, q.left); r = Math.max(r, q.right); t = Math.min(t, q.top + window.scrollY); b = Math.max(b, q.bottom + window.scrollY); }
         }
-        if (r > l) contactBox = { left: l, right: r, top: t, bottom: b };
       }
+      if (r > l) contactBox = { left: l, right: r, top: t, bottom: b };
     }
     const hd = document.querySelector('.hd');
     bandCss = hd ? parseFloat(getComputedStyle(hd, '::before').height) || 0 : 0;

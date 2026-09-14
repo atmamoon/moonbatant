@@ -594,6 +594,23 @@ describe('3 · the world behaves', () => {
     } finally { await page.close(); }
   });
 
+  test('where its summit is clear of the contact text, the moon rests on it at the page end', { timeout: 90000 }, async () => {
+    const page = await open('/', DESKTOP);
+    try {
+      await ready(page);
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await wait(2500);
+      const r = await page.evaluate(() => {
+        const s = window.__sidereal, m = s.moonRect, range = document.createRange();
+        range.selectNodeContents(document.querySelector('.final__title'));
+        return { vis: s.moonVis, moon: m && { left: m.left, bottom: m.bottom }, labelTop: document.querySelector('.final__label').getBoundingClientRect().top, titleRight: Math.max(...[...range.getClientRects()].filter((q) => q.width).map((q) => q.right)) };
+      });
+      assert.ok(r.vis > 0.05 && r.moon, 'the moon should be up at the page end');
+      assert.ok(r.moon.left > r.titleRight, `at 1600px the moon (from ${Math.round(r.moon.left)}px) should sit clear of the headline (to ${Math.round(r.titleRight)}px)`);
+      assert.ok(r.moon.bottom > r.labelTop, `the moon hovers above the contact text (its disc ends at ${Math.round(r.moon.bottom)}px, the text starts at ${Math.round(r.labelTop)}px) instead of resting on its summit`);
+    } finally { await page.close(); }
+  });
+
   test('the risen moon is the brightest thing in the last chapter', { timeout: 90000 }, async () => {
     const page = await open('/', DESKTOP);
     try {
