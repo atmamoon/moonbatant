@@ -3,8 +3,12 @@
 import { TEST_TYPES, buildTestForType } from './testTypes.js';
 import { bankFreshCount, markSeen } from './banks.js';
 import { initAnalytics, track } from './analytics.js';
+import { pacingVerdict, sweepInflight } from './metrics.js';
+import { createDashboard } from './dashboard.js';
 
 const LOG_KEY = 'ua_history';
+const INFLIGHT_KEY = 'ua_inflight';    // tests still running: progress + heartbeat (see recoverAbandoned)
+const ABANDONED_KEY = 'ua_abandoned';  // tests started but never finished
 
 const state = {
   mode: 'full',
@@ -19,6 +23,7 @@ const state = {
   timerId: null,
   startedAt: null,
   finished: false,
+  finishReason: null, // 'complete' | 'manual' | 'time'
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -26,7 +31,14 @@ const ABC = ['A', 'B', 'C', 'D', 'E'];
 
 /* ---------------- screens ---------------- */
 function show(screen) {
-  ['start', 'test', 'results'].forEach(s => $('#screen-' + s).classList.toggle('hidden', s !== screen));
+  ['start', 'test', 'results', 'dashboard'].forEach(s => $('#screen-' + s).classList.toggle('hidden', s !== screen));
+  // section tabs: hidden mid-test (forward-only, there is nowhere to go)
+  $('#app-tabs').classList.toggle('hidden', screen === 'test');
+  document.querySelectorAll('#app-tabs [data-tab]').forEach(t => {
+    const on = t.dataset.tab === (screen === 'dashboard' ? 'dashboard' : 'practice');
+    t.classList.toggle('active', on);
+    t.setAttribute('aria-current', on ? 'page' : 'false');
+  });
 }
 
 /* ---------------- start / new test ---------------- */
@@ -50,6 +62,9 @@ async function startTest(mode = state.mode) {
   state.remaining = t.seconds;
   state.finished = false;
   state.startedAt = Date.now();
+  saveInflight();
+  // a reload mid-test lands on the start screen, not wherever the test was launched from
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   track('test_started', {
     test_type: state.mode,
     test_label: t.label,
@@ -102,6 +117,7 @@ function startTimer() {
   state.timerId = setInterval(() => {
     state.remaining -= 1;
     updateTimer();
+    if (state.remaining % 5 === 0) saveInflight(); // heartbeat: a closed tab goes stale and is logged as abandoned
     if (state.remaining <= 0) { clearInterval(state.timerId); finishTest('time'); }
   }, 1000);
 }
@@ -174,6 +190,7 @@ function advance() {
   if (state.current >= state.questions.length - 1) { finishTest('complete'); return; }
   recordQTime();
   state.current += 1;                 // previous question is now locked & unreachable
+  saveInflight();
   renderQuestion(); renderPalette();
 }
 
@@ -222,7 +239,9 @@ function finishTest(reason = 'manual') {
   }
   recordQTime();
   state.finished = true;
+  state.finishReason = reason;
   clearInterval(state.timerId);
+  clearInflight();
   // Mark as seen ONLY the questions actually reached (forward-only: indices
   // 0..current are opened; anything past `current` was never opened — e.g. time
   // ran out — so it stays unseen and can come back next time).
@@ -234,12 +253,15 @@ function finishTest(reason = 'manual') {
 
 function renderResults(auto) {
   const cats = {};
+  const split = { ok: [0, 0], bad: [0, 0], blank: [0, 0] }; // [questions, seconds] by outcome
   let correct = 0, answered = 0;
   state.questions.forEach((q, i) => {
     cats[q.category] = cats[q.category] || { correct: 0, total: 0 };
     cats[q.category].total++;
     if (state.answers[i] !== null) answered++;
     if (state.answers[i] === q.correct) { correct++; cats[q.category].correct++; }
+    const outcome = state.answers[i] === null ? 'blank' : state.answers[i] === q.correct ? 'ok' : 'bad';
+    split[outcome][0]++; split[outcome][1] += state.qTimes[i];
   });
   const total = state.questions.length;
   const scorePct = Math.round((correct / total) * 100);
@@ -307,7 +329,13 @@ function renderResults(auto) {
     usedSec: used,
     avgSec: Math.round((used / total) * 10) / 10,
     cats: Object.fromEntries(Object.entries(cats).map(([c, s]) => [c, [s.correct, s.total]])),
-    topics: Object.fromEntries(Object.entries(topicStats).map(([t, s]) => [t, [s.correct, s.total, Math.round(s.secs)]])),
+    topics: Object.fromEntries(Object.entries(topicStats).map(([t, s]) => [t, [s.correct, s.total, Math.round(s.secs), s.blank]])),
+    // schema 2: additive fields for the progress dashboard (older rows simply lack them)
+    schema: 2,
+    reason: state.finishReason,
+    limitSec: state.totalSeconds,
+    reached: state.current + 1,
+    split: Object.fromEntries(Object.entries(split).map(([k, [n, secs]]) => [k, [n, Math.round(secs)]])),
   });
   renderHistory('#results-history');
 }
@@ -321,9 +349,9 @@ function renderPacing(budget) {
   let okSec = 0, okN = 0, badSec = 0, badN = 0, blankSec = 0, blankN = 0;
   state.questions.forEach((q, i) => {
     const key = q.topic || q.category;
-    const g = groups[key] = groups[key] || { correct: 0, total: 0, secs: 0 };
+    const g = groups[key] = groups[key] || { correct: 0, total: 0, secs: 0, blank: 0 };
     g.total++; g.secs += state.qTimes[i];
-    if (state.answers[i] === null) { blankSec += state.qTimes[i]; blankN++; }
+    if (state.answers[i] === null) { blankSec += state.qTimes[i]; blankN++; g.blank++; }
     else if (state.answers[i] === q.correct) { g.correct++; okSec += state.qTimes[i]; okN++; }
     else { badSec += state.qTimes[i]; badN++; }
   });
@@ -341,13 +369,16 @@ function renderPacing(budget) {
   }
   $('#pacing-note').innerHTML = note;
 
-  // per-topic table, slowest first
+  // per-topic table, slowest first (thresholds live in metrics.js so the dashboard agrees)
+  const VERDICTS = {
+    sink: '⛔ Time sink — guess fast in tests, drill after',
+    slow: '🐢 Accurate but slow — drill for speed',
+    rushed: '⚠️ Fast but wrong — slow down a touch',
+    good: '✓ On pace',
+  };
   const verdict = (g) => {
-    const a = g.secs / g.total, acc = g.correct / g.total;
-    if (a > budget * 1.4 && acc < 0.5) return ['sink', '⛔ Time sink — guess fast in tests, drill after'];
-    if (a > budget * 1.4) return ['slow', '🐢 Accurate but slow — drill for speed'];
-    if (a <= budget && acc < 0.5) return ['rushed', '⚠️ Fast but wrong — slow down a touch'];
-    return ['good', '✓ On pace'];
+    const v = pacingVerdict(g.secs / g.total, g.correct / g.total, budget);
+    return [v, VERDICTS[v]];
   };
   const rows = Object.entries(groups)
     .sort((x, y) => y[1].secs / y[1].total - x[1].secs / x[1].total)
@@ -421,6 +452,13 @@ function buildMarkdown() {
       : '';
     md += `| ${fmtDate(e.ts)} | ${e.modeLabel || e.mode} | ${e.correct}/${e.total} | ${e.pct}% | ${e.answered}/${e.total} | ${fmtTime(e.usedSec)} | ${e.avgSec != null ? e.avgSec + 's' : ''} | ${slow} | ${cats} |\n`;
   }
+  const abandoned = loadAbandoned();
+  if (abandoned.length) {
+    md += '\n## Abandoned sessions\n\n| Started | Mode | Reached | Answered | Time before quitting |\n|---|---|---|---|---|\n';
+    for (const a of abandoned) {
+      md += `| ${fmtDate(a.ts)} | ${a.modeLabel || a.mode} | Q${a.reached}/${a.total} | ${a.answered}/${a.total} | ${fmtTime(Math.round(a.elapsedSec || 0))} |\n`;
+    }
+  }
   return md;
 }
 function exportLog() {
@@ -435,6 +473,7 @@ function exportLog() {
 function clearLog() {
   if (!confirm('Clear your entire practice log? This cannot be undone.')) return;
   saveLog([]);
+  writeStore(ABANDONED_KEY, []);
   syncLogFile(); // overwrite the project file with the empty log too
   renderHistory('#history-table');
   renderHistory('#results-history');
@@ -442,6 +481,85 @@ function clearLog() {
 }
 function refreshHistoryVisibility() {
   $('#history-wrap').classList.toggle('hidden', loadLog().length === 0);
+}
+
+/* ---------------- abandoned sessions ---------------- */
+// A running test is mirrored into localStorage (progress + a heartbeat), so a
+// reload or a closed tab mid-test still shows up, as an abandoned session.
+// Like the rest of the log, this never leaves the browser.
+const TAB_ID = (() => {
+  const fresh = () => Math.random().toString(36).slice(2, 10);
+  try {
+    let id = sessionStorage.getItem('ua_tab'); // survives a reload of this tab, not a new tab
+    if (!id) { id = fresh(); sessionStorage.setItem('ua_tab', id); }
+    return id;
+  } catch { return fresh(); }
+})();
+function readStore(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
+}
+function writeStore(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* private mode / quota */ }
+}
+function loadInflight() {
+  const v = readStore(INFLIGHT_KEY, {});
+  return v && typeof v === 'object' && !Array.isArray(v) ? v : {};
+}
+function loadAbandoned() {
+  const v = readStore(ABANDONED_KEY, []);
+  return Array.isArray(v) ? v : [];
+}
+function saveInflight() {
+  if (state.finished || !state.startedAt) return;
+  const all = loadInflight();
+  all[state.startedAt] = {
+    ts: state.startedAt,
+    mode: state.mode,
+    modeLabel: (TEST_TYPES[state.mode] || TEST_TYPES.full).label,
+    total: state.questions.length,
+    limitSec: state.totalSeconds,
+    reached: state.current + 1,
+    answered: state.answers.filter(a => a != null).length,
+    elapsedSec: state.totalSeconds - Math.max(0, state.remaining),
+    lastSeen: Date.now(),
+    tabId: TAB_ID,
+  };
+  writeStore(INFLIGHT_KEY, all);
+}
+function clearInflight() {
+  const all = loadInflight();
+  delete all[state.startedAt];
+  writeStore(INFLIGHT_KEY, all);
+  // swept as abandoned while its tab sat throttled in the background, then finished after all
+  const abandoned = loadAbandoned();
+  if (abandoned.some(a => a.ts === state.startedAt)) writeStore(ABANDONED_KEY, abandoned.filter(a => a.ts !== state.startedAt));
+}
+// On page load: tests this tab was running before a reload, or whose tab went
+// quiet, move to the abandoned list. A test ticking in another open tab stays.
+function recoverAbandoned() {
+  const { keep, abandoned } = sweepInflight(loadInflight(), { tabId: TAB_ID, now: Date.now() });
+  if (!abandoned.length) return;
+  writeStore(INFLIGHT_KEY, keep);
+  writeStore(ABANDONED_KEY, [...loadAbandoned(), ...abandoned]);
+}
+
+/* ---------------- section tabs (Practice / Dashboard) ---------------- */
+let dashboard = null;
+function goTo(tab, push) {
+  // forward-only: nothing navigates away from a running test
+  if (!$('#screen-test').classList.contains('hidden') && !state.finished) return;
+  const url = tab === 'dashboard' ? '#dashboard' : location.pathname + location.search;
+  if (push && (tab === 'dashboard') !== (location.hash === '#dashboard')) history.pushState(null, '', url);
+  if (tab === 'dashboard') {
+    show('dashboard');
+    dashboard.render();
+  } else {
+    renderModePicker(); // refresh the unseen-question counts
+    renderHistory('#history-table');
+    refreshHistoryVisibility();
+    show('start');
+  }
+  window.scrollTo(0, 0);
 }
 
 /* ---------------- review filter ---------------- */
@@ -455,7 +573,14 @@ function filterReview(mode) {
 /* ---------------- wire up ---------------- */
 function init() {
   initAnalytics();
-  renderModePicker();
+  recoverAbandoned();
+  dashboard = createDashboard({
+    root: $('#dashboard-root'),
+    testTypes: TEST_TYPES,
+    loadLog,
+    loadAbandoned,
+    onStart: (mode) => startTest(mode),
+  });
   $('#advance-btn').addEventListener('click', advance);
   $('#submit-btn').addEventListener('click', () => finishTest('manual'));
   $('#new-test-btn').addEventListener('click', () => startTest(state.mode)); // same mode, fresh questions
@@ -477,9 +602,19 @@ function init() {
     }
   });
 
-  renderHistory('#history-table');
-  refreshHistoryVisibility();
-  show('start');
+  // section tabs; the #dashboard hash keeps the dashboard reload- and back-button-safe
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-tab]');
+    if (!link) return;
+    e.preventDefault();
+    goTo(link.dataset.tab, true);
+  });
+  window.addEventListener('popstate', () => goTo(location.hash === '#dashboard' ? 'dashboard' : 'practice', false));
+  // keep the in-flight record fresh right up to the moment the page goes away
+  window.addEventListener('pagehide', saveInflight);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) saveInflight(); });
+
+  goTo(location.hash === '#dashboard' ? 'dashboard' : 'practice', false);
 }
 
 document.addEventListener('DOMContentLoaded', init);

@@ -9,6 +9,10 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
 </head>
 <body>
+  <nav id="app-tabs" class="app-tabs" aria-label="Sections">
+    <a href="./" class="app-tab active" data-tab="practice" aria-current="page">🧠 Practice</a>
+    <a href="#dashboard" class="app-tab" data-tab="dashboard">📈 Dashboard</a>
+  </nav>
 
   <!-- ===================== START ===================== -->
   <section id="screen-start" class="screen">
@@ -101,6 +105,7 @@
         <button id="new-test-btn" class="btn primary">↻ Start a New Test (fresh questions)</button>
         <button id="review-toggle" class="btn ghost">Show / hide answer review</button>
         <button id="results-export" class="btn ghost">⤓ Export log (.md)</button>
+        <a href="#dashboard" class="btn ghost" data-tab="dashboard">📈 Progress dashboard</a>
       </div>
       <div id="sync-note" class="sync-note"></div>
       <div id="results-history" class="history-table compact"></div>
@@ -116,6 +121,12 @@
       </div>
       <div id="review-list" class="review-list"></div>
     </div>
+  </section>
+
+  <!-- ===================== DASHBOARD ===================== -->
+  <!-- rendered by js/dashboard.js; metric catalogue in DASHBOARD-METRICS.md -->
+  <section id="screen-dashboard" class="screen hidden">
+    <div id="dashboard-root"></div>
   </section>
 
   <script type="module" src="js/app.js"></script>
