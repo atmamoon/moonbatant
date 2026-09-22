@@ -1,5 +1,6 @@
 ---
 import Sidereal from '../../layouts/Sidereal.astro';
+import Film from '../../components/sidereal/Film.astro';
 import { getCollection } from 'astro:content';
 import '../../styles/sidereal/pages.css';
 
@@ -13,7 +14,8 @@ export async function getStaticPaths() {
 
 const { study, next, index, total } = Astro.props;
 const { Content, headings } = await study.render();
-const toc = headings.filter((h) => h.depth === 2);
+// the contents: every section of the body, then the screens if the study carries any
+const toc = [...headings.filter((h) => h.depth === 2), ...(study.data.gallery.length ? [{ slug: 'screens', text: study.data.galleryTitle }] : [])];
 const d = study.data;
 const pad = (n: number) => String(n).padStart(2, '0');
 const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
@@ -45,6 +47,12 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
         </div>
       )}
 
+      {d.films.length > 0 && (
+        <div class:list={['case__films', 'rv', d.films.length > 1 && 'case__films--pair']} role="group" aria-label="Films">
+          {d.films.map((f, i) => <Film {...f} eager={i === 0} />)}
+        </div>
+      )}
+
       <div class="case__grid">
         <aside class="case__aside rv" aria-label="On this page">
           {toc.length > 0 && (
@@ -61,9 +69,28 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
               <p class="case__tags">{d.tags.map((t, i) => (<><span>{t}</span>{i < d.tags.length - 1 && <span class="sep" aria-hidden="true">·</span>}</>))}</p>
             </div>
           )}
+          {d.links.length > 0 && (
+            <div>
+              <span class="t-label">Sources</span>
+              <ul class="case__links">
+                {d.links.map((l) => <li><a class="rule-link" href={l.href} target="_blank" rel="noopener">{l.label} <span aria-hidden="true">↗</span></a></li>)}
+              </ul>
+            </div>
+          )}
         </aside>
         <div class="prose">   {/* long-form reading never fades in */}
           <Content />
+          {d.gallery.length > 0 && (
+            <section class="case__shots" aria-labelledby="screens">
+              <h2 id="screens">{d.galleryTitle}</h2>
+              {d.gallery.map((g) => (
+                <figure>
+                  <img src={g.src} alt={g.alt} loading="lazy" decoding="async" width="1600" />
+                  <figcaption>{g.caption}</figcaption>
+                </figure>
+              ))}
+            </section>
+          )}
         </div>
       </div>
 
@@ -82,7 +109,7 @@ const isNumeric = (v: string) => /\d/.test(v) && !/[a-wyzA-WYZ]/.test(v);
   <script>
     // contents: mark the section being read
     const tocLinks = new Map([...document.querySelectorAll<HTMLAnchorElement>('.toc a[href^="#"]')].map((a) => [decodeURIComponent(a.getAttribute('href')!.slice(1)), a] as const));
-    const headings = [...document.querySelectorAll<HTMLElement>('.prose > h2[id]')].filter((h) => tocLinks.has(h.id));
+    const headings = [...document.querySelectorAll<HTMLElement>('.prose h2[id]')].filter((h) => tocLinks.has(h.id));
     // the reading line sits 30% down the view and slides to the bottom over the last 0.7 screen, so a short closing
     // section still gets its turn; a click marks its own entry until the reader scrolls again
     if (headings.length) {

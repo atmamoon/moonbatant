@@ -380,10 +380,19 @@ function assertReadable(fails) {
 
 // ═════════════════════════════════════════════════════════════════════════════
 describe('1 · content is untouched', () => {
-  test('content sources are identical to where this branch left main', () => {
+  test('content that existed where this branch left main is identical; only additions are allowed', () => {
     const base = git('merge-base', 'main', 'HEAD');
-    const diff = git('diff', '--stat', base, '--', 'src/content', 'src/consts.ts');
+    // files the branch point already had: byte for byte the same. New studies may be added
+    // (their text is checked verbatim below); nothing that existed may change or go.
+    const existed = git('ls-tree', '-r', '--name-only', base, '--', 'src/content', 'src/consts.ts').split('\n').filter(Boolean);
+    const diff = git('diff', '--stat', base, '--', ...existed);
     assert.equal(diff, '', `content changed since ${base.slice(0, 7)}:\n${diff}`);
+    const gone = existed.filter((f) => !fs.existsSync(path.join(ROOT, f)));
+    assert.deepEqual(gone, [], 'content removed since the branch point');
+    // the schema may grow fields for new studies, never lose the ones the old ones use
+    const schemaDiff = git('diff', base, '--', 'src/content/config.ts');
+    const removed = schemaDiff.split('\n').filter((l) => /^-\s+\w+:/.test(l));
+    assert.deepEqual(removed, [], 'schema fields removed');
   });
 
   test('every string in consts.ts is on the home page', () => {

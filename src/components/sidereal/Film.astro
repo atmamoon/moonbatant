@@ -1,0 +1,90 @@
+---
+// Film — a plate that holds a video of the work. It ships as a still of our own
+// between hairlines, with a play slate; the YouTube player (privacy-enhanced
+// domain) is only created when the reader presses play, so nothing loads from
+// YouTube on a visit that never does. Without JavaScript the still is a link
+// to the film.
+interface Props {
+  id: string;
+  title: string;
+  by: string;
+  duration: string;
+  poster: string;
+  caption: string;
+  /** the first plate on a page loads its still eagerly */
+  eager?: boolean;
+}
+const { id, title, by, duration, poster, caption, eager = false } = Astro.props;
+const watch = `https://www.youtube.com/watch?v=${id}`;
+const embed = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`;
+// "1:36" → "1 minute 36 seconds", for the accessible name
+const spoken = (() => {
+  const [m, s] = duration.split(':').map(Number);
+  return `${m} minute${m === 1 ? '' : 's'}${s ? ` ${s} seconds` : ''}`;
+})();
+---
+
+<figure class="film" data-film={id} data-embed={embed}>
+  <div class="film__frame">
+    <a class="film__still" href={watch} target="_blank" rel="noopener" aria-label={`Watch on YouTube: ${title}, ${spoken}`}>
+      <img src={poster} alt="" width="1600" height="900" loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    </a>
+    <button type="button" class="film__play" aria-label={`Play: ${title}, ${spoken}`} hidden>
+      <span class="film__slate">
+        <span class="film__tri" aria-hidden="true"></span>
+        <span class="film__play-text">Play</span>
+        <span class="film__dur t-label">{duration}</span>
+      </span>
+    </button>
+  </div>
+  <figcaption>
+    <span class="film__title">{title}</span>
+    <span class="film__meta t-label">{by} <span class="film__sep" aria-hidden="true">·</span> {duration}</span>
+    <span class="film__cap">{caption}</span>
+  </figcaption>
+</figure>
+
+<style>
+  /* the plate: no border, no radius, no shadow — hairlines above and below, like the exhibits in the prose */
+  .film { display: grid; gap: 14px; padding: 1.2em 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .film__frame { position: relative; aspect-ratio: 16 / 9; background: #05070f; overflow: hidden; }
+  .film__still, .film__frame :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .film__still img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* a quiet cinematographer's grad at the foot, so the slate reads on any still */
+  .film__frame::after { content: ''; position: absolute; inset: auto 0 0 0; height: 46%; background: linear-gradient(180deg, rgba(5, 7, 15, 0) 0%, rgba(5, 7, 15, 0.72) 100%); pointer-events: none; }
+  .film__play { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; display: flex; align-items: flex-end; justify-content: flex-start; padding: clamp(14px, 3vw, 28px); cursor: pointer; }
+  .film__play[hidden] { display: none; }
+  .film__slate { display: inline-flex; align-items: center; gap: 12px; padding: 12px 18px; border: 1px solid var(--ink); background: rgba(5, 7, 15, 0.55); color: var(--ink); font-family: var(--font-display); font-stretch: 110%; font-weight: 500; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease); }
+  .film__tri { width: 0; height: 0; border-style: solid; border-width: 6px 0 6px 10px; border-color: transparent transparent transparent currentColor; }
+  .film__dur { color: inherit; padding-left: 12px; border-left: 1px solid var(--rule-strong); }
+  .film__play:hover .film__slate, .film__play:focus-visible .film__slate { background: var(--ink); color: #0b0f1c; border-color: var(--ink); }
+  .film__play:focus-visible { outline: none; }
+  .film__play:focus-visible .film__slate { box-shadow: 0 0 0 3px var(--venus); }
+  .film--playing .film__frame::after { display: none; }
+  figcaption { display: grid; gap: 6px; }
+  .film__title { font-family: var(--font-serif); font-size: 1.15rem; line-height: 1.25; color: var(--ink); }
+  .film__meta { color: var(--ink-2); }
+  .film__sep { color: var(--ink-4); margin: 0 6px; }
+  .film__cap { font-family: var(--font-display); font-size: var(--text-small); line-height: 1.55; color: var(--ink-2); max-width: 60ch; }
+</style>
+
+<script>
+  // the play slate exists only with JavaScript: it swaps the still for the player, in place
+  for (const fig of document.querySelectorAll<HTMLElement>('.film[data-embed]')) {
+    const btn = fig.querySelector<HTMLButtonElement>('.film__play');
+    const frame = fig.querySelector<HTMLElement>('.film__frame');
+    if (!btn || !frame) continue;
+    btn.hidden = false;
+    btn.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = fig.dataset.embed!;
+      iframe.title = btn.getAttribute('aria-label')!.replace(/^Play: /, '');
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+      frame.replaceChildren(iframe);
+      fig.classList.add('film--playing');
+      iframe.focus();
+    });
+  }
+</script>

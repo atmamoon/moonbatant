@@ -66,3 +66,15 @@ html[data-mode='night'] .prose { color: var(--ink-read, rgba(234, 240, 251, 0.9)
 .plate--bleed { margin-inline: calc(50% - 50vw); padding-inline: var(--gutter-l) var(--gutter-r); }
 @media (max-width: 700px) { .case__metrics { grid-template-columns: 1fr 1fr; } .case__metric:first-child:nth-last-child(odd) { grid-column: 1 / -1; } }   /* an odd count: the lead takes the first row, no orphan */
 @media (max-width: 480px) { .case__metrics { grid-template-columns: 1fr; row-gap: 22px; } }   /* phones: one result a row, so captions keep their length */
+
+/* ── Films: the work moving, under the headline results. One plate at the reading measure,
+      a pair side by side on wide screens, stacked on phones. ── */
+.case__films { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(20px, 3vw, 36px); margin-bottom: clamp(36px, 5vw, 60px); }
+.case__films--pair { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+@media (max-width: 900px) { .case__films--pair { grid-template-columns: minmax(0, 1fr); } }
+.case__links { list-style: none; display: grid; gap: 10px; }
+.case__links .rule-link { font-size: var(--text-small); color: var(--ink-2); }
+/* screens: the plates share the prose column and its hairlines; the heading joins the contents */
+.case__shots { margin-top: 2.4em; }
+.case__shots h2 { scroll-margin-top: var(--head-offset, 118px); }
+.prose figcaption { color: var(--ink-2); text-transform: none; letter-spacing: 0.02em; font-size: var(--text-small); line-height: 1.5; }
