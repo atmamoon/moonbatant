@@ -87,8 +87,12 @@ async function pinClock(page, iso) {
   }, iso);
 }
 
-/** Capture the viewport (or one element) as WebP. */
-async function shot(page, slug, name, { selector = null } = {}) {
+/**
+ * Capture the viewport (or one element) as WebP. A project whose own repo
+ * wants the same frames (a README, an article) sets `png_dir` in the sources
+ * file, and each shot is also written there as a 1600px PNG.
+ */
+async function shot(page, slug, name, { selector = null, pngDir = null } = {}) {
   const dir = `${OUT_ROOT}/${slug}`;
   mkdirSync(dir, { recursive: true });
   const target = selector ? await page.$(selector) : page;
@@ -98,6 +102,11 @@ async function shot(page, slug, name, { selector = null } = {}) {
   await sharp(png).resize({ width: 1600, withoutEnlargement: true }).webp({ quality: 78 }).toFile(file);
   const { size } = await sharp(file).metadata().then(async (m) => ({ size: m.size ?? 0 }));
   console.log(`  ✓ ${file}${size ? ` (${Math.round(size / 1024)} KB)` : ''}`);
+  if (pngDir) {
+    mkdirSync(pngDir, { recursive: true });
+    await sharp(png).resize({ width: 1600, withoutEnlargement: true }).png({ compressionLevel: 9 }).toFile(`${pngDir}/${name}.png`);
+    console.log(`    + ${pngDir}/${name}.png`);
+  }
 }
 
 // ── Flows ────────────────────────────────────────────────────────────────
@@ -194,6 +203,50 @@ const FLOWS = {
 
       await clickText(page, 'button', 'Confirm & generate plan', { settle: 5000 });
       await shot(page, 'dietician-scribe', '04-plan');
+    },
+  },
+
+  // Serve the tracker's production build against a DE-IDENTIFIED COPY of its
+  // database (never data/tracker.db, which holds personal activity). The
+  // server's clock is pinned to the demo afternoon in its own environment,
+  // and the browser's clock here matches it, so the day reads as "today"
+  // with some of its queue still open.
+  'activity-tracker': {
+    clock: '2026-09-15T11:10:00Z', // 16:40 IST on the demo day
+    async run(page) {
+      const pngDir = SOURCES['activity-tracker'].png_dir ?? null;
+      // The app follows the OS theme; the plates are its dark scheme.
+      await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }]);
+      await page.reload({ waitUntil: 'networkidle2' });
+      await wait(2000);
+      await shot(page, 'activity-tracker', '01-planner', { pngDir });
+
+      // The NOW card: the first unfinished task, time, duration and category.
+      await shot(page, 'activity-tracker', '02-now-card', { selector: '.task-card.hero', pngDir });
+
+      // The timeline: tasks packed around the day, the red line at the current time.
+      await shot(page, 'activity-tracker', '03-timeline', { selector: '.timeline', pngDir });
+
+      // The books shelf is collapsed by default; open it for the plate.
+      await page.click('.books-collapse-toggle');
+      await wait(900);
+      await shot(page, 'activity-tracker', '04-books', { selector: '.books-shelf', pngDir });
+    },
+  },
+
+  // Same build, the history copy, real clock: the all-time numbers are true.
+  'activity-tracker-history': {
+    async run(page) {
+      const pngDir = SOURCES['activity-tracker-history'].png_dir ?? null;
+      await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }]);
+      await page.reload({ waitUntil: 'networkidle2' });
+      await wait(1500);
+      await clickText(page, 'button', 'Past activity', { settle: 1500 });
+      await clickText(page, 'button', '90 days', { settle: 1800 }); // the whole log, with a readable range label
+      await shot(page, 'activity-tracker', '05-history', { pngDir });
+
+      // Where the time goes: share by category and the consistency table.
+      await shot(page, 'activity-tracker', '06-insights', { selector: '.insights-panel', pngDir });
     },
   },
 };
