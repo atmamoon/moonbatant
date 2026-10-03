@@ -37,7 +37,12 @@ gallery:
     caption: "Where the time goes. The consistency table is the instrument the whole thing was built for: one drill at 31 of 31 days, the hardest one at 10 of 15."
 links:
   - { label: "Source on GitHub", href: "https://github.com/atmamoon/activity-tracker" }
+  - { label: "Write-up on Medium", href: "https://medium.com/@sheikh.mamoon.mondal/i-built-a-free-local-first-day-planner-so-my-hard-drills-would-stop-slipping-bdb9e2633ee6" }
 ---
+
+> Full write-up on Medium:
+> [I built a free, local-first day planner so my hard drills would stop slipping](https://medium.com/@sheikh.mamoon.mondal/i-built-a-free-local-first-day-planner-so-my-hard-drills-would-stop-slipping-bdb9e2633ee6).
+> This is the condensed case-study version.
 
 ## Context
 

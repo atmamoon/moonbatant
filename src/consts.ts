@@ -59,6 +59,11 @@ export const FOOTER_PHOTO = '/photos/night-milkyway-pano.webp';
 // ── Writing ─────────────────────────────────────────────────────────────
 export const WRITING: { title: string; outlet: string; href: string }[] = [
   {
+    title: 'I built a free, local-first day planner so my hard drills would stop slipping',
+    outlet: 'Medium',
+    href: 'https://medium.com/@sheikh.mamoon.mondal/i-built-a-free-local-first-day-planner-so-my-hard-drills-would-stop-slipping-bdb9e2633ee6',
+  },
+  {
     title: 'Building a 5x PM Agent',
     outlet: 'Medium',
     href: 'https://medium.com/@sheikh.mamoon.mondal/building-a-5x-pm-agent-b9af78e16628',
