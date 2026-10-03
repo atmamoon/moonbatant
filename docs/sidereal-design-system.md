@@ -189,7 +189,8 @@ measure it; body text over open sky runs 7:1 or better.
   scene or the header. The page being read is marked in the nav in full ink. On the home page every nav item
   scrolls in place, Work included, and the nav marks the chapter whose first line has reached the middle of the view (the last chapter's two thirds
   down, since its label sits low, and always at the page's end);
-  each chapter is a region named by its own label.
+  each chapter is a region named by its own label. The full work record is reached from the foot of the
+  Selected work chapter, not from the nav (see *Layout*).
 - **Result captions** are 12px mono (13px on case studies): a number means nothing without its caption, and
   each hero result names the company where it was earned.
 
@@ -211,6 +212,10 @@ measure it; body text over open sky runs 7:1 or better.
 - Manifest rows (case studies): `index · title · meta` left, `metrics` right,
   full-row link, hairline above; hover reveals a sweep and a right arrow. On phones the arrow
   sits in the row's top-right corner, so title, summary and readouts share the full width.
+  The home chapter lists the featured cases and ends in a foot: the count shown of the whole
+  record under the index column (`04 of 10`, in mono caps), and a rule-link, *All work →*, under
+  the rows' arrows. That link is the one route from the home page to `/work`, which holds every
+  case: the shipped work, the independent builds and the university project.
 - Writing list (the home chapter and /writing, one component): `index · title · where it ran · arrow`, a summary
   under the title when a piece has one, 960px wide, hairlines like the manifest's.
 - Ledger (experience): company as a serif heading, role/period in mono, bullets

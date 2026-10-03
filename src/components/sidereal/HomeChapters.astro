@@ -9,9 +9,9 @@ import { HERO, ABOUT, EXPERIENCE, EDUCATION, SKILLS, SOCIALS, WRITING } from '..
 import Manifest from './Manifest.astro';
 import WritingList from './WritingList.astro';
 
-const featured = (await getCollection('work'))
-  .filter((s) => !s.data.draft && s.data.featured)
-  .sort((a, b) => a.data.order - b.data.order);
+const studies = (await getCollection('work')).filter((s) => !s.data.draft);
+const featured = studies.filter((s) => s.data.featured).sort((a, b) => a.data.order - b.data.order);
+const total = studies.length;   // the whole record, on /work: the featured rows above are the first of it
 const bio = ABOUT.split('\n\n');
 const pad = (n: number) => String(n).padStart(2, '0');
 // solar altitude per chapter, in degrees: read by the stage, never shown
@@ -55,6 +55,12 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
       <h2 class="ch__title">Products &amp; agents I've shipped.</h2>
     </header>
     <Manifest studies={featured} />
+    {/* the register's foot: how much of the record the chapter shows, and the way to the rest (/work holds every case,
+        the independent builds and the university project with the shipped work); the one route there from this page */}
+    <p class="mf-foot rv">
+      <span class="t-label mf-foot__count">{pad(featured.length)} of {pad(total)}</span>
+      <a class="rule-link" href="/work">All work <span aria-hidden="true">→</span></a>
+    </p>
   </div>
 </section>
 
@@ -214,6 +220,10 @@ const CH = { work: -1, about: -5, experience: -10, education: -14, writing: -18,
   .hero__hint { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; pointer-events: none; }
   .hero__hint-line { width: 1px; height: 44px; background: linear-gradient(180deg, transparent, var(--ink-2)); animation: hint 3.2s var(--ease) 4 both; transform-origin: top; }   /* four passes, then still: no endless style work */
   @keyframes hint { 0% { transform: scaleY(0); opacity: 0; } 35% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+
+  /* ── 02 the register's foot: the count under the index column, the link under the rows' arrows, like the colophon ── */
+  .mf-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; padding-top: 22px; }
+  .mf-foot__count { color: var(--ink-2); text-shadow: var(--instrument-shadow); }
 
   /* ── 03 about: one centred measure; credits beneath ── */
   .ch--centre .ch__head { max-width: 720px; margin-inline: auto; }
