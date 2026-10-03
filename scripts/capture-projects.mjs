@@ -219,6 +219,10 @@ const FLOWS = {
       await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }]);
       await page.reload({ waitUntil: 'networkidle2' });
       await wait(2000);
+      // Open the reading shelf (collapsed by default) so the left column runs
+      // the full height of the timeline.
+      await page.click('.books-collapse-toggle');
+      await wait(900);
       await shot(page, 'activity-tracker', '01-planner', { pngDir });
 
       // The NOW card: the first unfinished task, time, duration and category.
@@ -227,15 +231,13 @@ const FLOWS = {
       // The timeline: tasks packed around the day, the red line at the current time.
       await shot(page, 'activity-tracker', '03-timeline', { selector: '.timeline', pngDir });
 
-      // The books shelf is collapsed by default; open it for the plate.
-      await page.click('.books-collapse-toggle');
-      await wait(900);
       await shot(page, 'activity-tracker', '04-books', { selector: '.books-shelf', pngDir });
     },
   },
 
   // Same build, the history copy, real clock: the all-time numbers are true.
   'activity-tracker-history': {
+    clock: '2026-10-02T18:00:00Z', // 23:30 IST on the day the log was snapshotted
     async run(page) {
       const pngDir = SOURCES['activity-tracker-history'].png_dir ?? null;
       await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }]);

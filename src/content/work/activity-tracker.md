@@ -18,8 +18,8 @@ photo: "/photos/lake-gokyo.webp"
 focal: "50% 32%"
 gallery:
   - src: "/shots/activity-tracker/01-planner.webp"
-    alt: "The planner: a NOW card at the top of the day's queue on the left, and a timeline of the day's blocks with a red current-time line on the right"
-    caption: "The planner. The first unfinished task is the NOW card, the rest of the queue sits under it, and the timeline on the right is packed around the calendar."
+    alt: "The planner: a NOW card at the top of the day's queue on the left with the reading shelf under it, and a timeline of the day's blocks with a red current-time line on the right"
+    caption: "The planner. The first unfinished task is the NOW card, the rest of the queue and the reading shelf sit under it, and the timeline on the right is packed around the calendar."
   - src: "/shots/activity-tracker/02-now-card.webp"
     alt: "A single task card tagged NOW, showing the task's time slot, duration and category"
     caption: "The NOW card. After a break there is nothing to decide: the time slot, the duration and the category are already on screen."
@@ -46,6 +46,9 @@ practised daily, on top of a routine I already had. The drills only improve
 through repetition, and I wanted that improvement to be measurable week over
 week: the score on each drill against the hours put into it. My first method was
 to plan the day as it went, picking the next thing whenever the last one ended.
+What I needed turned out to be a daily planner of the kind founders and busy
+people run their day with, Sunsama being the best known, and every one of them
+is paywalled. So I built a free, local-first one.
 
 ## The problem
 
@@ -103,10 +106,9 @@ The plates above are the real log with the activities renamed. Over 34 active
 days: 188 activities completed, 128 hours 40 minutes logged, about 3 hours 47
 minutes per active day, and nothing missed, because unfinished work was carried
 forward rather than dropped. One timed drill ran 31 of 31 planned days and was
-clearly matured; the daily case study, the hardest item on the list, sat at
+clearly matured; the daily practice set, the hardest item on the list, sat at
 10 of 15. That gap was invisible while planning hour by hour and took one glance
-at the table to see, and the next week's queue put the case study first each
-morning.
+at the table to see, and the next week's queue put that set first each morning.
 
 ## Reflection & tradeoffs
 
@@ -122,6 +124,9 @@ morning.
 - **The tracker measures the denominator, not the numerator.** The drill scores
   live in the drill tools. What this gives them is reliable hours per activity,
   so improvement can be read per unit of effort.
-- **What I would build next:** a weekly review screen that proposes next week's
-  queue from the consistency table, so the thermostat is as explicit as the
-  thermometer.
+- **What I would build next:** notifications before a planned block starts and
+  a flag when one passes untouched; a live timer per task, the way Sunsama runs
+  one, so the log holds actual hours next to planned ones and planned over
+  actual becomes the efficiency figure each drill is judged by; and a weekly
+  review screen that proposes next week's queue from the consistency table, so
+  the thermostat is as explicit as the thermometer.
